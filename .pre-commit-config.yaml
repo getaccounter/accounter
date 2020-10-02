@@ -16,3 +16,8 @@ repos:
       - id: eslint
         files: \.[jt]sx?$
         types: [file]
+
+  - repo: https://github.com/pre-commit/mirrors-pylint
+    rev: "v2.6.0"
+    hooks:
+      - id: pylint
