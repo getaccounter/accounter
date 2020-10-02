@@ -1,0 +1,30 @@
+version: "3.8"
+   
+services:
+  database:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  server:
+    build: ./server
+    volumes:
+      - ./server:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+
+  web:
+    build: ./web
+    volumes:
+      - ./web:/code
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    depends_on:
+      - server
+
