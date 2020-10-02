@@ -21,10 +21,21 @@ services:
     build: ./web
     volumes:
       - ./web:/code
-      - /usr/app/node_modules
+      - /code/node_modules
     ports:
       - "3000:3000"
     stdin_open: true
     depends_on:
       - server
 
+  e2e:
+    build: ./e2e-tests
+    depends_on:
+      - web
+    environment:
+      - CYPRESS_baseUrl=http://web:3000
+    working_dir: /e2e
+    command: npm i @testing-library/cypress
+    volumes:
+      - ./e2e-tests:/e2e
+      - /e2e/node_modules
