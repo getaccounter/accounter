@@ -11,4 +11,5 @@ jobs:
       - uses: actions/checkout@v2
       - run: docker-compose run web npm run lint
       - run: docker-compose run web npm run typecheck
+      - run: docker-compose run web npm build
       - run: docker-compose up --exit-code-from e2e
