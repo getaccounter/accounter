@@ -5,8 +5,9 @@ on:
   pull_request:
     branches: [master]
 jobs:
-  E2E:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: docker-compose run web npm run lint
       - run: docker-compose up --exit-code-from e2e
