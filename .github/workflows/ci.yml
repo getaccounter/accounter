@@ -19,3 +19,8 @@ jobs:
         run: docker-compose run web npm t
       - name: End-to-end tests production build
         run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --build --exit-code-from e2e
+      - name: Report coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: web
