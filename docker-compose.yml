@@ -10,6 +10,8 @@ services:
 
   server:
     build: ./server
+    environment:
+      - CI=${CI}
     volumes:
       - ./server:/code
     ports:
@@ -21,6 +23,8 @@ services:
     build:
       context: ./web
       target: development
+    environment:
+      - CI=${CI}
     volumes:
       - ./web:/code
       - /code/node_modules

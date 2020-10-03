@@ -5,13 +5,17 @@ on:
   pull_request:
     branches: [master]
 jobs:
-  tests:
-    runs-on: ubuntu-latest
+  health-checks:
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - name: Linting
+      - name: Linting server
+        run: docker-compose run server pylint accounter
+      - name: Linting web
         run: docker-compose run web npm run lint
-      - name: Typechecking
+      - name: Typechecking web
         run: docker-compose run web npm run typecheck
-      - name: End-to-end tests on production build
+      - name: Unit testing web web
+        run: docker-compose run web npm t
+      - name: End-to-end tests production build
         run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --build --exit-code-from e2e
