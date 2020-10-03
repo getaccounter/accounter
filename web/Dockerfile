@@ -1,4 +1,4 @@
-FROM node:14.11.0 as development
+FROM node:14.12.0 as development
 RUN mkdir /code
 WORKDIR /code
 COPY package*.json ./
@@ -7,13 +7,13 @@ COPY . /code/
 EXPOSE 3000
 CMD [ "npm", "start" ]
 
-FROM node:14.11.0 as builder
+FROM node:14.12.0 as builder
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code /code
 RUN npm run build
 
-FROM node:14.11.0 as production
+FROM node:14.12.0 as production
 RUN mkdir /build
 COPY --from=builder /code/build /build
 EXPOSE 3000
