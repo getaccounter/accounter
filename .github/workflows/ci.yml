@@ -29,3 +29,17 @@ jobs:
           fail_ci_if_error: true
       - name: end-to-end tests production build
         run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --no-deps --build --exit-code-from e2e web e2e
+
+      - name: Log into GitHub Container Registry
+        run: echo "${{ secrets.PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image to GitHub Container Registry
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/web
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          VERSION=${{ github.sha }}
+          [ "$VERSION" == "$default-branch" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag web.production $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
