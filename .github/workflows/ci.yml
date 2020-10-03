@@ -14,13 +14,13 @@ jobs:
       - name: build
         run: docker-compose build
       - name: linting server
-        run: docker-compose run server pylint accounter
+        run: docker-compose run --no-deps server pylint accounter
       - name: linting web
-        run: docker-compose run web npm run lint
+        run: docker-compose run --no-deps web npm run lint
       - name: typechecking web
-        run: docker-compose run web npm run typecheck
+        run: docker-compose run --no-deps web npm run typecheck
       - name: unit tests web
-        run: docker-compose run web npm t -- --coverage
+        run: docker-compose run --no-deps web npm t -- --coverage
       - name: report coverage
         uses: codecov/codecov-action@v1
         with:
