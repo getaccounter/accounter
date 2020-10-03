@@ -9,6 +9,7 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   server:
+    image: server.development
     build: ./server
     environment:
       - CI=${CI}
@@ -20,6 +21,7 @@ services:
       - database
 
   web:
+    image: web.development
     build:
       context: ./web
       target: development
