@@ -9,7 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker-compose run web npm run lint
-      - run: docker-compose run web npm run typecheck
-      - run: docker-compose run web npm build
-      - run: docker-compose up --exit-code-from e2e
+      - name: Linting
+        run: docker-compose run web npm run lint
+      - name: Typechecking
+        run: docker-compose run web npm run typecheck
+      - name: End-to-end tests on production build
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --build --exit-code-from e2e
