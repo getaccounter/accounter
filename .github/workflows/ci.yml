@@ -32,7 +32,7 @@ jobs:
           flags: web
           fail_ci_if_error: true
       - name: end-to-end tests production build
-        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --no-deps --build --exit-code-from e2e web e2e
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --no-deps --build --exit-code-from e2e
 
       - name: Login to google cloud run
         if: github.ref == 'refs/heads/master'
