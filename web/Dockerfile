@@ -1,6 +1,5 @@
 FROM node:14.12.0 as development
 ENV PORT=3000
-
 RUN mkdir /code
 WORKDIR /code
 COPY package*.json ./
