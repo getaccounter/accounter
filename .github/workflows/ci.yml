@@ -30,20 +30,21 @@ jobs:
       - name: end-to-end tests production build
         run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --no-deps --build --exit-code-from e2e web e2e
 
-      - name: Login to GitHub Package Registry
-        uses: docker/login-action@v1
+      - name: Login to google cloud run
+        if: github.ref == 'refs/heads/master'
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.3
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.PAT }}
+          version: "312.0.0"
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          export_default_credentials: true
 
-      - name: Push image to GitHub Container Registry
+      - name: prepare image deployment
+        if: github.ref == 'refs/heads/master'
+        run: gcloud auth configure-docker
+
+      - name: Deploy image to google container registry
         if: github.ref == 'refs/heads/master'
         run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/web
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          VERSION=latest
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          docker tag web.production $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+          docker tag web.production eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/web
+          docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/web
