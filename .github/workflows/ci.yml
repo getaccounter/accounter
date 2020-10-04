@@ -4,6 +4,10 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+
+env:
+  IMAGE_REGISTRY_TAG_WEB: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/web
+
 jobs:
   health-checks:
     runs-on: ubuntu-18.04
@@ -46,14 +50,14 @@ jobs:
       - name: deploy image to google container registry
         if: github.ref == 'refs/heads/master'
         run: |
-          docker tag web.production eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/web
-          docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/web
+          docker tag web.production $IMAGE_REGISTRY_TAG_WEB
+          docker push $IMAGE_REGISTRY_TAG_WEB
 
       - name: deploy image to production
         if: github.ref == 'refs/heads/master'
         uses: GoogleCloudPlatform/github-actions/deploy-cloudrun@0.1.3
         with:
-          image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/web:latest
-          service: accounter-web
+          image: $IMAGE_REGISTRY_TAG_WEB:latest
+          service: a9988603-29aa-4609-9eda-8ab751baf5d2
         env:
           GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
