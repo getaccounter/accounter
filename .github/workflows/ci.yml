@@ -38,11 +38,11 @@ jobs:
           password: ${{ secrets.PAT }}
 
       - name: Push image to GitHub Container Registry
+        if: github.ref == 'refs/heads/master'
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/web
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          VERSION=${{ github.sha }}
-          [ "$VERSION" == "$default-branch" ] && VERSION=latest
+          VERSION=latest
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag web.production $IMAGE_ID:$VERSION
