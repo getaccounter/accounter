@@ -3,11 +3,10 @@ ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 RUN mkdir /code
 WORKDIR /code
-COPY requirement.development.txt /code/
-COPY requirements.txt /code/
-RUN pip install -r requirement.development.txt
+COPY /requirements /code/requirements
 # installed as a user, as it is easier to copy to the next build stage
-RUN pip install --user -r requirements.txt 
+RUN pip install -r requirements/development.txt
+RUN pip install --user -r requirements/base.txt 
 COPY . /code/
 CMD python manage.py runserver 0.0.0.0:$PORT
 
