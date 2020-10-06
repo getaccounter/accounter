@@ -34,6 +34,9 @@ jobs:
       - name: end-to-end tests production build
         run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --no-deps --build --exit-code-from e2e
 
+      - name: django deployment check
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
+
       - name: Login to google cloud run
         if: github.ref == 'refs/heads/master'
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.3
