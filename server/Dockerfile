@@ -3,13 +3,17 @@ ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 RUN mkdir /code
 WORKDIR /code
+COPY requirement.development.txt /code/
 COPY requirements.txt /code/
-RUN pip install --user -r requirements.txt
+RUN pip install -r requirement.development.txt
+# installed as a user, as it is easier to copy to the next build stage
+RUN pip install --user -r requirements.txt 
 COPY . /code/
 CMD python manage.py runserver 0.0.0.0:$PORT
 
 FROM python:3.8.6 as production
 ENV PORT=3000
+# copying dependencies
 COPY --from=development /root/.local /root/.local
 RUN python -m pip install daphne
 RUN mkdir /code
