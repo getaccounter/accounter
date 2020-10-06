@@ -20,7 +20,9 @@ services:
 
   server:
     image: server.development
-    build: ./server
+    build:
+      context: ./server
+      target: development
     environment:
       - PORT=8000
     volumes:

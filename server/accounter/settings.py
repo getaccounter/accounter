@@ -25,7 +25,7 @@ SECRET_KEY = "-7k-e#5^w@00zsxi$0+i!n$&4w#m-i@x4+i@(lp$e1q3m#0p$-"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["nginx"]
 
 
 # Application definition
