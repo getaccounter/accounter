@@ -8,14 +8,15 @@ COPY /requirements /code/requirements
 RUN pip install -r requirements/development.txt
 RUN pip install --user -r requirements/base.txt 
 COPY . /code/
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD python manage.py runserver 0.0.0.0:$PORT
 
 FROM python:3.8.6 as production
 ENV PORT=3000
-# copying dependencies
 COPY --from=development /root/.local /root/.local
 RUN python -m pip install daphne
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code /code
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD daphne -b 0.0.0.0 -p $PORT accounter.asgi:application

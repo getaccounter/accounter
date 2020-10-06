@@ -22,3 +22,22 @@ docker-compose up
 ```bash
 docker-compose run e2e
 ```
+
+### Running unit tests
+
+```bash
+docker-compose exec web npm t
+```
+
+### Linting
+
+```bash
+docker-compose exec server pylint accounter
+docker-compose exec web npm run lint
+```
+
+### typechecking
+
+```
+docker-compose exec web npm run typecheck
+```

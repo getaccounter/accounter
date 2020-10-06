@@ -25,6 +25,10 @@ services:
       target: development
     environment:
       - PORT=8000
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_URL=database
     volumes:
       - ./server:/code
     depends_on:
