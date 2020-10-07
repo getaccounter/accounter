@@ -11,6 +11,20 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from django.core.exceptions import ImproperlyConfigured
+
+
+def get_env_value(env_variable):
+    """
+    Getting environment variables
+    """
+    try:
+        return os.environ[env_variable]
+    except KeyError as key_error:
+        error_msg = "Set the {} environment variable".format(env_variable)
+        raise ImproperlyConfigured(error_msg) from key_error
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -75,8 +89,12 @@ WSGI_APPLICATION = "accounter.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": get_env_value("POSTGRES_DB"),
+        "USER": get_env_value("POSTGRES_USER"),
+        "PASSWORD": get_env_value("POSTGRES_PASSWORD"),
+        "HOST": get_env_value("POSTGRES_URL"),
+        "PORT": 5432,
     }
 }
 
