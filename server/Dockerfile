@@ -15,9 +15,9 @@ ENV PYTHONUNBUFFERED True
 ENV PORT=8000
 RUN mkdir /code
 WORKDIR /code
+COPY --from=development /code /code
 RUN pip install -r requirements/base.txt 
 RUN pip install daphne
-COPY --from=development /code /code
 WORKDIR /code
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD daphne -b 0.0.0.0 -p $PORT accounter.asgi:application
