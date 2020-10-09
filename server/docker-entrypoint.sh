@@ -1,6 +1,6 @@
 #!/bin/sh
 
-./wait-for-it.sh $POSTGRES_URL:5432 -- echo "DB is up"
+./wait-for-it.sh -s $POSTGRES_URL:5432 -- echo "DB is up"
 
 python manage.py migrate
 
