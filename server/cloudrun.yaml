@@ -1,37 +1,72 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  annotations: {}
-  labels:
-    cloud.googleapis.com/location: europe-west1
   name: accounter-server
   namespace: "999814452385"
+  selfLink: /apis/serving.knative.dev/v1/namespaces/999814452385/services/accounter-server
+  uid: a256fefb-2af5-4408-9345-8d323684e983
+  resourceVersion: AAWxPuBHOOE
+  generation: 7
+  creationTimestamp: "2020-10-07T16:39:01.106656Z"
+  labels:
+    cloud.googleapis.com/location: europe-west1
+  annotations:
+    run.googleapis.com/client-name: cloud-console
+    serving.knative.dev/creator: accounter-service-account@accounter-291508.iam.gserviceaccount.com
+    serving.knative.dev/lastModifier: google@mosattler.com
+    client.knative.dev/user-image: eu.gcr.io/accounter-291508/server:latest
 spec:
   template:
     metadata:
+      name: accounter-server-00007-bil
       annotations:
+        run.googleapis.com/client-name: cloud-console
+        run.googleapis.com/cloudsql-instances: accounter-291508:us-central1:accounter-database
         autoscaling.knative.dev/maxScale: "1000"
     spec:
       containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: 999814452385-compute@developer.gserviceaccount.com
       containers:
         - image: eu.gcr.io/accounter-291508/server:latest
           ports:
             - containerPort: 8080
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_URL
+              value: database
           resources:
             limits:
               cpu: 1000m
               memory: 256Mi
-          env:
-            - name: POSTGRES_DB
-              value: "postgres"
-            - name: POSTGRES_USER
-              value: "postgres"
-            - name: POSTGRES_PASSWORD
-              value: "postgres"
-            - name: POSTGRES_URL
-              value: "database"
-
-      timeoutSeconds: 300
   traffic:
-    - latestRevision: true
+    - percent: 100
+      latestRevision: true
+status:
+  observedGeneration: 7
+  conditions:
+    - type: Ready
+      status: Unknown
+      message: Revision deployment finished. Waiting for health check to begin.
+      lastTransitionTime: "2020-10-09T15:48:12.405985Z"
+    - type: ConfigurationsReady
+      status: Unknown
+      message: Revision deployment finished. Waiting for health check to begin.
+      lastTransitionTime: "2020-10-09T15:48:12.405985Z"
+    - type: RoutesReady
+      status: "True"
+      lastTransitionTime: "2020-10-09T15:48:08.716404Z"
+  latestReadyRevisionName: accounter-server-cst48
+  latestCreatedRevisionName: accounter-server-00007-bil
+  traffic:
+    - revisionName: accounter-server-cst48
       percent: 100
+      latestRevision: true
+  url: https://accounter-server-benpx3qpfa-ew.a.run.app
+  address:
+    url: https://accounter-server-benpx3qpfa-ew.a.run.app
