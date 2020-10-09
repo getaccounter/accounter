@@ -15,10 +15,11 @@ FROM python:3.9.0 as production
 ENV PORT=8000
 COPY --from=development /root/.local /root/.local
 RUN python -m pip install daphne
-RUN pip install -r requirements/development.txt
-RUN pip install --user -r requirements/base.txt 
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code /code
+# temp install
+RUN pip install -r requirements/development.txt
+RUN pip install --user -r requirements/base.txt 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD daphne -b 0.0.0.0 -p $PORT accounter.asgi:application
