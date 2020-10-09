@@ -14,7 +14,6 @@ spec:
         autoscaling.knative.dev/maxScale: "1000"
         run.googleapis.com/client-name: cloud-console
         run.googleapis.com/cloudsql-instances: accounter-291508:us-central1:accounter-database
-      name: accounter-server-00007-bil
     spec:
       containerConcurrency: 80
       containers:
