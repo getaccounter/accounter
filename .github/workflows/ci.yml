@@ -56,7 +56,7 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |
           docker tag web.production $IMAGE_REGISTRY_TAG_WEB
-          docker tag server.production $IMAGE_REGISTRY_TAG_SERVER
+          docker tag server.development $IMAGE_REGISTRY_TAG_SERVER
           docker push $IMAGE_REGISTRY_TAG_WEB
           docker push $IMAGE_REGISTRY_TAG_SERVER
 
