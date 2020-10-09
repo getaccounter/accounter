@@ -63,17 +63,17 @@ jobs:
       - name: deploy web to production
         if: github.ref == 'refs/heads/master'
         uses: GoogleCloudPlatform/github-actions/deploy-cloudrun@0.1.3
+        env:
+          GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
         with:
           region: europe-west1
           metadata: ./web/cloudrun.yaml
-        env:
-          GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
 
       - name: deploy server to production
         if: github.ref == 'refs/heads/master'
         uses: GoogleCloudPlatform/github-actions/deploy-cloudrun@0.1.3
+        env:
+          GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
         with:
           region: europe-west1
           metadata: ./server/cloudrun.yaml
-        env:
-          GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
