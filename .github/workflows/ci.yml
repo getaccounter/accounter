@@ -71,7 +71,7 @@ jobs:
 
       - name: deploy server to production
         if: github.ref == 'refs/heads/master'
-        uses: GoogleCloudPlatform/github-actions/deploy-cloudrun@master
+        uses: GoogleCloudPlatform/github-actions/deploy-cloudrun@0.1.3
         with:
           region: europe-west1
           metadata: ./server/cloudrun.yaml
