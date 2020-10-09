@@ -12,6 +12,7 @@ ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD python manage.py runserver 0.0.0.0:$PORT
 
 FROM python:3.9.0 as production
+ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 COPY --from=development /root/.local /root/.local
 RUN python -m pip install daphne
