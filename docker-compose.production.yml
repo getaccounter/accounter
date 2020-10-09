@@ -6,7 +6,7 @@ services:
     build:
       target: production
 
-  # server:
-  #   image: server.production
-  #   build:
-  #     target: production
+  server:
+    image: server.production
+    build:
+      target: production
