@@ -1,5 +1,7 @@
 #!/bin/sh
 
+./wait-for-it.sh $POSTGRES_URL:5432 -- echo "DB is up"
+
 python manage.py migrate
 
 echo "Create super user if not existing"
@@ -13,4 +15,4 @@ User.objects.filter(username='admin').exists() or \
 EOF
 
 
-exec ./wait-for-it.sh $POSTGRES_URL:5432 -- "$@"
+exec "$@"
