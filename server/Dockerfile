@@ -21,6 +21,6 @@ WORKDIR /code
 COPY --from=development /code /code
 # temp install
 RUN pip install -r requirements/development.txt
-RUN pip install --user -r requirements/base.txt 
+RUN pip install -r requirements/base.txt 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD daphne -b 0.0.0.0 -p $PORT accounter.asgi:application
