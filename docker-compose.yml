@@ -13,7 +13,7 @@ services:
     build: ./loadbalancer
     volumes:
       - ./loadbalancer/nginx.conf.template:/etc/nginx/nginx.conf.template
-      - ./loadbalancer/docker-entrypoint.sh /docker-entrypoint.sh
+      - ./loadbalancer/docker-entrypoint.sh:/docker-entrypoint.sh
     environment:
       - PORT=8080
       - WEB_HOST=http://web
