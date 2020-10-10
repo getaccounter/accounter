@@ -3,8 +3,8 @@ events {}
 
 http {
     server {
-        listen 8080;
-        listen [::]:8080;
+        listen ${PORT};
+        listen [::]:${PORT};
 
         location / {
             proxy_pass http://${WEB_HOST}:${WEB_PORT};
