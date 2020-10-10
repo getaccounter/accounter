@@ -9,6 +9,7 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   loadbalancer:
+    image: loadbalancer
     build: ./loadbalancer
     volumes:
       - ./loadbalancer/nginx.conf.template:/etc/nginx/nginx.conf.template
