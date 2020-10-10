@@ -1,0 +1,19 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: accounter-server
+spec:
+  template:
+    spec:
+      containerConcurrency: 80
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_URL
+              value: /cloudsql/accounter-291508:us-central1:accounter-database
+          image: eu.gcr.io/accounter-291508/server
