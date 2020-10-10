@@ -2,7 +2,7 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   annotations:
-    client.knative.dev/user-image: eu.gcr.io/accounter-291508/loadbalancer:latest
+    client.knative.dev/user-image: eu.gcr.io/accounter-291508/loadbalancer@sha256:8bcd0a545e4559e88b0e2d82a94f25d57134896fa1f43ff97648b8b2b1701ff6
   labels:
     cloud.googleapis.com/location: europe-west1
   name: accounter-loadbalancer
@@ -13,11 +13,11 @@ spec:
       annotations:
         autoscaling.knative.dev/maxScale: "1000"
         run.googleapis.com/client-name: cloud-console
-      name: accounter-loadbalancer
+      name: accounter-loadbalancer-00001-suq
     spec:
       containerConcurrency: 80
       containers:
-        - image: eu.gcr.io/accounter-291508/loadbalancer:latest
+        - image: eu.gcr.io/accounter-291508/loadbalancer@sha256:8bcd0a545e4559e88b0e2d82a94f25d57134896fa1f43ff97648b8b2b1701ff6
           ports:
             - containerPort: 8080
           resources:
