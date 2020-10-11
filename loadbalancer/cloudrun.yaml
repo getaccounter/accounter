@@ -8,12 +8,14 @@ spec:
       containerConcurrency: 80
       containers:
         - env:
+            - name: PROTOCOL
+              value: https
             - name: SERVER_HOST
-              value: https://accounter-server-benpx3qpfa-ew.a.run.app
+              value: accounter-server-benpx3qpfa-ew.a.run.app
             - name: SERVER_PORT
               value: "443"
             - name: WEB_HOST
-              value: https://accounter-web-benpx3qpfa-ew.a.run.app
+              value: accounter-web-benpx3qpfa-ew.a.run.app
             - name: WEB_PORT
               value: "443"
           image: eu.gcr.io/accounter-291508/loadbalancer

@@ -16,16 +16,13 @@ services:
       - ./loadbalancer/docker-entrypoint.sh:/docker-entrypoint.sh
     environment:
       - PORT=8080
-      - WEB_HOST=http://web
+      - PROTOCOL=http
+      - WEB_HOST=web
       - WEB_PORT=3000
-      - SERVER_HOST=http://server
+      - SERVER_HOST=server
       - SERVER_PORT=8000
     ports:
       - 8080:8080
-    depends_on:
-      - web
-      - server
-
   server:
     image: server.development
     build:
@@ -39,8 +36,6 @@ services:
       - POSTGRES_URL=database
     volumes:
       - ./server:/code
-    depends_on:
-      - database
 
   web:
     image: web.development
@@ -50,17 +45,15 @@ services:
     environment:
       - CI=${CI}
       - PORT=3000
+      - SERVER_URL=server
+      - SERVER_PORT=8000
     volumes:
       - ./web:/code
       - /code/node_modules
     stdin_open: true
-    depends_on:
-      - server
 
   e2e:
     build: ./e2e-tests
-    depends_on:
-      - loadbalancer
     environment:
       - CYPRESS_baseUrl=http://loadbalancer:8080
     working_dir: /e2e
