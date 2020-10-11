@@ -42,7 +42,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "loadbalancer",
-    "accounter-server-benpx3qpfa-ew.a.run.app",
+    "accounter-server-benpx3qpfa-ew.a.run.app", # direct server address
+    "https://accounter-server-benpx3qpfa-ew.a.run.app", # loadbalancer
 ]
 
 
