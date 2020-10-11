@@ -27,10 +27,6 @@ jobs:
         run: docker-compose pull
       - name: build
         run: docker-compose build
-      - name: linting server
-        run: docker-compose run --no-deps --entrypoint python server -m pylint accounter
-      - name: linting web
-        run: docker-compose run --no-deps web npm run lint
       - name: typechecking web
         run: docker-compose run --no-deps web npm run typecheck
       - name: unit tests web

@@ -5,8 +5,6 @@ describe("The Home Page", () => {
   });
   it("successfully loads server", () => {
     cy.visit("/api/");
-    cy.findByText("The install worked successfully! Congratulations!").should(
-      "exist"
-    );
+    cy.findByText("Api Root").should("exist");
   });
 });
