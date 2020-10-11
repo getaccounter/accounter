@@ -11,4 +11,3 @@ spec:
               value: https://accounter-server-benpx3qpfa-ew.a.run.app
             - name: SERVER_PORT
               value: "443"
-          image: eu.gcr.io/accounter-291508/web

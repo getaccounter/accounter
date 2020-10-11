@@ -17,4 +17,3 @@ spec:
               value: accounter-web-benpx3qpfa-ew.a.run.app
             - name: WEB_PORT
               value: "443"
-          image: eu.gcr.io/accounter-291508/loadbalancer
