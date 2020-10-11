@@ -15,6 +15,14 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
+
+      - name: prepare cloud run manifests
+        if: github.ref == 'refs/heads/master'
+        run: |
+          envsubst '${GITHUB_SHA}' < server/cloudrun.template.yaml > server/cloudrun.yaml
+          envsubst '${GITHUB_SHA}' < web/cloudrun.template.yaml > web/cloudrun.yaml
+          envsubst '${GITHUB_SHA}' < loadbalancer/cloudrun.template.yaml > loadbalancer/cloudrun.yaml
+
       - name: pull dependency images
         run: docker-compose pull
       - name: build
@@ -70,7 +78,6 @@ jobs:
           GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
         with:
           region: europe-west1
-          image: ${{env.IMAGE_REGISTRY_TAG_SERVER}}
           metadata: ./server/cloudrun.yaml
 
       - name: deploy web to production
@@ -80,7 +87,6 @@ jobs:
           GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
         with:
           region: europe-west1
-          image: ${{env.IMAGE_REGISTRY_TAG_WEB}}
           metadata: ./web/cloudrun.yaml
 
       - name: deploy loadbalancer to production
@@ -90,5 +96,4 @@ jobs:
           GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
         with:
           region: europe-west1
-          image: ${{env.IMAGE_REGISTRY_TAG_LOADBALANCER}}
           metadata: ./loadbalancer/cloudrun.yaml
