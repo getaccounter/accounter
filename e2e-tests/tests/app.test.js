@@ -5,7 +5,7 @@ describe("The Home Page", () => {
   });
   it("successfully loads server", () => {
     cy.visit("/api/");
-    cy.findByText("The install worked successfully! Congratulations!").should(
+    cy.findByText("The default basic root view for DefaultRouter").should(
       "exist"
     );
   });
