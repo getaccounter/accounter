@@ -23,6 +23,10 @@ services:
       - SERVER_PORT=8000
     ports:
       - 8080:8080
+    depends_on:
+      - web
+      - server
+
   server:
     image: server.development
     build:
@@ -36,6 +40,10 @@ services:
       - POSTGRES_URL=database
     volumes:
       - ./server:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - database
 
   web:
     image: web.development
@@ -45,19 +53,24 @@ services:
     environment:
       - CI=${CI}
       - PORT=3000
-      - SERVER_URL=server
+      - SERVER_HOST=server
       - SERVER_PORT=8000
     volumes:
       - ./web:/code
       - /code/node_modules
     stdin_open: true
+    depends_on:
+      - server
 
   e2e:
     build: ./e2e-tests
     environment:
+      - LOADBALANCER_HOST=loadbalancer
+      - LOADBALANCER_PORT=8080
       - CYPRESS_baseUrl=http://loadbalancer:8080
     working_dir: /e2e
-    command: npm i @testing-library/cypress
     volumes:
       - ./e2e-tests:/e2e
       - /e2e/node_modules
+    depends_on:
+      - loadbalancer

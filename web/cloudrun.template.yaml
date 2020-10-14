@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - env:
-            - name: SERVER_URL
+            - name: SERVER_HOST
               value: https://accounter-server-benpx3qpfa-ew.a.run.app
             - name: SERVER_PORT
               value: "443"
