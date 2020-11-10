@@ -17,6 +17,8 @@ RUN npm run build
 
 FROM node:15.1.0-alpine as production
 RUN apk update && apk add bash
+# temp fix to prevent this bug https://github.com/npm/cli/issues/1975
+RUN echo "{}" > /package.json
 ENV PORT=3000
 RUN mkdir /build
 COPY --from=builder /code/build /build
