@@ -26,6 +26,17 @@ def get_env_value(env_variable):
         raise ImproperlyConfigured(error_msg) from key_error
 
 
+def get_bool_env_value(env_variable):
+    valid_boolean_values = ["True", "False"]
+    string_value = get_env_value(env_variable)
+    if string_value not in valid_boolean_values:
+        error_msg = "The {} environment variable must be in [{}]".format(
+            env_variable, ", ".join(valid_boolean_values)
+        )
+        raise ImproperlyConfigured(error_msg)
+    return string_value == "True"
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -37,7 +48,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = "-7k-e#5^w@00zsxi$0+i!n$&4w#m-i@x4+i@(lp$e1q3m#0p$-"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = get_bool_env_value("DEBUG")
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -55,7 +66,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
+    "graphene_django",
 ]
 
 MIDDLEWARE = [
@@ -142,10 +153,4 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
-    ]
-}
+GRAPHENE = {"SCHEMA": "accounter.schema.schema"}
