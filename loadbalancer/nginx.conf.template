@@ -7,6 +7,19 @@ http {
         listen [::]:${PORT};
 
         location / {
+            if ($request_uri ~* /static/) {
+                set $staticfiles_fromdjango "true";
+            }
+
+            if ($http_referer ~* /api/) {
+                set $staticfiles_fromdjango "${staticfiles_fromdjango}-true";
+            }
+
+            if ($staticfiles_fromdjango = "true-true") {
+                # This needs to be in place, because django static requests do not request /api/static but only /static
+                    return 301 /api$request_uri;
+            }
+
             proxy_pass ${PROTOCOL}://${WEB_HOST}:${WEB_PORT};
         }
 
