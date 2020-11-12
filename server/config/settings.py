@@ -80,7 +80,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "accounter.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -98,7 +98,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "accounter.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
