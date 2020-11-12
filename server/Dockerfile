@@ -23,4 +23,4 @@ RUN pip install daphne
 COPY --from=development /code /code
 WORKDIR /code
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD daphne -b 0.0.0.0 -p $PORT accounter.asgi:application
+CMD daphne -b 0.0.0.0 -p $PORT config.asgi:application
