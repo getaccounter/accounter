@@ -8,3 +8,8 @@ repos:
     rev: "2.1.2"
     hooks:
       - id: prettier
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: "3.8.4"
+    hooks:
+      - id: flake8
