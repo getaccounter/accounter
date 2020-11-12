@@ -27,6 +27,8 @@ jobs:
         run: docker-compose pull
       - name: build
         run: docker-compose build
+      - name: lint server
+        run: docker-compose run server flake8 accounter
       - name: typechecking web
         run: docker-compose run --no-deps web npm run typecheck
       - name: unit tests web

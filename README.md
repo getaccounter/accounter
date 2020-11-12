@@ -32,7 +32,7 @@ docker-compose exec web npm t
 ### Linting
 
 ```bash
-docker-compose exec server pylint accounter
+docker-compose exec server flake8 accounter
 docker-compose exec web npm run lint
 ```
 
