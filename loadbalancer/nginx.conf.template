@@ -17,10 +17,20 @@ http {
 
             if ($staticfiles_fromdjango = "true-true") {
                 # This needs to be in place, because django static requests do not request /api/static but only /static
-                    return 301 /api$request_uri;
+                return 301 /api$request_uri;
             }
 
             proxy_pass ${PROTOCOL}://${WEB_HOST}:${WEB_PORT};
+        }
+
+        location /sockjs-node {
+            # The dev hot reloading, should be removed in production eventually
+            proxy_pass ${PROTOCOL}://${WEB_HOST}:${WEB_PORT}/sockjs-node;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
         }
 
         location /api/ {
