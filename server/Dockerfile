@@ -5,7 +5,6 @@ ENV DEBUG=True
 RUN mkdir /code
 WORKDIR /code
 COPY /requirements /code/requirements
-RUN pip install -r requirements/base.txt 
 RUN pip install -r requirements/development.txt
 COPY . /code/
 ENTRYPOINT ["./docker-entrypoint.sh"]
@@ -18,7 +17,7 @@ ENV DEBUG=False
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code/requirements /code/requirements
-RUN pip install -r requirements/base.txt 
+RUN pip install -r requirements/production.txt 
 RUN pip install daphne
 COPY --from=development /code /code
 WORKDIR /code
