@@ -3,10 +3,20 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { GRAPHQL_ENDPOINT } from "./config";
 
+const client = new ApolloClient({
+  uri: GRAPHQL_ENDPOINT,
+  cache: new InMemoryCache(),
+});
+
+// TODO move providers to App.tsx
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
