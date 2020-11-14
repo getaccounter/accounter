@@ -68,6 +68,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "graphene_django",
+    "accounter.organizations",
+    "accounter.integrations",
 ]
 
 MIDDLEWARE = [
