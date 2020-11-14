@@ -21,5 +21,7 @@ RUN pip install -r requirements/production.txt
 RUN pip install daphne
 COPY --from=development /code /code
 WORKDIR /code
+# make cloudsql directory for google cloud sql
+RUN mkdir /cloudsql 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD daphne -b 0.0.0.0 -p $PORT config.asgi:application
