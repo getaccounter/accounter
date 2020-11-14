@@ -2,8 +2,6 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: accounter-server
-  annotations:
-    run.googleapis.com/cloudsql-instances: accounter-291508:us-central1:accounter-database
 spec:
   template:
     metadata:
