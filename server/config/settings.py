@@ -68,6 +68,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "graphene_django",
+    "accounter.organizations",
+    "accounter.integrations",
 ]
 
 MIDDLEWARE = [
@@ -80,7 +82,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "config.urls"
+ROOT_URLCONF = "accounter.urls"
 
 TEMPLATES = [
     {
