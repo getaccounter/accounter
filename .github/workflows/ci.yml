@@ -29,12 +29,14 @@ jobs:
         run: docker-compose build
       - name: lint
         run: |
-          docker-compose run server flake8 accounter
-          docker-compose run web npm run lint
-      - name: typechecking web
-        run: docker-compose run --no-deps web npm run typecheck
-      - name: unit tests web
-        run: docker-compose run --no-deps web npm t -- --coverage
+          docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
+          docker-compose run --no-deps --entrypoint /usr/bin/env web npm run lint
+      - name: typechecking
+        run: |
+          docker-compose run --no-deps --entrypoint /usr/bin/env web npm run typecheck
+          docker-compose run --no-deps --entrypoint /usr/bin/env server pyright /code
+      - name: unit tests
+        run: docker-compose run --no-deps --entrypoint /usr/bin/env web npm t -- --coverage
       - name: report coverage
         uses: codecov/codecov-action@v1
         with:

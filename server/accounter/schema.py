@@ -19,7 +19,7 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     all_users = graphene.List(UserType)
 
-    def resolve_all_users(root, info):
+    def resolve_all_users(self, info):
         return User.objects.all()
 
 
