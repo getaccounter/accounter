@@ -34,7 +34,7 @@ jobs:
       - name: typechecking
         run: |
           docker-compose run --no-deps --entrypoint /usr/bin/env web npm run typecheck
-          docker-compose run --no-deps --entrypoint /usr/bin/env server pyright /code
+          docker-compose run --no-deps --entrypoint /usr/bin/env server pyright
       - name: unit tests
         run: docker-compose run --no-deps --entrypoint /usr/bin/env web npm t -- --coverage
       - name: report coverage
