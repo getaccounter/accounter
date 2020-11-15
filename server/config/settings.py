@@ -167,3 +167,10 @@ AUTHENTICATION_BACKENDS = [
     "graphql_jwt.backends.JSONWebTokenBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+INTEGRATIONS = {
+    "SLACK": {
+        "CLIENT_ID": get_env_value("SLACK_CLIENT_ID"),
+        "CLIENT_SECRET": get_env_value("SLACK_CLIENT_SECRET"),
+    }
+}

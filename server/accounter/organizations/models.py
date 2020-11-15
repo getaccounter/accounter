@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from accounter.integrations.models import Integration
+from ..integrations.models import Integration
 
 
 class Organization(models.Model):
