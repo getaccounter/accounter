@@ -4,11 +4,13 @@ repos:
     rev: 20.8b1
     hooks:
       - id: black
+        name: formatting-server
 
   - repo: https://github.com/prettier/prettier
     rev: "2.1.2"
     hooks:
       - id: prettier
+        name: formatting
 
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: "v5.6.4"
@@ -19,6 +21,7 @@ repos:
     rev: "3.8.4"
     hooks:
       - id: flake8
+        name: linting-server
         args: ["--config=server/setup.cfg"]
 
   - repo: local
@@ -31,7 +34,7 @@ repos:
         files: web
         # push does not work at the moment for some reason
         # stages: [push]
-        
+
       - id: typecheck-server
         name: typecheck-server
         entry: docker-compose run --no-deps --entrypoint /usr/bin/env server pyright

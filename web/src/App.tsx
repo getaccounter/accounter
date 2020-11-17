@@ -1,59 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Login from "./components/Login";
+import OAuthSlackCallback from "./components/OAuthSlackCallback";
 
-import { gql, useMutation } from "@apollo/client";
-
-export const LOGIN_MUTATION = gql`
-  mutation TokenAuth($username: String!, $password: String!) {
-    tokenAuth(username: $username, password: $password) {
-      token
-      payload
-      refreshExpiresIn
-    }
-  }
-`;
-
-function App() {
-  const [usernameInput, setUsernameInput] = useState<string>("");
-  const [passwordInput, setPasswordInput] = useState<string>("");
-  const [login, { data, error }] = useMutation(LOGIN_MUTATION, {
-    errorPolicy: "all",
-  });
-
-  const isLoggedOut = !data && !error;
-
-  return isLoggedOut ? (
-    <div>
-      <input
-        value={usernameInput}
-        onChange={(evt) => setUsernameInput(evt.target.value)}
-        type="text"
-        placeholder="username"
-        name="username"
-      />
-      <input
-        value={passwordInput}
-        onChange={(evt) => setPasswordInput(evt.target.value)}
-        type="password"
-        name="password"
-        placeholder="password"
-        minLength={8}
-        required
-      />
-      <button
-        onClick={() => {
-          login({
-            variables: { username: usernameInput, password: passwordInput },
-          });
-        }}
-      >
-        Login
-      </button>
-    </div>
-  ) : error ? (
-    <div>{error.message}</div>
-  ) : (
-    <div>Logged in!</div>
+export default function App() {
+  return (
+    <Router>
+      <div>
+        <Switch>
+          <Route exact path="/">
+            <Login />
+          </Route>
+          <Route exact path="/slack/oauth/callback">
+            <OAuthSlackCallback />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
-
-export default App;

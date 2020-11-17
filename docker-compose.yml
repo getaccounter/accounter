@@ -38,6 +38,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_URL=database
+    env_file:
+      - ./server/.env
     volumes:
       - ./server:/code
     ports:

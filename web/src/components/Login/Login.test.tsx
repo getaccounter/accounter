@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 
-import App, { LOGIN_MUTATION } from "./App";
+import Login, { LOGIN_MUTATION } from "./";
 import userEvent from "@testing-library/user-event";
 
 const getLoginQueryMock = (username: string, password: string) => ({
@@ -27,7 +27,7 @@ test("renders learn react link", async () => {
   const loginQueryMock = getLoginQueryMock(username, password);
   const app = render(
     <MockedProvider mocks={[loginQueryMock]}>
-      <App />
+      <Login />
     </MockedProvider>
   );
   const usernameInput = app.getByPlaceholderText("username");

@@ -8,3 +8,7 @@ class Integration(models.Model):
         max_length=8,
         choices=TODO_INTEGRATIONS_GENERATE_FROM_SOMETHING_ELSE,
     )
+
+
+class SlackIntegration(Integration):
+    pass
