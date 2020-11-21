@@ -1,9 +1,11 @@
-import React from "react";
-import { render } from "@testing-library/react";
+import React, { ReactNode } from "react";
+import { render, waitFor } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 
-import Login, { LOGIN_MUTATION } from "./";
+import Login from "./";
 import userEvent from "@testing-library/user-event";
+import AuthProvider, { LOGIN_MUTATION } from "../../contexts/auth";
+import { MemoryRouter, Route, Switch } from "react-router-dom";
 
 const getLoginQueryMock = (username: string, password: string) => ({
   request: {
@@ -21,13 +23,70 @@ const getLoginQueryMock = (username: string, password: string) => ({
   },
 });
 
-test("renders learn react link", async () => {
+const getLoginQueryMockWithError = (
+  username: string,
+  password: string,
+  errorMessage: string
+) => ({
+  request: {
+    query: LOGIN_MUTATION,
+    variables: { username, password },
+  },
+  error: new Error(errorMessage),
+});
+
+const Providers = ({ children }: { children: ReactNode }) => (
+  <AuthProvider>
+    <MemoryRouter initialEntries={["/login"]}>{children}</MemoryRouter>
+  </AuthProvider>
+);
+
+test("logs in and reroutes", async () => {
   const username = "someuser";
   const password = "somepassword";
   const loginQueryMock = getLoginQueryMock(username, password);
   const app = render(
     <MockedProvider mocks={[loginQueryMock]}>
-      <Login />
+      <Providers>
+        <Switch>
+          <Route exact path="/login">
+            <Login />
+          </Route>
+          <Route exact path="/">
+            Success
+          </Route>
+        </Switch>
+      </Providers>
+    </MockedProvider>
+  );
+
+  expect(app.queryByText("Success")).not.toBeInTheDocument();
+
+  const usernameInput = app.getByPlaceholderText("username");
+  const passwordInput = app.getByPlaceholderText("password");
+  const loginButton = app.getByText("Login");
+
+  userEvent.type(usernameInput, username);
+  userEvent.type(passwordInput, password);
+  userEvent.click(loginButton);
+
+  expect(await app.findByText("Success")).toBeInTheDocument();
+});
+
+test("renders error message if something goes wrong", async () => {
+  const username = "someuser";
+  const password = "somepassword";
+  const errorMessage = "Your login failed!";
+  const loginQueryMock = getLoginQueryMockWithError(
+    username,
+    password,
+    errorMessage
+  );
+  const app = render(
+    <MockedProvider mocks={[loginQueryMock]}>
+      <Providers>
+        <Login />
+      </Providers>
     </MockedProvider>
   );
   const usernameInput = app.getByPlaceholderText("username");
@@ -38,5 +97,5 @@ test("renders learn react link", async () => {
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 
-  expect(await app.findByText("Logged in!")).toBeInTheDocument();
+  waitFor(() => expect(app.getByText(errorMessage)).toBeInTheDocument());
 });

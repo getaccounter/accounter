@@ -1,24 +1,15 @@
 import React, { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
-
-export const LOGIN_MUTATION = gql`
-  mutation TokenAuth($username: String!, $password: String!) {
-    tokenAuth(username: $username, password: $password) {
-      token
-      payload
-      refreshExpiresIn
-    }
-  }
-`;
+import { Redirect, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/auth";
 
 export default function Login() {
   const [usernameInput, setUsernameInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
-  const [login, { data, error }] = useMutation(LOGIN_MUTATION, {
-    errorPolicy: "all",
-  });
 
-  const isLoggedOut = !data && !error;
+  const { token, signIn, signInError } = useAuth();
+  const location = useLocation();
+
+  const isLoggedOut = !token && !signInError;
 
   return (
     <div>
@@ -42,18 +33,21 @@ export default function Login() {
           />
           <button
             onClick={() => {
-              login({
-                variables: { username: usernameInput, password: passwordInput },
-              });
+              signIn(usernameInput, passwordInput);
             }}
           >
             Login
           </button>
         </>
-      ) : error ? (
-        error.message
+      ) : signInError ? (
+        signInError
       ) : (
-        "Logged in!"
+        <Redirect
+          to={{
+            pathname: "/",
+            state: { from: location },
+          }}
+        />
       )}
     </div>
   );
