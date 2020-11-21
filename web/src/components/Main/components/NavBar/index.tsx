@@ -6,18 +6,11 @@ import MobileMenu from "./components/MobileMenu";
 import ProfileDropdown from "./components/ProfileDropdown";
 import Tabs from "./components/Tabs";
 
-const TAB_LIST = [
-  {
-    label: "Services",
-    to: "/services",
-  },
-  {
-    label: "Users",
-    to: "/users",
-  },
-];
+type Props = {
+  tabs: Array<{ label: string; to: string }>;
+};
 
-const NavBar = () => {
+const NavBar = ({ tabs }: Props) => {
   const [showDropdown, setShowDrowndown] = useState(false);
   return (
     <nav className="bg-gray-800">
@@ -25,7 +18,7 @@ const NavBar = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Logo />
-            <Tabs value={TAB_LIST} />
+            <Tabs value={tabs} />
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
@@ -41,7 +34,7 @@ const NavBar = () => {
         </div>
       </div>
       <div className="block md:hidden">
-        {showDropdown && <MobileMenu tabs={TAB_LIST} />}
+        {showDropdown && <MobileMenu tabs={tabs} />}
       </div>
     </nav>
   );
