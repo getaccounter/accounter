@@ -9,7 +9,7 @@ import Tabs from "./components/Tabs";
 const TAB_LIST = [
   {
     label: "Services",
-    to: "/",
+    to: "/services",
   },
   {
     label: "Users",

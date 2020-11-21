@@ -4,7 +4,6 @@ import { useAuth } from "../contexts/auth";
 
 export default function PrivateRoute({ children, ...rest }: RouteProps) {
   const { token } = useAuth();
-  console.log({ token });
   return (
     <Route
       {...rest}
