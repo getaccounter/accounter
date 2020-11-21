@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "graphene_django",
     "accounter.organizations",
     "accounter.integrations",
+    "accounter.users",
 ]
 
 MIDDLEWARE = [
