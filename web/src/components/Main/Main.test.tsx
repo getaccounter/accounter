@@ -5,7 +5,7 @@ import Main from "./";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
-test("logs in and reroutes", async () => {
+test("show Services by default", () => {
   const main = render(
     <MemoryRouter>
       <Main />
@@ -13,12 +13,19 @@ test("logs in and reroutes", async () => {
   );
 
   const header = within(main.getByRole("heading"));
-  const navigationbar = within(main.getByRole("navigation"));
-
   expect(header.getByText("Services")).toBeInTheDocument();
+});
 
-  await userEvent.click(navigationbar.getByText("Users"));
+test.each(["Services", "Users", "Marketplace"])("renders %s", async (tab) => {
+  const main = render(
+    <MemoryRouter>
+      <Main />
+    </MemoryRouter>
+  );
 
-  const updatedHeader = within(main.getByRole("heading"));
-  expect(updatedHeader.getByText("Users")).toBeInTheDocument();
+  const navigationbar = within(main.getByRole("navigation"));
+  await userEvent.click(navigationbar.getByText(tab));
+
+  const header = within(main.getByRole("heading"));
+  expect(header.getByText(tab)).toBeInTheDocument();
 });

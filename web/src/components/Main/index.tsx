@@ -3,6 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Services from "./components/Services";
 import Users from "./components/Users";
+import Marketplace from "./components/Marketplace";
 
 const SEVICE_PATH = "/services";
 const USER_PATH = "/users";
@@ -34,7 +35,9 @@ export default function Main() {
         <Route path={USER_PATH}>
           <Users />
         </Route>
-        <Route path={MARKET_PLACE_PATH}>MARKET PLACE</Route>
+        <Route path={MARKET_PLACE_PATH}>
+          <Marketplace />
+        </Route>
         <Route exact path="/">
           <Redirect to="/services" />
         </Route>
