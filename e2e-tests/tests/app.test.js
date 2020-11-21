@@ -1,9 +1,9 @@
 describe("The Home Page", () => {
-  it("successfully loads web", () => {
+  it("redirects to login and let's me log in", () => {
     cy.visit("/");
     cy.findByPlaceholderText("username").type("admin");
     cy.findByPlaceholderText("password").type("password");
     cy.findByText("Login").click();
-    cy.findByText("Logged in!").should("exist");
+    cy.findByText("Dashboard").should("exist");
   });
 });

@@ -26,6 +26,15 @@ repos:
 
   - repo: local
     hooks:
+      - id: lint-web
+        name: lint-web
+        entry: docker-compose run --no-deps --entrypoint /usr/bin/env web npm run lint
+        language: system
+        pass_filenames: false
+        files: web
+
+  - repo: local
+    hooks:
       - id: typecheck-web
         name: typecheck-web
         entry: docker-compose run --no-deps --entrypoint /usr/bin/env web npm run typecheck

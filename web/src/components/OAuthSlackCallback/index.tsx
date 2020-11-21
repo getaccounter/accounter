@@ -20,7 +20,7 @@ export const LOGIN_MUTATION = gql`
 
 export default function OAuthSlackCallback() {
   const query = useQuery();
-  const [handleCallback, { data, error }] = useMutation(LOGIN_MUTATION, {
+  const [handleCallback] = useMutation(LOGIN_MUTATION, {
     errorPolicy: "all",
     variables: { code: query.get("code"), state: query.get("state") },
   });
@@ -28,7 +28,6 @@ export default function OAuthSlackCallback() {
   useEffect(() => {
     handleCallback();
   }, [handleCallback]);
-  console.log({ data, error });
   return (
     <div>
       <div>code: {query.get("code")}</div>
