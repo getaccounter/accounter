@@ -55,7 +55,8 @@
       "!**/node_modules/**",
       "!**/vendor/**",
       "!**/serviceWorker.ts",
-      "!**/*.d.ts"
+      "!**/*.d.ts",
+      "!src/index.tsx "
     ]
   }
 }

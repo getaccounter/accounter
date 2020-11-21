@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import OAuthSlackCallback from "./components/OAuthSlackCallback";
-import NewApp from "./components/NewApp";
+import Main from "./components/Main";
 import AuthProvider from "./contexts/auth";
 import PrivateRoute from "./components/ProtectedRoute";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
@@ -20,11 +20,11 @@ export default function App() {
         <Router>
           <div>
             <Switch>
-              <Route exact path="/login">
+              <Route path="/login">
                 <Login />
               </Route>
-              <PrivateRoute exact path="/">
-                <NewApp />
+              <PrivateRoute path="/">
+                <Main />
               </PrivateRoute>
               <Route exact path="/slack/oauth/callback">
                 <OAuthSlackCallback />

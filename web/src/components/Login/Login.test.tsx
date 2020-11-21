@@ -45,7 +45,7 @@ test("logs in and reroutes", async () => {
   const username = "someuser";
   const password = "somepassword";
   const loginQueryMock = getLoginQueryMock(username, password);
-  const app = render(
+  const login = render(
     <MockedProvider mocks={[loginQueryMock]}>
       <Providers>
         <Switch>
@@ -60,17 +60,17 @@ test("logs in and reroutes", async () => {
     </MockedProvider>
   );
 
-  expect(app.queryByText("Success")).not.toBeInTheDocument();
+  expect(login.queryByText("Success")).not.toBeInTheDocument();
 
-  const usernameInput = app.getByPlaceholderText("username");
-  const passwordInput = app.getByPlaceholderText("password");
-  const loginButton = app.getByText("Login");
+  const usernameInput = login.getByPlaceholderText("username");
+  const passwordInput = login.getByPlaceholderText("password");
+  const loginButton = login.getByText("Login");
 
   userEvent.type(usernameInput, username);
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 
-  expect(await app.findByText("Success")).toBeInTheDocument();
+  expect(await login.findByText("Success")).toBeInTheDocument();
 });
 
 test("renders error message if something goes wrong", async () => {
@@ -82,20 +82,20 @@ test("renders error message if something goes wrong", async () => {
     password,
     errorMessage
   );
-  const app = render(
+  const login = render(
     <MockedProvider mocks={[loginQueryMock]}>
       <Providers>
         <Login />
       </Providers>
     </MockedProvider>
   );
-  const usernameInput = app.getByPlaceholderText("username");
-  const passwordInput = app.getByPlaceholderText("password");
-  const loginButton = app.getByText("Login");
+  const usernameInput = login.getByPlaceholderText("username");
+  const passwordInput = login.getByPlaceholderText("password");
+  const loginButton = login.getByText("Login");
 
   userEvent.type(usernameInput, username);
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 
-  waitFor(() => expect(app.getByText(errorMessage)).toBeInTheDocument());
+  waitFor(() => expect(login.getByText(errorMessage)).toBeInTheDocument());
 });
