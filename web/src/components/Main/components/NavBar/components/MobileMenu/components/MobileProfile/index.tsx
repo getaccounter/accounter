@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
+import { Link } from "react-router-dom";
 
 const MobileProfile = () => (
   <div className="pt-4 pb-3 border-t border-gray-700">
@@ -21,26 +21,26 @@ const MobileProfile = () => (
       </div>
     </div>
     <div className="mt-3 px-2 space-y-1">
-      <a
-        href="#"
+      <Link
+        to="#"
         className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
       >
         Your Profile
-      </a>
+      </Link>
 
-      <a
-        href="#"
+      <Link
+        to="#"
         className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
       >
         Settings
-      </a>
+      </Link>
 
-      <a
-        href="#"
+      <Link
+        to="#"
         className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
       >
         Sign out
-      </a>
+      </Link>
     </div>
   </div>
 );

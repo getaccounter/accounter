@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 
