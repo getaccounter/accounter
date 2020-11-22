@@ -18,16 +18,16 @@ pre-commit install
 docker-compose up
 ```
 
-### Running e2e tests
-
-```bash
-docker-compose run e2e
-```
-
-### Running unit tests
+### Unit tests
 
 ```bash
 docker-compose exec web npm t
+```
+
+### E2E tests
+
+```bash
+docker-compose run e2e
 ```
 
 ### Linting
