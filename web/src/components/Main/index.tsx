@@ -23,7 +23,9 @@ export default function Main() {
       <NavBar tabs={TABS.map(({ label, path }) => ({ label, to: path }))} />
       <Switch>
         {TABS.map(({ path, content }) => (
-          <Route path={path}>{content}</Route>
+          <Route key={path} path={path}>
+            {content}
+          </Route>
         ))}
         <Route exact path="/">
           <Redirect to={TABS[0].path} />

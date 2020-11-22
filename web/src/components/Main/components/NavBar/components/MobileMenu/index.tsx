@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import MobileProfile from "./components/MobileProfile";
 import MobileTab from "./components/MobileTab";

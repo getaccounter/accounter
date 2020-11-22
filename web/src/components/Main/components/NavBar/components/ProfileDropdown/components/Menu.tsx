@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Menu = () => (
   <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
@@ -19,29 +19,29 @@ const Menu = () => (
       aria-orientation="vertical"
       aria-labelledby="user-menu"
     >
-      <a
-        href="#"
+      <Link
+        to="#"
         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
         role="menuitem"
       >
         Your Profile
-      </a>
+      </Link>
 
-      <a
-        href="#"
+      <Link
+        to="#"
         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
         role="menuitem"
       >
         Settings
-      </a>
+      </Link>
 
-      <a
-        href="#"
+      <Link
+        to="#"
         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
         role="menuitem"
       >
         Sign out
-      </a>
+      </Link>
     </div>
   </div>
 );
