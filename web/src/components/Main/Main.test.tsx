@@ -16,7 +16,7 @@ test("show Services by default", () => {
   expect(header.getByText("Services")).toBeInTheDocument();
 });
 
-test.each(["Services", "Users", "Marketplace"])("renders %s", async (tab) => {
+test.each(["Services", "Users"])("renders %s", async (tab) => {
   const main = render(
     <MemoryRouter>
       <Main />
