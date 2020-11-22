@@ -1,14 +1,12 @@
+from django.conf import settings
 from django.db import models
 
-TODO_INTEGRATIONS_GENERATE_FROM_SOMETHING_ELSE = [("slack", "Slack")]
+
+class Service(models.Model):
+    name = models.CharField(max_length=16)
+    logo = models.FileField(upload_to="services/logos")
 
 
 class Integration(models.Model):
-    service = models.CharField(
-        max_length=8,
-        choices=TODO_INTEGRATIONS_GENERATE_FROM_SOMETHING_ELSE,
-    )
-
-
-class SlackIntegration(Integration):
-    pass
+    # Add timestamps
+    service = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT)
