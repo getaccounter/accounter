@@ -11,7 +11,15 @@ http {
                 set $staticfiles_fromdjango "true";
             }
 
+            if ($request_uri ~* /media/) {
+                set $staticfiles_fromdjango "true";
+            }
+
             if ($http_referer ~* /api/) {
+                set $staticfiles_fromdjango "${staticfiles_fromdjango}-true";
+            }
+
+            if ($http_referer ~* /admin/) {
                 set $staticfiles_fromdjango "${staticfiles_fromdjango}-true";
             }
 
@@ -32,6 +40,18 @@ http {
             proxy_set_header Host $host;
             proxy_cache_bypass $http_upgrade;
         }
+
+        location /admin/ {
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_redirect off;
+            proxy_pass ${PROTOCOL}://${SERVER_HOST}:${SERVER_PORT}/admin/;
+        }
+
+        location /media/ {
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_redirect off;
+            proxy_pass ${PROTOCOL}://${SERVER_HOST}:${SERVER_PORT}/media/;
+        }   
 
         location /api/ {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

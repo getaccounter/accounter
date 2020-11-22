@@ -1,7 +1,8 @@
 import graphene
 import graphql_jwt
 
-from .integrations.schemas import Integrations
+from .integrations.models import Service
+from .integrations.schemas import Integrations, ServiceType
 from .users.schemas import UserType
 
 
@@ -21,7 +22,11 @@ class Mutation(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
-    placeholder = graphene.String(default_value="Placeholder")
+    services = graphene.List(ServiceType)
+
+    @classmethod
+    def resolve_services(cls, root, info, **kwargs):
+        return Service.objects.all()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

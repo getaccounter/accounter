@@ -175,3 +175,6 @@ INTEGRATIONS = {
         "CLIENT_SECRET": get_env_value("SLACK_CLIENT_SECRET"),
     }
 }
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
