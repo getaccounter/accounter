@@ -4,39 +4,29 @@ import NavBar from "./components/NavBar";
 import Services from "./components/Services";
 import Users from "./components/Users";
 
-const SEVICE_PATH = "/services";
-const USER_PATH = "/users";
-const MARKET_PLACE_PATH = "/marketplace";
+const TABS = [
+  {
+    label: "Services",
+    path: "/services",
+    content: <Services />,
+  },
+  {
+    label: "Users",
+    path: "/users",
+    content: <Users />,
+  },
+];
 
 export default function Main() {
   return (
     <div>
-      <NavBar
-        tabs={[
-          {
-            label: "Services",
-            to: SEVICE_PATH,
-          },
-          {
-            label: "Users",
-            to: USER_PATH,
-          },
-          {
-            label: "Marketplace",
-            to: MARKET_PLACE_PATH,
-          },
-        ]}
-      />
+      <NavBar tabs={TABS.map(({ label, path }) => ({ label, to: path }))} />
       <Switch>
-        <Route path={SEVICE_PATH}>
-          <Services />
-        </Route>
-        <Route path={USER_PATH}>
-          <Users />
-        </Route>
-        <Route path={MARKET_PLACE_PATH}>MARKET PLACE</Route>
+        {TABS.map(({ path, content }) => (
+          <Route path={path}>{content}</Route>
+        ))}
         <Route exact path="/">
-          <Redirect to="/services" />
+          <Redirect to={TABS[0].path} />
         </Route>
       </Switch>
     </div>
