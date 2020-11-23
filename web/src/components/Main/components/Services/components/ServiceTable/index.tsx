@@ -1,8 +1,9 @@
+import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { Link } from "react-router-dom";
 import AddButton from "./components/AddButton";
 import ChevronRightIcon from "./components/ChevronRightIcon";
-import SlackLogo from "./components/SlackLogo";
+import ServiceLogo from "./components/ServiceLogo";
 
 const UserIcon = ({ src }: { src: string }) => (
   <img
@@ -12,16 +13,25 @@ const UserIcon = ({ src }: { src: string }) => (
   />
 );
 
-const IntegrationRow = (props: { isNotInstalled?: boolean }) => {
+export type Service = {
+  id: number;
+  logo: string;
+  name: string;
+};
+
+const IntegrationRow = (props: {
+  service: Service;
+  isNotInstalled?: boolean;
+}) => {
   return (
     <li>
       <Link to="#" className="block hover:bg-gray-50">
         <div className="px-4 py-4 flex items-center sm:px-6">
           <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
             <div className="flex items-center">
-              <SlackLogo size={80} />
+              <ServiceLogo service={props.service} />
               <p className="pl-2 text-3xl font-bold leading-tight text-gray-900">
-                Slack
+                {props.service.name}
               </p>
             </div>
             {!props.isNotInstalled && (
@@ -37,7 +47,7 @@ const IntegrationRow = (props: { isNotInstalled?: boolean }) => {
           </div>
           <div className="ml-5 flex-shrink-0">
             {props.isNotInstalled ? (
-              <AddButton>Add Slack</AddButton>
+              <AddButton>Add</AddButton>
             ) : (
               <ChevronRightIcon />
             )}
@@ -48,13 +58,33 @@ const IntegrationRow = (props: { isNotInstalled?: boolean }) => {
   );
 };
 
-const ServiceTable = () => (
-  <div className="bg-white shadow overflow-hidden sm:rounded-md">
-    <ul className="divide-y divide-gray-200">
-      <IntegrationRow />
-      <IntegrationRow isNotInstalled />
-    </ul>
-  </div>
-);
+type ServiceListResponse = {
+  services: Array<Service>;
+};
+
+export const GET_SERVICE_LIST_QUERY = gql`
+  query GetServiceList {
+    services {
+      id
+      logo
+      name
+    }
+  }
+`;
+
+const ServiceTable = () => {
+  const { data } = useQuery<ServiceListResponse>(GET_SERVICE_LIST_QUERY);
+
+  return (
+    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+      <ul className="divide-y divide-gray-200">
+        {data?.services.map((service) => (
+          <IntegrationRow key={service.id} service={service} />
+        ))}
+        {/* <IntegrationRow isNotInstalled /> */}
+      </ul>
+    </div>
+  );
+};
 
 export default ServiceTable;
