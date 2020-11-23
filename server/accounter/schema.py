@@ -26,6 +26,7 @@ class Query(graphene.ObjectType):
 
     @classmethod
     def resolve_services(cls, root, info, **kwargs):
+        # TODO require login
         return Service.objects.all()
 
 
