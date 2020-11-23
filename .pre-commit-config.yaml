@@ -11,6 +11,10 @@ repos:
     hooks:
       - id: prettier
         name: formatting
+        additional_dependencies:
+          - prettier-plugin-organize-imports@1.1.1
+          - prettier-plugin-tailwind@2.2.0
+          - prettier-plugin-sh@0.6.0
 
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: "v5.6.4"
