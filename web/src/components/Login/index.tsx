@@ -10,7 +10,6 @@ export default function Login() {
   const location = useLocation();
 
   const isLoggedOut = !token && !signInError;
-
   return (
     <div>
       {isLoggedOut ? (

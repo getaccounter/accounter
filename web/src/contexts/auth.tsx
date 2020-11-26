@@ -11,7 +11,7 @@ export const LOGIN_MUTATION = gql`
   }
 `;
 
-type LoginSuccess = {
+export type LoginResponse = {
   tokenAuth: {
     token: string;
     payload: { username: string; exp: number; origIat: number };
@@ -19,7 +19,7 @@ type LoginSuccess = {
   };
 };
 
-type LoginParameters = {
+export type LoginParameters = {
   username: string;
   password: string;
 };
@@ -38,7 +38,7 @@ type Props = {
 };
 
 export default function AuthProvider({ children }: Props) {
-  const [login, { data, error }] = useMutation<LoginSuccess, LoginParameters>(
+  const [login, { data, error }] = useMutation<LoginResponse, LoginParameters>(
     LOGIN_MUTATION,
     {
       errorPolicy: "all",

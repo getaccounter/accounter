@@ -4,18 +4,7 @@ import { render } from "@testing-library/react";
 import Services from "./";
 import { MemoryRouter } from "react-router-dom";
 import { MockedProvider } from "@apollo/client/testing";
-import { GET_SERVICE_LIST_QUERY, Service } from "./components/ServiceTable";
-
-const getServiceMockQueryMock = (services: Array<Service> = []) => ({
-  request: {
-    query: GET_SERVICE_LIST_QUERY,
-  },
-  result: {
-    data: {
-      services,
-    },
-  },
-});
+import { getServiceMockQueryMock, serviceFactory } from "./Services.mocks";
 
 const Providers = ({ children }: { children: ReactNode }) => (
   <MemoryRouter>{children}</MemoryRouter>
@@ -23,16 +12,14 @@ const Providers = ({ children }: { children: ReactNode }) => (
 
 test("fetches and renders services", async () => {
   const services = [
-    {
-      id: 1,
+    serviceFactory.build({
       name: "service-one",
       logo: "path/to/logo/1",
-    },
-    {
-      id: 2,
+    }),
+    serviceFactory.build({
       name: "service-two",
       logo: "path/to/logo/2",
-    },
+    }),
   ];
   const renderedServices = render(
     <MockedProvider mocks={[getServiceMockQueryMock(services)]}>

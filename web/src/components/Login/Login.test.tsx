@@ -4,36 +4,13 @@ import { MockedProvider } from "@apollo/client/testing";
 
 import Login from "./";
 import userEvent from "@testing-library/user-event";
-import AuthProvider, { LOGIN_MUTATION } from "../../contexts/auth";
+import AuthProvider from "../../contexts/auth";
 import { MemoryRouter, Route, Switch } from "react-router-dom";
-
-const getLoginQueryMock = (username: string, password: string) => ({
-  request: {
-    query: LOGIN_MUTATION,
-    variables: { username, password },
-  },
-  result: {
-    data: {
-      tokenAuth: {
-        token: "some-token",
-        payload: { username, exp: 0, origIat: 0 }, // values need to be fixed, refer to certain time
-        refreshExpiresIn: 0, // values need to be fixed, refer to certain time
-      },
-    },
-  },
-});
-
-const getLoginQueryMockWithError = (
-  username: string,
-  password: string,
-  errorMessage: string
-) => ({
-  request: {
-    query: LOGIN_MUTATION,
-    variables: { username, password },
-  },
-  error: new Error(errorMessage),
-});
+import {
+  getLoginQueryMock,
+  getLoginQueryMockWithError,
+  loginParametersFactory,
+} from "../../contexts/auth.mocks";
 
 const Providers = ({ children }: { children: ReactNode }) => (
   <AuthProvider>
@@ -44,7 +21,9 @@ const Providers = ({ children }: { children: ReactNode }) => (
 test("logs in and reroutes", async () => {
   const username = "someuser";
   const password = "somepassword";
-  const loginQueryMock = getLoginQueryMock(username, password);
+  const loginQueryMock = getLoginQueryMock(
+    loginParametersFactory.build({ username, password })
+  );
   const login = render(
     <MockedProvider mocks={[loginQueryMock]}>
       <Providers>
@@ -78,8 +57,7 @@ test("renders error message if something goes wrong", async () => {
   const password = "somepassword";
   const errorMessage = "Your login failed!";
   const loginQueryMock = getLoginQueryMockWithError(
-    username,
-    password,
+    loginParametersFactory.build({ username, password }),
     errorMessage
   );
   const login = render(
