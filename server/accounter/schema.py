@@ -1,5 +1,6 @@
 import graphene
 import graphql_jwt
+from graphql_jwt.decorators import login_required
 
 from .integrations.models import Service
 from .integrations.schemas import Integrations, ServiceType
@@ -25,8 +26,8 @@ class Query(graphene.ObjectType):
     services = graphene.List(ServiceType)
 
     @classmethod
+    @login_required
     def resolve_services(cls, root, info, **kwargs):
-        # TODO require login
         return Service.objects.all()
 
 
