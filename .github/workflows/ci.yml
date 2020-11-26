@@ -39,6 +39,7 @@ jobs:
         run: |
           docker-compose run --no-deps --entrypoint /usr/bin/env web npm t -- --coverage
           docker-compose run --entrypoint /usr/bin/env server coverage run --source='.' manage.py test
+          docker-compose run --no-deps --entrypoint /usr/bin/env server coverage xml
 
       - name: report coverage
         uses: codecov/codecov-action@v1
