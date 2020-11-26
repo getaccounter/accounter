@@ -22,5 +22,5 @@ const parseRequiredEnv = <T>(envName: string, parser: (val: string) => T) => {
 export const GRAPHQL_ENDPOINT = parseEnv(
   "REACT_APP_GRAPHQL_ENDPOINT",
   String,
-  "/api/graphql"
+  "/api/graphql/"
 );
