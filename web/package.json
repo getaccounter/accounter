@@ -57,7 +57,8 @@
       "!**/serviceWorker.ts",
       "!**/*.d.ts",
       "!src/index.tsx",
-      "!src/App.tsx"
+      "!src/App.tsx",
+      "!src/**/*.mocks.ts*"
     ]
   },
   "devDependencies": {
