@@ -7,10 +7,9 @@ from .models import Service
 
 class ServiceTestCase(GraphQLTestCase):
     def test_some_query(self):
-        service = Service.objects.create(
-            name="my-service", logo="/path/to/some/logo.svg"
-        )
-        service.save()
+        name = "my-service"
+        logo = "/path/to/some/logo.svg"
+        Service.objects.create(name=name, logo=logo).save()
         response = self.query(
             """
             {
@@ -22,8 +21,9 @@ class ServiceTestCase(GraphQLTestCase):
             }
             """,
         )
-        content = json.loads(response.content)
-        print(content)
 
-        # This validates the status code and if you get errors
+        services = json.loads(response.content)["data"]["services"]
+        assert len(services) == 1
+        assert services[0]["name"] == name
+        assert services[0]["logo"] == logo
         self.assertResponseNoErrors(response)
