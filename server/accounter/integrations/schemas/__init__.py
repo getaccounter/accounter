@@ -10,5 +10,7 @@ class Integrations(graphene.ObjectType):
 
 
 class ServiceType(DjangoObjectType):
+    oauth_url = graphene.String(source="oauth_url")
+
     class Meta:
         model = Service

@@ -1,6 +1,7 @@
 from django.db import models
 
 from ..organizations.models import Organization, Profile
+from .utils.oauth import slack
 
 
 class Service(models.Model):
@@ -9,6 +10,10 @@ class Service(models.Model):
 
     name = models.CharField("Type", max_length=50, choices=Types.choices, unique=True)
     logo = models.FileField(upload_to="services/logos")
+
+    @property
+    def oauth_url(self):
+        return slack.get_url()
 
 
 # Abstract Classes

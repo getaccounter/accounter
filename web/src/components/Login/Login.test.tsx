@@ -7,10 +7,12 @@ import userEvent from "@testing-library/user-event";
 import AuthProvider from "../../contexts/auth";
 import { MemoryRouter, Route, Switch } from "react-router-dom";
 import {
-  getLoginQueryMock,
-  getLoginQueryMockWithError,
+  getLoginQueryWithErrorMock,
+  getLoginRequestMocks,
   loginParametersFactory,
 } from "../../contexts/auth.mocks";
+
+jest.mock("use-http", () => () => ({ loading: false }));
 
 const Providers = ({ children }: { children: ReactNode }) => (
   <AuthProvider>
@@ -21,11 +23,8 @@ const Providers = ({ children }: { children: ReactNode }) => (
 test("logs in and reroutes", async () => {
   const username = "someuser";
   const password = "somepassword";
-  const loginQueryMock = getLoginQueryMock(
-    loginParametersFactory.build({ username, password })
-  );
   const login = render(
-    <MockedProvider mocks={[loginQueryMock]}>
+    <MockedProvider mocks={[...getLoginRequestMocks(username, password)]}>
       <Providers>
         <Switch>
           <Route exact path="/login">
@@ -56,7 +55,7 @@ test("renders error message if something goes wrong", async () => {
   const username = "someuser";
   const password = "somepassword";
   const errorMessage = "Your login failed!";
-  const loginQueryMock = getLoginQueryMockWithError(
+  const loginQueryMock = getLoginQueryWithErrorMock(
     loginParametersFactory.build({ username, password }),
     errorMessage
   );
