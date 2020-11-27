@@ -1,12 +1,32 @@
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import AuthProvider from "./contexts/auth";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloProvider,
+  createHttpLink,
+  InMemoryCache,
+} from "@apollo/client";
 import { GRAPHQL_ENDPOINT } from "./config";
 import Root from "./Root";
+import { setContext } from "@apollo/client/link/context";
+import { getCSRFCookie } from "./utils/csrf";
+
+const httpLink = createHttpLink({
+  uri: GRAPHQL_ENDPOINT,
+});
+
+const authLink = setContext((_, { headers }) => {
+  return {
+    headers: {
+      ...headers,
+      "X-CSRFToken": getCSRFCookie(),
+    },
+  };
+});
 
 const client = new ApolloClient({
-  uri: GRAPHQL_ENDPOINT,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 

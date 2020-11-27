@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/auth";
+import { useCSRFCookie } from "../../utils/csrf";
 
 export default function Login() {
   const [usernameInput, setUsernameInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
+  useCSRFCookie();
 
   const { token, signIn, signInError } = useAuth();
   const location = useLocation();
