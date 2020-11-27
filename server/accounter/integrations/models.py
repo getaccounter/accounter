@@ -12,25 +12,34 @@ class Service(models.Model):
 
 
 # Abstract Classes
-class Integration(models.Model):
+class AbstractIntegration(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
+
+    @property
+    def service(self):
+        raise NotImplementedError()
 
     class Meta:
         abstract = True
 
 
-class Account(models.Model):
+class AbstractAccount(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.RESTRICT)
+
+    @property
+    def integration(self):
+        raise NotImplementedError()
 
     class Meta:
         abstract = True
 
 
 # Slack
-class SlackIntegration(Integration):
-    pass
+class SlackIntegration(AbstractIntegration):
+    @property
+    def service(self):
+        return Service.objects.get(name=Service.Types.SLACK)
 
 
-class SlackAccount(Account):
+class SlackAccount(AbstractAccount):
     integration = models.ForeignKey(SlackIntegration, on_delete=models.RESTRICT)
-    pass

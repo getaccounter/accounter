@@ -10,9 +10,8 @@ class ServiceTestCase(JSONWebTokenTestCase):
 
     def test_services_query(self):
         self.client.authenticate(self.user)
-        name = "my-service"
         logo = "/path/to/some/logo.svg"
-        Service.objects.create(name=name, logo=logo).save()
+        Service.objects.create(name=Service.Types.SLACK, logo=logo).save()
         response = self.client.execute(
             """
             {
@@ -27,7 +26,7 @@ class ServiceTestCase(JSONWebTokenTestCase):
         assert response.errors is None
         services = response.data["services"]
         assert len(services) == 1
-        assert services[0]["name"] == name
+        assert services[0]["name"] == Service.Types.SLACK
         assert services[0]["logo"] == logo
 
     def test_services_query_requires_authenticated_users(self):
