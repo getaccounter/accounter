@@ -8,9 +8,13 @@ import AuthProvider from "./contexts/auth";
 import { MemoryRouter } from "react-router-dom";
 import {
   getLoginQueryMock,
+  getVerifyTokenErrorMock,
+  getVerifyTokenMock,
   loginParametersFactory,
 } from "./contexts/auth.mocks";
 import { getServiceMockQueryMock } from "./components/Main/components/Services/Services.mocks";
+
+jest.mock("use-http", () => () => ({ loading: false }));
 
 const Providers = ({ children }: { children: ReactNode }) => (
   <AuthProvider>
@@ -25,7 +29,14 @@ test("reroutes to login and after reroutes to actual content", async () => {
     loginParametersFactory.build({ username, password })
   );
   const root = render(
-    <MockedProvider mocks={[loginQueryMock, getServiceMockQueryMock()]}>
+    <MockedProvider
+      mocks={[
+        getVerifyTokenErrorMock(),
+        loginQueryMock,
+        getVerifyTokenMock(),
+        getServiceMockQueryMock(),
+      ]}
+    >
       <Providers>
         <Root />
       </Providers>

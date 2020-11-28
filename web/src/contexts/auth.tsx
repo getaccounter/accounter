@@ -1,10 +1,53 @@
+import { useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
 import React, { createContext, ReactNode, useContext } from "react";
+
+const isTokenStillValid = (expiry: number) => {
+  return Date.now() < expiry * 1000;
+};
+
+export const VERIFY_TOKEN_MUTATION = gql`
+  mutation TokenAuth {
+    verifyToken {
+      payload
+    }
+  }
+`;
+
+export type Payload = {
+  username: string;
+  exp: number;
+  origIat: number;
+};
+
+export type VerificationResponse = {
+  verifyToken: {
+    payload: Payload;
+  };
+};
+
+export type VerificationParameters = void;
+
+const useIsLoggedIn = () => {
+  const [verify, { data, called, loading }] = useMutation<
+    VerificationResponse,
+    VerificationParameters
+  >(VERIFY_TOKEN_MUTATION, {
+    errorPolicy: "all",
+    onError: () => undefined,
+  });
+
+  const expiry = data?.verifyToken?.payload.exp;
+
+  // if it wasnt determined if user is logged in or not, it's set to undefined
+  const isLoggedIn =
+    called && !loading ? !!expiry && isTokenStillValid(expiry) : undefined;
+  return [verify, isLoggedIn] as [() => void, typeof isLoggedIn];
+};
 
 export const LOGIN_MUTATION = gql`
   mutation TokenAuth($username: String!, $password: String!) {
     tokenAuth(username: $username, password: $password) {
-      token
       payload
       refreshExpiresIn
     }
@@ -13,8 +56,7 @@ export const LOGIN_MUTATION = gql`
 
 export type LoginResponse = {
   tokenAuth: {
-    token: string;
-    payload: { username: string; exp: number; origIat: number };
+    payload: Payload;
     refreshExpiresIn: number;
   };
 };
@@ -24,26 +66,31 @@ export type LoginParameters = {
   password: string;
 };
 
-type AuthContext = {
-  token?: string;
+const authContext = createContext<{
+  isLoggedIn?: boolean;
   signInError?: string;
   signIn: (username: string, password: string) => void;
   signOut: () => void;
-};
-
-const authContext = createContext<AuthContext>(undefined!);
+}>(undefined!);
 
 type Props = {
   children: ReactNode;
 };
 
 export default function AuthProvider({ children }: Props) {
-  const [login, { data, error }] = useMutation<LoginResponse, LoginParameters>(
+  const [login, loginResponse] = useMutation<LoginResponse, LoginParameters>(
     LOGIN_MUTATION,
     {
       errorPolicy: "all",
+      onError: () => undefined,
     }
   );
+
+  const [checkIsLoggedIn, isLoggedIn] = useIsLoggedIn();
+
+  useEffect(() => {
+    checkIsLoggedIn();
+  }, [checkIsLoggedIn, loginResponse.data?.tokenAuth]);
 
   const signIn = (username: string, password: string) => {
     login({
@@ -56,8 +103,8 @@ export default function AuthProvider({ children }: Props) {
     <authContext.Provider
       children={children}
       value={{
-        token: data?.tokenAuth.token,
-        signInError: error?.message,
+        isLoggedIn,
+        signInError: loginResponse.error?.message,
         signIn,
         signOut,
       }}

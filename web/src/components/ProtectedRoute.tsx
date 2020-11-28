@@ -3,12 +3,15 @@ import { Redirect, Route, RouteProps } from "react-router-dom";
 import { useAuth } from "../contexts/auth";
 
 export default function PrivateRoute({ children, ...rest }: RouteProps) {
-  const { token } = useAuth();
+  const { isLoggedIn } = useAuth();
+  if (isLoggedIn === undefined) {
+    return <div>Loading...</div>;
+  }
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        token ? (
+        isLoggedIn ? (
           children
         ) : (
           <Redirect

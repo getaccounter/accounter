@@ -8,13 +8,11 @@ export default function Login() {
   const [passwordInput, setPasswordInput] = useState<string>("");
   useCSRFCookie();
 
-  const { token, signIn, signInError } = useAuth();
+  const { isLoggedIn, signIn, signInError } = useAuth();
   const location = useLocation();
-
-  const isLoggedOut = !token && !signInError;
   return (
     <div>
-      {isLoggedOut ? (
+      {!isLoggedIn ? (
         <>
           <input
             value={usernameInput}

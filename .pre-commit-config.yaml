@@ -5,12 +5,14 @@ repos:
     hooks:
       - id: black
         name: formatting-server
+        entry: bash -c 'black "$@"; git add -u' --
 
   - repo: https://github.com/prettier/prettier
     rev: "2.1.2"
     hooks:
       - id: prettier
         name: formatting
+        entry: bash -c 'prettier --write "$@"; git add -u' --
         additional_dependencies:
           - prettier-plugin-organize-imports@1.1.1
           - prettier-plugin-tailwind@2.2.0
@@ -20,6 +22,7 @@ repos:
     rev: "v5.6.4"
     hooks:
       - id: isort
+        entry: bash -c 'isort "$@"; git add -u' --
 
   - repo: https://gitlab.com/pycqa/flake8
     rev: "3.8.4"
