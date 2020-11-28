@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from graphql_jwt.testcases import JSONWebTokenTestCase
-from model_bakery import baker  # type: ignore
 
 from .models import Service
 
@@ -11,7 +10,7 @@ class ServiceTestCase(JSONWebTokenTestCase):
 
     def test_services_query(self):
         self.client.authenticate(self.user)
-        service = baker.make(Service, _create_files=True)
+        service = Service.objects.get(id=1)
         response = self.client.execute(
             """
             {
