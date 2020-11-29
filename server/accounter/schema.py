@@ -18,9 +18,8 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     services = graphene.List(ServiceType)
 
-    @classmethod
     @login_required
-    def resolve_services(cls, root, info, **kwargs):
+    def resolve_services(root, info, **kwargs):
         return Service.objects.all()
 
 

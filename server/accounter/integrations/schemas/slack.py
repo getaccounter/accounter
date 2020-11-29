@@ -1,18 +1,7 @@
 import graphene
+from graphql_jwt.decorators import login_required
 
-from ..utils.oauth import slack
-
-
-class StartOAuth(graphene.Mutation):
-    class Arguments:
-        pass
-
-    url = graphene.String()
-
-    @classmethod
-    def mutate(cls, root, info):
-        url = slack.get_url()
-        return cls(url=url)
+from ..models import Service, SlackIntegration
 
 
 class HandleCallback(graphene.Mutation):
@@ -22,12 +11,17 @@ class HandleCallback(graphene.Mutation):
 
     status = graphene.String()
 
-    @classmethod
-    def mutate(cls, root, info, code: str, state: str):
-        slack.handle_callback(code, state)
+    @login_required
+    def mutate(self, info, code: str, state: str):
+        organization = info.context.user.admin.organization
+        slack_service = Service.objects.get(name=Service.Types.SLACK)
+        token = slack_service.handle_callback(code, state)
+        slack_integration = SlackIntegration.objects.create(
+            organization=organization, token=token
+        )
+        slack_integration.save()
         return HandleCallback(status="success")
 
 
 class SlackType(graphene.ObjectType):
-    startOAuth = StartOAuth.Field()
     handleCallback = HandleCallback.Field()
