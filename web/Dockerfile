@@ -6,6 +6,8 @@ WORKDIR /code
 COPY package*.json ./
 RUN npm ci
 COPY . /code/
+# Temporary, until heroicons library is stable and transpiled
+RUN cp -R node_modules/heroicons/react/ src/components/icons
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD [ "npm", "start" ]
 

@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { render, waitFor } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 
 import Login from "./";
@@ -40,9 +40,9 @@ test("logs in and reroutes", async () => {
 
   expect(login.queryByText("Success")).not.toBeInTheDocument();
 
-  const usernameInput = login.getByPlaceholderText("username");
-  const passwordInput = login.getByPlaceholderText("password");
-  const loginButton = login.getByText("Login");
+  const usernameInput = login.getByLabelText("Email address");
+  const passwordInput = login.getByLabelText("Password");
+  const loginButton = login.getByRole("button", { name: "Sign in" });
 
   userEvent.type(usernameInput, username);
   userEvent.type(passwordInput, password);
@@ -66,13 +66,48 @@ test("renders error message if something goes wrong", async () => {
       </Providers>
     </MockedProvider>
   );
-  const usernameInput = login.getByPlaceholderText("username");
-  const passwordInput = login.getByPlaceholderText("password");
-  const loginButton = login.getByText("Login");
+  const usernameInput = login.getByLabelText("Email address");
+  const passwordInput = login.getByLabelText("Password");
+  const loginButton = login.getByRole("button", { name: "Sign in" });
 
   userEvent.type(usernameInput, username);
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 
-  waitFor(() => expect(login.getByText(errorMessage)).toBeInTheDocument());
+  expect(await login.findByText(errorMessage)).toBeInTheDocument();
+});
+
+test("supress error message", async () => {
+  const username = "someuser";
+  const password = "somepassword";
+  const errorMessage = "Your login failed!";
+  const loginQueryMock = getLoginQueryWithErrorMock(
+    loginParametersFactory.build({ username, password }),
+    errorMessage
+  );
+  const login = render(
+    <MockedProvider mocks={[loginQueryMock, loginQueryMock]}>
+      <Providers>
+        <Login />
+      </Providers>
+    </MockedProvider>
+  );
+  const usernameInput = login.getByLabelText("Email address");
+  const passwordInput = login.getByLabelText("Password");
+  const loginButton = login.getByRole("button", { name: "Sign in" });
+
+  userEvent.type(usernameInput, username);
+  userEvent.type(passwordInput, password);
+  userEvent.click(loginButton);
+
+  expect(await login.findByText(errorMessage)).toBeInTheDocument();
+
+  const closeButton = login.getByRole("button", { name: "Close" });
+  userEvent.click(closeButton);
+  // should be supressed
+  expect(login.queryByText(errorMessage)).not.toBeInTheDocument();
+
+  // but visible again at next try
+  userEvent.click(loginButton);
+  expect(await login.findByText(errorMessage)).toBeInTheDocument();
 });

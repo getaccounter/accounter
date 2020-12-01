@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { render, within } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 
 import Root from "./Root";
@@ -42,16 +42,17 @@ test("reroutes to login and after reroutes to actual content", async () => {
       </Providers>
     </MockedProvider>
   );
-  expect(await root.findByText("Login")).toBeInTheDocument();
+  expect(await root.findByText("Sign in")).toBeInTheDocument();
 
-  const usernameInput = root.getByPlaceholderText("username");
-  const passwordInput = root.getByPlaceholderText("password");
-  const loginButton = root.getByText("Login");
+  const usernameInput = root.getByLabelText("Email address");
+  const passwordInput = root.getByLabelText("Password");
+  const loginButton = root.getByRole("button", { name: "Sign in" });
 
   userEvent.type(usernameInput, username);
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 
-  const navigationbar = within(await root.findByRole("navigation"));
-  expect(navigationbar.getByText("Services")).toBeInTheDocument();
+  expect(
+    await root.findByRole("heading", { name: "Services" })
+  ).toBeInTheDocument();
 });

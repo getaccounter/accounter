@@ -27,7 +27,7 @@
 import "@testing-library/cypress/add-commands";
 
 Cypress.Commands.add("login", () => {
-  cy.findByPlaceholderText("username").type("admin");
-  cy.findByPlaceholderText("password").type("password");
-  cy.findByText("Login").click();
+  cy.findByLabelText("Email address").type("admin@getaccounter.io");
+  cy.findByLabelText("Password").type("password");
+  cy.findByText("Sign in").click();
 });
