@@ -12,12 +12,12 @@ export default function Root() {
         <Route path="/login">
           <Login />
         </Route>
-        <PrivateRoute path="/">
-          <Main />
-        </PrivateRoute>
         <Route exact path="/slack/oauth/callback">
           <OAuthSlackCallback />
         </Route>
+        <PrivateRoute path="/">
+          <Main />
+        </PrivateRoute>
       </Switch>
     </div>
   );

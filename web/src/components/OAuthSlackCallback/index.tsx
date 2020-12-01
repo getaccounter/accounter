@@ -32,16 +32,16 @@ export default function OAuthSlackCallback() {
       errorPolicy: "all",
     }
   );
+  const code = query.get("code");
+  const state = query.get("state");
 
   useEffect(() => {
-    const code = query.get("code");
-    const state = query.get("state");
     if (!code || !state) {
       setErrorMessage("Something went wrong");
     } else {
       handleCallback({ variables: { code, state } });
     }
-  }, [handleCallback, query]);
+  }, [handleCallback, code, state]);
 
   return (
     <div>

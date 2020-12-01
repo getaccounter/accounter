@@ -7,7 +7,7 @@ const isTokenStillValid = (expiry: number) => {
 };
 
 export const VERIFY_TOKEN_MUTATION = gql`
-  mutation TokenAuth {
+  mutation VerifyToken {
     verifyToken {
       payload
     }
