@@ -136,7 +136,7 @@ class ServiceTestCase(JSONWebTokenTestCase):
         print(response.errors)
         assert response.errors[0].message == "the state value is expired"
 
-    def test_handle_callback_not_state_saved(self):
+    def test_handle_callback_state_unknown(self):
 
         self.client.authenticate(self.user)
         organization = Organization.objects.create(name="some org")
