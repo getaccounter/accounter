@@ -1,7 +1,7 @@
 import React from "react";
+import { ChevronRight } from "../../../../../icons/outline";
 import { Service } from "../AddMoreServices";
 import AddButton from "../ServiceRow/components/AddButton";
-import ChevronRightIcon from "../ServiceRow/components/ChevronRightIcon";
 import ServiceLogo from "../ServiceRow/components/ServiceLogo";
 
 const UserIcon = ({ src }: { src: string }) => (
@@ -41,10 +41,10 @@ const ServiceRow = (props: { service: Service; isNotInstalled?: boolean }) => {
             )}
           </div>
           <div className="ml-5 flex-shrink-0">
-            {props.isNotInstalled ? (
+            {false ? (
               <AddButton>Add</AddButton>
             ) : (
-              <ChevronRightIcon />
+              <ChevronRight className="h-5 w-5 text-gray-400" />
             )}
           </div>
         </div>
