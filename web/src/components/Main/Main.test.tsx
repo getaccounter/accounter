@@ -19,8 +19,7 @@ test("show Services by default", () => {
     </Providers>
   );
 
-  const header = within(main.getByRole("heading"));
-  expect(header.getByText("Services")).toBeInTheDocument();
+  expect(main.getByRole("heading", { name: "Services" })).toBeInTheDocument();
 });
 
 test.each(["Services", "Users"])("renders %s", async (tab) => {
@@ -31,8 +30,6 @@ test.each(["Services", "Users"])("renders %s", async (tab) => {
   );
 
   const navigationbar = within(main.getByRole("navigation"));
-  await userEvent.click(navigationbar.getByText(tab));
-
-  const header = within(main.getByRole("heading"));
-  expect(header.getByText(tab)).toBeInTheDocument();
+  await userEvent.click(navigationbar.getByRole("link", { name: tab }));
+  expect(main.getByRole("heading", { name: tab })).toBeInTheDocument();
 });

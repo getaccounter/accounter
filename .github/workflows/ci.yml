@@ -28,16 +28,16 @@ jobs:
       - name: lint
         run: |
           docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
-          docker-compose run --no-deps --entrypoint /usr/bin/env web npm run lint
+          docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
 
       - name: typechecking
         run: |
-          docker-compose run --no-deps --entrypoint /usr/bin/env web npm run typecheck
+          docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run typecheck
           docker-compose run --no-deps --entrypoint /usr/bin/env server pyright
 
       - name: unit tests
         run: |
-          docker-compose run --no-deps --entrypoint /usr/bin/env web npm t -- --coverage
+          docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm t -- --coverage
           docker-compose run --entrypoint /usr/bin/env server coverage run --source='.' manage.py test
           docker-compose run --no-deps --entrypoint /usr/bin/env server coverage xml
 
