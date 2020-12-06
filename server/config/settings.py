@@ -160,15 +160,7 @@ STATIC_URL = "/static/"
 
 GRAPHENE = {
     "SCHEMA": "accounter.schema.schema",
-    "MIDDLEWARE": [
-        "graphql_jwt.middleware.JSONWebTokenMiddleware",
-    ],
 }
-
-AUTHENTICATION_BACKENDS = [
-    "graphql_jwt.backends.JSONWebTokenBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
 
 INTEGRATIONS = {
     "SLACK": {
@@ -179,3 +171,5 @@ INTEGRATIONS = {
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

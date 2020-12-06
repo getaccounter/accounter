@@ -2,45 +2,42 @@ import {
   LOGIN_MUTATION,
   LoginParameters,
   LoginResponse,
-  Payload,
-  VerificationResponse,
-  VERIFY_TOKEN_MUTATION,
+  SessionInfoQueryResponse,
+  SESSION_INFO_QUERY,
 } from "./auth";
 
 import * as Factory from "factory";
+import { MockedResponse } from "@apollo/client/testing";
 
 // Login mutation
 
 export const loginParametersFactory = Factory.Sync.makeFactory<LoginParameters>(
   {
-    username: "some-username",
+    email: "some@username.internet",
     password: "some-password",
   }
 );
 
-export const validExpiryFactory = () => Date.now() / 1000 + 10000; // expires in the future
-
-export const expiredExpiryFactory = () => Date.now() / 1000 - 10000; // expired in the past
-
-export const payloadFactory = Factory.Sync.makeFactory<Payload>({
-  username: "some-user",
-  exp: Factory.each(() => validExpiryFactory()),
-  origIat: 0, // values need to be fixed, refer to certain time
-});
-
-export const tokenAuthFactory = Factory.Sync.makeFactory<
-  LoginResponse["tokenAuth"]
->({
-  payload: payloadFactory.build(),
-  refreshExpiresIn: 0, // values need to be fixed, refer to certain time
+export const signinFactory = Factory.Sync.makeFactory<LoginResponse["signin"]>({
+  status: "success",
+  message: "Successfully signed in.",
 });
 
 export const loginResponseFactory = Factory.Sync.makeFactory<LoginResponse>({
-  tokenAuth: tokenAuthFactory.build(),
+  signin: signinFactory.build(),
+});
+
+export const loginResponseWithErrorFactory = Factory.Sync.makeFactory<
+  LoginResponse
+>({
+  signin: signinFactory.build({
+    status: "error",
+    message: "Please enter valid credentials.",
+  }),
 });
 
 // move to factory.ts
-export const getLoginQueryMock = (
+const getLoginQueryMock = (
   variables: LoginParameters = loginParametersFactory.build(),
   data: LoginResponse = loginResponseFactory.build()
 ) => ({
@@ -56,52 +53,72 @@ export const getLoginQueryMock = (
 // move to factory.ts
 export const getLoginQueryWithErrorMock = (
   variables: LoginParameters = loginParametersFactory.build(),
-  errorMessage: string = "some error"
+  data: LoginResponse = loginResponseWithErrorFactory.build()
 ) => ({
   request: {
     query: LOGIN_MUTATION,
-    variables: variables,
-  },
-  error: new Error(errorMessage),
-});
-
-// verify mutattion
-export const verifyTokenFactory = Factory.Sync.makeFactory<
-  VerificationResponse["verifyToken"]
->({
-  payload: payloadFactory.build(),
-});
-
-export const verifyTokenResponseFactory = Factory.Sync.makeFactory<
-  VerificationResponse
->({
-  verifyToken: verifyTokenFactory.build(),
-});
-
-// move to factory.ts
-export const getVerifyTokenMock = (
-  data: VerificationResponse = verifyTokenResponseFactory.build()
-) => ({
-  request: {
-    query: VERIFY_TOKEN_MUTATION,
+    variables,
   },
   result: {
     data,
   },
 });
 
-// move to factory.ts
-export const getVerifyTokenErrorMock = (
-  errorMessage: string = "some error"
-) => ({
-  request: {
-    query: VERIFY_TOKEN_MUTATION,
+// session info query
+export const getSessionInfoQueryResponseMock = Factory.Sync.makeFactory<
+  SessionInfoQueryResponse
+>({
+  sessionInfo: {
+    signedIn: true,
   },
-  error: new Error(errorMessage),
 });
 
-export const getLoginRequestMocks = (username: string, password: string) => [
-  getVerifyTokenErrorMock(),
-  getLoginQueryMock(loginParametersFactory.build({ username, password })),
-  getVerifyTokenMock(),
+export const sessionInfoQuerySignedInMock = Factory.Sync.makeFactory<
+  MockedResponse
+>({
+  request: {
+    query: SESSION_INFO_QUERY,
+  },
+  result: {
+    data: getSessionInfoQueryResponseMock.build(),
+  },
+});
+
+export const sessionInfoQuerySignedOutMock = Factory.Sync.makeFactory<
+  MockedResponse
+>({
+  request: {
+    query: SESSION_INFO_QUERY,
+  },
+  result: {
+    data: getSessionInfoQueryResponseMock.build({
+      sessionInfo: {
+        signedIn: false,
+      },
+    }),
+  },
+});
+
+export const getLoginRequestMocks = (email: string, password: string) => [
+  sessionInfoQuerySignedOutMock.build(),
+  getLoginQueryMock(loginParametersFactory.build({ email, password })),
+  sessionInfoQuerySignedInMock.build(),
+];
+
+export const getLoginFailureRequestMocks = (
+  email: string,
+  password: string,
+  errorMessage: string
+) => [
+  sessionInfoQuerySignedOutMock.build(),
+  getLoginQueryWithErrorMock(
+    loginParametersFactory.build({ email, password }),
+    loginResponseWithErrorFactory.build({
+      signin: signinFactory.build({
+        status: "error",
+        message: errorMessage,
+      }),
+    })
+  ),
+  sessionInfoQuerySignedOutMock.build(),
 ];

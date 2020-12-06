@@ -7,12 +7,11 @@ import userEvent from "@testing-library/user-event";
 import {
   loginParametersFactory,
   getLoginQueryWithErrorMock,
-  getVerifyTokenMock,
-  verifyTokenResponseFactory,
-  payloadFactory,
-  verifyTokenFactory,
-  expiredExpiryFactory,
   getLoginRequestMocks,
+  sessionInfoQuerySignedInMock,
+  sessionInfoQuerySignedOutMock,
+  loginResponseWithErrorFactory,
+  signinFactory,
 } from "./auth.mocks";
 
 const TestComponent = ({
@@ -25,20 +24,20 @@ const TestComponent = ({
 };
 
 test("logs in", async () => {
-  const username = "someuser";
+  const email = "some@user.internet";
   const password = "somepassword";
   const container = render(
-    <MockedProvider mocks={[...getLoginRequestMocks(username, password)]}>
+    <MockedProvider mocks={[...getLoginRequestMocks(email, password)]}>
       <AuthProvider>
         <TestComponent>
           {(authData) => (
             <div>
-              {authData.isLoggedIn === undefined
+              {authData.isSignedIn === undefined
                 ? "Loading..."
-                : authData.isLoggedIn
+                : authData.isSignedIn
                 ? "Logged In"
                 : "Logged Out"}
-              <button onClick={() => authData.signIn(username, password)} />
+              <button onClick={() => authData.signIn(email, password)} />
             </div>
           )}
         </TestComponent>
@@ -54,14 +53,14 @@ test("logs in", async () => {
 
 test("comes back when it was already logged in", async () => {
   const container = render(
-    <MockedProvider mocks={[getVerifyTokenMock()]}>
+    <MockedProvider mocks={[sessionInfoQuerySignedInMock.build()]}>
       <AuthProvider>
         <TestComponent>
           {(authData) => (
             <div>
-              {authData.isLoggedIn === undefined
+              {authData.isSignedIn === undefined
                 ? "Loading..."
-                : authData.isLoggedIn
+                : authData.isSignedIn
                 ? "Logged In"
                 : "Logged Out"}
             </div>
@@ -74,57 +73,34 @@ test("comes back when it was already logged in", async () => {
   expect(await container.findByText("Logged In")).toBeInTheDocument();
 });
 
-test("comes back when it was already logged in, but token expired", async () => {
+test("provides error after login error", async () => {
+  const email = "some@user.internet";
+  const password = "somepassword";
+  const errorMessage = "Ahh shut";
+
+  const loginQueryMock = getLoginQueryWithErrorMock(
+    loginParametersFactory.build({ email, password }),
+    loginResponseWithErrorFactory.build({
+      signin: signinFactory.build({
+        status: "error",
+        message: errorMessage,
+      }),
+    })
+  );
   const container = render(
     <MockedProvider
       mocks={[
-        getVerifyTokenMock(
-          verifyTokenResponseFactory.build({
-            verifyToken: verifyTokenFactory.build({
-              payload: payloadFactory.build({
-                exp: expiredExpiryFactory(),
-              }),
-            }),
-          })
-        ),
+        sessionInfoQuerySignedOutMock.build(),
+        loginQueryMock,
+        sessionInfoQuerySignedOutMock.build(),
       ]}
     >
       <AuthProvider>
         <TestComponent>
           {(authData) => (
             <div>
-              {authData.isLoggedIn === undefined
-                ? "Loading..."
-                : authData.isLoggedIn
-                ? "Logged In"
-                : "Logged Out"}
-            </div>
-          )}
-        </TestComponent>
-      </AuthProvider>
-    </MockedProvider>
-  );
-  expect(await container.findByText("Loading...")).toBeInTheDocument();
-  expect(await container.findByText("Logged Out")).toBeInTheDocument();
-});
-
-test("provides error after login error", async () => {
-  const username = "someuser";
-  const password = "somepassword";
-  const errorMessage = "Ahh shut";
-
-  const loginQueryMock = getLoginQueryWithErrorMock(
-    loginParametersFactory.build({ username, password }),
-    errorMessage
-  );
-  const container = render(
-    <MockedProvider mocks={[getVerifyTokenMock(), loginQueryMock]}>
-      <AuthProvider>
-        <TestComponent>
-          {(authData) => (
-            <div>
               {authData.signInError}
-              <button onClick={() => authData.signIn(username, password)} />
+              <button onClick={() => authData.signIn(email, password)} />
             </div>
           )}
         </TestComponent>
