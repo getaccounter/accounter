@@ -10,7 +10,7 @@ import {
 import { GRAPHQL_ENDPOINT } from "./config";
 import Root from "./Root";
 import { setContext } from "@apollo/client/link/context";
-import { getCSRFCookie } from "./utils/csrf";
+import { getCSRFCookie, useCSRFCookie } from "./utils/csrf";
 
 const httpLink = createHttpLink({
   uri: GRAPHQL_ENDPOINT,
@@ -31,7 +31,8 @@ const client = new ApolloClient({
 });
 
 export default function App() {
-  return (
+  const { token: csrfToken } = useCSRFCookie();
+  return csrfToken ? (
     <ApolloProvider client={client}>
       <AuthProvider>
         <Router>
@@ -39,5 +40,5 @@ export default function App() {
         </Router>
       </AuthProvider>
     </ApolloProvider>
-  );
+  ) : null;
 }

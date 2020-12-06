@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django.urls import path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from graphene_django.views import GraphQLView
-from graphql_jwt.decorators import jwt_cookie
 
 
 @ensure_csrf_cookie
@@ -15,6 +14,6 @@ def get_csrf_cookie(request):
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("graphql/", jwt_cookie(GraphQLView.as_view(graphiql=settings.DEBUG))),
+    path("graphql/", GraphQLView.as_view(graphiql=settings.DEBUG)),
     path("get_csrf_cookie", get_csrf_cookie),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

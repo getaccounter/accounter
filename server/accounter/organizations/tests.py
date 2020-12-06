@@ -1,17 +1,17 @@
 from django.contrib.auth import get_user_model
-from graphql_jwt.testcases import JSONWebTokenTestCase
+from graphene_django.utils.testing import GraphQLTestCase
 
 from .models import Organization
 
 User = get_user_model()
 
 
-class OrganizationTestCase(JSONWebTokenTestCase):
+class OrganizationTestCase(GraphQLTestCase):
     def test_signup_mutation(self):
         email = "user@internet.cat"
         password = "some password"
         org_name = "SuperOrg"
-        response = self.client.execute(
+        response = self.query(
             """
               mutation SignUp($email: String!, $orgName: String!, $password: String!) {
                 signup(email: $email, orgName: $orgName, password: $password) {
@@ -19,9 +19,9 @@ class OrganizationTestCase(JSONWebTokenTestCase):
                 }
               }
             """,
-            {"email": email, "password": password, "orgName": org_name},
+            variables={"email": email, "password": password, "orgName": org_name},
         )
-        assert response.errors is None
+        self.assertResponseNoErrors(response)
         user = User.objects.get(email=email)
         assert user is not None
         assert user.email == email
@@ -35,7 +35,7 @@ class OrganizationTestCase(JSONWebTokenTestCase):
         org_name = "some org"
         # create user, so other user cannot be created because of duplication
         User.objects.create(username=email, email=email, password="somepassword")
-        response = self.client.execute(
+        response = self.query(
             """
               mutation SignUp($email: String!, $orgName: String!, $password: String!) {
                 signup(email: $email, orgName: $orgName, password: $password) {
@@ -43,9 +43,9 @@ class OrganizationTestCase(JSONWebTokenTestCase):
                 }
               }
             """,
-            {"email": email, "password": "short", "orgName": org_name},
+            variables={"email": email, "password": "short", "orgName": org_name},
         )
-        assert response.errors is not None
+        self.assertResponseHasErrors(response)
         users = User.objects.filter(email=email)
         orgs = Organization.objects.filter(name=org_name)
 

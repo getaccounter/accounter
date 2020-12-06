@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, Redirect, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/auth";
-import { useCSRFCookie } from "../../utils/csrf";
 import Notifications from "../Notifications";
 import { LockClosed } from "../icons/solid";
 
 export default function Login() {
-  useCSRFCookie();
-  const { isLoggedIn, signIn, signInError } = useAuth();
+  const { isSignedIn, signIn, signInError } = useAuth();
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [supressError, setSupressError] = useState(false);
@@ -17,7 +15,7 @@ export default function Login() {
   }, [signInError]);
 
   const location = useLocation();
-  return !isLoggedIn ? (
+  return !isSignedIn ? (
     <>
       {signInError && !supressError && (
         <Notifications

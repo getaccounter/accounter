@@ -1,75 +1,58 @@
-import { useEffect } from "react";
-import { gql, useMutation } from "@apollo/client";
-import React, { createContext, ReactNode, useContext } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import React, { createContext, ReactNode, useContext, useEffect } from "react";
 
-const isTokenStillValid = (expiry: number) => {
-  return Date.now() < expiry * 1000;
-};
-
-export const VERIFY_TOKEN_MUTATION = gql`
-  mutation VerifyToken {
-    verifyToken {
-      payload
+export const SESSION_INFO_QUERY = gql`
+  query SessionInfo {
+    sessionInfo {
+      signedIn
     }
   }
 `;
 
-export type Payload = {
-  username: string;
-  exp: number;
-  origIat: number;
-};
-
-export type VerificationResponse = {
-  verifyToken: {
-    payload: Payload;
+export type SessionInfoQueryResponse = {
+  sessionInfo: {
+    signedIn: boolean;
   };
 };
 
 export type VerificationParameters = void;
 
-const useIsLoggedIn = () => {
-  const [verify, { data, called, loading }] = useMutation<
-    VerificationResponse,
-    VerificationParameters
-  >(VERIFY_TOKEN_MUTATION, {
-    errorPolicy: "all",
-    onError: () => undefined,
-  });
-
-  const expiry = data?.verifyToken?.payload.exp;
-
-  // if it wasnt determined if user is logged in or not, it's set to undefined
-  const isLoggedIn =
-    called && !loading ? !!expiry && isTokenStillValid(expiry) : undefined;
-  return [verify, isLoggedIn] as [() => void, typeof isLoggedIn];
+const useIsSignedIn = () => {
+  const { refetch, data, loading } = useQuery<SessionInfoQueryResponse>(
+    SESSION_INFO_QUERY,
+    {
+      notifyOnNetworkStatusChange: true,
+    }
+  );
+  const isSignedIn = !loading ? data?.sessionInfo.signedIn : undefined;
+  return { recheck: refetch, isSignedIn };
 };
 
 export const LOGIN_MUTATION = gql`
-  mutation TokenAuth($username: String!, $password: String!) {
-    tokenAuth(username: $username, password: $password) {
-      payload
-      refreshExpiresIn
+  mutation Signin($email: String!, $password: String!) {
+    signin(email: $email, password: $password) {
+      status
+      message
     }
   }
 `;
 
 export type LoginResponse = {
-  tokenAuth: {
-    payload: Payload;
-    refreshExpiresIn: number;
+  signin: {
+    status: "success" | "error";
+    message: string;
   };
 };
 
 export type LoginParameters = {
-  username: string;
+  email: string;
   password: string;
 };
 
 const authContext = createContext<{
-  isLoggedIn?: boolean;
+  isSignedIn?: boolean;
   signInError?: string;
-  signIn: (username: string, password: string) => void;
+  signIn: (email: string, password: string) => void;
   signOut: () => void;
 }>(undefined!);
 
@@ -86,15 +69,15 @@ export default function AuthProvider({ children }: Props) {
     }
   );
 
-  const [checkIsLoggedIn, isLoggedIn] = useIsLoggedIn();
+  const { recheck, isSignedIn } = useIsSignedIn();
 
   useEffect(() => {
-    checkIsLoggedIn();
-  }, [checkIsLoggedIn, loginResponse.data?.tokenAuth]);
+    recheck();
+  }, [recheck, loginResponse.data]);
 
-  const signIn = (username: string, password: string) => {
+  const signIn = (email: string, password: string) => {
     login({
-      variables: { username, password },
+      variables: { email, password },
     });
   };
   const signOut = () => "TODO";
@@ -103,8 +86,11 @@ export default function AuthProvider({ children }: Props) {
     <authContext.Provider
       children={children}
       value={{
-        isLoggedIn,
-        signInError: loginResponse.error?.message,
+        isSignedIn,
+        signInError:
+          loginResponse.data?.signin.status === "error"
+            ? loginResponse.data.signin.message
+            : undefined,
         signIn,
         signOut,
       }}

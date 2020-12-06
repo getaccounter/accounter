@@ -7,9 +7,8 @@ import userEvent from "@testing-library/user-event";
 import AuthProvider from "../../contexts/auth";
 import { MemoryRouter, Route, Switch } from "react-router-dom";
 import {
-  getLoginQueryWithErrorMock,
+  getLoginFailureRequestMocks,
   getLoginRequestMocks,
-  loginParametersFactory,
 } from "../../contexts/auth.mocks";
 
 jest.mock("use-http", () => () => ({ loading: false }));
@@ -21,10 +20,10 @@ const Providers = ({ children }: { children: ReactNode }) => (
 );
 
 test("logs in and reroutes", async () => {
-  const username = "someuser";
+  const email = "some@user.internet";
   const password = "somepassword";
   const login = render(
-    <MockedProvider mocks={[...getLoginRequestMocks(username, password)]}>
+    <MockedProvider mocks={[...getLoginRequestMocks(email, password)]}>
       <Providers>
         <Switch>
           <Route exact path="/login">
@@ -40,11 +39,11 @@ test("logs in and reroutes", async () => {
 
   expect(login.queryByText("Success")).not.toBeInTheDocument();
 
-  const usernameInput = login.getByLabelText("Email address");
+  const emailInput = login.getByLabelText("Email address");
   const passwordInput = login.getByLabelText("Password");
   const loginButton = login.getByRole("button", { name: "Sign in" });
 
-  userEvent.type(usernameInput, username);
+  userEvent.type(emailInput, email);
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 
@@ -52,25 +51,23 @@ test("logs in and reroutes", async () => {
 });
 
 test("renders error message if something goes wrong", async () => {
-  const username = "someuser";
+  const email = "some@user.internet";
   const password = "somepassword";
   const errorMessage = "Your login failed!";
-  const loginQueryMock = getLoginQueryWithErrorMock(
-    loginParametersFactory.build({ username, password }),
-    errorMessage
-  );
   const login = render(
-    <MockedProvider mocks={[loginQueryMock]}>
+    <MockedProvider
+      mocks={[...getLoginFailureRequestMocks(email, password, errorMessage)]}
+    >
       <Providers>
         <Login />
       </Providers>
     </MockedProvider>
   );
-  const usernameInput = login.getByLabelText("Email address");
+  const emailInput = login.getByLabelText("Email address");
   const passwordInput = login.getByLabelText("Password");
   const loginButton = login.getByRole("button", { name: "Sign in" });
 
-  userEvent.type(usernameInput, username);
+  userEvent.type(emailInput, email);
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 
@@ -78,25 +75,26 @@ test("renders error message if something goes wrong", async () => {
 });
 
 test("supress error message", async () => {
-  const username = "someuser";
+  const email = "some@user.internet";
   const password = "somepassword";
   const errorMessage = "Your login failed!";
-  const loginQueryMock = getLoginQueryWithErrorMock(
-    loginParametersFactory.build({ username, password }),
-    errorMessage
-  );
   const login = render(
-    <MockedProvider mocks={[loginQueryMock, loginQueryMock]}>
+    <MockedProvider
+      mocks={[
+        ...getLoginFailureRequestMocks(email, password, errorMessage),
+        ...getLoginFailureRequestMocks(email, password, errorMessage),
+      ]}
+    >
       <Providers>
         <Login />
       </Providers>
     </MockedProvider>
   );
-  const usernameInput = login.getByLabelText("Email address");
+  const emailInput = login.getByLabelText("Email address");
   const passwordInput = login.getByLabelText("Password");
   const loginButton = login.getByRole("button", { name: "Sign in" });
 
-  userEvent.type(usernameInput, username);
+  userEvent.type(emailInput, email);
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 

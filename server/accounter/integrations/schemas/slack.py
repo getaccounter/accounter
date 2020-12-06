@@ -1,6 +1,6 @@
 import graphene
-from graphql_jwt.decorators import login_required
 
+from ...utils import signin_required
 from ..models import Service, SlackIntegration
 
 
@@ -11,7 +11,7 @@ class HandleCallback(graphene.Mutation):
 
     status = graphene.String()
 
-    @login_required
+    @signin_required
     def mutate(self, info, code: str, state: str):
         organization = info.context.user.admin.organization
         slack_service = Service.objects.get(name=Service.Types.SLACK)
