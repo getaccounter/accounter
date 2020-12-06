@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
-import { CheckCircle, XCircle, X } from "../icons/outline";
+import ReactDOM from "react-dom";
+import { CheckCircle, XCircle, X } from "../../../../components/icons/outline";
 
 // TODO
 /*animate entering and leaving:
@@ -11,17 +12,22 @@ import { CheckCircle, XCircle, X } from "../icons/outline";
     To: "opacity-0"
     */
 
+export type Type = "success" | "error";
+
 type Props = {
-  type: "success" | "error";
+  type: Type;
   headline: ReactNode;
   children: ReactNode;
   onClose: () => void;
 };
 
 const Notifications = ({ type, headline, onClose, children }: Props) => {
-  return (
+  return ReactDOM.createPortal(
     <>
-      <div className="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end">
+      <div
+        role="alert"
+        className="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end"
+      >
         <div className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
           <div className="p-4">
             <div className="flex items-start">
@@ -49,7 +55,8 @@ const Notifications = ({ type, headline, onClose, children }: Props) => {
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.getElementById("root")!
   );
 };
 

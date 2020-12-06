@@ -11,6 +11,7 @@ import { GRAPHQL_ENDPOINT } from "./config";
 import Root from "./Root";
 import { setContext } from "@apollo/client/link/context";
 import { getCSRFCookie, useCSRFCookie } from "./utils/csrf";
+import NotificationProvider from "./contexts/notification";
 
 const httpLink = createHttpLink({
   uri: GRAPHQL_ENDPOINT,
@@ -36,7 +37,9 @@ export default function App() {
     <ApolloProvider client={client}>
       <AuthProvider>
         <Router>
-          <Root />
+          <NotificationProvider>
+            <Root />
+          </NotificationProvider>
         </Router>
       </AuthProvider>
     </ApolloProvider>

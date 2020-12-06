@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Link, Redirect, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/auth";
-import Notifications from "../Notifications";
+import { useNotifications } from "../../contexts/notification";
 import { LockClosed } from "../icons/solid";
 
 export default function Login() {
+  const { addNotification } = useNotifications();
   const { isSignedIn, signIn, signInError } = useAuth();
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
-  const [supressError, setSupressError] = useState(false);
 
   useEffect(() => {
-    setSupressError(false);
-  }, [signInError]);
+    if (signInError) {
+      addNotification({
+        type: "error",
+        title: Math.random() || "Login Failed",
+        content: signInError,
+      });
+    }
+  }, [signInError, addNotification]);
 
   const location = useLocation();
   return !isSignedIn ? (
     <>
-      {signInError && !supressError && (
-        <Notifications
-          onClose={() => setSupressError(true)}
-          type="error"
-          headline="Login Failed"
-        >
-          {signInError}
-        </Notifications>
-      )}
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
