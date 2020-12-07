@@ -7,14 +7,14 @@ import { LockClosed } from "../icons/solid";
 export default function Login() {
   const { addNotification } = useNotifications();
   const { isSignedIn, signIn, signInError } = useAuth();
-  const [usernameInput, setUsernameInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
 
   useEffect(() => {
     if (signInError) {
       addNotification({
         type: "error",
-        title: Math.random() || "Login Failed",
+        title: "Login Failed",
         content: signInError,
       });
     }
@@ -39,7 +39,7 @@ export default function Login() {
             <p className="mt-2 text-center text-sm text-gray-600">
               Or
               <Link
-                to="#"
+                to="/signup"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 {" "}
@@ -51,7 +51,7 @@ export default function Login() {
             className="mt-8 space-y-6"
             onSubmit={(e) => {
               e.preventDefault();
-              signIn(usernameInput, passwordInput);
+              signIn(emailInput, passwordInput);
             }}
           >
             <div className="rounded-md shadow-sm -space-y-px">
@@ -60,8 +60,8 @@ export default function Login() {
                   Email address
                 </label>
                 <input
-                  value={usernameInput}
-                  onChange={(evt) => setUsernameInput(evt.target.value)}
+                  value={emailInput}
+                  onChange={(evt) => setEmailInput(evt.target.value)}
                   id="email-address"
                   name="email"
                   type="email"

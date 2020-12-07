@@ -26,8 +26,16 @@
 
 import "@testing-library/cypress/add-commands";
 
-Cypress.Commands.add("login", () => {
-  cy.findByLabelText("Email address").type("admin@getaccounter.io");
-  cy.findByLabelText("Password").type("password");
+Cypress.Commands.add("register", (email, organization, password) => {
+  cy.findByLabelText("Email address").type(email);
+  cy.findByLabelText("Org name").type(organization);
+  cy.findByLabelText("Password").type(password);
+  cy.findByRole("button", { name: "Sign up" }).click();
+});
+
+Cypress.Commands.add("login", (email, password) => {
+  cy.findByText("Sign in to your account").should("exist");
+  cy.findByLabelText("Email address").type(email);
+  cy.findByLabelText("Password").type(password);
   cy.findByText("Sign in").click();
 });

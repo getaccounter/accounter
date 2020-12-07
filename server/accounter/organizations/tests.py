@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
 
 from .models import Organization
@@ -22,10 +22,8 @@ class OrganizationTestCase(GraphQLTestCase):
             variables={"email": email, "password": password, "orgName": org_name},
         )
         self.assertResponseNoErrors(response)
-        user = User.objects.get(email=email)
+        user = authenticate(username=email, password=password)
         assert user is not None
-        assert user.email == email
-        assert user.password == password
         assert user.admin is not None
         assert user.admin.organization is not None
         assert user.admin.organization.name == org_name
