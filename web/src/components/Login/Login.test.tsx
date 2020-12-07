@@ -10,13 +10,18 @@ import {
   getLoginFailureRequestMocks,
   getLoginRequestMocks,
 } from "../../contexts/auth.mocks";
+import NotificationProvider from "../../contexts/notification";
 
 jest.mock("use-http", () => () => ({ loading: false }));
 
 const Providers = ({ children }: { children: ReactNode }) => (
-  <AuthProvider>
-    <MemoryRouter initialEntries={["/login"]}>{children}</MemoryRouter>
-  </AuthProvider>
+  <div id="root">
+    <AuthProvider>
+      <NotificationProvider>
+        <MemoryRouter initialEntries={["/login"]}>{children}</MemoryRouter>
+      </NotificationProvider>
+    </AuthProvider>
+  </div>
 );
 
 test("logs in and reroutes", async () => {
@@ -71,41 +76,5 @@ test("renders error message if something goes wrong", async () => {
   userEvent.type(passwordInput, password);
   userEvent.click(loginButton);
 
-  expect(await login.findByText(errorMessage)).toBeInTheDocument();
-});
-
-test("supress error message", async () => {
-  const email = "some@user.internet";
-  const password = "somepassword";
-  const errorMessage = "Your login failed!";
-  const login = render(
-    <MockedProvider
-      mocks={[
-        ...getLoginFailureRequestMocks(email, password, errorMessage),
-        ...getLoginFailureRequestMocks(email, password, errorMessage),
-      ]}
-    >
-      <Providers>
-        <Login />
-      </Providers>
-    </MockedProvider>
-  );
-  const emailInput = login.getByLabelText("Email address");
-  const passwordInput = login.getByLabelText("Password");
-  const loginButton = login.getByRole("button", { name: "Sign in" });
-
-  userEvent.type(emailInput, email);
-  userEvent.type(passwordInput, password);
-  userEvent.click(loginButton);
-
-  expect(await login.findByText(errorMessage)).toBeInTheDocument();
-
-  const closeButton = login.getByRole("button", { name: "Close" });
-  userEvent.click(closeButton);
-  // should be supressed
-  expect(login.queryByText(errorMessage)).not.toBeInTheDocument();
-
-  // but visible again at next try
-  userEvent.click(loginButton);
   expect(await login.findByText(errorMessage)).toBeInTheDocument();
 });
