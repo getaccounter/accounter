@@ -84,7 +84,7 @@ class ServiceTestCase(GraphQLTestCase):
         response = self.query(
             """
             mutation SlackMutation($code: String!, $state: String!) {
-                integrations {
+                oauth {
                     slack {
                         handleCallback(code: $code, state: $state) {
                             status
@@ -121,7 +121,7 @@ class ServiceTestCase(GraphQLTestCase):
         response = self.query(
             """
             mutation SlackMutation($code: String!, $state: String!) {
-                integrations {
+                oauth {
                     slack {
                         handleCallback(code: $code, state: $state) {
                             status
@@ -149,7 +149,7 @@ class ServiceTestCase(GraphQLTestCase):
         response = self.query(
             """
             mutation SlackMutation($code: String!, $state: String!) {
-                integrations {
+                oauth {
                     slack {
                         handleCallback(code: $code, state: $state) {
                             status

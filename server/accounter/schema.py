@@ -1,7 +1,7 @@
 import graphene
 
 from .integrations.models import Service
-from .integrations.schemas import Integrations, ServiceType
+from .integrations.schemas import Oauth, ServiceType
 from .organizations.schemas import Signup
 from .users.schemas import SessionInfoQuery, Signin
 from .utils import signin_required
@@ -9,8 +9,8 @@ from .utils import signin_required
 
 class Mutation(graphene.ObjectType):
     signin = Signin.Field()
-    integrations = graphene.Field(Integrations, default_value={})
     signup = Signup.Field()
+    oauth = graphene.Field(Oauth, default_value={})
 
 
 class Query(graphene.ObjectType):

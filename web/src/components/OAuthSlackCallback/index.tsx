@@ -13,7 +13,7 @@ type CallbackParameters = {
 
 export const LOGIN_MUTATION = gql`
   mutation SlackMutation($code: String!, $state: String!) {
-    integrations {
+    oauth {
       slack {
         handleCallback(code: $code, state: $state) {
           status
