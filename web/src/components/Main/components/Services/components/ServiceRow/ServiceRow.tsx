@@ -12,7 +12,9 @@ const UserIcon = ({ src }: { src: string }) => (
   />
 );
 
-const ServiceRow = (props: { service: Service; isNotInstalled?: boolean }) => {
+type Props = { service: Service; isNotInstalled?: boolean };
+
+const ServiceRow = (props: Props) => {
   return (
     <li>
       <a
