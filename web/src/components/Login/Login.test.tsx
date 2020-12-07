@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 
 import Login from "./";
@@ -42,7 +42,12 @@ test("logs in and reroutes", async () => {
     </MockedProvider>
   );
 
-  expect(login.queryByText("Success")).not.toBeInTheDocument();
+  // waits for Login page to be ready
+  await waitFor(() =>
+    expect(login.getByLabelText("Email address")).not.toHaveAttribute(
+      "disabled"
+    )
+  );
 
   const emailInput = login.getByLabelText("Email address");
   const passwordInput = login.getByLabelText("Password");
@@ -68,6 +73,14 @@ test("renders error message if something goes wrong", async () => {
       </Providers>
     </MockedProvider>
   );
+
+  // waits for Login page to be ready
+  await waitFor(() =>
+    expect(login.getByLabelText("Email address")).not.toHaveAttribute(
+      "disabled"
+    )
+  );
+
   const emailInput = login.getByLabelText("Email address");
   const passwordInput = login.getByLabelText("Password");
   const loginButton = login.getByRole("button", { name: "Sign in" });
