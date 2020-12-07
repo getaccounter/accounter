@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import OAuthSlackCallback from "./components/OAuthSlackCallback";
 import Main from "./components/Main";
 import PrivateRoute from "./components/ProtectedRoute";
+import Signup from "./components/Signup/Signup";
 
 export default function Root() {
   return (
@@ -11,6 +12,9 @@ export default function Root() {
       <Switch>
         <Route path="/login">
           <Login />
+        </Route>
+        <Route path="/signup">
+          <Signup />
         </Route>
         <Route exact path="/slack/oauth/callback">
           <OAuthSlackCallback />

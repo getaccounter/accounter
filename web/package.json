@@ -69,6 +69,8 @@
     ]
   },
   "devDependencies": {
-    "factory": "https://registry.npmjs.org/factory.ts/-/factory.ts-0.5.1.tgz"
+    "@types/faker": "5.1.5",
+    "factory": "https://registry.npmjs.org/factory.ts/-/factory.ts-0.5.1.tgz",
+    "faker": "5.1.0"
   }
 }
