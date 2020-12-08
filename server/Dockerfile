@@ -1,4 +1,4 @@
-FROM python:3.9.0 as development
+FROM python:3.9.1 as development
 ENV PYTHONUNBUFFERED True
 ENV PORT=8000
 ENV DEBUG=True
@@ -16,7 +16,7 @@ COPY . /code/
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD python manage.py runserver 0.0.0.0:$PORT
 
-FROM python:3.9.0 as production
+FROM python:3.9.1 as production
 ENV PYTHONUNBUFFERED True
 ENV PORT=8000
 ENV DEBUG=False
