@@ -27,13 +27,11 @@ export const loginResponseFactory = Factory.Sync.makeFactory<LoginResponse>({
   signin: signinFactory.build(),
 });
 
-export const loginResponseWithErrorFactory = Factory.Sync.makeFactory<
-  LoginResponse
+export const loginMutationRequestMock = Factory.Sync.makeFactory<
+  MockedResponse["request"]
 >({
-  signin: signinFactory.build({
-    status: "error",
-    message: "Please enter valid credentials.",
-  }),
+  query: LOGIN_MUTATION,
+  variables: loginParametersFactory.build(),
 });
 
 // move to factory.ts
@@ -41,28 +39,22 @@ const getLoginQueryMock = (
   variables: LoginParameters = loginParametersFactory.build(),
   data: LoginResponse = loginResponseFactory.build()
 ) => ({
-  request: {
-    query: LOGIN_MUTATION,
-    variables,
-  },
+  request: loginMutationRequestMock.build({
+    // @ts-expect-error for some reason TS complains here
+    variables: variables,
+  }),
   result: {
     data,
   },
 });
 
 // move to factory.ts
-export const getLoginQueryWithErrorMock = (
-  variables: LoginParameters = loginParametersFactory.build(),
-  data: LoginResponse = loginResponseWithErrorFactory.build()
-) => ({
-  request: {
-    query: LOGIN_MUTATION,
-    variables,
-  },
-  result: {
-    data,
-  },
-});
+export const loginQueryWithErrorMock = Factory.Sync.makeFactory<MockedResponse>(
+  {
+    request: loginMutationRequestMock.build(),
+    error: new Error("Please enter valid credentials."),
+  }
+);
 
 // session info query
 export const getSessionInfoQueryResponseMock = Factory.Sync.makeFactory<
@@ -84,20 +76,17 @@ export const sessionInfoQuerySignedInMock = Factory.Sync.makeFactory<
   },
 });
 
-export const sessionInfoQuerySignedOutMock = Factory.Sync.makeFactory<
-  MockedResponse
->({
-  request: {
-    query: SESSION_INFO_QUERY,
-  },
-  result: {
-    data: getSessionInfoQueryResponseMock.build({
-      sessionInfo: {
-        signedIn: false,
-      },
-    }),
-  },
-});
+export const sessionInfoQuerySignedOutMock = sessionInfoQuerySignedInMock.extend(
+  {
+    result: {
+      data: getSessionInfoQueryResponseMock.build({
+        sessionInfo: {
+          signedIn: false,
+        },
+      }),
+    },
+  }
+);
 
 export const getLoginRequestMocks = (email: string, password: string) => [
   sessionInfoQuerySignedOutMock.build(),
@@ -111,14 +100,15 @@ export const getLoginFailureRequestMocks = (
   errorMessage: string
 ) => [
   sessionInfoQuerySignedOutMock.build(),
-  getLoginQueryWithErrorMock(
-    loginParametersFactory.build({ email, password }),
-    loginResponseWithErrorFactory.build({
-      signin: signinFactory.build({
-        status: "error",
-        message: errorMessage,
+  loginQueryWithErrorMock.build({
+    request: loginMutationRequestMock.build({
+      // @ts-expect-error for some reason TS complains here
+      variables: loginParametersFactory.build({
+        email,
+        password,
       }),
-    })
-  ),
+    }),
+    error: new Error(errorMessage),
+  }),
   sessionInfoQuerySignedOutMock.build(),
 ];

@@ -88,6 +88,7 @@ class Service(models.Model):
 
 # Abstract Classes
 class AbstractIntegration(models.Model):
+    token = models.TextField()
     organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
 
     @property
@@ -111,8 +112,6 @@ class AbstractAccount(models.Model):
 
 # Slack
 class SlackIntegration(AbstractIntegration):
-    token = models.TextField()
-
     @property
     def service(self):
         return Service.objects.get(name=Service.Types.SLACK)

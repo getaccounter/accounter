@@ -39,7 +39,7 @@ export const LOGIN_MUTATION = gql`
 
 export type LoginResponse = {
   signin: {
-    status: "success" | "error";
+    status: "success";
     message: string;
   };
 };
@@ -61,7 +61,7 @@ type Props = {
 };
 
 export default function AuthProvider({ children }: Props) {
-  const [login, loginResponse] = useMutation<LoginResponse, LoginParameters>(
+  const [login, { data, error }] = useMutation<LoginResponse, LoginParameters>(
     LOGIN_MUTATION,
     {
       errorPolicy: "all",
@@ -73,7 +73,7 @@ export default function AuthProvider({ children }: Props) {
 
   useEffect(() => {
     recheck();
-  }, [recheck, loginResponse.data]);
+  }, [recheck, data]);
 
   const signIn = (email: string, password: string) => {
     login({
@@ -87,10 +87,7 @@ export default function AuthProvider({ children }: Props) {
       children={children}
       value={{
         isSignedIn,
-        signInError:
-          loginResponse.data?.signin.status === "error"
-            ? loginResponse.data.signin.message
-            : undefined,
+        signInError: error && error.message,
         signIn,
         signOut,
       }}
