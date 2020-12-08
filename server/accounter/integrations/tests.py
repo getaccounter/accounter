@@ -27,7 +27,6 @@ class ServiceTestCase(GraphQLTestCase):
             """
             {
                 services {
-                    id
                     name
                     logo
                     oauthUrl
@@ -49,7 +48,7 @@ class ServiceTestCase(GraphQLTestCase):
             """
             {
                 services {
-                    id
+                    name
                 }
             }
             """,
@@ -165,3 +164,109 @@ class ServiceTestCase(GraphQLTestCase):
         errors = content["errors"]
         assert (len(errors)) == 1
         assert errors[0]["message"] == "the state value is expired"
+
+
+class IntegrationTestCase(GraphQLTestCase):
+    def setUp(self):
+        email = "somerandomemail@internet.internet"
+        self.query(
+            """
+              mutation SignUp($email: String!, $orgName: String!, $password: String!) {
+                signup(email: $email, orgName: $orgName, password: $password) {
+                  status
+                }
+              }
+            """,
+            variables={
+                "email": email,
+                "password": "somepassword",
+                "orgName": "some_org",
+            },
+        )
+        self.user = get_user_model().objects.get(username=email)
+
+        email_other_user = "different@dude.internet"
+        self.query(
+            """
+              mutation SignUp($email: String!, $orgName: String!, $password: String!) {
+                signup(email: $email, orgName: $orgName, password: $password) {
+                  status
+                }
+              }
+            """,
+            variables={
+                "email": email_other_user,
+                "password": "somepassword",
+                "orgName": "some_other_org",
+            },
+        )
+        self.other_user = get_user_model().objects.get(username=email_other_user)
+
+    def test_get_integrations(self):
+        slack_integration = SlackIntegration.objects.create(
+            organization=self.user.admin.organization, token="some_token"
+        )
+        slack_integration.save()
+        self._client.force_login(self.user)
+        response = self.query(
+            """
+            query {
+                integrations {
+                    service {
+                        name
+                    }
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        assert len(content["data"]["integrations"]) == 1
+        assert (
+            content["data"]["integrations"][0]["service"]["name"]
+            == slack_integration.service.name
+        )
+
+    def test_get_integrations_requires_authenticated_users(self):
+        response = self.query(
+            """
+            query {
+                integrations {
+                    service {
+                        name
+                    }
+                }
+            }
+            """
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        assert content["data"]["integrations"] is None
+
+    def test_get_integrations_only_of_own_organization(self):
+        # integration of this org
+        SlackIntegration.objects.create(
+            organization=self.other_user.admin.organization, token="some_other_token"
+        ).save()
+
+        # integration of other org
+        SlackIntegration.objects.create(
+            organization=self.user.admin.organization, token="some_token"
+        ).save()
+        self._client.force_login(self.user)
+        response = self.query(
+            """
+            query {
+                integrations {
+                    service {
+                        name
+                    }
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        assert len(content["data"]["integrations"]) == 1

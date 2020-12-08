@@ -6,12 +6,11 @@ import AuthProvider, { useAuth } from "./auth";
 import userEvent from "@testing-library/user-event";
 import {
   loginParametersFactory,
-  getLoginQueryWithErrorMock,
   getLoginRequestMocks,
   sessionInfoQuerySignedInMock,
   sessionInfoQuerySignedOutMock,
-  loginResponseWithErrorFactory,
-  signinFactory,
+  loginQueryWithErrorMock,
+  loginMutationRequestMock,
 } from "./auth.mocks";
 
 const TestComponent = ({
@@ -78,15 +77,16 @@ test("provides error after login error", async () => {
   const password = "somepassword";
   const errorMessage = "Ahh shut";
 
-  const loginQueryMock = getLoginQueryWithErrorMock(
-    loginParametersFactory.build({ email, password }),
-    loginResponseWithErrorFactory.build({
-      signin: signinFactory.build({
-        status: "error",
-        message: errorMessage,
+  const loginQueryMock = loginQueryWithErrorMock.build({
+    request: loginMutationRequestMock.build({
+      // @ts-expect-error for some reason TS complains here
+      variables: loginParametersFactory.build({
+        email,
+        password,
       }),
-    })
-  );
+    }),
+    error: new Error(errorMessage),
+  });
   const container = render(
     <MockedProvider
       mocks={[
