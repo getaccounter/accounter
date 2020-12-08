@@ -1,4 +1,4 @@
-FROM cypress/included:6.0.1
+FROM cypress/included:6.1.0
 
 COPY package*.json ./
 RUN npm ci
