@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { useLocation } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
+
+type CallbackResponse = {
+  oauth: {
+    slack: {
+      handleCallback?: {
+        status: "success";
+      };
+    };
+  };
+};
 
 type CallbackParameters = {
   code: string;
@@ -26,25 +36,34 @@ export const LOGIN_MUTATION = gql`
 export default function OAuthSlackCallback() {
   const query = useQuery();
   const [errorMessage, setErrorMessage] = useState<string>();
-  const [handleCallback] = useMutation<void, CallbackParameters>(
-    LOGIN_MUTATION,
-    {
-      errorPolicy: "all",
-    }
-  );
+  const [handleCallback, { data, error }] = useMutation<
+    CallbackResponse,
+    CallbackParameters
+  >(LOGIN_MUTATION, {
+    errorPolicy: "all",
+  });
   const code = query.get("code");
   const state = query.get("state");
 
   useEffect(() => {
-    if (!code || !state) {
-      setErrorMessage("Something went wrong");
+    if (!code || !state || error?.message) {
+      setErrorMessage(error?.message || "Something went wrong");
     } else {
       handleCallback({ variables: { code, state } });
     }
-  }, [handleCallback, code, state]);
+  }, [handleCallback, code, state, error]);
+  const location = useLocation();
 
-  return (
+  return data?.oauth.slack.handleCallback?.status === "success" ? (
+    <Redirect
+      to={{
+        pathname: "/services",
+        state: { from: location },
+      }}
+    />
+  ) : (
     <div>
+      TODO CHANGE THIS PAGE
       <div>code: {query.get("code")}</div>
       <div>state: {query.get("state")}</div>
       <div>error: {errorMessage}</div>

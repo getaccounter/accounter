@@ -22,12 +22,18 @@ export const GET_SERVICE_LIST_QUERY = gql`
   }
 `;
 
-const ServiceTable = () => {
+type Props = {
+  className?: string;
+};
+
+const ServiceTable = ({ className = "" }: Props) => {
   const { data } = useQuery<ServiceListResponse>(GET_SERVICE_LIST_QUERY);
 
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-md">
-      <ul className="divide-y divide-gray-200">
+    <div
+      className={`bg-white shadow overflow-hidden sm:rounded-md ${className}`}
+    >
+      <ul aria-label="more-services" className="divide-y divide-gray-200">
         {data?.services.map((service) => (
           <ServiceRow key={service.name} service={service} isNotInstalled />
         ))}

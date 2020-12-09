@@ -16,13 +16,8 @@ type Props = { service: Service; isNotInstalled?: boolean };
 
 const ServiceRow = (props: Props) => {
   return (
-    <li>
-      <a
-        className="block hover:bg-gray-50"
-        href={props.service.oauthUrl}
-        target="_blank"
-        rel="noreferrer"
-      >
+    <li aria-label={props.service.name}>
+      <a className="block hover:bg-gray-50" href={props.service.oauthUrl}>
         <div className="px-4 py-4 flex items-center sm:px-6">
           <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
             <div className="flex items-center">
@@ -43,10 +38,12 @@ const ServiceRow = (props: Props) => {
             )}
           </div>
           <div className="ml-5 flex-shrink-0">
-            {false ? (
+            {props.isNotInstalled ? (
               <AddButton>Add</AddButton>
             ) : (
-              <ChevronRight className="h-5 w-5 text-gray-400" />
+              <button>
+                <ChevronRight className="h-5 w-5 text-gray-400" />
+              </button>
             )}
           </div>
         </div>

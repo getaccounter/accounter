@@ -38,6 +38,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_URL=database
+
+        # mock proxy settings
+      - USE_MOCK_PROXY=True
+      - HTTP_PROXY=mockserver:1080
+      - HTTPS_PROXY=mockserver:1080
     env_file:
       - ./server/.env
     volumes:
@@ -64,6 +69,11 @@ services:
     depends_on:
       - server
 
+  mockserver:
+    image: mockserver/mockserver:mockserver-5.11.2
+    ports:
+      - 1080:1080
+
   e2e:
     build: ./e2e-tests
     environment:
@@ -76,3 +86,4 @@ services:
       - /e2e/node_modules
     depends_on:
       - loadbalancer
+      - mockserver
