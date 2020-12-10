@@ -25,4 +25,4 @@ COPY --from=builder /code/build /build
 COPY docker-entrypoint.sh /
 COPY wait-for-it.sh /
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD npx serve@11.3.2 -n -p $PORT build
+CMD npx serve@11.3.2 -n -p $PORT -s build
