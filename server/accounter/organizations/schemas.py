@@ -1,6 +1,7 @@
 import graphene
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from graphene_django import DjangoObjectType
 
 from .models import Admin, Organization
 
@@ -25,3 +26,9 @@ class Signup(graphene.Mutation):
         admin.save()
 
         return Signup(status="success")
+
+
+class OrganizationType(DjangoObjectType):
+    class Meta:
+        model = Organization
+        fields = ("name",)

@@ -6,9 +6,10 @@ from django.contrib.auth import get_user_model
 from django.core.validators import URLValidator
 from django.test import override_settings
 from graphene_django.utils.testing import GraphQLTestCase
+from model_bakery import baker
 from slack_sdk.web import WebClient
 
-from ..organizations.models import Admin, Organization
+from ..organizations.models import Admin
 from .models import Service, SlackIntegration
 
 validateURL = URLValidator(message="not a valid url")
@@ -16,9 +17,8 @@ validateURL = URLValidator(message="not a valid url")
 
 class ServiceTestCase(GraphQLTestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create(
-            username="test", password="somepass"
-        )
+        admin = baker.make(Admin)
+        self.user = admin.user
 
     def test_services_query(self):
         self._client.force_login(self.user)
@@ -68,10 +68,6 @@ class ServiceTestCase(GraphQLTestCase):
     @patch.object(WebClient, "oauth_v2_access")
     def test_handle_callback(self, oauth_call_mock):
         self._client.force_login(self.user)
-        organization = Organization.objects.create(name="some org")
-        organization.save()
-        admin = Admin.objects.create(user=self.user, organization=organization)
-        admin.save()
 
         code = "somecode"
         state = "somestate"
@@ -101,16 +97,14 @@ class ServiceTestCase(GraphQLTestCase):
             redirect_uri="http://localhost:8080/slack/oauth/callback",
             code=code,
         )
-        slack_integration = SlackIntegration.objects.filter(organization=organization)
+        slack_integration = SlackIntegration.objects.filter(
+            organization=self.user.admin.organization
+        )
         assert len(slack_integration) == 1
         assert slack_integration.first().token == token
 
     def test_handle_callback_expired_state(self):
         self._client.force_login(self.user)
-        organization = Organization.objects.create(name="some org")
-        organization.save()
-        admin = Admin.objects.create(user=self.user, organization=organization)
-        admin.save()
 
         state = "somestate"
         service = Service.objects.get(name=Service.Types.SLACK)
@@ -140,10 +134,6 @@ class ServiceTestCase(GraphQLTestCase):
     def test_handle_callback_state_unknown(self):
 
         self._client.force_login(self.user)
-        organization = Organization.objects.create(name="some org")
-        organization.save()
-        admin = Admin.objects.create(user=self.user, organization=organization)
-        admin.save()
 
         response = self.query(
             """
