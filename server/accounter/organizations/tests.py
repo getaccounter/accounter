@@ -1,12 +1,25 @@
+import json
+
 from django.contrib.auth import authenticate, get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
+from model_bakery import baker
 
-from .models import Organization
+from .models import Admin, Organization
 
 User = get_user_model()
 
+# self._client.force_login(self.user)
+# organization = Organization.objects.create(name="some org")
+# organization.save()
+# admin = Admin.objects.create(user=self.user, organization=organization)
+# admin.save()
+
 
 class OrganizationTestCase(GraphQLTestCase):
+    def setUp(self):
+        admin = baker.make(Admin)
+        self.user = admin.user
+
     def test_signup_mutation(self):
         email = "user@internet.cat"
         password = "some password"
@@ -49,3 +62,19 @@ class OrganizationTestCase(GraphQLTestCase):
 
         assert len(users) == 1
         assert len(orgs) == 0
+
+    def test_get_organization(self):
+        self._client.force_login(self.user)
+        response = self.query(
+            """
+              {
+                organization {
+                  name
+                }
+              }
+            """,
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        organization = content["data"]["organization"]
+        assert organization["name"] == self.user.admin.organization.name
