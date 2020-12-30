@@ -4,20 +4,22 @@ from django.contrib.auth import authenticate, get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 
-from .models import Admin, Organization
+from .models import Admin, Organization, Profile
 
 User = get_user_model()
-
-# self._client.force_login(self.user)
-# organization = Organization.objects.create(name="some org")
-# organization.save()
-# admin = Admin.objects.create(user=self.user, organization=organization)
-# admin.save()
 
 
 class OrganizationTestCase(GraphQLTestCase):
     def setUp(self):
         admin = baker.make(Admin)
+        self.profiles = [
+            baker.make(
+                Profile,
+                organization=admin.organization,
+                user=baker.make(User, _fill_optional=True),
+                _fill_optional=True,
+            )
+        ]
         self.user = admin.user
 
     def test_signup_mutation(self):
@@ -70,6 +72,16 @@ class OrganizationTestCase(GraphQLTestCase):
               {
                 organization {
                   name
+                  profiles {
+                    email
+                    firstName
+                    lastName
+                    title
+                    isActive
+                    department {
+                      name
+                    }
+                  }
                 }
               }
             """,
@@ -78,3 +90,13 @@ class OrganizationTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         organization = content["data"]["organization"]
         assert organization["name"] == self.user.admin.organization.name
+        assert len(organization["profiles"]) == 1
+        response_profile = organization["profiles"][0]
+        assert response_profile["email"] == self.profiles[0].user.email
+        assert response_profile["firstName"] == self.profiles[0].user.first_name
+        assert response_profile["lastName"] == self.profiles[0].user.last_name
+        assert response_profile["title"] == self.profiles[0].title
+        assert response_profile["isActive"] == self.profiles[0].is_active
+        assert (
+            response_profile["department"]["name"] == self.profiles[0].department.name
+        )
