@@ -5,11 +5,11 @@ from django.core.exceptions import PermissionDenied
 
 class Signin(graphene.Mutation):
     class Arguments:
-        email = graphene.String()
-        password = graphene.String()
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
 
-    status = graphene.String()
-    message = graphene.String()
+    status = graphene.String(required=True)
+    message = graphene.String(required=True)
 
     def mutate(self, info, email: str, password: str):
         user = authenticate(request=info.context, username=email, password=password)
@@ -23,7 +23,7 @@ class Signin(graphene.Mutation):
 
 
 class SessionInfoQuery(graphene.ObjectType):
-    signed_in = graphene.Boolean()
+    signed_in = graphene.Boolean(required=True)
 
     @staticmethod
     def resolve_signed_in(parent, info, **kwargs):

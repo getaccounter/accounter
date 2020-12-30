@@ -8,11 +8,11 @@ from .models import Admin, Organization
 
 class Signup(graphene.Mutation):
     class Arguments:
-        org_name = graphene.String()
-        email = graphene.String()
-        password = graphene.String()
+        org_name = graphene.String(required=True)
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
 
-    status = graphene.String()
+    status = graphene.String(required=True)
 
     @transaction.atomic
     def mutate(self, info, org_name: str, email: str, password: str):
