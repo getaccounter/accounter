@@ -1,0 +1,25 @@
+apiVersion: skaffold/v2beta10
+kind: Config
+metadata:
+  name: accounter
+build:
+  artifacts:
+  - image: reversed-proxy
+    context: loadbalancer
+    docker:
+      dockerfile: Dockerfile
+  - image: server
+    context: server
+    docker:
+      dockerfile: Dockerfile
+  - image: web
+    context: web
+    docker:
+      dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - database/k8s.yaml
+    - loadbalancer/k8s.yaml
+    - server/k8s.yaml
+    - web/k8s.yml
