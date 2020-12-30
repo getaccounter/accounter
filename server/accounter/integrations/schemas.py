@@ -6,7 +6,7 @@ from .models import Service, SlackIntegration
 
 
 class ServiceType(DjangoObjectType):
-    oauth_url = graphene.String(source="oauth_url")
+    oauth_url = graphene.String(source="oauth_url", required=True)
 
     class Meta:
         model = Service
@@ -23,10 +23,10 @@ class IntegrationInterface(graphene.Interface):
 
 class HandleCallback(graphene.Mutation):
     class Arguments:
-        code = graphene.String()
-        state = graphene.String()
+        code = graphene.String(required=True)
+        state = graphene.String(required=True)
 
-    status = graphene.String()
+    status = graphene.String(required=True)
 
     @signin_required
     def mutate(self, info, code: str, state: str):
