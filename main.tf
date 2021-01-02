@@ -28,6 +28,11 @@ terraform {
   }
 }
 
+resource "digitalocean_container_registry" "accounter-repo" {
+  name                   = "accounter"
+  subscription_tier_slug = "starter"
+}
+
 resource "digitalocean_database_cluster" "postgres" {
   name       = "database"
   engine     = "pg"
