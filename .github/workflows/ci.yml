@@ -102,7 +102,7 @@ jobs:
       # Deploy
       - name: django deployment check
         if: github.ref == 'refs/heads/master'
-        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deployment
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
 
       - name: Install doctl
         if: github.ref == 'refs/heads/master'
