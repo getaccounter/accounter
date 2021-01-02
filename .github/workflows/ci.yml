@@ -95,68 +95,26 @@ jobs:
               body: output
             })
 
-      # Deploy
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master'
         run: terraform apply -auto-approve
 
-      - name: prepare cloud run manifests
-        if: github.ref == 'refs/heads/master'
-        run: |
-          envsubst '${GITHUB_SHA}' < server/cloudrun.template.yaml > server/cloudrun.yaml
-          envsubst '${GITHUB_SHA}' < web/cloudrun.template.yaml > web/cloudrun.yaml
-          envsubst '${GITHUB_SHA}' < loadbalancer/cloudrun.template.yaml > loadbalancer/cloudrun.yaml
-
+      # Deploy
       - name: django deployment check
         if: github.ref == 'refs/heads/master'
-        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deployment
 
-      - name: Login to google cloud run
+      - name: Install doctl
         if: github.ref == 'refs/heads/master'
-        uses: google-github-actions/setup-gcloud@master
+        uses: digitalocean/action-doctl@v2.1.0
         with:
-          version: "312.0.0"
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          export_default_credentials: true
+          token: ${{ secrets.TF_VAR_DO_TOKEN }}
 
-      - name: prepare image deployments
-        if: github.ref == 'refs/heads/master'
-        run: gcloud auth configure-docker
-
-      - name: deploy images to google container registry
+      - name: deploy images to DO registry
         if: github.ref == 'refs/heads/master'
         run: |
-          docker tag server.production $IMAGE_REGISTRY_TAG_SERVER
-          docker tag web.production $IMAGE_REGISTRY_TAG_WEB
-          docker tag loadbalancer $IMAGE_REGISTRY_TAG_LOADBALANCER
-          docker push $IMAGE_REGISTRY_TAG_SERVER
-          docker push $IMAGE_REGISTRY_TAG_WEB
-          docker push $IMAGE_REGISTRY_TAG_LOADBALANCER
+          docker tag server.production registry.digitalocean.com/accounter/server
+          docker tag web.production registry.digitalocean.com/accounter/web
 
-      - name: deploy server to production
-        if: github.ref == 'refs/heads/master'
-        uses: google-github-actions/deploy-cloudrun@main
-        env:
-          GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
-        with:
-          region: europe-west1
-          metadata: ./server/cloudrun.yaml
-
-      - name: deploy web to production
-        if: github.ref == 'refs/heads/master'
-        uses: google-github-actions/deploy-cloudrun@main
-        env:
-          GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
-        with:
-          region: europe-west1
-          metadata: ./web/cloudrun.yaml
-
-      - name: deploy loadbalancer to production
-        if: github.ref == 'refs/heads/master'
-        uses: google-github-actions/deploy-cloudrun@main
-        env:
-          GCLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }} # due to bug, can be removed when using action verson > 0.1.3
-        with:
-          region: europe-west1
-          metadata: ./loadbalancer/cloudrun.yaml
+          docker push registry.digitalocean.com/accounter/server
+          docker push registry.digitalocean.com/accounter/web
