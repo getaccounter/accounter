@@ -1,11 +1,7 @@
 variable "do_token" {}
-variable "do_space_access_id" {}
-variable "do_space_access_secret" {}
 
 provider "digitalocean" {
-  token             = var.do_token
-  spaces_access_id  = var.do_space_access_id
-  spaces_secret_key = var.do_space_access_secret
+  token = var.do_token
 }
 
 terraform {
@@ -26,6 +22,15 @@ terraform {
     bucket                      = "accounter-terraform-backend" // name of your space
     key                         = "production/terraform.tfstate"
   }
+}
+
+resource "digitalocean_database_cluster" "postgres" {
+  name       = "database"
+  engine     = "pg"
+  version    = "12"
+  size       = "db-s-1vcpu-1gb"
+  region     = "ams3"
+  node_count = 1
 }
 
 resource "digitalocean_spaces_bucket" "terraform-backend" {
