@@ -1,3 +1,13 @@
+variable "do_token" {}
+variable "do_space_access_id" {}
+variable "do_space_access_secret" {}
+
+provider "digitalocean" {
+  token             = var.do_token
+  spaces_access_id  = var.do_space_access_id
+  spaces_secret_key = var.do_space_access_secret
+}
+
 terraform {
   required_providers {
     digitalocean = {
@@ -5,12 +15,22 @@ terraform {
       version = "2.3.0"
     }
   }
+
+  backend "s3" {
+    # access_key                = AWS_ACCESS_KEY_ID env var
+    # secret_key                = AWS_SECRET_ACCESS_KEY env var
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+    endpoint                    = "https://ams3.digitaloceanspaces.com"
+    region                      = "eu-west-1"
+    bucket                      = "accounter-terraform-backend" // name of your space
+    key                         = "production/terraform.tfstate"
+  }
 }
 
-variable "do_token" {}
-
-provider "digitalocean" {
-  token = var.do_token
+resource "digitalocean_spaces_bucket" "terraform-backend" {
+  name   = "accounter-terraform-backend"
+  region = "ams3"
 }
 
 resource "digitalocean_kubernetes_cluster" "accounter" {
