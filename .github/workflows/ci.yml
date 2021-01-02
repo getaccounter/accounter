@@ -115,6 +115,8 @@ jobs:
         run: |
           docker tag server.production registry.digitalocean.com/accounter/server
           docker tag web.production registry.digitalocean.com/accounter/web
+          
+          doctl registry login
 
           docker push registry.digitalocean.com/accounter/server
           docker push registry.digitalocean.com/accounter/web
