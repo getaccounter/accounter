@@ -1,7 +1,11 @@
 variable "do_token" {}
+variable "do_space_access_id" {}
+variable "do_space_access_secret" {}
 
 provider "digitalocean" {
-  token = var.do_token
+  token             = var.do_token
+  spaces_access_id  = var.do_space_access_id
+  spaces_secret_key = var.do_space_access_secret
 }
 
 terraform {
