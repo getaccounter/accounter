@@ -4,7 +4,7 @@ metadata:
   name: accounter
 build:
   artifacts:
-  - image: reversed-proxy
+  - image: reverse-proxy
     context: loadbalancer
     docker:
       dockerfile: Dockerfile
@@ -19,7 +19,19 @@ build:
 deploy:
   kubectl:
     manifests:
-    - database/k8s.yaml
     - loadbalancer/k8s.yaml
     - server/k8s.yaml
     - web/k8s.yml
+    - k8s/registry-secret.yaml
+
+# profiles:
+# - name: development
+#   activation:
+#     - command: dev
+#   deploy:
+#     kubectl:
+#       manifests:
+#       - database/k8s.yaml
+#       - loadbalancer/k8s.yaml
+#       - server/k8s.yaml
+#       - web/k8s.yml

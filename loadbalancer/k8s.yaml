@@ -1,30 +1,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: reversed-proxy
+  name: reverse-proxy
 spec:
   ports:
     - port: 8080
   type: LoadBalancer
   selector:
-    app: reversed-proxy
+    app: reverse-proxy
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: reversed-proxy
+  name: reverse-proxy
 spec:
   selector:
     matchLabels:
-      app: reversed-proxy
+      app: reverse-proxy
   template:
     metadata:
       labels:
-        app: reversed-proxy
+        app: reverse-proxy
     spec:
+      imagePullSecrets:
+        - name: registry-accounter
       containers:
-        - name: reversed-proxy
-          image: reversed-proxy
+        - name: reverse-proxy
+          image: reverse-proxy
           env:
             - name: PORT
               value: "8080"
