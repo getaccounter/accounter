@@ -30,7 +30,7 @@ terraform {
 
 resource "digitalocean_container_registry" "accounter-repo" {
   name                   = "accounter"
-  subscription_tier_slug = "starter"
+  subscription_tier_slug = "basic"
 }
 
 resource "digitalocean_database_cluster" "postgres" {
