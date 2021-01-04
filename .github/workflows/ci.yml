@@ -134,4 +134,5 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |
           doctl registry login
-          KUBECONFIG=k8s/kubeconfig.yaml skaffold run
+          doctl kubernetes cluster kubeconfig save accounter
+          skaffold run
