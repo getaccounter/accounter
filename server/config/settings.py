@@ -54,7 +54,7 @@ DEBUG = get_bool_env_value("DEBUG")
 ALLOWED_HOSTS = [
     "localhost",
     "server",  # docker-compose setup
-    "server-benpx3qpfa-ew.a.run.app",  # direct server address
+    "server.production"  # docker-compose setup
 ]
 
 
