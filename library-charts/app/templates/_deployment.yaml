@@ -1,0 +1,22 @@
+{{- define "app.deployment.tpl" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      imagePullSecrets:
+        - name: registry-accounter
+      containers:
+        -
+{{- end -}}
+{{- define "app.deployment" -}}
+{{- include "app.util.merge" (append . "app.deployment.tpl") -}}
+{{- end -}}

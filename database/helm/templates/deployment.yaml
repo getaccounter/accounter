@@ -1,19 +1,10 @@
-# Only for dev
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: database
+{{- include "app.deployment" (list . "database.deployment") -}}
+{{- define "database.deployment" -}}
 spec:
-  selector:
-    matchLabels:
-      app: database
   template:
-    metadata:
-      labels:
-        app: database
     spec:
       containers:
-        - name: database
+        - name: {{ .Chart.Name }}
           image: registry.hub.docker.com/library/postgres:12.4-alpine
           env:
             - name: POSTGRES_DB
@@ -23,4 +14,5 @@ spec:
             - name: POSTGRES_PASSWORD
               value: "postgres"
           ports:
-            - containerPort: 5432
+            - containerPort: {{ .Values.port }}
+{{- end -}}

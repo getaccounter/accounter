@@ -1,34 +1,14 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: server
+{{- include "app.deployment" (list . "server.deployment") -}}
+{{- define "server.deployment" -}}
 spec:
-  ports:
-    - port: 8000
-  selector:
-    app: server
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: server
-spec:
-  selector:
-    matchLabels:
-      app: server
   template:
-    metadata:
-      labels:
-        app: server
     spec:
-      imagePullSecrets:
-        - name: registry-accounter
       containers:
-        - name: server
-          image: server
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image }}
           env:
             - name: PORT
-              value: "8000"
+              value: "{{ .Values.port }}"
             - name: POSTGRES_DB
               value: "postgres"
             - name: POSTGRES_USER
@@ -42,4 +22,5 @@ spec:
             - name: SLACK_CLIENT_SECRET
               value: ""
           ports:
-            - containerPort: 8000
+            - containerPort: {{ .Values.port }}
+{{- end -}}

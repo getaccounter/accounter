@@ -1,0 +1,3 @@
+{{- include "app.service" (list . "database.service") -}}
+{{- define "database.service" -}}
+{{- end -}}

@@ -1,3 +1,7 @@
+# terraform
 .terraform
 *.tfstate.backup
 terraform.tfstate
+
+# k8s
+helm/charts

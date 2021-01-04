@@ -1,6 +1,6 @@
 #!/bin/sh
 
-./wait-for-it.sh -s $POSTGRES_URL:5432 -- echo "Database accepts connections"
+./wait-for-it.sh -s $POSTGRES_URL:5432 -t 60 -- echo "Database accepts connections"
 
 python manage.py migrate
 
