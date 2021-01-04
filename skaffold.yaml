@@ -4,41 +4,72 @@ metadata:
   name: accounter
 build:
   artifacts:
-  - image: reverse-proxy
-    context: loadbalancer
-    docker:
-      dockerfile: Dockerfile
-  - image: server
-    context: server
-    docker:
-      dockerfile: Dockerfile
-  - image: web
-    context: web
-    docker:
-      dockerfile: Dockerfile
+    - image: reverse-proxy
+      context: loadbalancer
+      docker:
+        dockerfile: Dockerfile
+    - image: server
+      context: server
+      docker:
+        dockerfile: Dockerfile
+    - image: web
+      context: web
+      docker:
+        dockerfile: Dockerfile
 
 profiles:
-- name: production
-  activation:
-    - command: run
-  deploy:
-    kubeContext: do-ams3-accounter
-    kubectl:
-      manifests:
-      - loadbalancer/k8s.yaml
-      - server/k8s.yaml
-      - web/k8s.yml
-      - k8s/registry-secret.yaml
+  - name: production
+    activation:
+      - command: run
+    deploy:
+      kubeContext: minikube
+      helm:
+        releases:
 
-- name: development
-  activation:
-    - command: dev
-  deploy:
-    kubeContext: minikube
-    kubectl:
-      manifests:
-      - database/k8s.yaml
-      - loadbalancer/k8s.yaml
-      - server/k8s.yaml
-      - web/k8s.yml
+          - name: web
+            chartPath: web/helm
+            skipBuildDependencies: true
+            artifactOverrides:
+              image: web
 
+          - name: server
+            chartPath: server/helm
+            skipBuildDependencies: true
+            artifactOverrides:
+              image: server
+
+          - name: loadbalancer
+            chartPath: loadbalancer/helm
+            skipBuildDependencies: true
+            artifactOverrides:
+              image: reverse-proxy
+
+  - name: development
+    activation:
+      - command: dev
+    deploy:
+      kubeContext: minikube
+      helm:
+        releases:
+
+          - name: web
+            chartPath: web/helm
+            skipBuildDependencies: true
+            artifactOverrides:
+              image: web
+
+          - name: server
+            chartPath: server/helm
+            skipBuildDependencies: true
+            artifactOverrides:
+              image: server
+
+          - name: loadbalancer
+            chartPath: loadbalancer/helm
+            skipBuildDependencies: true
+            artifactOverrides:
+              image: reverse-proxy
+
+          - name: database
+            chartPath: database/helm
+            skipBuildDependencies: true

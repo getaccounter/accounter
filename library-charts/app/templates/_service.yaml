@@ -1,0 +1,14 @@
+{{- define "app.service.tpl" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  ports:
+    - port: {{ .Values.port }}
+  selector:
+    app: {{ .Chart.Name }}
+{{- end -}}
+{{- define "app.service" -}}
+{{- include "app.util.merge" (append . "app.service.tpl") -}}
+{{- end -}}

@@ -54,7 +54,7 @@ DEBUG = get_bool_env_value("DEBUG")
 ALLOWED_HOSTS = [
     "localhost",
     "server",  # docker-compose setup
-    "accounter-server-benpx3qpfa-ew.a.run.app",  # direct server address
+    "server-benpx3qpfa-ew.a.run.app",  # direct server address
 ]
 
 

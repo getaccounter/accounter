@@ -134,5 +134,6 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |
           doctl registry login
+          doctl registry kubernetes-manifest > k8s/registry-secret.yaml
           doctl kubernetes cluster kubeconfig save accounter
           skaffold run
