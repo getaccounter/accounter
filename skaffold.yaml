@@ -28,21 +28,21 @@ profiles:
 
           - name: web
             chartPath: web/helm
-            skipBuildDependencies: true
             artifactOverrides:
               image: web
 
           - name: server
             chartPath: server/helm
-            skipBuildDependencies: true
             artifactOverrides:
               image: server
 
           - name: loadbalancer
             chartPath: loadbalancer/helm
-            skipBuildDependencies: true
             artifactOverrides:
               image: reverse-proxy
+
+          - name: database
+            chartPath: database/prod/helm
 
   - name: development
     activation:
@@ -71,5 +71,5 @@ profiles:
               image: reverse-proxy
 
           - name: database
-            chartPath: database/helm
+            chartPath: database/dev/helm
             skipBuildDependencies: true
