@@ -23,6 +23,9 @@ profiles:
       - command: dev
     deploy:
       kubeContext: minikube
+      kubectl:
+        manifests:
+        - k8s/database-credentials.yaml
       helm:
         releases:
           - name: web
@@ -73,6 +76,9 @@ profiles:
                 alias: DEVELOPMENT_IMAGE
     deploy:
       kubeContext: do-ams3-accounter
+      kubectl:
+        manifests:
+        - k8s/database-credentials.yaml
       helm:
         releases:
           - name: web

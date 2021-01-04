@@ -125,6 +125,11 @@ jobs:
           curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
           sudo install skaffold /usr/local/bin/
 
+      - name: get k8s secrets
+        if: github.ref == 'refs/heads/master'
+        run: |
+          echo ${{ secrets.DATABASE_CREDENTIALS }} | base64 --decode > k8s/database-credentials.yaml
+
       - name: deploy images to DO registry
         if: github.ref == 'refs/heads/master'
         run: |

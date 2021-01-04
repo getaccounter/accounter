@@ -4,4 +4,4 @@
 terraform.tfstate
 
 # k8s
-helm/charts
+**/helm/charts
