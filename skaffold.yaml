@@ -22,7 +22,7 @@ profiles:
     activation:
       - command: run
     deploy:
-      kubeContext: minikube
+      kubeContext: do-ams3-accounter
       helm:
         releases:
 
