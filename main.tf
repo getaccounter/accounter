@@ -42,6 +42,15 @@ resource "digitalocean_database_cluster" "postgres" {
   node_count = 1
 }
 
+resource "digitalocean_database_firewall" "example-fw" {
+  cluster_id = digitalocean_database_cluster.postgres.id
+
+  rule {
+    type  = "k8s"
+    value = digitalocean_kubernetes_cluster.accounter.id
+  }
+}
+
 resource "digitalocean_spaces_bucket" "terraform-backend" {
   name   = "accounter-terraform-backend"
   region = "ams3"
