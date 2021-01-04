@@ -16,22 +16,29 @@ build:
     context: web
     docker:
       dockerfile: Dockerfile
-deploy:
-  kubectl:
-    manifests:
-    - loadbalancer/k8s.yaml
-    - server/k8s.yaml
-    - web/k8s.yml
-    - k8s/registry-secret.yaml
 
-# profiles:
-# - name: development
-#   activation:
-#     - command: dev
-#   deploy:
-#     kubectl:
-#       manifests:
-#       - database/k8s.yaml
-#       - loadbalancer/k8s.yaml
-#       - server/k8s.yaml
-#       - web/k8s.yml
+profiles:
+- name: production
+  activation:
+    - command: run
+  deploy:
+    kubeContext: do-ams3-accounter
+    kubectl:
+      manifests:
+      - loadbalancer/k8s.yaml
+      - server/k8s.yaml
+      - web/k8s.yml
+      - k8s/registry-secret.yaml
+
+- name: development
+  activation:
+    - command: dev
+  deploy:
+    kubeContext: minikube
+    kubectl:
+      manifests:
+      - database/k8s.yaml
+      - loadbalancer/k8s.yaml
+      - server/k8s.yaml
+      - web/k8s.yml
+
