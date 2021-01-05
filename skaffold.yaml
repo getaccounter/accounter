@@ -17,42 +17,61 @@ build:
       docker:
         dockerfile: Dockerfile
 
+deploy:
+  kubeContext: minikube
+  kubectl:
+    manifests:
+    - k8s/database-credentials.yaml
+  helm:
+    releases:
+        # replace skipBuildDependencies to prevent build loop with helm
+      - name: web
+        chartPath: web/helm
+        skipBuildDependencies: true
+        artifactOverrides:
+          image: web.development
+
+      - name: server
+        chartPath: server/helm
+        skipBuildDependencies: true
+        artifactOverrides:
+          image: server.development
+
+      - name: loadbalancer
+        chartPath: loadbalancer/helm
+        skipBuildDependencies: true
+        artifactOverrides:
+          image: reverse-proxy
+
+      - name: database
+        chartPath: database/dev/helm
+        skipBuildDependencies: true
+
+      - name: mockserver
+        chartPath: mockserver/helm
+        skipBuildDependencies: true
+
+
 profiles:
-  - name: development
-    activation:
-      - command: dev
-    deploy:
-      kubeContext: minikube
-      kubectl:
-        manifests:
-        - k8s/database-credentials.yaml
-      helm:
-        releases:
-          - name: web
-            chartPath: web/helm
-            skipBuildDependencies: true
-            artifactOverrides:
-              image: web.development
-
-          - name: server
-            chartPath: server/helm
-            skipBuildDependencies: true
-            artifactOverrides:
-              image: server.development
-
-          - name: loadbalancer
-            chartPath: loadbalancer/helm
-            skipBuildDependencies: true
-            artifactOverrides:
-              image: reverse-proxy
-
-          - name: database
-            chartPath: database/dev/helm
-            skipBuildDependencies: true
+  - name: CI
+    patches:
+      - op: replace
+        path: /deploy/helm/releases/0/skipBuildDependencies
+        value: false
+      - op: replace
+        path: /deploy/helm/releases/1/skipBuildDependencies
+        value: false
+      - op: replace
+        path: /deploy/helm/releases/2/skipBuildDependencies
+        value: false
+      - op: replace
+        path: /deploy/helm/releases/3/skipBuildDependencies
+        value: false
+      - op: replace
+        path: /deploy/helm/releases/4/skipBuildDependencies
+        value: false
 
   - name: production
-    activation:
-      - command: run
     patches:
       - op: add
         path: /build/artifacts/-
@@ -74,6 +93,22 @@ profiles:
             requires:
               - image: web.development
                 alias: DEVELOPMENT_IMAGE
+      - op: replace
+        path: /deploy/helm/releases/0/skipBuildDependencies
+        value: false
+      - op: replace
+        path: /deploy/helm/releases/1/skipBuildDependencies
+        value: false
+      - op: replace
+        path: /deploy/helm/releases/2/skipBuildDependencies
+        value: false
+      - op: replace
+        path: /deploy/helm/releases/3/skipBuildDependencies
+        value: false
+      - op: replace
+        path: /deploy/helm/releases/4/skipBuildDependencies
+        value: false
+        
     deploy:
       kubeContext: do-ams3-accounter
       kubectl:

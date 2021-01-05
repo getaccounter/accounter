@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+
+  # server:
+  #   environment:
+  #       # mock proxy settings
+  #     - USE_MOCK_PROXY=True
+  #     - HTTP_PROXY=mockserver:1080
+  #     - HTTPS_PROXY=mockserver:1080
+
+  # web:
+  #   environment:
+  #     - CI=${CI}
+
+  # mockserver:
+  #   image: mockserver/mockserver:mockserver-5.11.2
+  #   ports:
+  #     - 1080:1080
+
+  e2e:
+    build: ./e2e-tests
+    environment:
+      - LOADBALANCER_HOST=localhost
+      - LOADBALANCER_PORT=8080
+      - CYPRESS_baseUrl=http://localhost:8080
+    working_dir: /e2e
+    volumes:
+      - ./e2e-tests:/e2e
+      - /e2e/node_modules
+    network_mode: host

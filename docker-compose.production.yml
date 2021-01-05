@@ -55,12 +55,3 @@ services:
       - database
     volumes:
       - ./server:/code
-
-  loadbalancer:
-    environment:
-      - PORT=8080
-      - PROTOCOL=http
-      - WEB_HOST=web.production
-      - WEB_PORT=3000
-      - SERVER_HOST=server.production
-      - SERVER_PORT=8000
