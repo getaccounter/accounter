@@ -12,9 +12,15 @@ spec:
             - name: POSTGRES_DB
               value: "postgres"
             - name: POSTGRES_USER
-              value: "postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: user
             - name: POSTGRES_PASSWORD
-              value: "postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
             - name: POSTGRES_URL
               value: "database"
             - name: SLACK_CLIENT_ID
