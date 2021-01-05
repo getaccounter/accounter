@@ -2,11 +2,66 @@ version: "3.8"
 
 services:
   web:
+    entrypoint: /usr/bin/env
+    command: sleep 300
+
+  web.production:
     image: web.production
     build:
-      target: production
+      context: ./web
+      dockerfile: Dockerfile.production
+      args:
+        DEVELOPMENT_IMAGE: web.development
+    environment:
+      - CI=${CI}
+      - PORT=3000
+      - SERVER_HOST=server.production
+      - SERVER_PORT=8000
+    volumes:
+      - ./web:/code
+      - /code/node_modules
+    stdin_open: true
+    depends_on:
+      - server
+      - web
 
   server:
+    entrypoint: /usr/bin/env
+    command: sleep 300
+
+  server.production:
     image: server.production
     build:
-      target: production
+      context: ./server
+      dockerfile: Dockerfile.production
+      args:
+        DEVELOPMENT_IMAGE: server.development
+
+    environment:
+      - PORT=8000
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_URL=database
+      - POSTGRES_SSL=False
+
+        # mock proxy settings
+      - USE_MOCK_PROXY=True
+      - HTTP_PROXY=mockserver:1080
+      - HTTPS_PROXY=mockserver:1080
+    env_file:
+      - ./server/.env
+    depends_on:
+      - server
+      - database
+    volumes:
+      - ./server:/code
+
+  loadbalancer:
+    environment:
+      - PORT=8080
+      - PROTOCOL=http
+      - WEB_HOST=web.production
+      - WEB_PORT=3000
+      - SERVER_HOST=server.production
+      - SERVER_PORT=8000
