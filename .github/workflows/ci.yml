@@ -34,9 +34,7 @@ jobs:
           docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
 
       - name: typechecking
-        run: |
-          docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run typecheck
-          docker-compose run --no-deps --entrypoint /usr/bin/env server pyright
+        run: docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run typecheck
 
       - name: unit tests
         run: |
