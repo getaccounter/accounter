@@ -1,4 +1,4 @@
-Django==3.1.4
+Django==3.1.5
 psycopg2-binary==2.8.6
 markdown==3.3.3
 graphene-django==2.15.0
