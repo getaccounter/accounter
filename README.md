@@ -41,5 +41,4 @@ docker-compose exec web npm run lint
 
 ```
 docker-compose exec web npm run typecheck
-docker-compose exec server pyright
 ```
