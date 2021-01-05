@@ -43,7 +43,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_URL=database
-      - POSTGRES_SSL=False
 
         # mock proxy settings
       - USE_MOCK_PROXY=True
