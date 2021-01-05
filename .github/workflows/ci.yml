@@ -78,6 +78,11 @@ jobs:
           curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
           sudo dpkg -i minikube_latest_amd64.deb
 
+      # this should somehow work automaticly
+      - name: add helm repos
+        run: |
+          helm dependency update loadbalancer/helm/
+
       - name: end-to-end tests # change to production build
         run: |
           docker-compose -f docker-compose.qa.yml pull
