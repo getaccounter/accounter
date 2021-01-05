@@ -144,7 +144,7 @@ jobs:
         run: |
           echo ${{ secrets.DATABASE_CREDENTIALS }} | base64 --decode > k8s/database-credentials.yaml
 
-      - name: deploy images to DO registry
+      - name: Deploy
         if: github.ref == 'refs/heads/master'
         run: |
           doctl registry login
