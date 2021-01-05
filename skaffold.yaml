@@ -8,42 +8,16 @@ build:
       context: loadbalancer
       docker:
         dockerfile: Dockerfile
-    - image: server
+    - image: server.development
       context: server
       docker:
         dockerfile: Dockerfile
-    - image: web
+    - image: web.development
       context: web
       docker:
         dockerfile: Dockerfile
 
 profiles:
-  - name: production
-    activation:
-      - command: run
-    deploy:
-      kubeContext: do-ams3-accounter
-      helm:
-        releases:
-
-          - name: web
-            chartPath: web/helm
-            artifactOverrides:
-              image: web
-
-          - name: server
-            chartPath: server/helm
-            artifactOverrides:
-              image: server
-
-          - name: loadbalancer
-            chartPath: loadbalancer/helm
-            artifactOverrides:
-              image: reverse-proxy
-
-          - name: database
-            chartPath: database/prod/helm
-
   - name: development
     activation:
       - command: dev
@@ -51,18 +25,17 @@ profiles:
       kubeContext: minikube
       helm:
         releases:
-
           - name: web
             chartPath: web/helm
             skipBuildDependencies: true
             artifactOverrides:
-              image: web
+              image: web.development
 
           - name: server
             chartPath: server/helm
             skipBuildDependencies: true
             artifactOverrides:
-              image: server
+              image: server.development
 
           - name: loadbalancer
             chartPath: loadbalancer/helm
@@ -73,3 +46,46 @@ profiles:
           - name: database
             chartPath: database/dev/helm
             skipBuildDependencies: true
+
+  - name: production
+    activation:
+      - command: run
+    patches:
+      - op: add
+        path: /build/artifacts/-
+        value:
+            image: server.production
+            context: server
+            docker:
+              dockerfile: Dockerfile.production
+            requires:
+              - image: server.development
+                alias: DEVELOPMENT_IMAGE
+      - op: add
+        path: /build/artifacts/-
+        value:
+            image: web.production
+            context: web
+            docker:
+              dockerfile: Dockerfile.production
+            requires:
+              - image: web.development
+                alias: DEVELOPMENT_IMAGE
+    deploy:
+      kubeContext: do-ams3-accounter
+      helm:
+        releases:
+          - name: web
+            chartPath: web/helm
+            artifactOverrides:
+              image: web.production
+          - name: server
+            chartPath: server/helm
+            artifactOverrides:
+              image: server.production
+          - name: loadbalancer
+            chartPath: loadbalancer/helm
+            artifactOverrides:
+              image: reverse-proxy
+          - name: database
+            chartPath: database/prod/helm
