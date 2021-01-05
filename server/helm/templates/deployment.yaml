@@ -27,6 +27,8 @@ spec:
               value: ""
             - name: SLACK_CLIENT_SECRET
               value: ""
+            - name: POSTGRES_SSL
+              value: "True"
           ports:
             - containerPort: {{ .Values.port }}
 {{- end -}}
