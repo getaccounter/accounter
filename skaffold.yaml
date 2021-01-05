@@ -93,21 +93,6 @@ profiles:
             requires:
               - image: web.development
                 alias: DEVELOPMENT_IMAGE
-      - op: replace
-        path: /deploy/helm/releases/0/skipBuildDependencies
-        value: false
-      - op: replace
-        path: /deploy/helm/releases/1/skipBuildDependencies
-        value: false
-      - op: replace
-        path: /deploy/helm/releases/2/skipBuildDependencies
-        value: false
-      - op: replace
-        path: /deploy/helm/releases/3/skipBuildDependencies
-        value: false
-      - op: replace
-        path: /deploy/helm/releases/4/skipBuildDependencies
-        value: false
         
     deploy:
       kubeContext: do-ams3-accounter
