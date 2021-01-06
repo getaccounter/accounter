@@ -1,11 +1,7 @@
 variable "do_token" {}
-variable "do_space_access_id" {}
-variable "do_space_access_secret" {}
 
 provider "digitalocean" {
   token             = var.do_token
-  spaces_access_id  = var.do_space_access_id
-  spaces_secret_key = var.do_space_access_secret
 }
 
 terraform {
@@ -23,8 +19,8 @@ terraform {
     skip_metadata_api_check     = true
     endpoint                    = "https://ams3.digitaloceanspaces.com"
     region                      = "eu-west-1"
-    bucket                      = digitalocean_spaces_bucket.terraform-backend.name // name of your space
-    key                         = "production/terraform.tfstate"
+    bucket                      = "accounter-tf-backend" // name of your space
+    key                         = "provider/terraform.tfstate"
   }
 }
 
@@ -42,18 +38,13 @@ resource "digitalocean_database_cluster" "postgres" {
   node_count = 1
 }
 
-resource "digitalocean_database_firewall" "example-fw" {
+resource "digitalocean_database_firewall" "database-fw" {
   cluster_id = digitalocean_database_cluster.postgres.id
 
   rule {
     type  = "k8s"
     value = digitalocean_kubernetes_cluster.accounter.id
   }
-}
-
-resource "digitalocean_spaces_bucket" "terraform-backend" {
-  name   = "accounter-terraform-backend"
-  region = "ams3"
 }
 
 resource "digitalocean_kubernetes_cluster" "accounter" {

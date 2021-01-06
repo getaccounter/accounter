@@ -99,14 +99,14 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: terraform -chdir=provider init
 
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: terraform -chdir=provider validate -no-color
 
       - id: plan
-        run: terraform plan -no-color
+        run: terraform -chdir=provider plan -no-color
 
       - uses: actions/github-script@0.9.0
         if: github.event_name == 'pull_request'
@@ -132,7 +132,7 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/master'
-        run: terraform apply -auto-approve
+        run: terraform -chdir=provider apply -auto-approve
 
       # Deploy
       - name: django deployment check
