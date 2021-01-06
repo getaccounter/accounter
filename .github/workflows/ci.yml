@@ -67,21 +67,33 @@ jobs:
         id: validate
         run: terraform -chdir=provider validate -no-color
 
-      - id: plan
+      - id: plan-provider
         run: terraform -chdir=provider plan -no-color
+
+      - id: plan-cluster
+        run: terraform -chdir=accounter plan -no-color
 
       - uses: actions/github-script@0.9.0
         if: github.event_name == 'pull_request'
         env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+          PROVIDER_PLAN: "terraform\n${{ steps.plan-provider.outputs.stdout }}"
+          CLUSTER_PLAN: "terraform\n${{ steps.plan-cluster.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            const output = `#### Terraform Plan 📖
 
-            <details><summary>Show Plan</summary>
+            <details>
+            <summary>Show Provider Plan</summary>
 
-            \`\`\`${process.env.PLAN}\`\`\`
+            \`\`\`${process.env.PROVIDER_PLAN}\`\`\`
+
+            </details>
+
+            <details>
+            <summary>Show Cluster Plan</summary>
+
+            \`\`\`${process.env.CLUSTER_PLAN}\`\`\`
 
             </details>`;
 
