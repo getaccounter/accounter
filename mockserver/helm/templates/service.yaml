@@ -1,3 +1,0 @@
-{{- include "app.service" (list . "mockserver.service") -}}
-{{- define "mockserver.service" -}}
-{{- end -}}

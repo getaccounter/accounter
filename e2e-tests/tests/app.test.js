@@ -3,7 +3,7 @@ const faker = require("faker");
 var mockServerClient = require("mockserver-client").mockServerClient;
 
 const mockSlack = () => {
-  mockServerClient("localhost", 1080)
+  mockServerClient("mockserver", 1080)
     .mockAnyResponse({
       httpRequest: {
         method: "POST",

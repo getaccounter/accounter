@@ -5,13 +5,14 @@ on:
   pull_request:
     branches: [master]
 
-env:
+env:  
+  IMAGE_REGISTRY: registry.digitalocean.com/accounter/
   AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACE_ACCESS_ID }} # says AWS, but is for digital ocean spaces
   AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACE_ACCESS_SECRET }} # says AWS, but is for digital ocean spaces
   TF_VAR_do_token: ${{ secrets.TF_VAR_DO_TOKEN }}
   TF_VAR_do_space_access_id: ${{ secrets.DO_SPACE_ACCESS_ID }}
   TF_VAR_do_space_access_secret: ${{ secrets.DO_SPACE_ACCESS_SECRET}}
-  SKAFFOLD_DEFAULT_REPO: registry.digitalocean.com/accounter
+  TF_VAR_image_tag: ${{ github.sha }}
 
 jobs:
   health-checks:
@@ -52,47 +53,8 @@ jobs:
       - name: check migrations
         run: docker-compose -f docker-compose.yml run --entrypoint /usr/bin/env server python manage.py makemigrations --check
 
-      - name: setup kubectl
-        run: |
-          sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2 curl
-          curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-          echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-          sudo apt-get update
-          sudo apt-get install -y kubectl
-
-      - name: setup helm
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
-          sudo apt-get install apt-transport-https --yes
-          echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
-
-      - name: setup skaffold
-        run: |
-          curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
-          sudo install skaffold /usr/local/bin/
-
-      - name: setup minikube
-        run: |
-          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
-          sudo dpkg -i minikube_latest_amd64.deb
-
-      # this should somehow work automaticly
-      - name: add helm repos
-        run: |
-          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo add jetstack https://charts.jetstack.io
-
-      - name: end-to-end tests # change to production build
-        run: |
-          docker-compose -f docker-compose.qa.yml pull
-          minikube start --cpus 2 --memory 4000
-          skaffold run -p CI
-          kubectl port-forward deployment/mockserver 1080 1080 &
-          kubectl port-forward deployment/loadbalancer 8080 8080 &
-          docker-compose -f docker-compose.qa.yml up --exit-code-from e2e
-          minikube delete
+      - name: end-to-end tests production build
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --build --exit-code-from e2e
 
       # Terraform
       - uses: hashicorp/setup-terraform@v1
@@ -130,10 +92,6 @@ jobs:
               body: output
             })
 
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/master'
-        run: terraform -chdir=provider apply -auto-approve
-
       # Deploy
       - name: django deployment check
         if: github.ref == 'refs/heads/master'
@@ -150,10 +108,20 @@ jobs:
         run: |
           echo ${{ secrets.DATABASE_CREDENTIALS }} | base64 --decode > k8s/database-credentials.yaml
 
-      - name: Deploy
+      - name: deploy images to registry
         if: github.ref == 'refs/heads/master'
         run: |
           doctl registry login
-          doctl registry kubernetes-manifest > k8s/registry-secret.yaml
+          docker tag server.production $IMAGE_REGISTRY/server
+          docker tag web.production $IMAGE_REGISTRY/web
+          docker tag loadbalancer $IMAGE_REGISTRY/loadbalancer
+          docker push $IMAGE_REGISTRY/server
+          docker push $IMAGE_REGISTRY/web
+          docker push $IMAGE_REGISTRY/loadbalancer
+
+      - name: Deploy
+        if: github.ref == 'refs/heads/master'
+        run: |
           doctl kubernetes cluster kubeconfig save accounter
-          skaffold run -p production
+          terraform -chdir=provider apply -auto-approve
+          terraform -chdir=accounter apply -auto-approve

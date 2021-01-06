@@ -8,6 +8,25 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
+  loadbalancer:
+    image: loadbalancer
+    build: ./loadbalancer
+    volumes:
+      - ./loadbalancer/nginx.conf.template:/etc/nginx/nginx.conf.template
+      - ./loadbalancer/docker-entrypoint.sh:/docker-entrypoint.sh
+    environment:
+      - PORT=8080
+      - PROTOCOL=http
+      - WEB_HOST=web
+      - WEB_PORT=3000
+      - SERVER_HOST=server
+      - SERVER_PORT=8000
+    ports:
+      - 8080:8080
+    depends_on:
+      - web
+      - server
+
   server:
     image: server.development
     build:
@@ -28,6 +47,8 @@ services:
       - ./server/.env
     volumes:
       - ./server:/code
+    ports:
+      - 8000:8000
     depends_on:
       - database
 
@@ -47,3 +68,22 @@ services:
     stdin_open: true
     depends_on:
       - server
+
+  mockserver:
+    image: mockserver/mockserver:mockserver-5.11.2
+    ports:
+      - 1080:1080
+
+  e2e:
+    build: ./e2e-tests
+    environment:
+      - LOADBALANCER_HOST=loadbalancer
+      - LOADBALANCER_PORT=8080
+      - CYPRESS_baseUrl=http://loadbalancer:8080
+    working_dir: /e2e
+    volumes:
+      - ./e2e-tests:/e2e
+      - /e2e/node_modules
+    depends_on:
+      - loadbalancer
+      - mockserver

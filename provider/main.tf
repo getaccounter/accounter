@@ -1,7 +1,7 @@
 variable "do_token" {}
 
 provider "digitalocean" {
-  token             = var.do_token
+  token = var.do_token
 }
 
 terraform {
@@ -24,12 +24,12 @@ terraform {
   }
 }
 
-resource "digitalocean_container_registry" "accounter-repo" {
+resource "digitalocean_container_registry" "accounter" {
   name                   = "accounter"
   subscription_tier_slug = "basic"
 }
 
-resource "digitalocean_database_cluster" "postgres" {
+resource "digitalocean_database_cluster" "database" {
   name       = "database"
   engine     = "pg"
   version    = "12"
@@ -39,7 +39,7 @@ resource "digitalocean_database_cluster" "postgres" {
 }
 
 resource "digitalocean_database_firewall" "database-fw" {
-  cluster_id = digitalocean_database_cluster.postgres.id
+  cluster_id = digitalocean_database_cluster.database.id
 
   rule {
     type  = "k8s"
