@@ -1,4 +1,4 @@
-FROM node:15.5.0-alpine as development
+FROM node:15.5.1-alpine as development
 RUN apk update && apk add bash
 ENV PORT=3000
 RUN mkdir /code
