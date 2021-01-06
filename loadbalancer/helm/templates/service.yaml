@@ -1,8 +1,0 @@
-{{- include "app.service" (list . "loadbalancer.service") -}}
-{{- define "loadbalancer.service" -}}
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 8080
-    targetPort: 8080
-{{- end -}}
