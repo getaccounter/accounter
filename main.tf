@@ -23,7 +23,7 @@ terraform {
     skip_metadata_api_check     = true
     endpoint                    = "https://ams3.digitaloceanspaces.com"
     region                      = "eu-west-1"
-    bucket                      = "accounter-terraform-backend" // name of your space
+    bucket                      = digitalocean_spaces_bucket.terraform-backend.name // name of your space
     key                         = "production/terraform.tfstate"
   }
 }
