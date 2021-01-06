@@ -50,7 +50,7 @@ describe("The Home Page", () => {
   });
 });
 
-describe.only("Services", () => {
+describe("Services", () => {
   it("add slack", () => {
     const user = faker.helpers.userCard();
     const password = faker.internet.password();
