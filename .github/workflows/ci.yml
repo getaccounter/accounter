@@ -56,32 +56,53 @@ jobs:
       - name: end-to-end tests production build
         run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --build --exit-code-from e2e
 
-      # Terraform
+      
       - uses: hashicorp/setup-terraform@v1
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.1.0
+        with:
+          token: ${{ secrets.TF_VAR_DO_TOKEN }}
 
       - name: Terraform Init
         id: init
-        run: terraform -chdir=provider init
+        run: |
+          doctl kubernetes cluster kubeconfig save accounter
+          terraform -chdir=provider init
+          terraform -chdir=accounter init
 
       - name: Terraform Validate
         id: validate
-        run: terraform -chdir=provider validate -no-color
+        run: |
+          terraform -chdir=provider validate -no-color
+          terraform -chdir=accounter validate -no-color
 
-      - id: plan
+      - id: plan-provider
         run: terraform -chdir=provider plan -no-color
+
+      - id: plan-cluster
+        run: terraform -chdir=accounter plan -no-color
 
       - uses: actions/github-script@0.9.0
         if: github.event_name == 'pull_request'
         env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+          PROVIDER_PLAN: "terraform\n${{ steps.plan-provider.outputs.stdout }}"
+          CLUSTER_PLAN: "terraform\n${{ steps.plan-cluster.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            const output = `#### Terraform Plan 📖
 
-            <details><summary>Show Plan</summary>
+            <details>
+            <summary>Show Provider Plan</summary>
 
-            \`\`\`${process.env.PLAN}\`\`\`
+            \`\`\`${process.env.PROVIDER_PLAN}\`\`\`
+
+            </details>
+
+            <details>
+            <summary>Show Cluster Plan</summary>
+
+            \`\`\`${process.env.CLUSTER_PLAN}\`\`\`
 
             </details>`;
 
@@ -97,17 +118,6 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
 
-      - name: Install doctl
-        if: github.ref == 'refs/heads/master'
-        uses: digitalocean/action-doctl@v2.1.0
-        with:
-          token: ${{ secrets.TF_VAR_DO_TOKEN }}
-
-      - name: get k8s secrets
-        if: github.ref == 'refs/heads/master'
-        run: |
-          echo ${{ secrets.DATABASE_CREDENTIALS }} | base64 --decode > k8s/database-credentials.yaml
-
       - name: deploy images to registry
         if: github.ref == 'refs/heads/master'
         run: |
@@ -122,6 +132,5 @@ jobs:
       - name: Deploy
         if: github.ref == 'refs/heads/master'
         run: |
-          doctl kubernetes cluster kubeconfig save accounter
           terraform -chdir=provider apply -auto-approve
           terraform -chdir=accounter apply -auto-approve
