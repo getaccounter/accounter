@@ -115,7 +115,7 @@ DATABASES = {
         "USER": get_env_value("POSTGRES_USER"),
         "PASSWORD": get_env_value("POSTGRES_PASSWORD"),
         "HOST": get_env_value("POSTGRES_URL"),
-        "PORT": 5432,
+        "PORT": get_env_value("POSTGRES_PORT"),
         'OPTIONS': {'sslmode': 'prefer'},
     }
 }

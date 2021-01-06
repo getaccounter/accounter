@@ -38,6 +38,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_URL=database
+      - POSTGRES_PORT=5432
 
         # mock proxy settings
       - USE_MOCK_PROXY=True

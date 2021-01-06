@@ -10,14 +10,6 @@ variable "image_tag" {
   default = "latest"
 }
 
-variable "image_registry_auth" {
-  description = "dockerconfigjson for the image registry to pull from"
-  type        = string
-  sensitive   = true
-  # TODO REMOVE ME!!!!!!!!!!!
-  default = "NGQzMmJlODI3ZTI3NjEyNTBlMTk1MTdjMmM5YzE1MDY3YmNhMWFkZDVlZjdlNDM0N2Q4MzZmMzI5ZmU0MjE1Nzo0ZDMyYmU4MjdlMjc2MTI1MGUxOTUxN2MyYzljMTUwNjdiY2ExYWRkNWVmN2U0MzQ3ZDgzNmYzMjlmZTQyMTU3"
-}
-
 provider "kubernetes" {}
 
 provider "helm" {
@@ -66,6 +58,9 @@ data "digitalocean_container_registry" "accounter" {
   name = "accounter"
 }
 
+resource "digitalocean_container_registry_docker_credentials" "accounter" {
+  registry_name = "accounter"
+}
 
 locals {
   web = {
@@ -76,40 +71,9 @@ locals {
   }
   database = {
     ip : "10.110.0.7"
-    port : 5432
   }
   loadbalancer = {
     port: 8080
-  }
-}
-
-resource "kubernetes_service" "database" {
-  metadata {
-    name = "database"
-  }
-  spec {
-    port {
-      port        = local.database.port
-      target_port = data.digitalocean_database_cluster.database.port
-    }
-    selector = {
-      "app" = "database"
-    }
-  }
-}
-
-resource "kubernetes_endpoints" "database" {
-  metadata {
-    name = "database"
-  }
-  subset {
-    address {
-      ip = local.database.ip
-    }
-
-    port {
-      port = data.digitalocean_database_cluster.database.port
-    }
   }
 }
 
@@ -133,15 +97,7 @@ resource "kubernetes_secret" "registry-accounter" {
   }
 
   data = {
-    ".dockerconfigjson" = <<DOCKER
-{
-  "auths": {
-    "${data.digitalocean_container_registry.accounter.server_url}": {
-      "auth": "${var.image_registry_auth}"
-    }
-  }
-}
-DOCKER
+    ".dockerconfigjson" = digitalocean_container_registry_docker_credentials.accounter.docker_credentials
   }
 }
 
@@ -179,7 +135,7 @@ resource "kubernetes_deployment" "server" {
           }
           env {
             name  = "PORT"
-            value = tostring(local.server.port)
+            value = local.server.port
           }
           env {
             name  = "POSTGRES_DB"
@@ -203,9 +159,13 @@ resource "kubernetes_deployment" "server" {
               }
             }
           }
-          env {
+          env { 
             name  = "POSTGRES_URL"
-            value = kubernetes_service.database.metadata[0].name
+            value = data.digitalocean_database_cluster.database.private_host
+          }
+          env { 
+            name  = "POSTGRES_PORT"
+            value = data.digitalocean_database_cluster.database.port
           }
           env {
             name  = "SLACK_CLIENT_ID"
@@ -416,4 +376,3 @@ resource "kubernetes_ingress" "loadbalancer" {
     helm_release.ingress-nginx,
   ]
 }
-
