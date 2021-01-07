@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "loadbalancer" {
 
       spec {
         image_pull_secrets {
-          name = var.image_pull_secret
+          name = var.image_pull_secret_name
         }
         container {
           image = "registry.digitalocean.com/accounter/loadbalancer:${var.image_tag}"
