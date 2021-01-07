@@ -10,10 +10,10 @@ services:
 
   loadbalancer:
     image: loadbalancer
-    build: ./loadbalancer
+    build: ./accounter/loadbalancer
     volumes:
-      - ./loadbalancer/nginx.conf.template:/etc/nginx/nginx.conf.template
-      - ./loadbalancer/docker-entrypoint.sh:/docker-entrypoint.sh
+      - ./accounter/loadbalancer/nginx.conf.template:/etc/nginx/nginx.conf.template
+      - ./accounter/loadbalancer/docker-entrypoint.sh:/docker-entrypoint.sh
     environment:
       - PORT=8080
       - PROTOCOL=http
