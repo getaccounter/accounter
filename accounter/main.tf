@@ -80,10 +80,10 @@ module "server" {
   image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   database = {
-    database = data.digitalocean_database_cluster.database.database
+    database                = data.digitalocean_database_cluster.database.database
     credentials_secret_name = kubernetes_secret.database-credentials.metadata[0].name
-    url = data.digitalocean_database_cluster.database.private_host
-    port = data.digitalocean_database_cluster.database.port
+    url                     = data.digitalocean_database_cluster.database.private_host
+    port                    = data.digitalocean_database_cluster.database.port
   }
 }
 
