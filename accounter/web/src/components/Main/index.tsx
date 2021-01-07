@@ -7,19 +7,6 @@ import SideBar from "./components/Sidebar";
 import Content from "./components/Content";
 import Directory from "./components/Directory";
 
-const TABS = [
-  {
-    label: "Services",
-    path: "/services",
-    content: <Services />,
-  },
-  {
-    label: "Users",
-    path: "/users",
-    content: <Users />,
-  },
-];
-
 const TO_DETERMINE = () => (
   <div className="lg:hidden">
     <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5">
