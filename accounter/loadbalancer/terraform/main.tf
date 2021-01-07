@@ -66,11 +66,10 @@ resource "kubernetes_service" "loadbalancer" {
   metadata {
     name = "loadbalancer"
     annotations = {
-      "kubernetes.digitalocean.com/load-balancer-id" = "3d0701a2-7cfb-440d-bed1-c93fc55ac319"
+      "kubernetes.digitalocean.com/load-balancer-id" = "b1b5e9aa-77cf-4545-b063-0cf5fa2192d6"
     }
   }
   spec {
-    type = "LoadBalancer"
     port {
       port        = var.port
       target_port = var.port
