@@ -1,5 +1,5 @@
 import React from "react";
-import Content from "../Content";
+import Content from "../_Content";
 import Header from "../Header";
 import AddMoreServices from "./components/AddMoreServices";
 import Integrations from "./components/Integrations";

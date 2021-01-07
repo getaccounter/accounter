@@ -1,5 +1,5 @@
 import React from "react";
-import Content from "../Content";
+import Content from "../_Content";
 import Header from "../Header";
 import UserTable from "./components/UserTable";
 
