@@ -1,15 +1,3 @@
-variable "do_token" {
-  description = "DO access token"
-  type        = string
-  sensitive   = true
-}
-
-variable "image_tag" {
-  description = "tag of mages to use"
-  type        = string
-  default = "latest"
-}
-
 provider "kubernetes" {}
 
 provider "helm" {
@@ -73,7 +61,7 @@ locals {
     ip : "10.110.0.7"
   }
   loadbalancer = {
-    port: 8080
+    port : 8080
   }
 }
 
@@ -159,11 +147,11 @@ resource "kubernetes_deployment" "server" {
               }
             }
           }
-          env { 
+          env {
             name  = "POSTGRES_URL"
             value = data.digitalocean_database_cluster.database.private_host
           }
-          env { 
+          env {
             name  = "POSTGRES_PORT"
             value = data.digitalocean_database_cluster.database.port
           }
@@ -330,11 +318,14 @@ resource "kubernetes_deployment" "loadbalancer" {
 resource "kubernetes_service" "loadbalancer" {
   metadata {
     name = "loadbalancer"
+    annotations = {
+      "kubernetes.digitalocean.com/load-balancer-id" = "3d0701a2-7cfb-440d-bed1-c93fc55ac319"
+    }
   }
   spec {
     type = "LoadBalancer"
     port {
-      port = local.loadbalancer.port
+      port        = local.loadbalancer.port
       target_port = local.loadbalancer.port
     }
     selector = {
@@ -371,7 +362,7 @@ resource "kubernetes_ingress" "loadbalancer" {
         }
       }
     }
-  }  
+  }
   depends_on = [
     helm_release.ingress-nginx,
   ]
