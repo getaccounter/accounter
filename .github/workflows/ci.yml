@@ -6,7 +6,7 @@ on:
     branches: [master]
 
 env:  
-  IMAGE_REGISTRY: registry.digitalocean.com/accounter/
+  IMAGE_REGISTRY: registry.digitalocean.com/accounter
   AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACE_ACCESS_ID }} # says AWS, but is for digital ocean spaces
   AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACE_ACCESS_SECRET }} # says AWS, but is for digital ocean spaces
   TF_VAR_do_token: ${{ secrets.TF_VAR_DO_TOKEN }}
