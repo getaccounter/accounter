@@ -5,7 +5,7 @@ variable "do_token" {
 }
 
 variable "image_tag" {
-  description = "tag of mages to use"
+  description = "tag of images to use"
   type        = string
-  default     = "e09116801642220cb6e28762cd035042ee1cab82"
+  default     = "latest"
 }

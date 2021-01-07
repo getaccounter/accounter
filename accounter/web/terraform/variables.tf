@@ -1,5 +1,5 @@
 variable "image_tag" {
-  description = "tag of mages to use"
+  description = "tag of images to use"
   type        = string
 }
 
@@ -11,19 +11,11 @@ variable "image_pull_secret_name" {
 variable "port" {
   description = "Port for loadbalancer to listen to"
   type        = number
-  default = 8080
+  default = 3000
 }
 
 variable "server" {
   description = "Endpoint of the server"
-  type = object({
-    host = string
-    port = number
-  })
-}
-
-variable "web" {
-  description = "Endpoint of the web app"
   type = object({
     host = string
     port = number

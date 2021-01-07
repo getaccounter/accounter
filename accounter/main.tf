@@ -51,17 +51,11 @@ resource "digitalocean_container_registry_docker_credentials" "accounter" {
 }
 
 locals {
-  web = {
-    port = 3000
-  }
   server = {
     port = 8000
   }
   database = {
     ip : "10.110.0.7"
-  }
-  loadbalancer = {
-    port : 8080
   }
 }
 
@@ -182,82 +176,27 @@ resource "kubernetes_service" "server" {
   }
 }
 
-resource "kubernetes_deployment" "web" {
-  metadata {
-    name = "web"
-    labels = {
-      app = "web"
-    }
-  }
+module "web" {
+  source = "./web/terraform"
 
-  spec {
-    selector {
-      match_labels = {
-        app = "web"
-      }
-    }
+  image_tag = var.image_tag
+  image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
-    template {
-      metadata {
-        labels = {
-          app = "web"
-        }
-      }
-
-      spec {
-        image_pull_secrets {
-          name = kubernetes_secret.registry-accounter.metadata[0].name
-        }
-        container {
-          image = "registry.digitalocean.com/accounter/web:${var.image_tag}"
-          name  = "web"
-          port {
-            container_port = local.web.port
-          }
-          env {
-            name  = "PORT"
-            value = tostring(local.web.port)
-          }
-          env {
-            name  = "SERVER_HOST"
-            value = kubernetes_service.server.metadata[0].name
-          }
-          env {
-            name  = "SERVER_PORT"
-            value = local.server.port
-          }
-        }
-      }
-    }
-  }
-}
-
-
-
-resource "kubernetes_service" "web" {
-  metadata {
-    name = "web"
-  }
-  spec {
-    port {
-      port = local.web.port
-    }
-    selector = {
-      app = "web"
-    }
+  server = {
+    host = kubernetes_service.server.metadata[0].name
+    port = local.server.port
   }
 }
 
 module "loadbalancer" {
   source = "./loadbalancer/terraform"
 
-  port = local.loadbalancer.port
   image_tag = var.image_tag
-  image_pull_secret = kubernetes_secret.registry-accounter.metadata[0].name
+  image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   web = {
-    host = kubernetes_service.web.metadata[0].name
-    port = local.web.port
+    host = module.web.host
+    port = module.web.port
   }
 
   server = {
