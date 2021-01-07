@@ -9,15 +9,17 @@ variable "image_pull_secret_name" {
 }
 
 variable "port" {
-  description = "Port for web to listen to"
+  description = "Port for server to listen to"
   type        = number
-  default = 3000
+  default = 8000
 }
 
-variable "server" {
-  description = "Endpoint of the server"
+variable "database" {
+  description = "Endpoint of the database"
   type = object({
-    host = string
+    database = string
+    credentials_secret_name = string
+    url = string
     port = number
   })
 }

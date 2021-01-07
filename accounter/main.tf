@@ -50,15 +50,6 @@ resource "digitalocean_container_registry_docker_credentials" "accounter" {
   registry_name = "accounter"
 }
 
-locals {
-  server = {
-    port = 8000
-  }
-  database = {
-    ip : "10.110.0.7"
-  }
-}
-
 resource "kubernetes_secret" "database-credentials" {
   type = "Opaque"
   metadata {
@@ -82,116 +73,36 @@ resource "kubernetes_secret" "registry-accounter" {
   }
 }
 
-resource "kubernetes_deployment" "server" {
-  metadata {
-    name = "server"
-    labels = {
-      app = "server"
-    }
-  }
+module "server" {
+  source = "./server/terraform"
 
-  spec {
-    selector {
-      match_labels = {
-        app = "server"
-      }
-    }
+  image_tag              = var.image_tag
+  image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
-    template {
-      metadata {
-        labels = {
-          app = "server"
-        }
-      }
-
-      spec {
-        image_pull_secrets {
-          name = kubernetes_secret.registry-accounter.metadata[0].name
-        }
-        container {
-          image = "registry.digitalocean.com/accounter/server:${var.image_tag}"
-          name  = "server"
-          port {
-            container_port = local.server.port
-          }
-          env {
-            name  = "PORT"
-            value = local.server.port
-          }
-          env {
-            name  = "POSTGRES_DB"
-            value = data.digitalocean_database_cluster.database.database
-          }
-          env {
-            name = "POSTGRES_USER"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.database-credentials.metadata[0].name
-                key  = "username"
-              }
-            }
-          }
-          env {
-            name = "POSTGRES_PASSWORD"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.database-credentials.metadata[0].name
-                key  = "password"
-              }
-            }
-          }
-          env {
-            name  = "POSTGRES_URL"
-            value = data.digitalocean_database_cluster.database.private_host
-          }
-          env {
-            name  = "POSTGRES_PORT"
-            value = data.digitalocean_database_cluster.database.port
-          }
-          env {
-            name  = "SLACK_CLIENT_ID"
-            value = "  "
-          }
-          env {
-            name  = "SLACK_CLIENT_SECRET"
-            value = "  "
-          }
-        }
-      }
-    }
-  }
-}
-
-resource "kubernetes_service" "server" {
-  metadata {
-    name = "server"
-  }
-  spec {
-    port {
-      port = local.server.port
-    }
-    selector = {
-      app = "server"
-    }
+  database = {
+    database = data.digitalocean_database_cluster.database.database
+    credentials_secret_name = kubernetes_secret.database-credentials.metadata[0].name
+    url = data.digitalocean_database_cluster.database.private_host
+    port = data.digitalocean_database_cluster.database.port
   }
 }
 
 module "web" {
   source = "./web/terraform"
 
-  image_tag = var.image_tag
+  image_tag              = var.image_tag
   image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   server = {
-    host = kubernetes_service.server.metadata[0].name
-    port = local.server.port
+    host = module.server.host
+    port = module.server.port
   }
 }
 
 module "loadbalancer" {
   source = "./loadbalancer/terraform"
 
-  image_tag = var.image_tag
+  image_tag              = var.image_tag
   image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   web = {
@@ -200,7 +111,7 @@ module "loadbalancer" {
   }
 
   server = {
-    host = kubernetes_service.server.metadata[0].name
-    port = local.server.port
+    host = module.server.host
+    port = module.server.port
   }
 }

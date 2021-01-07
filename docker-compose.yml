@@ -30,7 +30,7 @@ services:
   server:
     image: server.development
     build:
-      context: ./server
+      context: ./accounter/server
       target: development
     environment:
       - PORT=8000
@@ -45,9 +45,9 @@ services:
       - HTTP_PROXY=mockserver:1080
       - HTTPS_PROXY=mockserver:1080
     env_file:
-      - ./server/.env
+      - ./accounter/server/.env
     volumes:
-      - ./server:/code
+      - ./accounter/server:/code
     ports:
       - 8000:8000
     depends_on:

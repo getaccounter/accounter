@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: create .env
-        run: cp server/.env.example server/.env
+        run: cp accounter/server/.env.example accounter/server/.env
 
       - name: pull dependency images
         run: docker-compose pull
