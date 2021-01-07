@@ -65,14 +65,10 @@ resource "kubernetes_deployment" "loadbalancer" {
 resource "kubernetes_service" "loadbalancer" {
   metadata {
     name = "loadbalancer"
-    annotations = {
-      "kubernetes.digitalocean.com/load-balancer-id" = "b1b5e9aa-77cf-4545-b063-0cf5fa2192d6"
-    }
   }
   spec {
     port {
-      port        = var.port
-      target_port = var.port
+      port = var.port
     }
     selector = {
       app = "loadbalancer"
