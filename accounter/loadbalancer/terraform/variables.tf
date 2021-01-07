@@ -8,12 +8,6 @@ variable "image_pull_secret_name" {
   type        = string
 }
 
-variable "port" {
-  description = "Port for loadbalancer to listen to"
-  type        = number
-  default = 8080
-}
-
 variable "server" {
   description = "Endpoint of the server"
   type = object({
