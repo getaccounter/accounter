@@ -1,15 +1,3 @@
-variable "do_token" {
-  description = "DO access token"
-  type        = string
-  sensitive   = true
-}
-
-variable "image_tag" {
-  description = "tag of mages to use"
-  type        = string
-  default = "latest"
-}
-
 provider "kubernetes" {}
 
 provider "helm" {
@@ -73,7 +61,7 @@ locals {
     ip : "10.110.0.7"
   }
   loadbalancer = {
-    port: 8080
+    port : 8080
   }
 }
 
@@ -88,7 +76,6 @@ resource "kubernetes_secret" "database-credentials" {
     password = data.digitalocean_database_cluster.database.password
   }
 }
-
 
 resource "kubernetes_secret" "registry-accounter" {
   type = "kubernetes.io/dockerconfigjson"
@@ -159,11 +146,11 @@ resource "kubernetes_deployment" "server" {
               }
             }
           }
-          env { 
+          env {
             name  = "POSTGRES_URL"
             value = data.digitalocean_database_cluster.database.private_host
           }
-          env { 
+          env {
             name  = "POSTGRES_PORT"
             value = data.digitalocean_database_cluster.database.port
           }
@@ -261,118 +248,20 @@ resource "kubernetes_service" "web" {
   }
 }
 
+module "loadbalancer" {
+  source = "./loadbalancer/terraform"
 
+  port = local.loadbalancer.port
+  image_tag = var.image_tag
+  image_pull_secret = kubernetes_secret.registry-accounter.metadata[0].name
 
-resource "kubernetes_deployment" "loadbalancer" {
-  metadata {
-    name = "loadbalancer"
-    labels = {
-      app = "loadbalancer"
-    }
+  web = {
+    host = kubernetes_service.web.metadata[0].name
+    port = local.web.port
   }
 
-  spec {
-    selector {
-      match_labels = {
-        app = "loadbalancer"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app = "loadbalancer"
-        }
-      }
-
-      spec {
-        image_pull_secrets {
-          name = kubernetes_secret.registry-accounter.metadata[0].name
-        }
-        container {
-          image = "registry.digitalocean.com/accounter/loadbalancer:${var.image_tag}"
-          name  = "loadbalancer"
-          port {
-            container_port = local.loadbalancer.port
-          }
-          env {
-            name  = "PORT"
-            value = tostring(local.loadbalancer.port)
-          }
-          env {
-            name  = "PROTOCOL"
-            value = "http"
-          }
-          env {
-            name  = "WEB_HOST"
-            value = kubernetes_service.web.metadata[0].name
-          }
-          env {
-            name  = "WEB_PORT"
-            value = local.web.port
-          }
-          env {
-            name  = "SERVER_HOST"
-            value = kubernetes_service.server.metadata[0].name
-          }
-          env {
-            name  = "SERVER_PORT"
-            value = local.server.port
-          }
-        }
-      }
-    }
+  server = {
+    host = kubernetes_service.server.metadata[0].name
+    port = local.server.port
   }
-}
-
-
-
-resource "kubernetes_service" "loadbalancer" {
-  metadata {
-    name = "loadbalancer"
-  }
-  spec {
-    type = "LoadBalancer"
-    port {
-      port = local.loadbalancer.port
-      target_port = local.loadbalancer.port
-    }
-    selector = {
-      app = "loadbalancer"
-    }
-  }
-}
-
-resource "helm_release" "ingress-nginx" {
-  name       = "ingress-nginx"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  version    = "3.19.0"
-}
-
-resource "kubernetes_ingress" "loadbalancer" {
-  metadata {
-    name = "loadbalancer"
-    annotations = {
-      "kubernetes.io/ingress.class" = "nginx"
-    }
-  }
-
-  spec {
-
-    rule {
-      host = "app.accounter.io"
-      http {
-        path {
-          backend {
-            service_name = kubernetes_service.loadbalancer.metadata[0].name
-            service_port = local.loadbalancer.port
-          }
-        }
-      }
-    }
-  }  
-  depends_on = [
-    helm_release.ingress-nginx,
-  ]
 }

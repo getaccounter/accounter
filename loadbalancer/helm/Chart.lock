@@ -1,9 +1,0 @@
-dependencies:
-- name: app
-  repository: file://../../library-charts/app
-  version: 0.0.0
-- name: ingress-nginx
-  repository: https://kubernetes.github.io/ingress-nginx
-  version: 3.19.0
-digest: sha256:623465aa92aa1da7f7d5a93234adab8491e57b1ecb9621a157cded6be65ea9a4
-generated: "2021-01-05T19:58:48.111739416+01:00"
