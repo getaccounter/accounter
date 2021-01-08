@@ -32,7 +32,7 @@ const Integrations = () => {
       {/* <Content /> */}
       <Directory>
         <DirectoryEntryList>
-          {data!.integrations.map((integration, idx) => (
+          {data?.integrations.map((integration, idx) => (
             <DirectoryEntry key={idx}>
               <div className="flex items-center space-x-3">
                 <div className="flex-shrink-0">
