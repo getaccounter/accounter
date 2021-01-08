@@ -5,7 +5,7 @@ const DirectoryHeader = () => (
   <div className="px-6 pt-6 pb-4">
     <h2 className="text-lg font-medium text-gray-900">Directory</h2>
     <p className="mt-1 text-sm text-gray-600">
-      Search directory of 3,018 employees
+      Search directory of 9,999 employees
     </p>
     <form className="mt-6 flex space-x-4" action="#">
       <div className="flex-1 min-w-0">
@@ -36,14 +36,18 @@ const DirectoryHeader = () => (
   </div>
 );
 
-const DirectoryCategory = ({ children }: { children: ReactNode }) => (
-  <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
-    <h3>{children}</h3>
-  </div>
-);
-
-const DirectoryEntryList = ({ children }: { children: ReactNode }) => (
-  <ul className="relative z-0 divide-y divide-gray-200">{children}</ul>
+const DirectoryEntryList = (props: {
+  title: ReactNode;
+  children: ReactNode;
+}) => (
+  <>
+    {props.title && (
+      <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
+        <h3>{props.title}</h3>
+      </div>
+    )}
+    <ul className="relative z-0 divide-y divide-gray-200">{props.children}</ul>
+  </>
 );
 
 const DirectoryEntry = () => (
@@ -73,51 +77,43 @@ const DirectoryList = () => (
     className="flex-1 min-h-0 relative overflow-y-auto"
     aria-label="Directory"
   >
-    <DirectoryCategory>A</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="A">
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
     </DirectoryEntryList>
-    <DirectoryCategory>C</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="C">
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
     </DirectoryEntryList>
-    <DirectoryCategory>E</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="E">
       <DirectoryEntry />
       <DirectoryEntry />
     </DirectoryEntryList>
-    <DirectoryCategory>G</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="G">
       <DirectoryEntry />
     </DirectoryEntryList>
-    <DirectoryCategory>M</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="M">
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
     </DirectoryEntryList>
-    <DirectoryCategory>S</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="S">
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
     </DirectoryEntryList>
-    <DirectoryCategory>T</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="T">
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
     </DirectoryEntryList>
-    <DirectoryCategory>W</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="W">
       <DirectoryEntry />
       <DirectoryEntry />
       <DirectoryEntry />
@@ -128,8 +124,7 @@ const DirectoryList = () => (
       <DirectoryEntry />
       <DirectoryEntry />
     </DirectoryEntryList>
-    <DirectoryCategory>Y</DirectoryCategory>
-    <DirectoryEntryList>
+    <DirectoryEntryList title="Y">
       <DirectoryEntry />
     </DirectoryEntryList>
   </nav>
