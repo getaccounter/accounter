@@ -1,8 +1,8 @@
 import React from "react";
 import { ChevronRight } from "../../../../../icons/outline";
 import { Service } from "../AddMoreServices";
-import AddButton from "../ServiceRow/components/AddButton";
-import ServiceLogo from "../ServiceRow/components/ServiceLogo";
+import AddButton from "./components/AddButton";
+import ServiceLogo from "./components/ServiceLogo";
 
 const UserIcon = ({ src }: { src: string }) => (
   <img

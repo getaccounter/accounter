@@ -7,7 +7,7 @@ import userEvent from "@testing-library/user-event";
 import AuthProvider from "./contexts/auth";
 import { MemoryRouter } from "react-router-dom";
 import { getLoginRequestMocks } from "./contexts/auth.mocks";
-import { getServiceMockQueryMock } from "./components/Main/components/Services/Services.mocks";
+import { getServiceMockQueryMock } from "./components/Main/components/_Services/Services.mocks";
 import NotificationProvider from "./contexts/notification";
 
 jest.mock("use-http", () => () => ({ loading: false }));
