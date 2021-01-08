@@ -8,4 +8,9 @@ module.exports = {
       },
     },
   },
+  variants: {
+    extend: {
+      border: ['last'],
+    }
+  },
 };

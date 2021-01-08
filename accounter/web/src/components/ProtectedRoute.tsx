@@ -1,11 +1,12 @@
 import React from "react";
 import { Redirect, Route, RouteProps } from "react-router-dom";
 import { useAuth } from "../contexts/auth";
+import Loading from "./Loading";
 
 export default function PrivateRoute({ children, ...rest }: RouteProps) {
   const { isSignedIn } = useAuth();
   if (isSignedIn === undefined) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
   return (
     <Route
