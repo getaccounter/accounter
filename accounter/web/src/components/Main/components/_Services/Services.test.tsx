@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import { render } from "@testing-library/react";
 
-import Services from "./";
+import Services from ".";
 import { MemoryRouter } from "react-router-dom";
 import { MockedProvider } from "@apollo/client/testing";
 import { getServiceMockQueryMock, serviceFactory } from "./Services.mocks";

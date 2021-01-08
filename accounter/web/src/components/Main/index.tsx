@@ -4,6 +4,8 @@ import Content from "./components/Content";
 import Directory from "./components/Directory";
 import { Cog, Menu, UserGroup, ViewGrid, ViewGridAdd } from "../icons/outline";
 import { Redirect, Route, Switch } from "react-router-dom";
+import Integrations from "./components/Integrations";
+import Users from "./components/Users";
 
 const Header = () => (
   <div className="lg:hidden">
@@ -32,15 +34,10 @@ const MAIN_PAGES = [
   {
     tab: {
       label: "Apps",
-      path: "/services",
+      path: "/integrations",
       Icon: ViewGrid,
     },
-    content: (
-      <div className="flex-1 relative z-0 flex overflow-hidden">
-        <Content />
-        <Directory />
-      </div>
-    ),
+    content: <Integrations />,
   },
   {
     tab: {
@@ -49,7 +46,7 @@ const MAIN_PAGES = [
       Icon: UserGroup,
       content: "TODO",
     },
-    content: "TODO",
+    content: <Users />,
   },
 ];
 

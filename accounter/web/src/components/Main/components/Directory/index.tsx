@@ -5,7 +5,7 @@ const DirectoryHeader = () => (
   <div className="px-6 pt-6 pb-4">
     <h2 className="text-lg font-medium text-gray-900">Directory</h2>
     <p className="mt-1 text-sm text-gray-600">
-      Search directory of 3,018 employees
+      Search directory of 9,999 employees
     </p>
     <form className="mt-6 flex space-x-4" action="#">
       <div className="flex-1 min-w-0">
@@ -36,109 +36,41 @@ const DirectoryHeader = () => (
   </div>
 );
 
-const DirectoryCategory = ({ children }: { children: ReactNode }) => (
-  <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
-    <h3>{children}</h3>
-  </div>
-);
-
-const DirectoryEntryList = ({ children }: { children: ReactNode }) => (
-  <ul className="relative z-0 divide-y divide-gray-200">{children}</ul>
-);
-
-const DirectoryEntry = () => (
-  <li>
-    <div className="relative px-6 py-5 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500">
-      <div className="flex-shrink-0">
-        <img
-          className="h-10 w-10 rounded-full"
-          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-          alt=""
-        />
+export const DirectoryEntryList = (props: {
+  title: ReactNode;
+  children: ReactNode;
+}) => (
+  <>
+    {props.title && (
+      <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
+        <h3>{props.title}</h3>
       </div>
-      <div className="flex-1 min-w-0">
-        <a href="#" className="focus:outline-none">
-          {/* Extend touch target to entire panel */}
-          <span className="absolute inset-0" aria-hidden="true" />
-          <p className="text-sm font-medium text-gray-900">Leslie Abbott</p>
-          <p className="text-sm text-gray-500 truncate">Co-Founder / CEO</p>
-        </a>
-      </div>
-    </div>
-  </li>
+    )}
+    <ul className="relative z-0 divide-y divide-gray-200">{props.children}</ul>
+  </>
 );
 
-const DirectoryList = () => (
+export const DirectoryEntry = (props: { children: ReactNode }) => (
+  <li>{props.children}</li>
+);
+
+type Props = {
+  children: ReactNode;
+};
+
+const DirectoryList = ({ children }: Props) => (
   <nav
     className="flex-1 min-h-0 relative overflow-y-auto"
     aria-label="Directory"
   >
-    <DirectoryCategory>A</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryCategory>C</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryCategory>E</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryCategory>G</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryCategory>M</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryCategory>S</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryCategory>T</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryCategory>W</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryCategory>Y</DirectoryCategory>
-    <DirectoryEntryList>
-      <DirectoryEntry />
-    </DirectoryEntryList>
+    {children}
   </nav>
 );
 
-const Directory = () => (
+const Directory = ({ children }: Props) => (
   <aside className="hidden xl:order-first xl:flex xl:flex-col flex-shrink-0 w-96 border-r border-gray-200">
     <DirectoryHeader />
-    <DirectoryList />
+    <DirectoryList>{children}</DirectoryList>
   </aside>
 );
 
