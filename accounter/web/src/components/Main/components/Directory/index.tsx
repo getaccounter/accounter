@@ -37,7 +37,7 @@ const DirectoryHeader = () => (
 );
 
 export const DirectoryEntryList = (props: {
-  title: ReactNode;
+  title?: ReactNode;
   children: ReactNode;
 }) => (
   <>
@@ -46,12 +46,16 @@ export const DirectoryEntryList = (props: {
         <h3>{props.title}</h3>
       </div>
     )}
-    <ul className="relative z-0 divide-y divide-gray-200">{props.children}</ul>
+    <ul className={`relative z-0 divide-y divide-gray-200 border-gray-200 last:border-b ${!props.title && "border-t"}`}>{props.children}</ul>
   </>
 );
 
 export const DirectoryEntry = (props: { children: ReactNode }) => (
-  <li>{props.children}</li>
+  <li>
+    <div className="relative px-6 py-5 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500">
+      {props.children}
+    </div>
+  </li>
 );
 
 type Props = {

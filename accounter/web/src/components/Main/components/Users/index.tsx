@@ -2,7 +2,7 @@ import React from "react";
 import Directory, { DirectoryEntryList, DirectoryEntry } from "../Directory";
 
 const User = () => (
-  <div className="relative px-6 py-5 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500">
+  <div className="flex items-center space-x-3">
     <div className="flex-shrink-0">
       <img
         className="h-10 w-10 rounded-full"
