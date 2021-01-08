@@ -1,5 +1,5 @@
-import { ReactNode, ComponentType } from "react";
-import { useLocation } from "react-router-dom";
+import React, { ReactNode, ComponentType } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 
 type MenuItemProps = {
@@ -13,8 +13,8 @@ type MenuItemProps = {
     const location = useLocation();
     const isSelected = props.path === location.pathname;
     return (
-      <a
-        href={props.path}
+      <Link
+        to={props.path}
         className={`rounded-md font-medium px-2 py-2 group flex items-center ${
           props.desktop ? "text-sm" : "text-base"
         } ${
@@ -31,7 +31,7 @@ type MenuItemProps = {
           }`}
         />
         {props.label}
-      </a>
+      </Link>
     );
   };
 
