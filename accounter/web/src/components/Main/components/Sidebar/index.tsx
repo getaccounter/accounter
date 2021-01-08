@@ -1,5 +1,4 @@
 import React from "react";
-import { Cog, UserGroup, ViewGrid, ViewGridAdd } from "../../../icons/outline";
 import { X } from "../../../icons/solid";
 import Tab, {TabType} from "./components/Tab";
 import Profile from "./components/Profile";
@@ -61,7 +60,7 @@ const MobileSidebar = (props: Props) => (
             <nav aria-label="Sidebar" className="mt-5">
               <div className="px-2 space-y-1">
                 {props.mainTabs.map((tab) => (
-                  <Tab tab={tab} />
+                  <Tab key={tab.path} tab={tab} />
                 ))}
               </div>
               <hr
@@ -70,7 +69,7 @@ const MobileSidebar = (props: Props) => (
               />
               <div className="px-2 space-y-1">
                 {props.extraTabs.map((tab) => (
-                  <Tab tab={tab} />
+                  <Tab key={tab.path} tab={tab} />
                 ))}
               </div>
             </nav>
@@ -102,7 +101,7 @@ const DesktopSidebar = (props: Props) => (
             <nav className="mt-5 flex-1" aria-label="Sidebar">
               <div className="px-2 space-y-1">
                 {props.mainTabs.map((tab) => (
-                  <Tab desktop tab={tab} />
+                  <Tab key={tab.path} desktop tab={tab} />
                 ))}
               </div>
               <hr
@@ -111,7 +110,7 @@ const DesktopSidebar = (props: Props) => (
               />
               <div className="flex-1 px-2 space-y-1">
                 {props.extraTabs.map((tab) => (
-                  <Tab desktop tab={tab} />
+                  <Tab key={tab.path} desktop tab={tab} />
                 ))}
               </div>
             </nav>

@@ -36,7 +36,7 @@ const DirectoryHeader = () => (
   </div>
 );
 
-const DirectoryEntryList = (props: {
+export const DirectoryEntryList = (props: {
   title: ReactNode;
   children: ReactNode;
 }) => (
@@ -50,90 +50,27 @@ const DirectoryEntryList = (props: {
   </>
 );
 
-const DirectoryEntry = () => (
-  <li>
-    <div className="relative px-6 py-5 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-pink-500">
-      <div className="flex-shrink-0">
-        <img
-          className="h-10 w-10 rounded-full"
-          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-          alt=""
-        />
-      </div>
-      <div className="flex-1 min-w-0">
-        <a href="#" className="focus:outline-none">
-          {/* Extend touch target to entire panel */}
-          <span className="absolute inset-0" aria-hidden="true" />
-          <p className="text-sm font-medium text-gray-900">Leslie Abbott</p>
-          <p className="text-sm text-gray-500 truncate">Co-Founder / CEO</p>
-        </a>
-      </div>
-    </div>
-  </li>
+export const DirectoryEntry = (props: { children: ReactNode }) => (
+  <li>{props.children}</li>
 );
 
-const DirectoryList = () => (
+type Props = {
+  children: ReactNode;
+};
+
+const DirectoryList = ({ children }: Props) => (
   <nav
     className="flex-1 min-h-0 relative overflow-y-auto"
     aria-label="Directory"
   >
-    <DirectoryEntryList title="A">
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryEntryList title="C">
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryEntryList title="E">
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryEntryList title="G">
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryEntryList title="M">
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryEntryList title="S">
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryEntryList title="T">
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryEntryList title="W">
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-      <DirectoryEntry />
-    </DirectoryEntryList>
-    <DirectoryEntryList title="Y">
-      <DirectoryEntry />
-    </DirectoryEntryList>
+    {children}
   </nav>
 );
 
-const Directory = () => (
+const Directory = ({ children }: Props) => (
   <aside className="hidden xl:order-first xl:flex xl:flex-col flex-shrink-0 w-96 border-r border-gray-200">
     <DirectoryHeader />
-    <DirectoryList />
+    <DirectoryList>{children}</DirectoryList>
   </aside>
 );
 

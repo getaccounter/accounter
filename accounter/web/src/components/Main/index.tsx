@@ -5,6 +5,7 @@ import Directory from "./components/Directory";
 import { Cog, Menu, UserGroup, ViewGrid, ViewGridAdd } from "../icons/outline";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Integrations from "./components/Integrations";
+import Users from "./components/Users";
 
 const Header = () => (
   <div className="lg:hidden">
@@ -45,7 +46,7 @@ const MAIN_PAGES = [
       Icon: UserGroup,
       content: "TODO",
     },
-    content: "TODO",
+    content: <Users />,
   },
 ];
 
