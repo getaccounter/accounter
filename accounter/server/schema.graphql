@@ -1,0 +1,39 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type HandleCallback {
+  status: String!
+}
+
+type Mutation {
+  signin(email: String!, password: String!): Signin
+  signup(email: String!, orgName: String!, password: String!): Signup
+  oauth: Oauth
+}
+
+type Oauth {
+  slack: SlackCallbackType
+}
+
+type Query {
+  sessionInfo: SessionInfoQuery
+}
+
+type SessionInfoQuery {
+  signedIn: Boolean!
+}
+
+type Signin {
+  status: String!
+  message: String!
+}
+
+type Signup {
+  status: String!
+}
+
+type SlackCallbackType {
+  handleCallback(code: String!, state: String!): HandleCallback
+}
