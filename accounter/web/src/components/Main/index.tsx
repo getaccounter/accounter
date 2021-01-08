@@ -2,7 +2,8 @@ import React from "react";
 import SideBar from "./components/Sidebar";
 import Content from "./components/Content";
 import Directory from "./components/Directory";
-import { Menu } from "../icons/outline";
+import { Cog, Menu, UserGroup, ViewGrid, ViewGridAdd } from "../icons/outline";
+import { Redirect, Route, Switch } from "react-router-dom";
 
 const Header = () => (
   <div className="lg:hidden">
@@ -27,6 +28,41 @@ const Header = () => (
   </div>
 );
 
+const MAIN_TABS = [
+  {
+    label: "Apps",
+    path: "/services",
+    icon: ViewGrid,
+    content: (
+      <div className="flex-1 relative z-0 flex overflow-hidden">
+        <Content />
+        <Directory />
+      </div>
+    ),
+  },
+  {
+    label: "Users",
+    path: "/users",
+    icon: UserGroup,
+    content: "",
+  },
+];
+
+const EXTRA_TABS = [
+  {
+    label: "Add Apps",
+    path: "/add-services",
+    icon: ViewGridAdd,
+    content: "",
+  },
+  {
+    label: "Settings",
+    path: "/settings",
+    icon: Cog,
+    content: "",
+  },
+];
+
 export default function Main() {
   return (
     <div>
@@ -34,10 +70,16 @@ export default function Main() {
         <SideBar />
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
           <Header />
-          <div className="flex-1 relative z-0 flex overflow-hidden">
-            <Content />
-            <Directory />
-          </div>
+          <Switch>
+            {[...MAIN_TABS, ...EXTRA_TABS].map(({ path, content }) => (
+              <Route key={path} path={path}>
+                {content}
+              </Route>
+            ))}
+            <Route exact path="/">
+              <Redirect to={MAIN_TABS[0].path} />
+            </Route>
+          </Switch>
         </div>
       </div>
     </div>
