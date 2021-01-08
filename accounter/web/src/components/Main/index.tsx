@@ -1,8 +1,4 @@
 import React from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
-import NavBar from "./components/NavBar";
-import Services from "./components/Services";
-import Users from "./components/Users";
 import SideBar from "./components/Sidebar";
 import Content from "./components/Content";
 import Directory from "./components/Directory";
