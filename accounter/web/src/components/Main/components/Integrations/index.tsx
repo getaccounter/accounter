@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
+import { ASSET_STORAGE } from "../../../../config";
 import { Service } from "../../../../utils/types";
 import Loading from "../../../Loading";
 import Directory, { DirectoryEntry, DirectoryEntryList } from "../Directory";
@@ -38,7 +39,7 @@ const Integrations = () => {
                 <div className="flex-shrink-0">
                   <img
                     className="h-10 w-10 rounded-full"
-                    src={integration.service.logo}
+                    src={`${ASSET_STORAGE}${integration.service.logo}`}
                     alt=""
                   />
                 </div>
