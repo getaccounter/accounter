@@ -1,36 +1,15 @@
 import React from "react";
 import { Cog, UserGroup, ViewGrid, ViewGridAdd } from "../../../icons/outline";
 import { X } from "../../../icons/solid";
-import MenuItem from "./components/MenuItem";
+import Tab, {TabType} from "./components/Tab";
 import Profile from "./components/Profile";
 
-const MAIN_TABS = [
-  {
-    label: "Apps",
-    path: "/services",
-    icon: ViewGrid,
-  },
-  {
-    label: "Users",
-    path: "/users",
-    icon: UserGroup,
-  },
-];
+type Props = {
+  mainTabs: Array<TabType>
+  extraTabs: Array<TabType>
+}
 
-const EXTRA_TABS = [
-  {
-    label: "Add Apps",
-    path: "/add-services",
-    icon: ViewGridAdd,
-  },
-  {
-    label: "Settings",
-    path: "/settings",
-    icon: Cog,
-  },
-];
-
-const MobileSidebar = () => (
+const MobileSidebar = (props: Props) => (
   <>
     {/* Off-canvas menu for mobile, show/hide based on off-canvas menu state. */}
     <div className="lg:hidden">
@@ -81,8 +60,8 @@ const MobileSidebar = () => (
             </div>
             <nav aria-label="Sidebar" className="mt-5">
               <div className="px-2 space-y-1">
-                {MAIN_TABS.map((t) => (
-                  <MenuItem Icon={t.icon} label={t.label} path={t.path} />
+                {props.mainTabs.map((tab) => (
+                  <Tab tab={tab} />
                 ))}
               </div>
               <hr
@@ -90,8 +69,8 @@ const MobileSidebar = () => (
                 aria-hidden="true"
               />
               <div className="px-2 space-y-1">
-                {EXTRA_TABS.map((t) => (
-                  <MenuItem Icon={t.icon} label={t.label} path={t.path} />
+                {props.extraTabs.map((tab) => (
+                  <Tab tab={tab} />
                 ))}
               </div>
             </nav>
@@ -106,7 +85,7 @@ const MobileSidebar = () => (
   </>
 );
 
-const DesktopSidebar = () => (
+const DesktopSidebar = (props: Props) => (
   <>
     {/* Static sidebar for desktop */}
     <div className="hidden lg:flex lg:flex-shrink-0">
@@ -122,8 +101,8 @@ const DesktopSidebar = () => (
             </div>
             <nav className="mt-5 flex-1" aria-label="Sidebar">
               <div className="px-2 space-y-1">
-                {MAIN_TABS.map((t) => (
-                  <MenuItem desktop Icon={t.icon} label={t.label} path={t.path} />
+                {props.mainTabs.map((tab) => (
+                  <Tab desktop tab={tab} />
                 ))}
               </div>
               <hr
@@ -131,8 +110,8 @@ const DesktopSidebar = () => (
                 aria-hidden="true"
               />
               <div className="flex-1 px-2 space-y-1">
-                {EXTRA_TABS.map((t) => (
-                  <MenuItem desktop Icon={t.icon} label={t.label} path={t.path} />
+                {props.extraTabs.map((tab) => (
+                  <Tab desktop tab={tab} />
                 ))}
               </div>
             </nav>
@@ -144,10 +123,10 @@ const DesktopSidebar = () => (
   </>
 );
 
-const Sidebar = () => (
+const Sidebar = (props: Props) => (
   <>
-    <MobileSidebar />
-    <DesktopSidebar />
+    <MobileSidebar {...props} />
+    <DesktopSidebar {...props} />
   </>
 );
 

@@ -28,11 +28,13 @@ const Header = () => (
   </div>
 );
 
-const MAIN_TABS = [
+const MAIN_PAGES = [
   {
-    label: "Apps",
-    path: "/services",
-    icon: ViewGrid,
+    tab: {
+      label: "Apps",
+      path: "/services",
+      Icon: ViewGrid,
+    },
     content: (
       <div className="flex-1 relative z-0 flex overflow-hidden">
         <Content />
@@ -41,25 +43,32 @@ const MAIN_TABS = [
     ),
   },
   {
-    label: "Users",
-    path: "/users",
-    icon: UserGroup,
-    content: "",
+    tab: {
+      label: "Users",
+      path: "/users",
+      Icon: UserGroup,
+      content: "TODO",
+    },
+    content: "TODO",
   },
 ];
 
-const EXTRA_TABS = [
+const EXTRA_PAGES = [
   {
-    label: "Add Apps",
-    path: "/add-services",
-    icon: ViewGridAdd,
-    content: "",
+    tab: {
+      label: "Add Apps",
+      path: "/add-services",
+      Icon: ViewGridAdd,
+    },
+    content: "TODO",
   },
   {
-    label: "Settings",
-    path: "/settings",
-    icon: Cog,
-    content: "",
+    tab: {
+      label: "Settings",
+      path: "/settings",
+      Icon: Cog,
+    },
+    content: "TODO",
   },
 ];
 
@@ -67,17 +76,20 @@ export default function Main() {
   return (
     <div>
       <div className="h-screen flex overflow-hidden bg-white">
-        <SideBar />
+        <SideBar
+          mainTabs={MAIN_PAGES.map((p) => p.tab)}
+          extraTabs={EXTRA_PAGES.map((p) => p.tab)}
+        />
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
           <Header />
           <Switch>
-            {[...MAIN_TABS, ...EXTRA_TABS].map(({ path, content }) => (
-              <Route key={path} path={path}>
+            {[...MAIN_PAGES, ...EXTRA_PAGES].map(({ tab, content }) => (
+              <Route key={tab.path} path={tab.path}>
                 {content}
               </Route>
             ))}
             <Route exact path="/">
-              <Redirect to={MAIN_TABS[0].path} />
+              <Redirect to={MAIN_PAGES[0].tab.path} />
             </Route>
           </Switch>
         </div>
