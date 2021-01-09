@@ -2,10 +2,11 @@ import React from "react";
 import SideBar from "./components/Sidebar";
 import Content from "./components/Content";
 import Directory from "./components/Directory";
-import { Cog, Menu, UserGroup, ViewGrid, ViewGridAdd } from "../icons/outline";
+import { Cog, Menu, UserGroup, ViewGrid, ViewGridAdd, UserAdd } from "../icons/outline";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Integrations from "./components/Integrations";
 import Users from "./components/Users";
+import Services from "./components/Services";
 
 const Header = () => (
   <div className="lg:hidden">
@@ -44,7 +45,6 @@ const MAIN_PAGES = [
       label: "Users",
       path: "/users",
       Icon: UserGroup,
-      content: "TODO",
     },
     content: <Users />,
   },
@@ -53,11 +53,19 @@ const MAIN_PAGES = [
 const EXTRA_PAGES = [
   {
     tab: {
-      label: "Add Apps",
-      path: "/add-services",
-      Icon: ViewGridAdd,
+      label: "Add Users",
+      path: "/add-users",
+      Icon: UserAdd,
     },
     content: "TODO",
+  },
+  {
+    tab: {
+      label: "Add Apps",
+      path: "/services",
+      Icon: ViewGridAdd,
+    },
+    content: <Services />,
   },
   {
     tab: {
@@ -68,6 +76,8 @@ const EXTRA_PAGES = [
     content: "TODO",
   },
 ];
+
+export const HOME_PAGE = MAIN_PAGES[0]
 
 export default function Main() {
   return (
@@ -86,7 +96,7 @@ export default function Main() {
               </Route>
             ))}
             <Route exact path="/">
-              <Redirect to={MAIN_PAGES[0].tab.path} />
+              <Redirect to={HOME_PAGE.tab.path} />
             </Route>
           </Switch>
         </div>
