@@ -23,3 +23,13 @@ variable "database" {
     port = number
   })
 }
+
+variable "s3" {
+  description = "Endpoint of the database"
+  type = object({
+    endpoint = string
+    bucket_name = string
+    credentials_secret_name = string
+    region = string
+  })
+}

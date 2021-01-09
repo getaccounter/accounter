@@ -23,3 +23,11 @@ variable "web" {
     port = number
   })
 }
+
+variable "s3" {
+  description = "Endpoint of S3"
+  type = object({
+    endpoint = string
+    bucket = string
+  })
+}
