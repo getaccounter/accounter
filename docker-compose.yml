@@ -8,6 +8,13 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
+  s3:
+    image: adobe/s3mock
+    environment:
+      - initialBuckets=testbucket
+    ports:
+      - 9090:9090
+
   loadbalancer:
     image: loadbalancer
     build: ./accounter/loadbalancer
@@ -40,9 +47,14 @@ services:
       - POSTGRES_URL=database
       - POSTGRES_PORT=5432
 
+
+      - AWS_STORAGE_BUCKET_NAME=testbucket
+      - AWS_S3_ENDPOINT_URL=http://s3:9090
+      - AWS_LOCATION=assets
+
         # mock proxy settings
       - USE_MOCK_PROXY=True
-      - HTTP_PROXY=mockserver:1080
+      # - HTTP_PROXY=mockserver:1080
       - HTTPS_PROXY=mockserver:1080
     env_file:
       - ./accounter/server/.env
@@ -52,6 +64,7 @@ services:
       - 8000:8000
     depends_on:
       - database
+      - s3
 
   web:
     image: web.development

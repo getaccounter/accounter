@@ -41,6 +41,12 @@ Cypress.Commands.add("login", (email, password) => {
   cy.findByText("Sign in").click();
 });
 
+Cypress.Commands.add("navigateTo", (entryName) => {
+  cy.findByRole("navigation", {name: "Sidebar"}).should("exist").within(() => {
+    cy.findByRole("link", { name: entryName }).click();
+  });
+});
+
 Cypress.Commands.add("mockSlackOauth", () => {
   // can we somehow prevent from going to the slack page by intercepting the new route
   // and routing back to the handler page immedietly?

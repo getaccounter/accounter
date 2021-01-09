@@ -7,8 +7,8 @@ import userEvent from "@testing-library/user-event";
 import AuthProvider from "./contexts/auth";
 import { MemoryRouter } from "react-router-dom";
 import { getLoginRequestMocks } from "./contexts/auth.mocks";
-import { getServiceMockQueryMock } from "./components/Main/components/Services/Services.mocks";
 import NotificationProvider from "./contexts/notification";
+import { getServiceMockQueryMock } from "./components/Main/components/Services/mocks";
 
 jest.mock("use-http", () => () => ({ loading: false }));
 
@@ -20,7 +20,7 @@ const Providers = ({ children }: { children: ReactNode }) => (
   </AuthProvider>
 );
 
-test.only("reroutes to login and after reroutes to actual content", async () => {
+test("reroutes to login and after reroutes to actual content", async () => {
   const email = "some@user.internet";
   const password = "somepassword";
   const root = render(
@@ -46,6 +46,6 @@ test.only("reroutes to login and after reroutes to actual content", async () => 
   userEvent.click(loginButton);
 
   expect(
-    await root.findByRole("heading", { name: "Services" })
+    (await root.findAllByRole("navigation", { name: "Sidebar" }))[0]
   ).toBeInTheDocument();
 });

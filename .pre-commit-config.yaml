@@ -29,7 +29,7 @@ repos:
     hooks:
       - id: flake8
         name: linting-server
-        args: ["--config=server/setup.cfg"]
+        args: ["--config=accounter/server/setup.cfg"]
 
   - repo: local
     hooks:
@@ -38,7 +38,7 @@ repos:
         entry: docker-compose run --no-deps --entrypoint /usr/bin/env web npm run lint
         language: system
         pass_filenames: false
-        files: web
+        files: accounter/web
 
   - repo: local
     hooks:
@@ -47,6 +47,6 @@ repos:
         entry: docker-compose run --no-deps --entrypoint /usr/bin/env web npm run typecheck
         language: system
         pass_filenames: false
-        files: web
+        files: accounter/web
         # push does not work at the moment for some reason
         # stages: [push]

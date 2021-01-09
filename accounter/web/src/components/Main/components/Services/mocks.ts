@@ -1,5 +1,6 @@
-import { GET_SERVICE_LIST_QUERY, Service } from "./components/AddMoreServices";
 import * as Factory from "factory";
+import { GET_SERVICE_LIST_QUERY } from ".";
+import { Service } from "../../../../utils/types";
 
 export const serviceFactory = Factory.Sync.makeFactory<Service>({
   name: "service",
