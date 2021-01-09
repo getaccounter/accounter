@@ -13,6 +13,8 @@ env:
   TF_VAR_do_space_access_id: ${{ secrets.DO_SPACE_ACCESS_ID }}
   TF_VAR_do_space_access_secret: ${{ secrets.DO_SPACE_ACCESS_SECRET}}
   TF_VAR_image_tag: ${{ github.sha }}
+  TF_VAR_s3_secret_key: ${{ secrets.DO_SPACE_ACCESS_SECRET }}
+  TF_VAR_s3_access_id: ${{ secrets.DO_SPACE_ACCESS_ID }}
 
 jobs:
   health-checks:
