@@ -27,13 +27,22 @@ variable "database" {
 }
 
 variable "s3" {
-  description = "Endpoint of the database"
+  description = "S3 access info"
   type = object({
     endpoint    = string
     bucket_name = string
     access_id   = string
     secret_key  = string
     region      = string
+  })
+  sensitive = true
+}
+
+variable "slack" {
+  description = "Slack credentials"
+  type = object({
+    client_id     = string
+    client_secret = string
   })
   sensitive = true
 }

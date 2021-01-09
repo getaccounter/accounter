@@ -24,6 +24,18 @@ resource "kubernetes_secret" "s3-credentials" {
   }
 }
 
+resource "kubernetes_secret" "slack-credentials" {
+  type = "Opaque"
+  metadata {
+    name = "slack-credentials"
+  }
+
+  data = {
+    client_id     = var.slack.client_id
+    client_secret = var.slack.client_secret
+  }
+}
+
 resource "kubernetes_deployment" "server" {
   metadata {
     name = "server"

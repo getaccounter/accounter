@@ -100,6 +100,11 @@ module "server" {
     access_id   = var.s3_access_id
     secret_key  = var.s3_secret_key
   }
+
+  slack = {
+    client_id     = var.slack_client_id
+    client_secret = var.slack_client_secret
+  }
 }
 
 module "web" {

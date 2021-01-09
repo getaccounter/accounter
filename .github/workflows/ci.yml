@@ -125,12 +125,12 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |
           doctl registry login
-          docker tag server.production $IMAGE_REGISTRY/server
-          docker tag web.production $IMAGE_REGISTRY/web
-          docker tag loadbalancer $IMAGE_REGISTRY/loadbalancer
-          docker push $IMAGE_REGISTRY/server
-          docker push $IMAGE_REGISTRY/web
-          docker push $IMAGE_REGISTRY/loadbalancer
+          docker tag server.production $IMAGE_REGISTRY/server:$GITHUB_SHA
+          docker tag web.production $IMAGE_REGISTRY/web:$GITHUB_SHA
+          docker tag loadbalancer $IMAGE_REGISTRY/loadbalancer:$GITHUB_SHA
+          docker push $IMAGE_REGISTRY/server:$GITHUB_SHA
+          docker push $IMAGE_REGISTRY/web:$GITHUB_SHA
+          docker push $IMAGE_REGISTRY/loadbalancer:$GITHUB_SHA
 
       - name: Deploy
         if: github.ref == 'refs/heads/master'
