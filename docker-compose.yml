@@ -47,6 +47,11 @@ services:
       - POSTGRES_URL=database
       - POSTGRES_PORT=5432
 
+
+      - AWS_STORAGE_BUCKET_NAME=testbucket
+      - AWS_S3_ENDPOINT_URL=http://s3:9090
+      - AWS_LOCATION=assets
+
         # mock proxy settings
       - USE_MOCK_PROXY=True
       # - HTTP_PROXY=mockserver:1080
@@ -59,6 +64,7 @@ services:
       - 8000:8000
     depends_on:
       - database
+      - s3
 
   web:
     image: web.development

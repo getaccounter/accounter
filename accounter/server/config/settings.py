@@ -179,6 +179,6 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 AWS_ACCESS_KEY_ID = get_env_value("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = get_env_value("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = "testbucket"
-AWS_S3_ENDPOINT_URL = "http://s3:9090"
-AWS_LOCATION = "assets"
+AWS_STORAGE_BUCKET_NAME = get_env_value("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_ENDPOINT_URL = get_env_value("AWS_S3_ENDPOINT_URL")
+AWS_LOCATION = get_env_value("AWS_LOCATION")
