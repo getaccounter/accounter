@@ -31,6 +31,12 @@ const mockSlack = () => {
     );
 };
 
+beforeEach(() => {
+  // run these tests as if in a desktop
+  // TODO run as well for mobile
+  cy.viewport(1280, 720)
+})
+
 describe("The Home Page", () => {
   it("redirects to login and let's me log in", () => {
     const user = faker.helpers.userCard();
@@ -40,13 +46,7 @@ describe("The Home Page", () => {
     cy.findByRole("link", { name: "register" }).click();
     cy.register(user.email, user.company.name, password);
     cy.login(user.email, password);
-    cy.findByRole("heading", { name: "Services" }).should("exist");
-
-    cy.findByRole("navigation").within(() => {
-      cy.findByRole("link", { name: "Users" }).click();
-    });
-
-    cy.findByRole("heading", { name: "Users" }).should("exist");
+    cy.findByRole("navigation", {name: "Sidebar"}).should("exist");
   });
 });
 
@@ -61,16 +61,15 @@ describe("Services", () => {
     cy.findByRole("link", { name: "register" }).click();
     cy.register(user.email, user.company.name, password);
     cy.login(user.email, password);
-    cy.findByRole("heading", { name: "Services" }).should("exist");
 
-    cy.findByRole("list", { name: "more-services" }).within(() => {
-      cy.findByRole("listitem", { name: "SLACK" }).click();
-    });
+    cy.navigateTo("Add Apps")
 
+    cy.findByRole("link", { name: "Add SLACK" }).click();
+    
     cy.mockSlackOauth();
 
-    cy.findByRole("list", { name: "integrations" }).within(() => {
-      cy.findByRole("listitem", { name: "SLACK" }).should("exist");
+    cy.findByRole("navigation", { name: "Directory" }).within(() => {
+      cy.findByRole("link", { name: "SLACK" }).should("exist");
     });
   });
 });

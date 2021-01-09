@@ -50,7 +50,7 @@ services:
         # mock proxy settings
       - USE_MOCK_PROXY=True
       # - HTTP_PROXY=mockserver:1080
-      # - HTTPS_PROXY=mockserver:1080
+      - HTTPS_PROXY=mockserver:1080
     env_file:
       - ./accounter/server/.env
     volumes:

@@ -44,6 +44,7 @@ const Services = () => {
               <a href={service.oauthUrl} className="focus:outline-none">
                 <span className="absolute inset-0" aria-hidden="true" />
                 <Plus className="h-6 w-6 text-gray-400" />
+                <span className="sr-only">Add {service.name}</span>
               </a>
             </div>
           </div>
