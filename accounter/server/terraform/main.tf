@@ -7,8 +7,20 @@ resource "kubernetes_secret" "database-credentials" {
   }
 
   data = {
-    user = var.database.user
+    user     = var.database.user
     password = var.database.password
+  }
+}
+
+resource "kubernetes_secret" "s3-credentials" {
+  type = "Opaque"
+  metadata {
+    name = "s3-credentials"
+  }
+
+  data = {
+    access_id  = var.s3.access_id
+    secret_key = var.s3.secret_key
   }
 }
 
@@ -102,7 +114,7 @@ resource "kubernetes_deployment" "server" {
             name = "AWS_ACCESS_KEY_ID"
             value_from {
               secret_key_ref {
-                name = var.s3.credentials_secret_name
+                name = kubernetes_secret.s3-credentials.metadata[0].name
                 key  = "access_id"
               }
             }
@@ -111,7 +123,7 @@ resource "kubernetes_deployment" "server" {
             name = "AWS_SECRET_ACCESS_KEY"
             value_from {
               secret_key_ref {
-                name = var.s3.credentials_secret_name
+                name = kubernetes_secret.s3-credentials.metadata[0].name
                 key  = "secret_key"
               }
             }

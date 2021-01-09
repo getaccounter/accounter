@@ -68,18 +68,6 @@ resource "digitalocean_container_registry_docker_credentials" "accounter" {
   registry_name = "accounter"
 }
 
-resource "kubernetes_secret" "s3-credentials" {
-  type = "Opaque"
-  metadata {
-    name = "s3-credentials"
-  }
-
-  data = {
-    access_id  = var.s3_access_id
-    secret_key = var.s3_secret_key
-  }
-}
-
 resource "kubernetes_secret" "registry-accounter" {
   type = "kubernetes.io/dockerconfigjson"
   metadata {
@@ -106,10 +94,11 @@ module "server" {
   }
 
   s3 = {
-    bucket_name             = digitalocean_spaces_bucket.assets.name
-    region                  = digitalocean_spaces_bucket.assets.region
-    endpoint                = join("", ["https://", digitalocean_spaces_bucket.assets.bucket_domain_name])
-    credentials_secret_name = kubernetes_secret.s3-credentials.metadata[0].name
+    bucket_name = digitalocean_spaces_bucket.assets.name
+    region      = digitalocean_spaces_bucket.assets.region
+    endpoint    = join("", ["https://", digitalocean_spaces_bucket.assets.bucket_domain_name])
+    access_id   = var.s3_access_id
+    secret_key  = var.s3_secret_key
   }
 }
 
