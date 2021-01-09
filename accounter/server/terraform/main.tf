@@ -74,6 +74,36 @@ resource "kubernetes_deployment" "server" {
             name  = "SLACK_CLIENT_SECRET"
             value = "  "
           }
+          env {
+            name  = "AWS_STORAGE_BUCKET_NAME"
+            value = var.s3.bucket_name
+          }
+          env {
+            name  = "AWS_S3_ENDPOINT_URL"
+            value = var.s3.endpoint
+          }
+          env {
+            name  = "AWS_DEFAULT_REGION"
+            value = var.s3.region
+          }
+          env {
+            name = "AWS_ACCESS_KEY_ID"
+            value_from {
+              secret_key_ref {
+                name = var.s3.credentials_secret_name
+                key  = "access_id"
+              }
+            }
+          }
+          env {
+            name = "AWS_SECRET_ACCESS_KEY"
+            value_from {
+              secret_key_ref {
+                name = var.s3.credentials_secret_name
+                key  = "secret_key"
+              }
+            }
+          }
         }
       }
     }

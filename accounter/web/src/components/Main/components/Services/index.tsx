@@ -1,5 +1,4 @@
 import { gql, useQuery } from "@apollo/client";
-import { ASSET_STORAGE } from "../../../../config";
 import { Service } from "../../../../utils/types";
 import { Plus } from "../../../icons/solid";
 
@@ -31,7 +30,7 @@ const Services = () => {
             <div className="flex-shrink-0">
               <img
                 className="h-10 w-10 rounded-full"
-                src={`${ASSET_STORAGE}${service.logo}`}
+                src={`s3/${service.logo}`}
                 alt={`${service.name} logo`}
               />
             </div>

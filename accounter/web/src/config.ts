@@ -24,9 +24,3 @@ export const GRAPHQL_ENDPOINT = parseEnv(
   String,
   "/api/graphql/"
 );
-
-export const ASSET_STORAGE = parseEnv(
-  "REACT_APP_ASSET_STORAGE",
-  String,
-  "http://localhost:9090/testbucket/assets/"
-);
