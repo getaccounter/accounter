@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0005_auto_20201129_0903'),
+        ("integrations", "0005_auto_20201129_0903"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='slackintegration',
-            name='token',
-            field=models.TextField(default=''),
+            model_name="slackintegration",
+            name="token",
+            field=models.TextField(default=""),
             preserve_default=False,
         ),
     ]

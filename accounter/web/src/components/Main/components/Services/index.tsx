@@ -46,7 +46,6 @@ const Services = () => {
                 <Plus className="h-6 w-6 text-gray-400" />
               </a>
             </div>
-
           </div>
         ))}
       </div>

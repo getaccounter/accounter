@@ -1,8 +1,13 @@
 import React from "react";
 import SideBar from "./components/Sidebar";
-import Content from "./components/Content";
-import Directory from "./components/Directory";
-import { Cog, Menu, UserGroup, ViewGrid, ViewGridAdd, UserAdd } from "../icons/outline";
+import {
+  Cog,
+  Menu,
+  UserGroup,
+  ViewGrid,
+  ViewGridAdd,
+  UserAdd,
+} from "../icons/outline";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Integrations from "./components/Integrations";
 import Users from "./components/Users";
@@ -77,7 +82,7 @@ const EXTRA_PAGES = [
   },
 ];
 
-export const HOME_PAGE = MAIN_PAGES[0]
+export const HOME_PAGE = MAIN_PAGES[0];
 
 export default function Main() {
   return (

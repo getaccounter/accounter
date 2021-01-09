@@ -46,7 +46,13 @@ export const DirectoryEntryList = (props: {
         <h3>{props.title}</h3>
       </div>
     )}
-    <ul className={`relative z-0 divide-y divide-gray-200 border-gray-200 last:border-b ${!props.title && "border-t"}`}>{props.children}</ul>
+    <ul
+      className={`relative z-0 divide-y divide-gray-200 border-gray-200 last:border-b ${
+        !props.title && "border-t"
+      }`}
+    >
+      {props.children}
+    </ul>
   </>
 );
 

@@ -278,4 +278,4 @@ const Content = () => (
   </main>
 );
 
-export default Content
+export default Content;

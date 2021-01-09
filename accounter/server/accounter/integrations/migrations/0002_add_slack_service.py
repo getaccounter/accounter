@@ -12,8 +12,7 @@ def add_services(apps, schema_editor):
     Service = apps.get_model("integrations", "Service")
     service = Service.objects.create(name="SLACK")
     with open(
-        os.path.join(current_path, "./0002_add_slack_service_slack_logo.svg"),
-        'rb'
+        os.path.join(current_path, "./0002_add_slack_service_slack_logo.svg"), "rb"
     ) as logo:
         service.logo.save("slack.svg", File(logo), save=True)
     service.save()

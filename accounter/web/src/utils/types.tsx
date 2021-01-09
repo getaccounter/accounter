@@ -1,5 +1,5 @@
 export type Service = {
-    logo: string;
-    name: string;
-    oauthUrl: string;
-  };
+  logo: string;
+  name: string;
+  oauthUrl: string;
+};

@@ -1,12 +1,12 @@
 import React from "react";
 import { X } from "../../../icons/solid";
-import Tab, {TabType} from "./components/Tab";
+import Tab, { TabType } from "./components/Tab";
 import Profile from "./components/Profile";
 
 type Props = {
-  mainTabs: Array<TabType>
-  extraTabs: Array<TabType>
-}
+  mainTabs: Array<TabType>;
+  extraTabs: Array<TabType>;
+};
 
 const MobileSidebar = (props: Props) => (
   <>

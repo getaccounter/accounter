@@ -57,24 +57,24 @@ export const loginQueryWithErrorMock = Factory.Sync.makeFactory<MockedResponse>(
 );
 
 // session info query
-export const getSessionInfoQueryResponseMock = Factory.Sync.makeFactory<
-  SessionInfoQueryResponse
->({
-  sessionInfo: {
-    signedIn: true,
-  },
-});
+export const getSessionInfoQueryResponseMock = Factory.Sync.makeFactory<SessionInfoQueryResponse>(
+  {
+    sessionInfo: {
+      signedIn: true,
+    },
+  }
+);
 
-export const sessionInfoQuerySignedInMock = Factory.Sync.makeFactory<
-  MockedResponse
->({
-  request: {
-    query: SESSION_INFO_QUERY,
-  },
-  result: {
-    data: getSessionInfoQueryResponseMock.build(),
-  },
-});
+export const sessionInfoQuerySignedInMock = Factory.Sync.makeFactory<MockedResponse>(
+  {
+    request: {
+      query: SESSION_INFO_QUERY,
+    },
+    result: {
+      data: getSessionInfoQueryResponseMock.build(),
+    },
+  }
+);
 
 export const sessionInfoQuerySignedOutMock = sessionInfoQuerySignedInMock.extend(
   {

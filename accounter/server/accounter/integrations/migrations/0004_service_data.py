@@ -7,13 +7,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0003_add_hstore_to_services'),
+        ("integrations", "0003_add_hstore_to_services"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='service',
-            name='data',
+            model_name="service",
+            name="data",
             field=django.contrib.postgres.fields.hstore.HStoreField(default=dict),
         ),
     ]

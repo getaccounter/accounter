@@ -5,9 +5,11 @@
 ## Developing
 
 ### Installing pre-commit hooks
+
 1. [Install pre-commit](https://pre-commit.com/#install)
 
 2. Install hooks:
+
 ```bash
 pre-commit install
 ```
