@@ -22,3 +22,15 @@ variable "s3_secret_key" {
   sensitive   = true
 }
 
+variable "slack_client_id" {
+  description = "slack client id"
+  type        = string
+  sensitive   = true
+}
+
+variable "slack_client_secret" {
+  description = "slack client secret"
+  type        = string
+  sensitive   = true
+}
+
