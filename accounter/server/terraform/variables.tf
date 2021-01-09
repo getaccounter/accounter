@@ -17,11 +17,13 @@ variable "port" {
 variable "database" {
   description = "Endpoint of the database"
   type = object({
+    user = string
+    password = string
     database = string
-    credentials_secret_name = string
     url = string
     port = number
   })
+  sensitive   = true
 }
 
 variable "s3" {
