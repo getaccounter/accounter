@@ -12,6 +12,7 @@ const User = () => {
         />
       </div>
       <div className="flex-1 min-w-0">
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a href="#" className="focus:outline-none">
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />

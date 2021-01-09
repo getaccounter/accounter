@@ -10,6 +10,7 @@ const Content = () => (
       className="flex items-start px-4 py-3 sm:px-6 lg:px-8 xl:hidden"
       aria-label="Breadcrumb"
     >
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <a
         href="#"
         className="inline-flex items-center space-x-3 text-sm font-medium text-gray-900"
@@ -106,6 +107,7 @@ const Content = () => (
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
               {/* Current: "border-pink-500 text-indigo-600", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" */}
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a
                 href="#"
                 className="border-pink-500 text-gray-900 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
@@ -113,12 +115,14 @@ const Content = () => (
               >
                 Profile
               </a>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a
                 href="#"
                 className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
               >
                 Calendar
               </a>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a
                 href="#"
                 className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
@@ -201,6 +205,7 @@ const Content = () => (
               />
             </div>
             <div className="flex-1 min-w-0">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a href="#" className="focus:outline-none">
                 <span className="absolute inset-0" aria-hidden="true" />
                 <p className="text-sm font-medium text-gray-900">
@@ -221,6 +226,7 @@ const Content = () => (
               />
             </div>
             <div className="flex-1 min-w-0">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a href="#" className="focus:outline-none">
                 <span className="absolute inset-0" aria-hidden="true" />
                 <p className="text-sm font-medium text-gray-900">
@@ -241,6 +247,7 @@ const Content = () => (
               />
             </div>
             <div className="flex-1 min-w-0">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a href="#" className="focus:outline-none">
                 <span className="absolute inset-0" aria-hidden="true" />
                 <p className="text-sm font-medium text-gray-900">
@@ -261,6 +268,7 @@ const Content = () => (
               />
             </div>
             <div className="flex-1 min-w-0">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a href="#" className="focus:outline-none">
                 <span className="absolute inset-0" aria-hidden="true" />
                 <p className="text-sm font-medium text-gray-900">

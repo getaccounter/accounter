@@ -1,5 +1,6 @@
 const Profile = ({ desktop }: { desktop?: boolean }) => (
   <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
     <a
       href="#"
       className={`flex-shrink-0 group block ${desktop ? "w-full" : ""}`}
