@@ -15,6 +15,8 @@ env:
   TF_VAR_image_tag: ${{ github.sha }}
   TF_VAR_s3_secret_key: ${{ secrets.DO_SPACE_ACCESS_SECRET }}
   TF_VAR_s3_access_id: ${{ secrets.DO_SPACE_ACCESS_ID }}
+  TF_VAR_slack_client_id: ${{ secrets.SLACK_CLIENT_ID }}
+  TF_VAR_slack_client_secret: ${{ secrets.SLACK_CLIENT_SECRET }}
 
 jobs:
   health-checks:
@@ -123,12 +125,12 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |
           doctl registry login
-          docker tag server.production $IMAGE_REGISTRY/server
-          docker tag web.production $IMAGE_REGISTRY/web
-          docker tag loadbalancer $IMAGE_REGISTRY/loadbalancer
-          docker push $IMAGE_REGISTRY/server
-          docker push $IMAGE_REGISTRY/web
-          docker push $IMAGE_REGISTRY/loadbalancer
+          docker tag server.production $IMAGE_REGISTRY/server:$GITHUB_SHA
+          docker tag web.production $IMAGE_REGISTRY/web:$GITHUB_SHA
+          docker tag loadbalancer $IMAGE_REGISTRY/loadbalancer:$GITHUB_SHA
+          docker push $IMAGE_REGISTRY/server:$GITHUB_SHA
+          docker push $IMAGE_REGISTRY/web:$GITHUB_SHA
+          docker push $IMAGE_REGISTRY/loadbalancer:$GITHUB_SHA
 
       - name: Deploy
         if: github.ref == 'refs/heads/master'

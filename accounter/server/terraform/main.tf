@@ -1,5 +1,41 @@
 
 
+resource "kubernetes_secret" "database-credentials" {
+  type = "Opaque"
+  metadata {
+    name = "database-credentials"
+  }
+
+  data = {
+    user     = var.database.user
+    password = var.database.password
+  }
+}
+
+resource "kubernetes_secret" "s3-credentials" {
+  type = "Opaque"
+  metadata {
+    name = "s3-credentials"
+  }
+
+  data = {
+    access_id  = var.s3.access_id
+    secret_key = var.s3.secret_key
+  }
+}
+
+resource "kubernetes_secret" "slack-credentials" {
+  type = "Opaque"
+  metadata {
+    name = "slack-credentials"
+  }
+
+  data = {
+    client_id     = var.slack.client_id
+    client_secret = var.slack.client_secret
+  }
+}
+
 resource "kubernetes_deployment" "server" {
   metadata {
     name = "server"
@@ -44,8 +80,8 @@ resource "kubernetes_deployment" "server" {
             name = "POSTGRES_USER"
             value_from {
               secret_key_ref {
-                name = var.database.credentials_secret_name
-                key  = "username"
+                name = kubernetes_secret.database-credentials.metadata[0].name
+                key  = "user"
               }
             }
           }
@@ -53,7 +89,7 @@ resource "kubernetes_deployment" "server" {
             name = "POSTGRES_PASSWORD"
             value_from {
               secret_key_ref {
-                name = var.database.credentials_secret_name
+                name = kubernetes_secret.database-credentials.metadata[0].name
                 key  = "password"
               }
             }
@@ -90,7 +126,7 @@ resource "kubernetes_deployment" "server" {
             name = "AWS_ACCESS_KEY_ID"
             value_from {
               secret_key_ref {
-                name = var.s3.credentials_secret_name
+                name = kubernetes_secret.s3-credentials.metadata[0].name
                 key  = "access_id"
               }
             }
@@ -99,7 +135,7 @@ resource "kubernetes_deployment" "server" {
             name = "AWS_SECRET_ACCESS_KEY"
             value_from {
               secret_key_ref {
-                name = var.s3.credentials_secret_name
+                name = kubernetes_secret.s3-credentials.metadata[0].name
                 key  = "secret_key"
               }
             }

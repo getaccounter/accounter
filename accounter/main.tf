@@ -68,30 +68,6 @@ resource "digitalocean_container_registry_docker_credentials" "accounter" {
   registry_name = "accounter"
 }
 
-resource "kubernetes_secret" "database-credentials" {
-  type = "Opaque"
-  metadata {
-    name = "database-credentials"
-  }
-
-  data = {
-    username = data.digitalocean_database_cluster.database.user
-    password = data.digitalocean_database_cluster.database.password
-  }
-}
-
-resource "kubernetes_secret" "s3-credentials" {
-  type = "Opaque"
-  metadata {
-    name = "s3-credentials"
-  }
-
-  data = {
-    access_id  = var.s3_access_id
-    secret_key = var.s3_secret_key
-  }
-}
-
 resource "kubernetes_secret" "registry-accounter" {
   type = "kubernetes.io/dockerconfigjson"
   metadata {
@@ -110,17 +86,24 @@ module "server" {
   image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   database = {
-    database                = data.digitalocean_database_cluster.database.database
-    credentials_secret_name = kubernetes_secret.database-credentials.metadata[0].name
-    url                     = data.digitalocean_database_cluster.database.private_host
-    port                    = data.digitalocean_database_cluster.database.port
+    user     = data.digitalocean_database_cluster.database.user
+    password = data.digitalocean_database_cluster.database.password
+    database = data.digitalocean_database_cluster.database.database
+    url      = data.digitalocean_database_cluster.database.private_host
+    port     = data.digitalocean_database_cluster.database.port
   }
 
   s3 = {
     bucket_name = digitalocean_spaces_bucket.assets.name
-    region = digitalocean_spaces_bucket.assets.region
-    endpoint = join("", ["https://", digitalocean_spaces_bucket.assets.bucket_domain_name])
-    credentials_secret_name = kubernetes_secret.s3-credentials.metadata[0].name
+    region      = digitalocean_spaces_bucket.assets.region
+    endpoint    = join("", ["https://", digitalocean_spaces_bucket.assets.bucket_domain_name])
+    access_id   = var.s3_access_id
+    secret_key  = var.s3_secret_key
+  }
+
+  slack = {
+    client_id     = var.slack_client_id
+    client_secret = var.slack_client_secret
   }
 }
 
@@ -154,6 +137,6 @@ module "loadbalancer" {
 
   s3 = {
     endpoint = join("", ["https://", digitalocean_spaces_bucket.assets.bucket_domain_name])
-    bucket = digitalocean_spaces_bucket.assets.name
+    bucket   = digitalocean_spaces_bucket.assets.name
   }
 }
