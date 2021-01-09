@@ -5,13 +5,15 @@ import { Service } from "../../../../utils/types";
 import Loading from "../../../Loading";
 import Directory, { DirectoryEntry, DirectoryEntryList } from "../Directory";
 
+export type Integration = {
+  service: Pick<Service, "name" | "logo">;
+}
+
 type IntegratonListResponse = {
-  integrations: Array<{
-    service: Pick<Service, "name" | "logo">;
-  }>;
+  integrations: Array<Integration>;
 };
 
-export const GET_SERVICE_LIST_QUERY = gql`
+export const GET_INTEGRATION_LIST_QUERY = gql`
   query GetIntegrationList {
     integrations {
       service {
@@ -24,7 +26,7 @@ export const GET_SERVICE_LIST_QUERY = gql`
 
 const Integrations = () => {
   const { data, loading } = useQuery<IntegratonListResponse>(
-    GET_SERVICE_LIST_QUERY
+    GET_INTEGRATION_LIST_QUERY
   );
   return loading ? (
     <Loading />

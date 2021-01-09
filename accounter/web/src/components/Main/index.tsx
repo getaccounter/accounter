@@ -36,7 +36,7 @@ const Header = () => (
   </div>
 );
 
-const MAIN_PAGES = [
+export const MAIN_PAGES = [
   {
     tab: {
       label: "Apps",
