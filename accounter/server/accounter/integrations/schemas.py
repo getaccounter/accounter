@@ -6,11 +6,16 @@ from .models import Service, SlackIntegration
 
 
 class ServiceType(DjangoObjectType):
-    oauth_url = graphene.String(source="oauth_url", required=True)
-
     class Meta:
         model = Service
-        fields = ("name", "logo")
+        fields = ("name",)
+
+    oauth_url = graphene.String(source="oauth_url", required=True)
+    logo = graphene.String(required=True)
+
+    @classmethod
+    def resolve_logo(cls, instance, info):
+        return instance.logo and instance.logo.url
 
 
 class IntegrationInterface(graphene.Interface):

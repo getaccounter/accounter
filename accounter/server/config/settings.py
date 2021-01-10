@@ -16,6 +16,21 @@ from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 
 
+def get_optional_env_value(env_variable, default_value):
+    """
+    Getting environment variables
+    """
+    try:
+        return os.environ[env_variable]
+    except KeyError as key_error:
+        error_msg = (
+            "Optional environment variable {} not found. Defaulting to '{}'".format(
+                env_variable, default_value
+            )
+        )
+        return default_value
+
+
 def get_env_value(env_variable):
     """
     Getting environment variables
@@ -30,6 +45,17 @@ def get_env_value(env_variable):
 def get_bool_env_value(env_variable):
     valid_boolean_values = ["True", "False"]
     string_value = get_env_value(env_variable)
+    if string_value not in valid_boolean_values:
+        error_msg = "The {} environment variable must be in [{}]".format(
+            env_variable, ", ".join(valid_boolean_values)
+        )
+        raise ImproperlyConfigured(error_msg)
+    return string_value == "True"
+
+
+def get_optional_bool_env_value(env_variable, default_value: bool):
+    valid_boolean_values = ["True", "False"]
+    string_value = get_optional_env_value(env_variable, str(default_value))
     if string_value not in valid_boolean_values:
         error_msg = "The {} environment variable must be in [{}]".format(
             env_variable, ", ".join(valid_boolean_values)
@@ -179,3 +205,5 @@ AWS_SECRET_ACCESS_KEY = get_env_value("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = get_env_value("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_ENDPOINT_URL = get_env_value("AWS_S3_ENDPOINT_URL")
 AWS_LOCATIAWS_DEFAULT_REGIONON = get_env_value("AWS_DEFAULT_REGION")
+AWS_S3_CUSTOM_DOMAIN = get_optional_env_value("AWS_S3_CUSTOM_DOMAIN", None)
+AWS_S3_SECURE_URLS = get_optional_bool_env_value("AWS_S3_SECURE_URLS", True)

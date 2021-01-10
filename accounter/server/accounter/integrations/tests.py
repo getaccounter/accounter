@@ -40,7 +40,7 @@ class ServiceTestCase(GraphQLTestCase):
         service.refresh_from_db()
         assert len(services) == 1
         assert services[0]["name"] == service.name
-        assert services[0]["logo"] == service.logo
+        assert services[0]["logo"] == service.logo.url
         validateURL(services[0]["oauthUrl"])
 
     def test_services_query_requires_authenticated_users(self):
