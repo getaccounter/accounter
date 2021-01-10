@@ -104,11 +104,21 @@ resource "kubernetes_deployment" "server" {
           }
           env {
             name  = "SLACK_CLIENT_ID"
-            value = "  "
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.slack-credentials.metadata[0].name
+                key  = "client_id"
+              }
+            }
           }
           env {
             name  = "SLACK_CLIENT_SECRET"
-            value = "  "
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.slack-credentials.metadata[0].name
+                key  = "client_secret"
+              }
+            }
           }
           env {
             name  = "AWS_STORAGE_BUCKET_NAME"
