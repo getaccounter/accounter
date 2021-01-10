@@ -21,7 +21,7 @@ class ServiceTestCase(GraphQLTestCase):
         self.user = admin.user
 
     def test_services_query(self):
-        self._client.force_login(self.user)
+        self.client.force_login(self.user)
         service = Service.objects.get(name=Service.Types.SLACK)
         response = self.query(
             """
@@ -67,7 +67,7 @@ class ServiceTestCase(GraphQLTestCase):
     )
     @patch.object(WebClient, "oauth_v2_access")
     def test_handle_callback(self, oauth_call_mock):
-        self._client.force_login(self.user)
+        self.client.force_login(self.user)
 
         code = "somecode"
         state = "somestate"
@@ -75,7 +75,10 @@ class ServiceTestCase(GraphQLTestCase):
         service = Service.objects.get(name=Service.Types.SLACK)
         service.state_store[f"{service._client_id}/{state}"] = time.time()
         service.save()
-        oauth_call_mock.return_value = {"authed_user": {"access_token": token}}
+        oauth_call_mock.return_value = {
+            "authed_user": {"access_token": token},
+            "team": {"id": "abc"},
+        }
         response = self.query(
             """
             mutation SlackMutation($code: String!, $state: String!) {
@@ -103,8 +106,73 @@ class ServiceTestCase(GraphQLTestCase):
         assert len(slack_integration) == 1
         assert slack_integration.first().token == token
 
+    @override_settings(
+        INTEGRATIONS={
+            "SLACK": {
+                "CLIENT_ID": "SOME_CLIENT_ID",
+                "CLIENT_SECRET": "SOME_SECRET_KEY",
+            }
+        }
+    )
+    @patch.object(WebClient, "oauth_v2_access")
+    def test_handle_callback_duplicates_only_updates_token(self, oauth_call_mock):
+        self.client.force_login(self.user)
+        first_state = "someFirstState"
+        original_token = "some token"
+        service = Service.objects.get(name=Service.Types.SLACK)
+        service.state_store[f"{service._client_id}/{first_state}"] = time.time()
+        service.save()
+        oauth_call_mock.return_value = {
+            "authed_user": {"access_token": original_token},
+            "team": {"id": "abc"},
+        }
+        # Calling endpoint twice
+        self.query(
+            """
+            mutation SlackMutation($code: String!, $state: String!) {
+                oauth {
+                    slack {
+                        handleCallback(code: $code, state: $state) {
+                            status
+                        }
+                    }
+                }
+            }
+            """,
+            variables={"code": "someFirstCode", "state": first_state},
+        )
+        assert SlackIntegration.objects.count() == 1
+        slack_integration = SlackIntegration.objects.first()
+        assert slack_integration.token == original_token
+
+        updated_token = "updated token"
+        second_state = "some other state"
+        service.state_store[f"{service._client_id}/{second_state}"] = time.time()
+        service.save()
+        oauth_call_mock.return_value = {
+            "authed_user": {"access_token": updated_token},
+            "team": {"id": "abc"},
+        }
+        self.query(
+            """
+            mutation SlackMutation($code: String!, $state: String!) {
+                oauth {
+                    slack {
+                        handleCallback(code: $code, state: $state) {
+                            status
+                        }
+                    }
+                }
+            }
+            """,
+            variables={"code": "someSecondCode", "state": second_state},
+        )
+        assert SlackIntegration.objects.count() == 1
+        slack_integration.refresh_from_db()
+        assert slack_integration.token == updated_token
+
     def test_handle_callback_expired_state(self):
-        self._client.force_login(self.user)
+        self.client.force_login(self.user)
 
         state = "somestate"
         service = Service.objects.get(name=Service.Types.SLACK)
@@ -133,7 +201,7 @@ class ServiceTestCase(GraphQLTestCase):
 
     def test_handle_callback_state_unknown(self):
 
-        self._client.force_login(self.user)
+        self.client.force_login(self.user)
 
         response = self.query(
             """
@@ -197,7 +265,7 @@ class IntegrationTestCase(GraphQLTestCase):
             organization=self.user.admin.organization, token="some_token"
         )
         slack_integration.save()
-        self._client.force_login(self.user)
+        self.client.force_login(self.user)
         response = self.query(
             """
             query {
@@ -237,14 +305,16 @@ class IntegrationTestCase(GraphQLTestCase):
     def test_get_integrations_only_of_own_organization(self):
         # integration of this org
         SlackIntegration.objects.create(
-            organization=self.other_user.admin.organization, token="some_other_token"
+            id="1",
+            organization=self.other_user.admin.organization,
+            token="some_other_token",
         ).save()
 
         # integration of other org
         SlackIntegration.objects.create(
-            organization=self.user.admin.organization, token="some_token"
+            id="2", organization=self.user.admin.organization, token="some_token"
         ).save()
-        self._client.force_login(self.user)
+        self.client.force_login(self.user)
         response = self.query(
             """
             query {

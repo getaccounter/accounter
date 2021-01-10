@@ -37,10 +37,11 @@ class HandleCallback(graphene.Mutation):
     def mutate(self, info, code: str, state: str):
         organization = info.context.user.admin.organization
         slack_service = Service.objects.get(name=Service.Types.SLACK)
-        token = slack_service.handle_callback(code, state)
-        slack_integration = SlackIntegration.objects.create(
-            organization=organization, token=token
+        callback_result = slack_service.handle_callback(code, state)
+        slack_integration, _ = SlackIntegration.objects.get_or_create(
+            id=callback_result.integration_id, organization=organization
         )
+        slack_integration.token = callback_result.token
         slack_integration.save()
         return HandleCallback(status="success")
 

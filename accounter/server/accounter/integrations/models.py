@@ -12,6 +12,14 @@ from ..organizations.models import Organization, Profile
 
 
 class Service(models.Model):
+    class CallbackResult():
+        integration_id: str
+        token: str
+
+        def __init__(self, integration_id: str, token: str):
+            self.integration_id = integration_id
+            self.token = token
+
     # Has a lot of slack specific logic, once we add a second service, lets fix this
     class Types(models.TextChoices):
         SLACK = "SLACK", "Slack"
@@ -47,8 +55,9 @@ class Service(models.Model):
             code=code,
         )
         authed_user = oauth_response.get("authed_user")
+        team = oauth_response.get("team")
         token = authed_user.get("access_token")
-        return token
+        return Service.CallbackResult(integration_id=team.get("id"), token=token)
 
     def _is_callback_still_valid(self, state: str):
         key = f"{self._client_id}/{state}"
@@ -88,6 +97,7 @@ class Service(models.Model):
 
 # Abstract Classes
 class AbstractIntegration(models.Model):
+    id = models.TextField(primary_key=True)
     token = models.TextField()
     organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
 
