@@ -1,10 +1,8 @@
 import React from "react";
+import Content from "./Content";
 
-const Content = () => (
-  <main
-    className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last"
-    tabIndex={0}
-  >
+const OldContent = () => (
+  <Content>
     {/* Breadcrumb */}
     <nav
       className="flex items-start px-4 py-3 sm:px-6 lg:px-8 xl:hidden"
@@ -283,7 +281,7 @@ const Content = () => (
         </div>
       </div>
     </article>
-  </main>
+  </Content>
 );
 
-export default Content;
+export default OldContent;
