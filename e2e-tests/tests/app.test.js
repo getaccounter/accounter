@@ -15,6 +15,9 @@ const mockSlack = () => {
           authed_user: {
             access_token: "some-token",
           },
+          team: {
+            id: "some-unique-integration-id"
+          }
         },
       },
       times: {

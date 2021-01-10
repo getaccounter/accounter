@@ -1,5 +1,6 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { Filter, Search } from "../../../icons/solid";
+import SecondaryColumn from "../SecondaryColumn";
 
 const DirectoryHeader = () => (
   <div className="px-6 pt-6 pb-4">
@@ -78,10 +79,10 @@ const DirectoryList = ({ children }: Props) => (
 );
 
 const Directory = ({ children }: Props) => (
-  <aside className="hidden xl:order-first xl:flex xl:flex-col flex-shrink-0 w-96 border-r border-gray-200">
+  <SecondaryColumn>
     <DirectoryHeader />
     <DirectoryList>{children}</DirectoryList>
-  </aside>
+  </SecondaryColumn>
 );
 
 export default Directory;

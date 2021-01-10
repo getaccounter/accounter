@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { Service } from "../../../../utils/types";
 import Loading from "../../../Loading";
+import OldContent from "../OldContent";
 import Directory, { DirectoryEntry, DirectoryEntryList } from "../Directory";
 
 export type Integration = {
@@ -31,7 +32,7 @@ const Integrations = () => {
     <Loading />
   ) : (
     <div className="flex-1 relative z-0 flex overflow-hidden">
-      {/* <Content /> */}
+      <OldContent />
       <Directory>
         <DirectoryEntryList>
           {data?.integrations.map((integration, idx) => (
