@@ -18,7 +18,6 @@ type ServiceListResponse = {
 
 const Services = () => {
   const { data } = useQuery<ServiceListResponse>(GET_SERVICE_LIST_QUERY);
-  console.log(data);
   return (
     <>
       <div className="p-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -30,7 +29,7 @@ const Services = () => {
             <div className="flex-shrink-0">
               <img
                 className="h-10 w-10 rounded-full"
-                src={`s3/${service.logo}`}
+                src={service.logo}
                 alt={`${service.name} logo`}
               />
             </div>
