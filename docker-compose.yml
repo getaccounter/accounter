@@ -73,7 +73,6 @@ services:
     build:
       context: ./accounter/web
       target: development
-    user: "0"
     environment:
       - CI=${CI}
       - PORT=3000
