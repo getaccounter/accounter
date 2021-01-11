@@ -1,0 +1,82 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type DepartmentType {
+  id: ID!
+  name: String!
+}
+
+type HandleCallback {
+  status: String!
+}
+
+interface IntegrationInterface {
+  service: ServiceType!
+}
+
+type Mutation {
+  signin(email: String!, password: String!): Signin
+  signup(email: String!, orgName: String!, password: String!): Signup
+  oauth: Oauth
+}
+
+type Oauth {
+  slack: SlackCallbackType
+}
+
+type OrganizationType {
+  name: String!
+  profiles: [ProfileType!]!
+}
+
+type ProfileType {
+  title: String
+  department: DepartmentType
+  isActive: Boolean!
+  email: String!
+  firstName: String
+  lastName: String
+}
+
+type Query {
+  sessionInfo: SessionInfoQuery
+  services: [ServiceType]!
+  integrations: [IntegrationInterface!]!
+  organization: OrganizationType
+}
+
+enum ServiceName {
+  SLACK
+}
+
+type ServiceType {
+  name: ServiceName!
+  oauthUrl: String!
+  logo: String!
+}
+
+type SessionInfoQuery {
+  signedIn: Boolean!
+}
+
+type Signin {
+  status: String!
+  message: String!
+}
+
+type Signup {
+  status: String!
+}
+
+type SlackCallbackType {
+  handleCallback(code: String!, state: String!): HandleCallback
+}
+
+type SlackIntegrationType implements IntegrationInterface {
+  id: String!
+  token: String!
+  organization: OrganizationType!
+  service: ServiceType!
+}
