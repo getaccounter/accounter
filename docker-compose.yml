@@ -81,6 +81,7 @@ services:
     volumes:
       - ./accounter/web:/code
       - ./accounter/server/schema.graphql:/code/schema.graphql
+      - /etc/passwd:/etc/passwd:ro
       - /code/node_modules
     stdin_open: true
     depends_on:
