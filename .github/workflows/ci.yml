@@ -35,6 +35,7 @@ jobs:
           docker-compose build
           docker-compose run server ./manage.py graphql_schema --out schema.graphql
           sudo chown $USER:$USER accounter/web/schema.graphql
+          docker-compose run --no-deps web sudo chown $USER:$USER accounter/web/schema.graphql
 
       - name: lint
         run: |
