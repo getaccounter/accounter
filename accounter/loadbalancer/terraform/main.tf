@@ -50,14 +50,6 @@ resource "kubernetes_deployment" "loadbalancer" {
             name  = "SERVER_PORT"
             value = var.server.port
           }
-          env {
-            name  = "S3_HOST"
-            value = var.s3.endpoint
-          }
-          env {
-            name  = "S3_BUCKET"
-            value = var.s3.bucket
-          }
         }
       }
     }
