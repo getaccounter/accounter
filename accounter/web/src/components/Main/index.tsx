@@ -12,6 +12,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import Integrations from "./components/Integrations";
 import Users from "./components/Users";
 import Services from "./components/Services";
+import AddUsers from "./components/AddUsers";
 
 const Header = () => (
   <div className="lg:hidden">
@@ -62,7 +63,7 @@ const EXTRA_PAGES = [
       path: "/add-users",
       Icon: UserAdd,
     },
-    content: "TODO",
+    content: <AddUsers />,
   },
   {
     tab: {

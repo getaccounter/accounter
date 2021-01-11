@@ -24,5 +24,4 @@ else
     echo "Will NOT add mockserver certificates"
 fi
 
-
 exec "$@"
