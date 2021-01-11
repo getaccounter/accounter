@@ -19,7 +19,7 @@ class ServiceType(DjangoObjectType):
 
 
 class IntegrationInterface(graphene.Interface):
-    service = graphene.Field(ServiceType)
+    service = graphene.Field(ServiceType, required=True)
 
     @classmethod
     def resolve_type(cls, instance, info):
