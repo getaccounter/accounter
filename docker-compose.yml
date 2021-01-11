@@ -80,7 +80,7 @@ services:
       - SERVER_PORT=8000
     volumes:
       - ./accounter/web:/code
-      - ./accounter/server/schema.graphql:/code/schema.graphql
+      # - ./accounter/server/schema.graphql:/code/schema.graphql
       - /code/node_modules
     stdin_open: true
     depends_on:
