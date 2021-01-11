@@ -8,7 +8,7 @@ WORKDIR /code
 COPY /requirements /code/requirements
 RUN pip install -r requirements/development.txt
 COPY . /code/
-ENTRYPOINT ["./docker-entrypoint.sh"]
+ENTRYPOINT ["./docker-entrypoint.development.sh"]
 CMD python manage.py runserver 0.0.0.0:$PORT
 
 FROM python:3.9.1 as production

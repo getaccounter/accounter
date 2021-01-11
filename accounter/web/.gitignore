@@ -30,3 +30,7 @@ tailwind.output.css
 
 # temp, until heroicons properly releases
 src/components/icons
+
+# relay
+__generated__
+schema.graphql

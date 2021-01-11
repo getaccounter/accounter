@@ -15,13 +15,13 @@
     "@types/react-dom": "17.0.0",
     "@types/react-router-dom": "5.1.7",
     "@types/uuid": "8.3.0",
-    "graphql": "15.4.0",
     "heroicons": "0.4.2",
     "js-cookie": "2.2.1",
     "postcss": "8.2.2",
     "react": "17.0.1",
     "react-click-away-listener": "1.5.0",
     "react-dom": "17.0.1",
+    "react-relay": "10.1.2",
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.1",
     "tailwindcss-cli": "0.1.2",
@@ -31,14 +31,16 @@
   },
   "scripts": {
     "build:tailwind": "tailwindcss-cli build src/tailwind.css -o src/tailwind.output.css",
-    "prestart": "npm run build:tailwind",
-    "prebuild": "npm run build:tailwind",
+    "prestart": "npm run build:tailwind && npm run relay",
+    "prebuild": "npm run build:tailwind && npm run relay",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint --ext .js --ext .tsx --max-warnings 0 src/",
     "test": "react-scripts test",
+    "pretypecheck": "npm run relay",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "relay": "relay-compiler --src ./src --schema ./schema.graphql --extensions ts tsx --language typescript"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -69,7 +71,16 @@
   },
   "devDependencies": {
     "@types/faker": "5.1.5",
+    "@types/react-relay": "7.0.17",
+    "@types/relay-runtime": "10.1.7",
+    "@types/relay-test-utils": "6.0.3",
+    "babel-plugin-relay": "10.1.2",
     "factory": "https://registry.npmjs.org/factory.ts/-/factory.ts-0.5.1.tgz",
-    "faker": "5.1.0"
+    "faker": "5.1.0",
+    "graphql": "15.4.0",
+    "relay-compiler": "10.1.2",
+    "relay-compiler-language-typescript": "13.0.2",
+    "relay-config": "10.1.2",
+    "relay-test-utils": "10.1.2"
   }
 }
