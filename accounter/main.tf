@@ -134,9 +134,4 @@ module "loadbalancer" {
     host = module.server.host
     port = module.server.port
   }
-
-  s3 = {
-    endpoint = join("", ["https://", digitalocean_spaces_bucket.assets.bucket_domain_name])
-    bucket   = digitalocean_spaces_bucket.assets.name
-  }
 }
