@@ -31,13 +31,12 @@ const Integrations = () => {
             <Overview />
             <Directory>
               <DirectoryEntryList>
-                {props?.integrations!.map((integration, idx) => (
+                {props?.integrations.map((integration, idx) => (
                   <DirectoryEntry key={idx}>
                     <div className="flex items-center space-x-3">
                       <div className="flex-shrink-0">
                         <img
                           className="h-10 w-10 rounded-full"
-                          // @ts-expect-error FIX TYPES ON SERVER
                           src={integration.service.logo}
                           alt=""
                         />
@@ -51,7 +50,6 @@ const Integrations = () => {
                             aria-hidden="true"
                           />
                           <p className="text-sm font-medium text-gray-900">
-                            {/* @ts-expect-error FIX TYPES ON SERVER} */}
                             {integration.service.name}
                           </p>
                         </a>

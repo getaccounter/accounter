@@ -13,7 +13,7 @@ type HandleCallback {
 }
 
 interface IntegrationInterface {
-  service: ServiceType
+  service: ServiceType!
 }
 
 type Mutation {
@@ -42,8 +42,8 @@ type ProfileType {
 
 type Query {
   sessionInfo: SessionInfoQuery
-  services: [ServiceType]
-  integrations: [IntegrationInterface]
+  services: [ServiceType]!
+  integrations: [IntegrationInterface!]!
   organization: OrganizationType
 }
 
@@ -78,5 +78,5 @@ type SlackIntegrationType implements IntegrationInterface {
   id: String!
   token: String!
   organization: OrganizationType!
-  service: ServiceType
+  service: ServiceType!
 }

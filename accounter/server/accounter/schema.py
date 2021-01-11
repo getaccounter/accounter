@@ -21,14 +21,14 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     session_info = graphene.Field(SessionInfoQuery, default_value={})
 
-    services = graphene.List(ServiceType)
+    services = graphene.List(ServiceType, required=True)
 
     @staticmethod
     @signin_required
     def resolve_services(parent, info, **kwargs):
         return Service.objects.all()
 
-    integrations = graphene.List(IntegrationInterface)
+    integrations = graphene.List(graphene.NonNull(IntegrationInterface), required=True)
 
     @staticmethod
     @signin_required
