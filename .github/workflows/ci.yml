@@ -33,7 +33,7 @@ jobs:
       - name: build
         run: |
           docker-compose run server ./manage.py graphql_schema --out schema.graphql
-          cp accounter/server/schema.graphql accounter/web/schema.graphql
+          mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
           docker-compose build
 
       - name: lint

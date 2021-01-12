@@ -2,6 +2,6 @@
 
 ./docker-entrypoint.sh
 
-./manage.py graphql_schema --out schema.graphql --watch &
+./manage.py graphql_schema --out shared-graphql/schema.graphql --watch &
 
 exec "$@"

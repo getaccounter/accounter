@@ -39,7 +39,7 @@
     "test": "react-scripts test",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "eject": "react-scripts eject",
-    "relay": "relay-compiler --src ./src --schema ./schema.graphql --extensions ts tsx --language typescript"
+    "relay": "relay-compiler --src ./src --schema ./shared-graphql/schema.graphql --extensions ts tsx --language typescript"
   },
   "eslintConfig": {
     "extends": "react-app"
