@@ -55,7 +55,7 @@ class ServiceTestCase(GraphQLTestCase):
         )
         self.assertResponseHasErrors(response)
         content = json.loads(response.content)
-        assert content["data"]["services"] is None
+        assert content["data"] is None
 
     @override_settings(
         INTEGRATIONS={
@@ -300,7 +300,7 @@ class IntegrationTestCase(GraphQLTestCase):
         )
         self.assertResponseHasErrors(response)
         content = json.loads(response.content)
-        assert content["data"]["integrations"] is None
+        assert content["data"] is None
 
     def test_get_integrations_only_of_own_organization(self):
         # integration of this org
