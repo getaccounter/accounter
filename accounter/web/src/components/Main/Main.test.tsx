@@ -3,8 +3,6 @@ import { render, within } from "@testing-library/react";
 import Main, { MAIN_PAGES } from "./";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import { MockedProvider } from "@apollo/client/testing";
-import { getIntegrationMockQueryMock } from "./components/Integrations/mocks";
 import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
 import RelayProvider from "../../contexts/relay";
 import { Environment } from "react-relay";
@@ -16,11 +14,9 @@ const Providers = ({
   children: ReactNode;
   environment: Environment;
 }) => (
-  <MockedProvider mocks={[getIntegrationMockQueryMock()]}>
-    <RelayProvider environment={environment}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </RelayProvider>
-  </MockedProvider>
+  <RelayProvider environment={environment}>
+    <MemoryRouter>{children}</MemoryRouter>
+  </RelayProvider>
 );
 
 test("show Services by default", async () => {

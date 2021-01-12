@@ -8,29 +8,39 @@ import AuthProvider from "./contexts/auth";
 import { MemoryRouter } from "react-router-dom";
 import { getLoginRequestMocks } from "./contexts/auth.mocks";
 import NotificationProvider from "./contexts/notification";
-import { getServiceMockQueryMock } from "./components/Main/components/Services/mocks";
+import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
+import { Environment } from "react-relay";
+import RelayProvider from "./contexts/relay";
 
 jest.mock("use-http", () => () => ({ loading: false }));
 
-const Providers = ({ children }: { children: ReactNode }) => (
+const Providers = ({
+  children,
+  environment,
+}: {
+  children: ReactNode;
+  environment: Environment;
+}) => (
   <AuthProvider>
-    <NotificationProvider>
-      <MemoryRouter>{children}</MemoryRouter>
-    </NotificationProvider>
+    <RelayProvider environment={environment}>
+      <NotificationProvider>
+        <MemoryRouter>{children}</MemoryRouter>
+      </NotificationProvider>
+    </RelayProvider>
   </AuthProvider>
 );
 
 test("reroutes to login and after reroutes to actual content", async () => {
+  const environment = createMockEnvironment();
+
+  environment.mock.queueOperationResolver((operation) =>
+    MockPayloadGenerator.generate(operation)
+  );
   const email = "some@user.internet";
   const password = "somepassword";
   const root = render(
-    <MockedProvider
-      mocks={[
-        ...getLoginRequestMocks(email, password),
-        getServiceMockQueryMock(),
-      ]}
-    >
-      <Providers>
+    <MockedProvider mocks={[...getLoginRequestMocks(email, password)]}>
+      <Providers environment={environment}>
         <Root />
       </Providers>
     </MockedProvider>
