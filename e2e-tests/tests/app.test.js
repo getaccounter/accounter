@@ -16,7 +16,7 @@ const mockSlack = () => {
             access_token: "some-token",
           },
           team: {
-            id: "some-unique-integration-id"
+            id: faker.random.uuid()
           }
         },
       },
