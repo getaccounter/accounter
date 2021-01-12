@@ -32,5 +32,4 @@ tailwind.output.css
 src/components/icons
 
 # relay
-__generated__
 schema.graphql
