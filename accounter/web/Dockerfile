@@ -6,15 +6,12 @@ RUN apk update && apk add bash watchman
 RUN mkdir /var/run/watchman
 
 RUN mkdir /code
-RUN chown -R root /code
-# USER node
 WORKDIR /code
 COPY package*.json ./
 RUN npm ci
 COPY . /code/
 # Temporary, until heroicons library is stable and transpiled
 RUN cp -R node_modules/heroicons/react/ src/components/icons
-
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD [ "npm", "start" ]
 
