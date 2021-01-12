@@ -21,7 +21,7 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     session_info = graphene.Field(SessionInfoQuery, default_value={})
 
-    services = graphene.List(ServiceType, required=True)
+    services = graphene.List(graphene.NonNull(ServiceType), required=True)
 
     @staticmethod
     @signin_required
