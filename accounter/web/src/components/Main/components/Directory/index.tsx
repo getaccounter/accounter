@@ -2,12 +2,20 @@ import React, { ReactNode } from "react";
 import { Filter, Search } from "../../../icons/solid";
 import SecondaryColumn from "../SecondaryColumn";
 
-const DirectoryHeader = () => (
+const DirectoryHeader = ({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle?: string;
+}) => (
   <div className="px-6 pt-6 pb-4">
-    <h2 className="text-lg font-medium text-gray-900">Directory</h2>
-    <p className="mt-1 text-sm text-gray-600">
-      Search directory of 9,999 employees
-    </p>
+    <h2 className="text-lg font-medium text-gray-900">{title}</h2>
+    {subtitle && (
+      <p className="mt-1 text-sm text-gray-600">
+        {subtitle}
+      </p>
+    )}
     <form className="mt-6 flex space-x-4" action="#">
       <div className="flex-1 min-w-0">
         <label htmlFor="search" className="sr-only">
@@ -65,11 +73,7 @@ export const DirectoryEntry = (props: { children: ReactNode }) => (
   </li>
 );
 
-type Props = {
-  children: ReactNode;
-};
-
-const DirectoryList = ({ children }: Props) => (
+const DirectoryList = ({ children }: { children: ReactNode }) => (
   <nav
     className="flex-1 min-h-0 relative overflow-y-auto"
     aria-label="Directory"
@@ -78,9 +82,16 @@ const DirectoryList = ({ children }: Props) => (
   </nav>
 );
 
-const Directory = ({ children }: Props) => (
-  <SecondaryColumn>
-    <DirectoryHeader />
+type Props = {
+  showOnMobile: boolean,
+  title: string;
+  subtitle?: string,
+  children: ReactNode;
+};
+
+const Directory = ({ children, showOnMobile, title, subtitle }: Props) => (
+  <SecondaryColumn showOnMobile={showOnMobile}>
+    <DirectoryHeader title={title} subtitle={subtitle} />
     <DirectoryList>{children}</DirectoryList>
   </SecondaryColumn>
 );

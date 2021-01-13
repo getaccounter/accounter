@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SideBar from "./components/Sidebar";
 import {
   Cog,
@@ -14,7 +14,11 @@ import Users from "./components/Users";
 import Services from "./components/Services";
 import AddUsers from "./components/AddUsers";
 
-const Header = () => (
+type HeaderProps = {
+  onOpenSidebar: () => void
+}
+
+const Header = (props: HeaderProps) => (
   <div className="lg:hidden">
     <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5">
       <div>
@@ -28,6 +32,7 @@ const Header = () => (
         <button
           type="button"
           className="-mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-600"
+          onClick={() => props.onOpenSidebar()}
         >
           <span className="sr-only">Open sidebar</span>
           <Menu className="h-6 w-6" />
@@ -86,15 +91,18 @@ const EXTRA_PAGES = [
 export const HOME_PAGE = MAIN_PAGES[0];
 
 export default function Main() {
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false)
   return (
     <div>
       <div className="h-screen flex overflow-hidden bg-white">
         <SideBar
+          onCloseMobileSidebar={() => setShowMobileSidebar(false)}
+          showMobileSidebar={showMobileSidebar}
           mainTabs={MAIN_PAGES.map((p) => p.tab)}
           extraTabs={EXTRA_PAGES.map((p) => p.tab)}
         />
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
-          <Header />
+          <Header onOpenSidebar={() => setShowMobileSidebar(true)} />
           <Switch>
             {[...MAIN_PAGES, ...EXTRA_PAGES].map(({ tab, content }) => (
               <Route key={tab.path} path={tab.path}>
