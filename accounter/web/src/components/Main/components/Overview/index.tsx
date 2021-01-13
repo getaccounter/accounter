@@ -1,25 +1,25 @@
 import React, { ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { ChevronLeft, Mail, Phone } from "../../../icons/solid";
 import Content from "../Content";
 
 type BreadcrumbProps = {
   title: ReactNode;
-  onOpenDirectory: () => void;
 };
-const Breadcrumb = ({ title, onOpenDirectory }: BreadcrumbProps) => {
+const Breadcrumb = ({ title }: BreadcrumbProps) => {
   return (
     <nav
       className="flex items-start px-4 py-3 sm:px-6 lg:px-8 xl:hidden"
       aria-label="Breadcrumb"
     >
       {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-      <button
-        onClick={() => onOpenDirectory()}
+      <Link
+        to="/integrations"
         className="inline-flex items-center space-x-3 text-sm font-medium text-gray-900"
       >
         <ChevronLeft className="-ml-2 h-5 w-5 text-gray-400" />
         <span>{title}</span>
-      </button>
+      </Link>
     </nav>
   );
 };
@@ -198,14 +198,12 @@ const TeamMemberList = () => {
 };
 
 type Props = {
-  showOnMobile: boolean;
-  onOpenDirectoryOnMobile: () => void;
   title: ReactNode;
 };
 
-const Overview = ({ title, showOnMobile, onOpenDirectoryOnMobile }: Props) => (
-  <Content className={showOnMobile ? "" : "hidden xl:block"}>
-    <Breadcrumb title={title} onOpenDirectory={onOpenDirectoryOnMobile} />
+const Overview = ({ title }: Props) => (
+  <Content>
+    <Breadcrumb title={title} />
     <article>
       <Header />
       <Tabs />

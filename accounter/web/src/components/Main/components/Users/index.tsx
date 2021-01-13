@@ -27,7 +27,7 @@ const User = () => {
 const Users = () => (
   <div className="flex-1 relative z-0 flex overflow-hidden">
     {/* <Content /> */}
-    <Directory showOnMobile={true} title="Users" subtitle={`${9999} users`}>
+    <Directory title="Users" subtitle={`${9999} users`}>
       <DirectoryEntryList title="A">
         <DirectoryEntry>
           <User />

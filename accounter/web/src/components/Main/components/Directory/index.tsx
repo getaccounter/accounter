@@ -83,14 +83,14 @@ const DirectoryList = ({ children }: { children: ReactNode }) => (
 );
 
 type Props = {
-  showOnMobile: boolean,
+  isMobile?: boolean,
   title: string;
   subtitle?: string,
   children: ReactNode;
 };
 
-const Directory = ({ children, showOnMobile, title, subtitle }: Props) => (
-  <SecondaryColumn showOnMobile={showOnMobile}>
+const Directory = ({ children, isMobile, title, subtitle }: Props) => (
+  <SecondaryColumn isMobile={isMobile}>
     <DirectoryHeader title={title} subtitle={subtitle} />
     <DirectoryList>{children}</DirectoryList>
   </SecondaryColumn>
