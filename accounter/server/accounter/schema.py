@@ -7,7 +7,7 @@ from .integrations.schemas import (
     ServiceType,
     SlackIntegrationType,
 )
-from .organizations.schemas import OrganizationType, Signup
+from .organizations.schemas import Signup, Query as OrganizationQuery
 from .users.schemas import SessionInfoQuery, Signin
 from .utils import signin_required
 
@@ -18,7 +18,7 @@ class Mutation(graphene.ObjectType):
     oauth = graphene.Field(Oauth, default_value={})
 
 
-class Query(graphene.ObjectType):
+class Query(OrganizationQuery, graphene.ObjectType):
     session_info = graphene.Field(SessionInfoQuery, default_value={})
 
     services = graphene.List(graphene.NonNull(ServiceType), required=True)
@@ -36,13 +36,6 @@ class Query(graphene.ObjectType):
         organization = info.context.user.admin.organization
         slack_integrations = SlackIntegration.objects.filter(organization=organization)
         return slack_integrations
-
-    organization = graphene.Field(OrganizationType)
-
-    @staticmethod
-    @signin_required
-    def resolve_organization(parent, info, **kwargs):
-        return info.context.user.admin.organization
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation, types=[SlackIntegrationType])
