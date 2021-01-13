@@ -8,39 +8,45 @@ import {
   ViewGridAdd,
   UserAdd,
 } from "../icons/outline";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Link, Redirect, Route, Switch, useLocation } from "react-router-dom";
 import Integrations from "./components/Integrations";
 import Users from "./components/Users";
 import Services from "./components/Services";
 import AddUsers from "./components/AddUsers";
+import queryString from 'query-string'
 
-type HeaderProps = {
-  onOpenSidebar: () => void
-}
-
-const Header = (props: HeaderProps) => (
-  <div className="lg:hidden">
-    <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5">
-      <div>
-        <img
-          className="h-8 w-auto"
-          src="https://tailwindui.com/img/logos/workflow-mark-pink-500.svg"
-          alt="Workflow"
-        />
-      </div>
-      <div>
-        <button
-          type="button"
-          className="-mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-600"
-          onClick={() => props.onOpenSidebar()}
-        >
-          <span className="sr-only">Open sidebar</span>
-          <Menu className="h-6 w-6" />
-        </button>
+const Header = () => {
+  const location = useLocation();
+  const qsObject = {
+    ...queryString.parse(location.search),
+    showMobileSidebar: true
+  }
+  const menuLink = `${location.pathname}?${queryString.stringify(qsObject)}`
+  return (
+    <div className="lg:hidden">
+      <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5">
+        <div>
+          <img
+            className="h-8 w-auto"
+            src="https://tailwindui.com/img/logos/workflow-mark-pink-500.svg"
+            alt="Workflow"
+          />
+        </div>
+        <div>
+          <Link to={menuLink}>
+            <button
+              type="button"
+              className="-mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-600"
+            >
+              <span className="sr-only">Open sidebar</span>
+              <Menu className="h-6 w-6" />
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const MAIN_PAGES = [
   {
@@ -91,18 +97,15 @@ const EXTRA_PAGES = [
 export const HOME_PAGE = MAIN_PAGES[0];
 
 export default function Main() {
-  const [showMobileSidebar, setShowMobileSidebar] = useState(false)
   return (
     <div>
       <div className="h-screen flex overflow-hidden bg-white">
         <SideBar
-          onCloseMobileSidebar={() => setShowMobileSidebar(false)}
-          showMobileSidebar={showMobileSidebar}
           mainTabs={MAIN_PAGES.map((p) => p.tab)}
           extraTabs={EXTRA_PAGES.map((p) => p.tab)}
         />
         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
-          <Header onOpenSidebar={() => setShowMobileSidebar(true)} />
+          <Header />
           <Switch>
             {[...MAIN_PAGES, ...EXTRA_PAGES].map(({ tab, content }) => (
               <Route key={tab.path} path={tab.path}>
