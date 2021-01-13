@@ -83,9 +83,10 @@ class Query(graphene.ObjectType):
     @signin_required
     def resolve_organization(parent, info, **kwargs):
         return info.context.user.profile.organization
+        
+    current_user = graphene.Field(ProfileNode)
 
-    # organization = graphene.relay.Node.Field(OrganizationNode)
-    # all_categories = DjangoFilterConnectionField(CategoryNode)
-
-    profile = graphene.relay.Node.Field(ProfileNode)
-    # all_categories = DjangoFilterConnectionField(CategoryNode)
+    @staticmethod
+    @signin_required
+    def resolve_current_user(parent, info, **kwargs):
+        return info.context.user.profile

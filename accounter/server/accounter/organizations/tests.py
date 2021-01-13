@@ -66,7 +66,7 @@ class OrganizationTestCase(GraphQLTestCase):
         assert len(orgs) == 0
 
     def test_get_organization(self):
-        self._client.force_login(self.user)
+        self.client.force_login(self.user)
         response = self.query(
             """
             {
@@ -104,3 +104,20 @@ class OrganizationTestCase(GraphQLTestCase):
         assert (
             response_profile["department"]["name"] == self.profiles[0].department.name
         )
+
+    def test_get_current_user(self):
+        self.client.force_login(self.user)
+        response = self.query(
+            """
+            {
+              currentUser{
+                email
+              }
+            }
+
+            """,
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        organization = content["data"]["currentUser"]
+        assert content["data"]["currentUser"]["email"] == self.user.email
