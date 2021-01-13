@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import { Filter, Search } from "../../../icons/solid";
-import SecondaryColumn from "../SecondaryColumn";
 
 const DirectoryHeader = ({
   title,
@@ -83,17 +82,16 @@ const DirectoryList = ({ children }: { children: ReactNode }) => (
 );
 
 type Props = {
-  isMobile?: boolean,
   title: string;
   subtitle?: string,
   children: ReactNode;
 };
 
-const Directory = ({ children, isMobile, title, subtitle }: Props) => (
-  <SecondaryColumn isMobile={isMobile}>
+const Directory = ({ children, title, subtitle }: Props) => (
+  <>
     <DirectoryHeader title={title} subtitle={subtitle} />
     <DirectoryList>{children}</DirectoryList>
-  </SecondaryColumn>
+  </>
 );
 
 export default Directory;

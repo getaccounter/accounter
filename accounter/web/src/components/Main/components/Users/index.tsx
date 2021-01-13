@@ -1,10 +1,12 @@
 import React from "react";
 import Media from "react-media";
-import { Route, Switch } from "react-router-dom";
+import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
+import DetailLayout from "../DetailLayout";
 import Directory, { DirectoryEntryList, DirectoryEntry } from "../Directory";
-import Overview from "../Overview";
+import Content from "../Content";
 
 const User = () => {
+  let { url } = useRouteMatch();
   return (
     <div className="flex items-center space-x-3">
       <div className="flex-shrink-0">
@@ -16,20 +18,20 @@ const User = () => {
       </div>
       <div className="flex-1 min-w-0">
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a href="#" className="focus:outline-none">
+        <Link to={`${url}/details/5`} className="focus:outline-none">
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
           <p className="text-sm font-medium text-gray-900">Leslie Abbott</p>
           <p className="text-sm text-gray-500 truncate">Co-Founder / CEO</p>
-        </a>
+        </Link>
       </div>
     </div>
   );
 };
 
-const UserDirectory = (props: {isMobile?: boolean}) => {
+const UserDirectory = () => {
   return (
-    <Directory isMobile={props.isMobile} title="Users" subtitle={`${9999} users`}>
+    <Directory title="Users" subtitle={`${9999} users`}>
       <DirectoryEntryList title="A">
         <DirectoryEntry>
           <User />
@@ -150,31 +152,10 @@ const UserDirectory = (props: {isMobile?: boolean}) => {
 
 const Users = () => (
   <div className="flex-1 relative z-0 flex overflow-hidden">
-    <Media query="(min-width: 1280px)">
-      {(xlAndBigger) =>
-        xlAndBigger ? (
-          <>
-            <Route path="/userid/:id">
-              <Overview title="Users" />
-            </Route>
-            <Route path="/">
-              <UserDirectory />
-            </Route>
-          </>
-        ) : (
-          <Switch>
-            <Route path="/userid/:id">
-              <Overview title="Users" />
-            </Route>
-            <Route path="/">
-              <UserDirectory
-                isMobile
-              />
-            </Route>
-          </Switch>
-        )
-      }
-    </Media>
+    <DetailLayout
+      mainColumn={<Content title="Users" />}
+      secondaryColumn={<UserDirectory />}
+    />
   </div>
 );
 

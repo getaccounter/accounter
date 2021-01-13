@@ -2,12 +2,13 @@ import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Integration_integration } from "./__generated__/Integration_integration.graphql";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 
 const Integration = (props: {
   className?: string;
   integration: Integration_integration;
 }) => {
+  let { url } = useRouteMatch();
   return (
     <div className="flex items-center space-x-3">
       <div className="flex-shrink-0">
@@ -20,7 +21,7 @@ const Integration = (props: {
       <div className="flex-1 min-w-0">
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <Link
-          to={`/integrations/${props.integration.service.name}/5`}
+          to={`${url}/details/5`}
           className="focus:outline-none"
         >
           {/* Extend touch target to entire panel */}
