@@ -119,5 +119,4 @@ class OrganizationTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        organization = content["data"]["currentUser"]
         assert content["data"]["currentUser"]["email"] == self.user.email

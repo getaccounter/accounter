@@ -19,8 +19,16 @@ const Providers = ({
   </RelayProvider>
 );
 
+describe("Profile", () => {
+  test.todo("Shows name when present");
+  test.todo("Shows email when name not present");
+})
+
 test("show Services by default", async () => {
   const environment = createMockEnvironment();
+  environment.mock.queueOperationResolver((operation) =>
+    MockPayloadGenerator.generate(operation)
+  );
   environment.mock.queueOperationResolver((operation) =>
     MockPayloadGenerator.generate(operation)
   );
@@ -39,6 +47,9 @@ test.each(MAIN_PAGES.map((page) => page.tab.label))(
   "renders %s",
   async (tabLabel) => {
     const environment = createMockEnvironment();
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation)
+    );
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation)
     );

@@ -1,7 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 
-from ..utils import signin_required, admin_required
+from ..utils import admin_required
 from .models import Service, SlackIntegration
 
 
