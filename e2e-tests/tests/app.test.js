@@ -16,8 +16,8 @@ const mockSlack = () => {
             access_token: "some-token",
           },
           team: {
-            id: faker.random.uuid()
-          }
+            id: faker.random.uuid(),
+          },
         },
       },
       times: {
@@ -34,45 +34,63 @@ const mockSlack = () => {
     );
 };
 
-beforeEach(() => {
-  // run these tests as if in a desktop
-  // TODO run as well for mobile
-  cy.viewport(1280, 720)
-})
+describe("Mobile", () => {
+  beforeEach(() => {
+    cy.viewport("iphone-5");
+  });
 
-describe("The Home Page", () => {
-  it("redirects to login and let's me log in", () => {
-    const user = faker.helpers.userCard();
-    const password = faker.internet.password();
+  describe("Services", () => {
+    it("add slack", () => {
+      const user = faker.helpers.userCard();
+      const password = faker.internet.password();
 
-    cy.visit("/");
-    cy.findByRole("link", { name: "register" }).click();
-    cy.register(user.email, user.company.name, password);
-    cy.login(user.email, password);
-    cy.findByRole("navigation", {name: "Sidebar"}).should("exist");
+      mockSlack();
+
+      cy.visit("/");
+      cy.findByRole("link", { name: "register" }).click();
+      cy.register(user.email, user.company.name, password);
+      cy.login(user.email, password);
+
+      cy.mobileNavigateTo("Add Apps");
+
+      cy.findByRole("link", { name: "Add SLACK" }).click();
+
+      cy.mockSlackOauth();
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", { name: "SLACK" }).should("exist");
+      });
+    });
   });
 });
 
-describe("Services", () => {
-  it("add slack", () => {
-    const user = faker.helpers.userCard();
-    const password = faker.internet.password();
 
-    mockSlack();
+describe("Desktop", () => {
+  beforeEach(() => {
+    cy.viewport("macbook-13");
+  });
 
-    cy.visit("/");
-    cy.findByRole("link", { name: "register" }).click();
-    cy.register(user.email, user.company.name, password);
-    cy.login(user.email, password);
+  describe("Services", () => {
+    it("add slack", () => {
+      const user = faker.helpers.userCard();
+      const password = faker.internet.password();
 
-    cy.navigateTo("Add Apps")
+      mockSlack();
 
-    cy.findByRole("link", { name: "Add SLACK" }).click();
-    
-    cy.mockSlackOauth();
+      cy.visit("/");
+      cy.findByRole("link", { name: "register" }).click();
+      cy.register(user.email, user.company.name, password);
+      cy.login(user.email, password);
 
-    cy.findByRole("navigation", { name: "Directory" }).within(() => {
-      cy.findByRole("link", { name: "SLACK" }).should("exist");
+      cy.navigateTo("Add Apps");
+
+      cy.findByRole("link", { name: "Add SLACK" }).click();
+
+      cy.mockSlackOauth();
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", { name: "SLACK" }).should("exist");
+      });
     });
   });
 });

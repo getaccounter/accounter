@@ -1,7 +1,11 @@
 import React from "react";
+import { Link, useRouteMatch } from "react-router-dom";
+import DetailLayout from "../DetailLayout";
 import Directory, { DirectoryEntryList, DirectoryEntry } from "../Directory";
+import Content from "../Content";
 
 const User = () => {
+  let { url } = useRouteMatch();
   return (
     <div className="flex items-center space-x-3">
       <div className="flex-shrink-0">
@@ -12,22 +16,20 @@ const User = () => {
         />
       </div>
       <div className="flex-1 min-w-0">
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a href="#" className="focus:outline-none">
+        <Link to={`${url}/details/5`} className="focus:outline-none">
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
           <p className="text-sm font-medium text-gray-900">Leslie Abbott</p>
           <p className="text-sm text-gray-500 truncate">Co-Founder / CEO</p>
-        </a>
+        </Link>
       </div>
     </div>
   );
 };
 
-const Users = () => (
-  <div className="flex-1 relative z-0 flex overflow-hidden">
-    {/* <Content /> */}
-    <Directory showOnMobile={true} title="Users" subtitle={`${9999} users`}>
+const UserDirectory = () => {
+  return (
+    <Directory title="Users" subtitle={`${9999} users`}>
       <DirectoryEntryList title="A">
         <DirectoryEntry>
           <User />
@@ -143,6 +145,15 @@ const Users = () => (
         </DirectoryEntry>
       </DirectoryEntryList>
     </Directory>
+  );
+};
+
+const Users = () => (
+  <div className="flex-1 relative z-0 flex overflow-hidden">
+    <DetailLayout
+      mainColumn={<Content title="Users" />}
+      secondaryColumn={<UserDirectory />}
+    />
   </div>
 );
 
