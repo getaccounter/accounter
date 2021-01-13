@@ -71,6 +71,7 @@ services:
 
   web:
     image: web.development
+    privileged: true
     build:
       context: ./accounter/web
       target: development
