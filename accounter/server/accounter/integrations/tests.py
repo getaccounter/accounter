@@ -17,11 +17,13 @@ validateURL = URLValidator(message="not a valid url")
 
 class ServiceTestCase(GraphQLTestCase):
     def setUp(self):
-        admin = baker.make(Profile, is_admin=True)
-        self.user = admin.user
+        self.admin = baker.make(Profile, is_admin=True).user
+        self.non_admin_user = baker.make(
+            Profile, organization=self.admin.profile.organization, is_admin=False
+        ).user
 
     def test_services_query(self):
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
         service = Service.objects.get(name=Service.Types.SLACK)
         response = self.query(
             """
@@ -67,7 +69,7 @@ class ServiceTestCase(GraphQLTestCase):
     )
     @patch.object(WebClient, "oauth_v2_access")
     def test_handle_callback(self, oauth_call_mock):
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
 
         code = "somecode"
         state = "somestate"
@@ -101,10 +103,40 @@ class ServiceTestCase(GraphQLTestCase):
             code=code,
         )
         slack_integration = SlackIntegration.objects.filter(
-            organization=self.user.profile.organization
+            organization=self.admin.profile.organization
         )
         assert len(slack_integration) == 1
         assert slack_integration.first().token == token
+
+    def test_handle_callback_non_admin_fails(self):
+        self.client.force_login(self.non_admin_user)
+
+        state = "somestate"
+        service = Service.objects.get(name=Service.Types.SLACK)
+        service.state_store[f"{service._client_id}/{state}"] = time.time() - 1000
+        service.save()
+
+        response = self.query(
+            """
+            mutation SlackMutation($code: String!, $state: String!) {
+                oauth {
+                    slack {
+                        handleCallback(code: $code, state: $state) {
+                            status
+                        }
+                    }
+                }
+            }
+            """,
+            variables={"code": "somecode", "state": state},
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )
 
     @override_settings(
         INTEGRATIONS={
@@ -116,7 +148,7 @@ class ServiceTestCase(GraphQLTestCase):
     )
     @patch.object(WebClient, "oauth_v2_access")
     def test_handle_callback_duplicates_only_updates_token(self, oauth_call_mock):
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
         first_state = "someFirstState"
         original_token = "some token"
         service = Service.objects.get(name=Service.Types.SLACK)
@@ -172,7 +204,7 @@ class ServiceTestCase(GraphQLTestCase):
         assert slack_integration.token == updated_token
 
     def test_handle_callback_expired_state(self):
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
 
         state = "somestate"
         service = Service.objects.get(name=Service.Types.SLACK)
@@ -201,7 +233,7 @@ class ServiceTestCase(GraphQLTestCase):
 
     def test_handle_callback_state_unknown(self):
 
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
 
         response = self.query(
             """
@@ -241,7 +273,7 @@ class IntegrationTestCase(GraphQLTestCase):
                 "orgName": "some_org",
             },
         )
-        self.user = get_user_model().objects.get(username=email)
+        self.admin = get_user_model().objects.get(username=email)
 
         email_other_user = "different@dude.internet"
         self.query(
@@ -258,14 +290,16 @@ class IntegrationTestCase(GraphQLTestCase):
                 "orgName": "some_other_org",
             },
         )
-        self.other_user = get_user_model().objects.get(username=email_other_user)
+        self.other_company_admin = get_user_model().objects.get(
+            username=email_other_user
+        )
 
     def test_get_integrations(self):
         slack_integration = SlackIntegration.objects.create(
-            organization=self.user.profile.organization, token="some_token"
+            organization=self.admin.profile.organization, token="some_token"
         )
         slack_integration.save()
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
         response = self.query(
             """
             query {
@@ -306,15 +340,15 @@ class IntegrationTestCase(GraphQLTestCase):
         # integration of this org
         SlackIntegration.objects.create(
             id="1",
-            organization=self.other_user.profile.organization,
+            organization=self.other_company_admin.profile.organization,
             token="some_other_token",
         ).save()
 
         # integration of other org
         SlackIntegration.objects.create(
-            id="2", organization=self.user.profile.organization, token="some_token"
+            id="2", organization=self.admin.profile.organization, token="some_token"
         ).save()
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
         response = self.query(
             """
             query {

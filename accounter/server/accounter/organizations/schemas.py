@@ -33,7 +33,8 @@ class OrganizationNode(DjangoObjectType):
     class Meta:
         model = Organization
         fields = ("name", "profiles")
-        interfaces = (graphene.relay.Node, )
+        interfaces = (graphene.relay.Node,)
+
 
 class DepartmentType(DjangoObjectType):
     class Meta:
@@ -52,7 +53,7 @@ class ProfileNode(DjangoObjectType):
             "is_active",
             "department",
         )
-        interfaces = (graphene.relay.Node, )
+        interfaces = (graphene.relay.Node,)
 
     email = graphene.String(required=True)
     first_name = graphene.String()
@@ -76,6 +77,7 @@ class ProfileNode(DjangoObjectType):
             return last_name
         return None
 
+
 class Query(graphene.ObjectType):
     organization = graphene.Field(OrganizationNode)
 
@@ -83,7 +85,7 @@ class Query(graphene.ObjectType):
     @signin_required
     def resolve_organization(parent, info, **kwargs):
         return info.context.user.profile.organization
-        
+
     current_user = graphene.Field(ProfileNode)
 
     @staticmethod

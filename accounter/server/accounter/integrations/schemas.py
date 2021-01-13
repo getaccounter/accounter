@@ -1,7 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 
-from ..utils import signin_required
+from ..utils import signin_required, admin_required
 from .models import Service, SlackIntegration
 
 
@@ -33,7 +33,7 @@ class HandleCallback(graphene.Mutation):
 
     status = graphene.String(required=True)
 
-    @signin_required
+    @admin_required
     def mutate(self, info, code: str, state: str):
         organization = info.context.user.profile.organization
         slack_service = Service.objects.get(name=Service.Types.SLACK)
