@@ -57,22 +57,16 @@ const Integrations = () => {
                 xlAndBigger ? (
                   <>
                     <Route path="/:service/:id">
-                      <Overview
-                        title={TITLE}
-                      />
+                      <Overview title={TITLE} />
                     </Route>
                     <Route path="/">
-                      <IntegrationDirectory
-                        integrations={props.integrations}
-                      />
+                      <IntegrationDirectory integrations={props.integrations} />
                     </Route>
                   </>
                 ) : (
                   <Switch>
                     <Route path="/:service/:id">
-                      <Overview
-                        title={TITLE}
-                      />
+                      <Overview title={TITLE} />
                     </Route>
                     <Route path="/">
                       <IntegrationDirectory

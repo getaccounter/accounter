@@ -1,5 +1,8 @@
 import React from "react";
+import Media from "react-media";
+import { Route, Switch } from "react-router-dom";
 import Directory, { DirectoryEntryList, DirectoryEntry } from "../Directory";
+import Overview from "../Overview";
 
 const User = () => {
   return (
@@ -24,10 +27,9 @@ const User = () => {
   );
 };
 
-const Users = () => (
-  <div className="flex-1 relative z-0 flex overflow-hidden">
-    {/* <Content /> */}
-    <Directory title="Users" subtitle={`${9999} users`}>
+const UserDirectory = (props: {isMobile?: boolean}) => {
+  return (
+    <Directory isMobile={props.isMobile} title="Users" subtitle={`${9999} users`}>
       <DirectoryEntryList title="A">
         <DirectoryEntry>
           <User />
@@ -143,6 +145,36 @@ const Users = () => (
         </DirectoryEntry>
       </DirectoryEntryList>
     </Directory>
+  );
+};
+
+const Users = () => (
+  <div className="flex-1 relative z-0 flex overflow-hidden">
+    <Media query="(min-width: 1280px)">
+      {(xlAndBigger) =>
+        xlAndBigger ? (
+          <>
+            <Route path="/userid/:id">
+              <Overview title="Users" />
+            </Route>
+            <Route path="/">
+              <UserDirectory />
+            </Route>
+          </>
+        ) : (
+          <Switch>
+            <Route path="/userid/:id">
+              <Overview title="Users" />
+            </Route>
+            <Route path="/">
+              <UserDirectory
+                isMobile
+              />
+            </Route>
+          </Switch>
+        )
+      }
+    </Media>
   </div>
 );
 
