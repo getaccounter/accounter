@@ -6,7 +6,6 @@ import { QueryRenderer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import {
   IntegrationsQuery,
-  IntegrationsQueryResponse,
 } from "./__generated__/IntegrationsQuery.graphql";
 import { useEnvironment } from "../../../../contexts/relay";
 import Integration from "./component/Integration";
