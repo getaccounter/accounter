@@ -1,9 +1,7 @@
 FROM node:15.5.1-alpine as development
 ENV PORT=3000
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-RUN apk update && apk add bash watchman
-RUN mkdir /var/run/watchman
+RUN apk update && apk add bash
 
 RUN mkdir /code
 WORKDIR /code
