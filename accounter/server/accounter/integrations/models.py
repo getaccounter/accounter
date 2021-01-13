@@ -12,7 +12,7 @@ from ..organizations.models import Organization, Profile
 
 
 class Service(models.Model):
-    class CallbackResult():
+    class CallbackResult:
         integration_id: str
         token: str
 

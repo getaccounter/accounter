@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0006_slackintegration_token'),
+        ("integrations", "0006_slackintegration_token"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='slackintegration',
-            name='id',
+            model_name="slackintegration",
+            name="id",
             field=models.TextField(primary_key=True, serialize=False),
         ),
     ]

@@ -36,9 +36,6 @@ const Integration = (props: {
 };
 
 export default createFragmentContainer(Integration, {
-  // For each of the props that depend on server data, we define a corresponding
-  // key in this object. Here, the component expects server data to populate the
-  // `item` prop, so we'll specify the fragment from above at the `item` key.
   integration: graphql`
     fragment Integration_integration on IntegrationInterface {
       service {

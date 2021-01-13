@@ -86,7 +86,7 @@ class Query(graphene.ObjectType):
     def resolve_organization(parent, info, **kwargs):
         return info.context.user.profile.organization
 
-    current_user = graphene.Field(ProfileNode)
+    current_user = graphene.Field(ProfileNode, required=True)
 
     @staticmethod
     @signin_required
