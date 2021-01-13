@@ -33,7 +33,7 @@ class Query(OrganizationQuery, graphene.ObjectType):
     @staticmethod
     @signin_required
     def resolve_integrations(parent, info, **kwargs):
-        organization = info.context.user.admin.organization
+        organization = info.context.user.profile.organization
         slack_integrations = SlackIntegration.objects.filter(organization=organization)
         return slack_integrations
 

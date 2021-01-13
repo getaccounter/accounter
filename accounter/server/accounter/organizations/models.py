@@ -13,12 +13,6 @@ class Department(models.Model):
     )
 
 
-# can this be deleted?
-class Admin(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT)
-    organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
-
-
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT)
     organization = models.ForeignKey(
@@ -32,4 +26,5 @@ class Profile(models.Model):
         blank=True,
         null=True,
     )
+    is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

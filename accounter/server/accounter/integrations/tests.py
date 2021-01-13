@@ -9,7 +9,7 @@ from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 from slack_sdk.web import WebClient
 
-from ..organizations.models import Admin
+from ..organizations.models import Profile
 from .models import Service, SlackIntegration
 
 validateURL = URLValidator(message="not a valid url")
@@ -17,7 +17,7 @@ validateURL = URLValidator(message="not a valid url")
 
 class ServiceTestCase(GraphQLTestCase):
     def setUp(self):
-        admin = baker.make(Admin)
+        admin = baker.make(Profile, is_admin=True)
         self.user = admin.user
 
     def test_services_query(self):
@@ -101,7 +101,7 @@ class ServiceTestCase(GraphQLTestCase):
             code=code,
         )
         slack_integration = SlackIntegration.objects.filter(
-            organization=self.user.admin.organization
+            organization=self.user.profile.organization
         )
         assert len(slack_integration) == 1
         assert slack_integration.first().token == token
@@ -262,7 +262,7 @@ class IntegrationTestCase(GraphQLTestCase):
 
     def test_get_integrations(self):
         slack_integration = SlackIntegration.objects.create(
-            organization=self.user.admin.organization, token="some_token"
+            organization=self.user.profile.organization, token="some_token"
         )
         slack_integration.save()
         self.client.force_login(self.user)
@@ -306,13 +306,13 @@ class IntegrationTestCase(GraphQLTestCase):
         # integration of this org
         SlackIntegration.objects.create(
             id="1",
-            organization=self.other_user.admin.organization,
+            organization=self.other_user.profile.organization,
             token="some_other_token",
         ).save()
 
         # integration of other org
         SlackIntegration.objects.create(
-            id="2", organization=self.user.admin.organization, token="some_token"
+            id="2", organization=self.user.profile.organization, token="some_token"
         ).save()
         self.client.force_login(self.user)
         response = self.query(

@@ -4,7 +4,7 @@ from django.db import transaction
 from graphene_django import DjangoObjectType
 from ..utils import signin_required
 
-from .models import Admin, Department, Organization, Profile
+from .models import Department, Organization, Profile
 
 
 class Signup(graphene.Mutation):
@@ -23,7 +23,7 @@ class Signup(graphene.Mutation):
         user = User.objects.create(username=email, email=email)
         user.set_password(password)
         user.save()
-        admin = Admin.objects.create(user=user, organization=org)
+        admin = Profile.objects.create(user=user, organization=org, is_admin=True)
         admin.save()
 
         return Signup(status="success")
@@ -82,7 +82,7 @@ class Query(graphene.ObjectType):
     @staticmethod
     @signin_required
     def resolve_organization(parent, info, **kwargs):
-        return info.context.user.admin.organization
+        return info.context.user.profile.organization
 
     # organization = graphene.relay.Node.Field(OrganizationNode)
     # all_categories = DjangoFilterConnectionField(CategoryNode)

@@ -35,7 +35,7 @@ class HandleCallback(graphene.Mutation):
 
     @signin_required
     def mutate(self, info, code: str, state: str):
-        organization = info.context.user.admin.organization
+        organization = info.context.user.profile.organization
         slack_service = Service.objects.get(name=Service.Types.SLACK)
         callback_result = slack_service.handle_callback(code, state)
         slack_integration, _ = SlackIntegration.objects.get_or_create(
