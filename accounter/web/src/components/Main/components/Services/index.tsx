@@ -26,7 +26,6 @@ const Services = () => {
           <Loading />
         ) : (
           <>
-            oauthUrl
             <div className="p-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {props.services.map((service) => (
                 <div

@@ -8,7 +8,7 @@ import { IntegrationsQuery } from "./__generated__/IntegrationsQuery.graphql";
 import { useEnvironment } from "../../../../contexts/relay";
 
 const Integrations = () => {
-  const environment = useEnvironment()
+  const environment = useEnvironment();
   return (
     <QueryRenderer<IntegrationsQuery>
       environment={environment}
@@ -29,9 +29,12 @@ const Integrations = () => {
         ) : (
           <div className="flex-1 relative z-0 flex overflow-hidden">
             <Overview />
-            <Directory>
+            <Directory
+              title="Apps"
+              subtitle={`${props.integrations.length} installed apps`}
+            >
               <DirectoryEntryList>
-                {props?.integrations.map((integration, idx) => (
+                {props.integrations.map((integration, idx) => (
                   <DirectoryEntry key={idx}>
                     <div className="flex items-center space-x-3">
                       <div className="flex-shrink-0">
