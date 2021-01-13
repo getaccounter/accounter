@@ -11,6 +11,7 @@ COPY . /code/
 COPY shared-graphql /code/shared-graphql
 # Temporary, until heroicons library is stable and transpiled
 RUN cp -R node_modules/heroicons/react/ src/components/icons
+RUN npm i -g nodemon
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD [ "npm", "start" ]
 
