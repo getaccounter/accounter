@@ -3,12 +3,17 @@ import { X } from "../../../icons/solid";
 import Tab, { TabType } from "./components/Tab";
 import Profile from "./components/Profile";
 
-type Props = {
+
+interface SharetypedProps {
   mainTabs: Array<TabType>;
   extraTabs: Array<TabType>;
-};
+}
 
-const MobileSidebar = (props: Props) => (
+interface MobileProps extends SharetypedProps {
+  onClose: () => void;
+}
+
+const MobileSidebar = (props: MobileProps) => (
   <>
     {/* Off-canvas menu for mobile, show/hide based on off-canvas menu state. */}
     <div className="lg:hidden">
@@ -42,6 +47,7 @@ const MobileSidebar = (props: Props) => (
         >
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
+              onClick={() => props.onClose()}
               type="button"
               className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
             >
@@ -84,7 +90,7 @@ const MobileSidebar = (props: Props) => (
   </>
 );
 
-const DesktopSidebar = (props: Props) => (
+const DesktopSidebar = (props: SharetypedProps) => (
   <>
     {/* Static sidebar for desktop */}
     <div className="hidden lg:flex lg:flex-shrink-0">
@@ -122,9 +128,16 @@ const DesktopSidebar = (props: Props) => (
   </>
 );
 
+interface Props extends SharetypedProps {
+  showMobileSidebar: boolean;
+  onCloseMobileSidebar: () => void;
+}
+
 const Sidebar = (props: Props) => (
   <>
-    <MobileSidebar {...props} />
+    {props.showMobileSidebar && (
+      <MobileSidebar onClose={props.onCloseMobileSidebar} {...props} />
+    )}
     <DesktopSidebar {...props} />
   </>
 );
