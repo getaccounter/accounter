@@ -3,14 +3,11 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type ServiceName = "SLACK" | "%future added value";
+import { FragmentRefs } from "relay-runtime";
 export type IntegrationsQueryVariables = {};
 export type IntegrationsQueryResponse = {
     readonly integrations: ReadonlyArray<{
-        readonly service: {
-            readonly name: ServiceName;
-            readonly logo: string;
-        };
+        readonly " $fragmentRefs": FragmentRefs<"Integration_integration">;
     }>;
 };
 export type IntegrationsQuery = {
@@ -24,41 +21,20 @@ export type IntegrationsQuery = {
 query IntegrationsQuery {
   integrations {
     __typename
-    service {
-      name
-      logo
-    }
+    ...Integration_integration
+  }
+}
+
+fragment Integration_integration on IntegrationInterface {
+  __isIntegrationInterface: __typename
+  service {
+    name
+    logo
   }
 }
 */
 
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "ServiceType",
-  "kind": "LinkedField",
-  "name": "service",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "logo",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-};
-return {
+const node: ConcreteRequest = {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -73,7 +49,11 @@ return {
         "name": "integrations",
         "plural": true,
         "selections": [
-          (v0/*: any*/)
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "Integration_integration"
+          }
         ],
         "storageKey": null
       }
@@ -102,21 +82,48 @@ return {
             "name": "__typename",
             "storageKey": null
           },
-          (v0/*: any*/)
+          {
+            "kind": "TypeDiscriminator",
+            "abstractKey": "__isIntegrationInterface"
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ServiceType",
+            "kind": "LinkedField",
+            "name": "service",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "logo",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "101d82e8da67d4b4a010787a87ada88f",
+    "cacheID": "e3e81a8ad4997832dea013645fdd4c0a",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    __typename\n    service {\n      name\n      logo\n    }\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    __typename\n    ...Integration_integration\n  }\n}\n\nfragment Integration_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
-})();
-(node as any).hash = 'a05b3714581b5d6a5f7eee8fda2e8b81';
+(node as any).hash = '5c86abe77e2b691ddb481f3b19625459';
 export default node;

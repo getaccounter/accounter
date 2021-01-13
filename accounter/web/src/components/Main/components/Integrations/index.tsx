@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Loading from "../../../Loading";
 import Overview from "../Overview";
 import Directory, { DirectoryEntry, DirectoryEntryList } from "../Directory";
@@ -6,19 +6,20 @@ import { QueryRenderer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { IntegrationsQuery } from "./__generated__/IntegrationsQuery.graphql";
 import { useEnvironment } from "../../../../contexts/relay";
+import Integration from "./component/Integration";
+
+const TITLE = "Apps";
 
 const Integrations = () => {
   const environment = useEnvironment();
+  const [showDirectoryOnMobile, setShowDirectoryOnMobile] = useState(true);
   return (
     <QueryRenderer<IntegrationsQuery>
       environment={environment}
       query={graphql`
         query IntegrationsQuery {
           integrations {
-            service {
-              name
-              logo
-            }
+            ...Integration_integration
           }
         }
       `}
@@ -28,36 +29,23 @@ const Integrations = () => {
           <Loading />
         ) : (
           <div className="flex-1 relative z-0 flex overflow-hidden">
-            <Overview />
+            <Overview
+              showOnMobile={!showDirectoryOnMobile}
+              title={TITLE}
+              onOpenDirectoryOnMobile={() => setShowDirectoryOnMobile(true)}
+            />
             <Directory
-              title="Apps"
+              showOnMobile={showDirectoryOnMobile}
+              title={TITLE}
               subtitle={`${props.integrations.length} installed apps`}
             >
               <DirectoryEntryList>
                 {props.integrations.map((integration, idx) => (
                   <DirectoryEntry key={idx}>
-                    <div className="flex items-center space-x-3">
-                      <div className="flex-shrink-0">
-                        <img
-                          className="h-10 w-10 rounded-full"
-                          src={integration.service.logo}
-                          alt=""
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                        <a href="#" className="focus:outline-none">
-                          {/* Extend touch target to entire panel */}
-                          <span
-                            className="absolute inset-0"
-                            aria-hidden="true"
-                          />
-                          <p className="text-sm font-medium text-gray-900">
-                            {integration.service.name}
-                          </p>
-                        </a>
-                      </div>
-                    </div>
+                    <Integration
+                      integration={integration}
+                      onClick={() => setShowDirectoryOnMobile(false)}
+                    />
                   </DirectoryEntry>
                 ))}
               </DirectoryEntryList>
