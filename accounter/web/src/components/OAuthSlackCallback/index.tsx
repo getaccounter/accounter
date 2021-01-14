@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Redirect, useLocation } from "react-router-dom";
-import { HOME_PAGE } from "../Main";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -58,7 +57,7 @@ export default function OAuthSlackCallback() {
   return data?.oauth.slack.handleCallback?.status === "success" ? (
     <Redirect
       to={{
-        pathname: HOME_PAGE.tab.path,
+        pathname: "/",
         state: { from: location },
       }}
     />

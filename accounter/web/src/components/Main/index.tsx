@@ -53,54 +53,6 @@ const Header = () => {
   );
 };
 
-export const MAIN_PAGES = [
-  {
-    tab: {
-      label: "Apps",
-      path: "/integrations",
-      Icon: ViewGrid,
-    },
-    content: <Integrations />,
-  },
-  {
-    tab: {
-      label: "Users",
-      path: "/users",
-      Icon: UserGroup,
-    },
-    content: <Users />,
-  },
-];
-
-const EXTRA_PAGES = [
-  {
-    tab: {
-      label: "Add Users",
-      path: "/add-users",
-      Icon: UserAdd,
-    },
-    content: <AddUsers />,
-  },
-  {
-    tab: {
-      label: "Add Apps",
-      path: "/services",
-      Icon: ViewGridAdd,
-    },
-    content: <Services />,
-  },
-  {
-    tab: {
-      label: "Settings",
-      path: "/settings",
-      Icon: Cog,
-    },
-    content: "TODO",
-  },
-];
-
-export const HOME_PAGE = MAIN_PAGES[0];
-
 export default function Main() {
   const environment = useEnvironment();
   return (
@@ -110,30 +62,80 @@ export default function Main() {
         query MainQuery {
           currentUser {
             ...Sidebar_profile
+            organization {
+              ...Users_organization
+            }
           }
         }
       `}
       variables={{}}
       render={({ props }) => {
-        return !props ? (
-          <Loading />
-        ) : (
+        if (!props) {
+          return <Loading />;
+        }
+
+        const mainPages = [
+          {
+            tab: {
+              label: "Apps",
+              path: "/integrations",
+              Icon: ViewGrid,
+            },
+            content: <Integrations />,
+          },
+          {
+            tab: {
+              label: "Users",
+              path: "/users",
+              Icon: UserGroup,
+            },
+            content: <Users organization={props.currentUser.organization} />,
+          },
+        ];
+
+        const extraPages = [
+          {
+            tab: {
+              label: "Add Users",
+              path: "/add-users",
+              Icon: UserAdd,
+            },
+            content: <AddUsers />,
+          },
+          {
+            tab: {
+              label: "Add Apps",
+              path: "/services",
+              Icon: ViewGridAdd,
+            },
+            content: <Services />,
+          },
+          {
+            tab: {
+              label: "Settings",
+              path: "/settings",
+              Icon: Cog,
+            },
+            content: "TODO",
+          },
+        ];
+        return (
           <div className="h-screen flex overflow-hidden bg-white">
             <SideBar
               profile={props.currentUser}
-              mainTabs={MAIN_PAGES.map((p) => p.tab)}
-              extraTabs={EXTRA_PAGES.map((p) => p.tab)}
+              mainTabs={mainPages.map((p) => p.tab)}
+              extraTabs={extraPages.map((p) => p.tab)}
             />
             <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
               <Header />
               <Switch>
-                {[...MAIN_PAGES, ...EXTRA_PAGES].map(({ tab, content }) => (
+                {[...mainPages, ...extraPages].map(({ tab, content }) => (
                   <Route key={tab.path} path={tab.path}>
                     {content}
                   </Route>
                 ))}
                 <Route exact path="/">
-                  <Redirect to={HOME_PAGE.tab.path} />
+                  <Redirect to="/integrations" />
                 </Route>
               </Switch>
             </div>

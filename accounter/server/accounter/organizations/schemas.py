@@ -52,6 +52,7 @@ class ProfileNode(DjangoObjectType):
             "title",
             "is_active",
             "department",
+            "organization"
         )
         interfaces = (graphene.relay.Node,)
 
@@ -79,8 +80,6 @@ class ProfileNode(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    organization = graphene.Field(OrganizationNode)
-
     @staticmethod
     @signin_required
     def resolve_organization(parent, info, **kwargs):
