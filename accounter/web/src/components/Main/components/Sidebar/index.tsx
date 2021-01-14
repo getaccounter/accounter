@@ -5,10 +5,14 @@ import Profile from "./components/Profile";
 import { Link, useLocation } from "react-router-dom";
 import { useBooleanQueryString } from "../../../../utils/querystring";
 import queryString from 'query-string'
+import { createFragmentContainer } from "react-relay";
+import graphql from "babel-plugin-relay/macro";
+import { Sidebar_profile } from "./__generated__/Sidebar_profile.graphql";
 
 interface Props {
   mainTabs: Array<TabType>;
   extraTabs: Array<TabType>;
+  profile: Sidebar_profile
 }
 
 const MobileSidebar = (props: Props) => {
@@ -83,7 +87,7 @@ const MobileSidebar = (props: Props) => {
                 </div>
               </nav>
             </div>
-            <Profile />
+            <Profile profile={props.profile} />
           </div>
           <div className="flex-shrink-0 w-14" aria-hidden="true">
             {/* Force sidebar to shrink to fit close icon */}
@@ -125,7 +129,7 @@ const DesktopSidebar = (props: Props) => (
               </div>
             </nav>
           </div>
-          <Profile desktop />
+          <Profile desktop profile={props.profile} />
         </div>
       </div>
     </div>
@@ -142,4 +146,10 @@ const Sidebar = (props: Props) => {
   );
 };
 
-export default Sidebar;
+export default createFragmentContainer(Sidebar, {
+  profile: graphql`
+    fragment Sidebar_profile on ProfileNode {
+      ...Profile_profile
+    }
+  `,
+});

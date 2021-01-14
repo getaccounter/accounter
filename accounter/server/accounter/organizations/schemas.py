@@ -2,8 +2,9 @@ import graphene
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from graphene_django import DjangoObjectType
+from ..utils import signin_required
 
-from .models import Admin, Department, Organization, Profile
+from .models import Department, Organization, Profile
 
 
 class Signup(graphene.Mutation):
@@ -22,16 +23,17 @@ class Signup(graphene.Mutation):
         user = User.objects.create(username=email, email=email)
         user.set_password(password)
         user.save()
-        admin = Admin.objects.create(user=user, organization=org)
+        admin = Profile.objects.create(user=user, organization=org, is_admin=True)
         admin.save()
 
         return Signup(status="success")
 
 
-class OrganizationType(DjangoObjectType):
+class OrganizationNode(DjangoObjectType):
     class Meta:
         model = Organization
         fields = ("name", "profiles")
+        interfaces = (graphene.relay.Node,)
 
 
 class DepartmentType(DjangoObjectType):
@@ -40,7 +42,7 @@ class DepartmentType(DjangoObjectType):
         fields = ("name", "id")
 
 
-class ProfileType(DjangoObjectType):
+class ProfileNode(DjangoObjectType):
     class Meta:
         model = Profile
         fields = (
@@ -51,6 +53,7 @@ class ProfileType(DjangoObjectType):
             "is_active",
             "department",
         )
+        interfaces = (graphene.relay.Node,)
 
     email = graphene.String(required=True)
     first_name = graphene.String()
@@ -73,3 +76,19 @@ class ProfileType(DjangoObjectType):
         if len(last_name) > 0:
             return last_name
         return None
+
+
+class Query(graphene.ObjectType):
+    organization = graphene.Field(OrganizationNode)
+
+    @staticmethod
+    @signin_required
+    def resolve_organization(parent, info, **kwargs):
+        return info.context.user.profile.organization
+
+    current_user = graphene.Field(ProfileNode, required=True)
+
+    @staticmethod
+    @signin_required
+    def resolve_current_user(parent, info, **kwargs):
+        return info.context.user.profile

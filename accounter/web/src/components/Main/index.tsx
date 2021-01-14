@@ -13,15 +13,20 @@ import Integrations from "./components/Integrations";
 import Users from "./components/Users";
 import Services from "./components/Services";
 import AddUsers from "./components/AddUsers";
-import queryString from 'query-string'
+import queryString from "query-string";
+import { QueryRenderer } from "react-relay";
+import Loading from "../Loading";
+import graphql from "babel-plugin-relay/macro";
+import { useEnvironment } from "../../contexts/relay";
+import { MainQuery } from "./__generated__/MainQuery.graphql";
 
 const Header = () => {
   const location = useLocation();
   const qsObject = {
     ...queryString.parse(location.search),
-    showMobileSidebar: true
-  }
-  const menuLink = `${location.pathname}?${queryString.stringify(qsObject)}`
+    showMobileSidebar: true,
+  };
+  const menuLink = `${location.pathname}?${queryString.stringify(qsObject)}`;
   return (
     <div className="lg:hidden">
       <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-1.5">
@@ -97,27 +102,44 @@ const EXTRA_PAGES = [
 export const HOME_PAGE = MAIN_PAGES[0];
 
 export default function Main() {
+  const environment = useEnvironment();
   return (
-    <div>
-      <div className="h-screen flex overflow-hidden bg-white">
-        <SideBar
-          mainTabs={MAIN_PAGES.map((p) => p.tab)}
-          extraTabs={EXTRA_PAGES.map((p) => p.tab)}
-        />
-        <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
-          <Header />
-          <Switch>
-            {[...MAIN_PAGES, ...EXTRA_PAGES].map(({ tab, content }) => (
-              <Route key={tab.path} path={tab.path}>
-                {content}
-              </Route>
-            ))}
-            <Route exact path="/">
-              <Redirect to={HOME_PAGE.tab.path} />
-            </Route>
-          </Switch>
-        </div>
-      </div>
-    </div>
+    <QueryRenderer<MainQuery>
+      environment={environment}
+      query={graphql`
+        query MainQuery {
+          currentUser {
+            ...Sidebar_profile
+          }
+        }
+      `}
+      variables={{}}
+      render={({ props }) => {
+        return !props ? (
+          <Loading />
+        ) : (
+          <div className="h-screen flex overflow-hidden bg-white">
+            <SideBar
+              profile={props.currentUser}
+              mainTabs={MAIN_PAGES.map((p) => p.tab)}
+              extraTabs={EXTRA_PAGES.map((p) => p.tab)}
+            />
+            <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
+              <Header />
+              <Switch>
+                {[...MAIN_PAGES, ...EXTRA_PAGES].map(({ tab, content }) => (
+                  <Route key={tab.path} path={tab.path}>
+                    {content}
+                  </Route>
+                ))}
+                <Route exact path="/">
+                  <Redirect to={HOME_PAGE.tab.path} />
+                </Route>
+              </Switch>
+            </div>
+          </div>
+        );
+      }}
+    />
   );
 }
