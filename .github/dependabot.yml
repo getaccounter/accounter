@@ -1,12 +1,12 @@
 version: 2
 updates:
   - package-ecosystem: "pip"
-    directory: "/server"
+    directory: "/accounter/server"
     schedule:
       interval: "daily"
 
   - package-ecosystem: "npm"
-    directory: "/web"
+    directory: "/accounter/web"
     schedule:
       interval: "daily"
 
@@ -16,12 +16,12 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "docker"
-    directory: "/web"
+    directory: "/accounter/web"
     schedule:
       interval: "daily"
 
   - package-ecosystem: "docker"
-    directory: "/server"
+    directory: "/accounter/server"
     schedule:
       interval: "daily"
 
