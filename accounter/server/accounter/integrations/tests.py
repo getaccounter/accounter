@@ -108,7 +108,7 @@ class ServiceTestCase(GraphQLTestCase):
         assert len(slack_integration) == 1
         assert slack_integration.first().token == token
 
-    def test_handle_callback_non_admin_fails(self):
+    def test_handle_callback_requires_admin(self):
         self.client.force_login(self.non_admin_user)
 
         state = "somestate"
@@ -261,14 +261,28 @@ class IntegrationTestCase(GraphQLTestCase):
         email = "somerandomemail@internet.internet"
         self.query(
             """
-              mutation SignUp($email: String!, $orgName: String!, $password: String!) {
-                signup(email: $email, orgName: $orgName, password: $password) {
-                  status
-                }
+            mutation SignUp(
+              $orgName: String!
+              $firstName: String!
+              $lastName: String!
+              $email: String!
+              $password: String!
+            ) {
+              signup(
+                orgName: $orgName
+                firstName: $firstName
+                lastName: $lastName
+                email: $email
+                password: $password
+              ) {
+                status
               }
+            }
             """,
             variables={
                 "email": email,
+                "firstName": "Some",
+                "lastName": "Name",
                 "password": "somepassword",
                 "orgName": "some_org",
             },
@@ -278,14 +292,28 @@ class IntegrationTestCase(GraphQLTestCase):
         email_other_user = "different@dude.internet"
         self.query(
             """
-              mutation SignUp($email: String!, $orgName: String!, $password: String!) {
-                signup(email: $email, orgName: $orgName, password: $password) {
-                  status
-                }
+            mutation SignUp(
+              $orgName: String!
+              $firstName: String!
+              $lastName: String!
+              $email: String!
+              $password: String!
+            ) {
+              signup(
+                orgName: $orgName
+                firstName: $firstName
+                lastName: $lastName
+                email: $email
+                password: $password
+              ) {
+                status
               }
+            }
             """,
             variables={
                 "email": email_other_user,
+                "firstName": "Other",
+                "lastName": "Person",
                 "password": "somepassword",
                 "orgName": "some_other_org",
             },

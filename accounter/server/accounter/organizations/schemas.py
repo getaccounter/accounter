@@ -10,17 +10,29 @@ from .models import Department, Organization, Profile
 class Signup(graphene.Mutation):
     class Arguments:
         org_name = graphene.String(required=True)
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
         email = graphene.String(required=True)
         password = graphene.String(required=True)
 
     status = graphene.String(required=True)
 
     @transaction.atomic
-    def mutate(self, info, org_name: str, email: str, password: str):
+    def mutate(
+        self,
+        info,
+        org_name: str,
+        first_name: str,
+        last_name: str,
+        email: str,
+        password: str,
+    ):
         User = get_user_model()
         org = Organization.objects.create(name=org_name)
         org.save()
-        user = User.objects.create(username=email, email=email)
+        user = User.objects.create(
+            username=email, email=email, first_name=first_name, last_name=last_name
+        )
         user.set_password(password)
         user.save()
         admin = Profile.objects.create(user=user, organization=org, is_admin=True)
@@ -52,12 +64,13 @@ class ProfileNode(DjangoObjectType):
             "title",
             "is_active",
             "department",
+            "organization",
         )
         interfaces = (graphene.relay.Node,)
 
     email = graphene.String(required=True)
-    first_name = graphene.String()
-    last_name = graphene.String()
+    first_name = graphene.String(required=True)
+    last_name = graphene.String(required=True)
 
     @staticmethod
     def resolve_email(profile, info, **kwargs):
@@ -68,6 +81,9 @@ class ProfileNode(DjangoObjectType):
         first_name = profile.user.first_name
         if len(first_name) > 0:
             return first_name
+        print("!!!!!")
+        print(profile.user.__dict__)
+        print(len(first_name))
         return None
 
     @staticmethod
@@ -79,8 +95,6 @@ class ProfileNode(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    organization = graphene.Field(OrganizationNode)
-
     @staticmethod
     @signin_required
     def resolve_organization(parent, info, **kwargs):

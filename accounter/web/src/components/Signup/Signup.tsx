@@ -5,8 +5,8 @@ import { useNotifications } from "../../contexts/notification";
 import { LockClosed } from "../icons/solid";
 
 export const SIGNUP_MUTATION = gql`
-  mutation Signup($email: String!, $orgName: String!, $password: String!) {
-    signup(email: $email, orgName: $orgName, password: $password) {
+  mutation Signup($orgName: String!, $firstName: String!, $lastName: String!, $email: String!, $password: String!) {
+    signup(orgName: $orgName, firstName: $firstName, lastName: $lastName, email: $email, password: $password) {
       status
     }
   }
@@ -19,8 +19,10 @@ type SignupResponse = {
 };
 
 type SignupParameters = {
-  email: string;
   orgName: string;
+  firstName: string;
+  lastName: string;
+  email: string;
   password: string;
 };
 
@@ -35,6 +37,8 @@ const Signup = () => {
     onError: () => undefined,
   });
   const [organizationNameInput, setOrganizationNameInput] = useState("");
+  const [firstNameInput, setFirstNameInput] = useState("");
+  const [lastNameInput, setLastNameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
 
@@ -63,8 +67,10 @@ const Signup = () => {
             e.preventDefault();
             signup({
               variables: {
-                email: emailInput,
                 orgName: organizationNameInput,
+                firstName: firstNameInput,
+                lastName: lastNameInput,
+                email: emailInput,
                 password: passwordInput,
               },
             });
@@ -85,6 +91,40 @@ const Signup = () => {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Organization name"
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label htmlFor="first-name" className="sr-only">
+                First name
+              </label>
+              <input
+                value={firstNameInput}
+                onChange={(evt) => setFirstNameInput(evt.target.value)}
+                id="first-name"
+                name="text"
+                type="text"
+                autoComplete="given-name"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="First name"
+                disabled={loading}
+              />
+            </div>
+            <div>
+              <label htmlFor="last-name" className="sr-only">
+                Last name
+              </label>
+              <input
+                value={lastNameInput}
+                onChange={(evt) => setLastNameInput(evt.target.value)}
+                id="last-name"
+                name="text"
+                type="text"
+                autoComplete="family-name"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Last name"
                 disabled={loading}
               />
             </div>
