@@ -33,7 +33,6 @@ query MainQuery {
 }
 
 fragment Profile_profile on ProfileNode {
-  email
   firstName
   lastName
 }
@@ -47,6 +46,7 @@ fragment UserDirectory_organization on OrganizationNode {
     edges {
       node {
         id
+        lastName
         ...User_profile
         __typename
       }
@@ -63,7 +63,6 @@ fragment User_profile on ProfileNode {
   firstName
   lastName
   title
-  email
 }
 
 fragment Users_organization on OrganizationNode {
@@ -76,31 +75,24 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "email",
+  "name": "firstName",
   "storageKey": null
 },
 v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "firstName",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "lastName",
   "storageKey": null
 },
-v3 = [
+v2 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 100
   }
 ],
-v4 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -166,7 +158,6 @@ return {
         "selections": [
           (v0/*: any*/),
           (v1/*: any*/),
-          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -177,7 +168,7 @@ return {
             "selections": [
               {
                 "alias": null,
-                "args": (v3/*: any*/),
+                "args": (v2/*: any*/),
                 "concreteType": "ProfileNodeConnection",
                 "kind": "LinkedField",
                 "name": "profiles",
@@ -199,9 +190,9 @@ return {
                         "name": "node",
                         "plural": false,
                         "selections": [
-                          (v4/*: any*/),
+                          (v3/*: any*/),
                           (v1/*: any*/),
-                          (v2/*: any*/),
+                          (v0/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -209,7 +200,6 @@ return {
                             "name": "title",
                             "storageKey": null
                           },
-                          (v0/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -260,30 +250,30 @@ return {
               },
               {
                 "alias": null,
-                "args": (v3/*: any*/),
+                "args": (v2/*: any*/),
                 "filters": null,
                 "handle": "connection",
                 "key": "UserDirectory_profiles",
                 "kind": "LinkedHandle",
                 "name": "profiles"
               },
-              (v4/*: any*/)
+              (v3/*: any*/)
             ],
             "storageKey": null
           },
-          (v4/*: any*/)
+          (v3/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "e9a714966d8783a7a75d9d56ae0a0f7a",
+    "cacheID": "dc919b3aa00aebf861757d1931f45956",
     "id": null,
     "metadata": {},
     "name": "MainQuery",
     "operationKind": "query",
-    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    organization {\n      ...Users_organization\n      id\n    }\n    id\n  }\n}\n\nfragment Profile_profile on ProfileNode {\n  email\n  firstName\n  lastName\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_organization on OrganizationNode {\n  profiles(first: 100) {\n    edges {\n      node {\n        id\n        ...User_profile\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment User_profile on ProfileNode {\n  firstName\n  lastName\n  title\n  email\n}\n\nfragment Users_organization on OrganizationNode {\n  ...UserDirectory_organization\n}\n"
+    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    organization {\n      ...Users_organization\n      id\n    }\n    id\n  }\n}\n\nfragment Profile_profile on ProfileNode {\n  firstName\n  lastName\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_organization on OrganizationNode {\n  profiles(first: 100) {\n    edges {\n      node {\n        id\n        lastName\n        ...User_profile\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment User_profile on ProfileNode {\n  firstName\n  lastName\n  title\n}\n\nfragment Users_organization on OrganizationNode {\n  ...UserDirectory_organization\n}\n"
   }
 };
 })();

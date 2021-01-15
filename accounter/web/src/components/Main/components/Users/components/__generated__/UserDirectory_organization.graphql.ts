@@ -9,6 +9,7 @@ export type UserDirectory_organization = {
         readonly edges: ReadonlyArray<{
             readonly node: {
                 readonly id: string;
+                readonly lastName: string;
                 readonly " $fragmentRefs": FragmentRefs<"User_profile">;
             } | null;
         } | null>;
@@ -75,6 +76,13 @@ const node: ReaderFragment = {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
+                  "name": "lastName",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
                   "name": "__typename",
                   "storageKey": null
                 },
@@ -128,5 +136,5 @@ const node: ReaderFragment = {
   "type": "OrganizationNode",
   "abstractKey": null
 };
-(node as any).hash = 'b63824b431db32050f58d7a6390bcaec';
+(node as any).hash = '3790d1a986ffd4ae2b28448d494e5774';
 export default node;

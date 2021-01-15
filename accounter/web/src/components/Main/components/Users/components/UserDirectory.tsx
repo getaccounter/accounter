@@ -9,30 +9,30 @@ type Props = {
   organization: UserDirectory_organization;
 };
 
+type Profile = UserDirectory_organization["profiles"]["edges"][0];
+
 const UserDirectory = ({ organization }: Props) => {
+  const groupedUsers = organization.profiles.edges
+    .map((edge) => edge!)
+    .reduce((grouped: Record<string, Array<Profile>>, profile) => {
+      const groupLabel = profile.node!.lastName[0].toUpperCase();
+      const group = grouped[groupLabel] || [];
+      return {
+        ...grouped,
+        [groupLabel]: group.concat(profile),
+      };
+    }, {});
   return (
     <Directory title="Users" subtitle={`${9999} users`}>
-      <DirectoryEntryList title="A">
-        {organization.profiles.edges.map((profile) => (
-          <DirectoryEntry key={profile!.node!.id}>
-            <User profile={profile!.node!} />
-          </DirectoryEntry>
-        ))}
-      </DirectoryEntryList>
-      <DirectoryEntryList title="C">
-        {organization.profiles.edges.map((profile) => (
-          <DirectoryEntry key={profile!.node!.id}>
-            <User profile={profile!.node!} />
-          </DirectoryEntry>
-        ))}
-      </DirectoryEntryList>
-      <DirectoryEntryList title="E">
-        {organization.profiles.edges.map((profile) => (
-          <DirectoryEntry key={profile!.node!.id}>
-            <User profile={profile!.node!} />
-          </DirectoryEntry>
-        ))}
-      </DirectoryEntryList>
+      {Object.entries(groupedUsers).map(([groupLabel, profiles]) => (
+        <DirectoryEntryList key={groupLabel} title={groupLabel}>
+          {profiles.map((edge) => (
+            <DirectoryEntry key={edge!.node!.id}>
+              <User profile={edge!.node!} />
+            </DirectoryEntry>
+          ))}
+        </DirectoryEntryList>
+      ))}
     </Directory>
   );
 };
@@ -46,6 +46,7 @@ export default createFragmentContainer(UserDirectory, {
         edges {
           node {
             id
+            lastName
             ...User_profile
           }
         }

@@ -8,7 +8,7 @@ type Props = {
 };
 
 const Profile = ({ desktop, profile }: Props) => {
-  const profileLabel = profile.firstName && profile.lastName ? `${profile.firstName} ${profile.lastName}` : profile.email
+  const name = `${profile.firstName} ${profile.lastName}`;
   return (
     <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
       {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
@@ -32,7 +32,7 @@ const Profile = ({ desktop, profile }: Props) => {
                 desktop ? "text-sm" : "text-base"
               } font-medium text-gray-700 group-hover:text-gray-900`}
             >
-              {profileLabel}
+              {name}
             </p>
             <p
               className={`${
@@ -51,7 +51,6 @@ const Profile = ({ desktop, profile }: Props) => {
 export default createFragmentContainer(Profile, {
   profile: graphql`
     fragment Profile_profile on ProfileNode {
-      email
       firstName
       lastName
     }

@@ -69,8 +69,8 @@ class ProfileNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
 
     email = graphene.String(required=True)
-    first_name = graphene.String()
-    last_name = graphene.String()
+    first_name = graphene.String(required=True)
+    last_name = graphene.String(required=True)
 
     @staticmethod
     def resolve_email(profile, info, **kwargs):

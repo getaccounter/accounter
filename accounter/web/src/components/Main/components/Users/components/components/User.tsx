@@ -8,10 +8,7 @@ type Props = {
 };
 
 const User = ({ profile }: Props) => {
-  const name =
-    profile.firstName && profile.lastName
-      ? `${profile.firstName} ${profile.lastName}`
-      : profile.email;
+  const name = `${profile.firstName} ${profile.lastName}`
   let { url } = useRouteMatch();
   return (
     <div className="flex items-center space-x-3">
@@ -26,7 +23,7 @@ const User = ({ profile }: Props) => {
         <Link to={`${url}/details/5`} className="focus:outline-none">
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
-          <p className="text-sm font-medium text-gray-900">{name ? name : profile.email}</p>
+          <p className="text-sm font-medium text-gray-900">{name}</p>
           {profile.title && <p className="text-sm text-gray-500 truncate">{profile.title}</p>}
         </Link>
       </div>
@@ -40,7 +37,6 @@ export default createFragmentContainer(User, {
       firstName
       lastName
       title
-      email
     }
   `,
 });
