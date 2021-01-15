@@ -1,8 +1,7 @@
 import React, { ReactNode } from "react";
-import { render, within } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import Main  from "./";
 import { MemoryRouter } from "react-router-dom";
-import userEvent from "@testing-library/user-event";
 import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
 import RelayProvider from "../../contexts/relay";
 import { Environment } from "react-relay";
@@ -42,32 +41,3 @@ test("show Services by default", async () => {
     await main.findByRole("navigation", { name: "Directory" })
   ).toBeInTheDocument();
 });
-
-test.todo("each main page is reachable")
-// test.each(MAIN_PAGES.map((page) => page.tab.label))(
-//   "renders %s",
-//   async (tabLabel) => {
-//     const environment = createMockEnvironment();
-//     environment.mock.queueOperationResolver((operation) =>
-//       MockPayloadGenerator.generate(operation)
-//     );
-//     environment.mock.queueOperationResolver((operation) =>
-//       MockPayloadGenerator.generate(operation)
-//     );
-//     const main = render(
-//       <Providers environment={environment}>
-//         <Main />
-//       </Providers>
-//     );
-
-//     const navigationbar = within(
-//       (await main.findAllByRole("navigation", { name: "Sidebar" }))[0]
-//     );
-//     await userEvent.click(navigationbar.getByRole("link", { name: tabLabel }));
-
-//     // TODO assert for content page as soon as we have it for ${tabLabel}
-//     expect(
-//       await main.findByRole("navigation", { name: "Directory" })
-//     ).toBeInTheDocument();
-//   }
-// );
