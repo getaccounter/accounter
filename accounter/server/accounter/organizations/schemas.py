@@ -10,17 +10,29 @@ from .models import Department, Organization, Profile
 class Signup(graphene.Mutation):
     class Arguments:
         org_name = graphene.String(required=True)
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
         email = graphene.String(required=True)
         password = graphene.String(required=True)
 
     status = graphene.String(required=True)
 
     @transaction.atomic
-    def mutate(self, info, org_name: str, email: str, password: str):
+    def mutate(
+        self,
+        info,
+        org_name: str,
+        first_name: str,
+        last_name: str,
+        email: str,
+        password: str,
+    ):
         User = get_user_model()
         org = Organization.objects.create(name=org_name)
         org.save()
-        user = User.objects.create(username=email, email=email)
+        user = User.objects.create(
+            username=email, email=email, first_name=first_name, last_name=last_name
+        )
         user.set_password(password)
         user.save()
         admin = Profile.objects.create(user=user, organization=org, is_admin=True)
@@ -52,7 +64,7 @@ class ProfileNode(DjangoObjectType):
             "title",
             "is_active",
             "department",
-            "organization"
+            "organization",
         )
         interfaces = (graphene.relay.Node,)
 
