@@ -11,7 +11,9 @@ User = get_user_model()
 
 class OrganizationTestCase(GraphQLTestCase):
     def setUp(self):
-        admin = baker.make(Profile, is_admin=True)
+        admin = baker.make(
+            Profile, is_admin=True, user=baker.make(User, _fill_optional=True)
+        )
         self.profiles = [
             baker.make(
                 Profile,
@@ -24,21 +26,44 @@ class OrganizationTestCase(GraphQLTestCase):
 
     def test_signup_mutation(self):
         email = "user@internet.cat"
+        first_name = "firstname"
+        last_name = "lastname"
         password = "some password"
         org_name = "SuperOrg"
         response = self.query(
             """
-              mutation SignUp($email: String!, $orgName: String!, $password: String!) {
-                signup(email: $email, orgName: $orgName, password: $password) {
-                  status
-                }
+            mutation SignUp(
+              $orgName: String!
+              $firstName: String!
+              $lastName: String!
+              $email: String!
+              $password: String!
+            ) {
+              signup(
+                orgName: $orgName
+                firstName: $firstName
+                lastName: $lastName
+                email: $email
+                password: $password
+              ) {
+                status
               }
+            }
+
             """,
-            variables={"email": email, "password": password, "orgName": org_name},
+            variables={
+                "email": email,
+                "firstName": first_name,
+                "lastName": last_name,
+                "password": password,
+                "orgName": org_name,
+            },
         )
         self.assertResponseNoErrors(response)
         user = authenticate(username=email, password=password)
         assert user is not None
+        assert user.first_name == first_name
+        assert user.last_name == last_name
         assert user.profile is not None
         assert user.profile.organization is not None
         assert user.profile.organization.name == org_name
@@ -50,13 +75,31 @@ class OrganizationTestCase(GraphQLTestCase):
         User.objects.create(username=email, email=email, password="somepassword")
         response = self.query(
             """
-              mutation SignUp($email: String!, $orgName: String!, $password: String!) {
-                signup(email: $email, orgName: $orgName, password: $password) {
-                  status
-                }
+            mutation SignUp(
+              $orgName: String!
+              $firstName: String!
+              $lastName: String!
+              $email: String!
+              $password: String!
+            ) {
+              signup(
+                orgName: $orgName
+                firstName: $firstName
+                lastName: $lastName
+                email: $email
+                password: $password
+              ) {
+                status
               }
+            }
             """,
-            variables={"email": email, "password": "short", "orgName": org_name},
+            variables={
+                "email": email,
+                "firstName": "firstname",
+                "lastName": "lastname",
+                "password": "some password",
+                "orgName": org_name,
+            },
         )
         self.assertResponseHasErrors(response)
         users = User.objects.filter(email=email)
@@ -70,18 +113,20 @@ class OrganizationTestCase(GraphQLTestCase):
         response = self.query(
             """
             {
-              organization {
-                name
-                profiles {
-                  edges {
-                    node {
-                      email
-                      firstName
-                      lastName
-                      title
-                      isActive
-                      department {
-                        name
+              currentUser {
+                organization {
+                  name
+                  profiles {
+                    edges {
+                      node {
+                        email
+                        firstName
+                        lastName
+                        title
+                        isActive
+                        department {
+                          name
+                        }
                       }
                     }
                   }
@@ -92,7 +137,7 @@ class OrganizationTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        organization = content["data"]["organization"]
+        organization = content["data"]["currentUser"]["organization"]
         assert organization["name"] == self.user.profile.organization.name
         assert len(organization["profiles"]["edges"]) == 2
         response_profile = organization["profiles"]["edges"][1]["node"]

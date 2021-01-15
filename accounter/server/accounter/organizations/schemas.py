@@ -81,6 +81,9 @@ class ProfileNode(DjangoObjectType):
         first_name = profile.user.first_name
         if len(first_name) > 0:
             return first_name
+        print("!!!!!")
+        print(profile.user.__dict__)
+        print(len(first_name))
         return None
 
     @staticmethod
