@@ -30,9 +30,6 @@ jobs:
       - name: pull dependency images
         run: docker-compose pull
 
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
-
       - name: build
         run: |
           docker-compose run server ./manage.py graphql_schema --out schema.graphql
