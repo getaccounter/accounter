@@ -34,6 +34,18 @@ const mockSlack = () => {
     );
 };
 
+const generateUser = () => {
+  const firstName = faker.name.firstName();
+  const lastName = faker.name.lastName();
+  return {
+    organization: faker.company.companyName(),
+    firstName,
+    lastName,
+    email: faker.internet.email(firstName, lastName),
+    password: faker.internet.password(),
+  };
+};
+
 describe("Mobile", () => {
   beforeEach(() => {
     cy.viewport("iphone-5");
@@ -41,15 +53,20 @@ describe("Mobile", () => {
 
   describe("Services", () => {
     it("add slack", () => {
-      const user = faker.helpers.userCard();
-      const password = faker.internet.password();
+      const user = generateUser();
 
       mockSlack();
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
-      cy.register(user.email, user.company.name, password);
-      cy.login(user.email, password);
+      cy.register(
+        user.organization,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.password
+      );
+      cy.login(user.email, user.password);
 
       cy.mobileNavigateTo("Add Apps");
 
@@ -64,23 +81,62 @@ describe("Mobile", () => {
   });
 });
 
+describe("Desktop - window", () => {
+  beforeEach(() => {
+    cy.viewport(1024, 800);
+  });
 
-describe("Desktop", () => {
+  describe("Services", () => {
+    it("add slack", () => {
+      const user = generateUser();
+
+      mockSlack();
+
+      cy.visit("/");
+      cy.findByRole("link", { name: "register" }).click();
+      cy.register(
+        user.organization,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.password
+      );
+      cy.login(user.email, user.password);
+
+      cy.navigateTo("Add Apps");
+
+      cy.findByRole("link", { name: "Add SLACK" }).click();
+
+      cy.mockSlackOauth();
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", { name: "SLACK" }).should("exist");
+      });
+    });
+  });
+});
+
+describe("Desktop - full screen", () => {
   beforeEach(() => {
     cy.viewport("macbook-13");
   });
 
   describe("Services", () => {
     it("add slack", () => {
-      const user = faker.helpers.userCard();
-      const password = faker.internet.password();
+      const user = generateUser();
 
       mockSlack();
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
-      cy.register(user.email, user.company.name, password);
-      cy.login(user.email, password);
+      cy.register(
+        user.organization,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.password
+      );
+      cy.login(user.email, user.password);
 
       cy.navigateTo("Add Apps");
 

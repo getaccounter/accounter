@@ -27,9 +27,11 @@
 import "@testing-library/cypress/add-commands";
 import querystring from "querystring";
 
-Cypress.Commands.add("register", (email, organization, password) => {
-  cy.findByLabelText("Email address").type(email);
+Cypress.Commands.add("register", (organization, firstName, lastName, email, password) => {
   cy.findByLabelText("Org name").type(organization);
+  cy.findByLabelText("First name").type(firstName);
+  cy.findByLabelText("Last name").type(lastName);
+  cy.findByLabelText("Email address").type(email);
   cy.findByLabelText("Password").type(password);
   cy.findByRole("button", { name: "Sign up" }).click();
 });

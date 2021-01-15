@@ -95,13 +95,13 @@ const Signup = () => {
               />
             </div>
             <div>
-              <label htmlFor="org-name" className="sr-only">
+              <label htmlFor="first-name" className="sr-only">
                 First name
               </label>
               <input
                 value={firstNameInput}
                 onChange={(evt) => setFirstNameInput(evt.target.value)}
-                id="org-name"
+                id="first-name"
                 name="text"
                 type="text"
                 autoComplete="given-name"
@@ -112,13 +112,13 @@ const Signup = () => {
               />
             </div>
             <div>
-              <label htmlFor="org-name" className="sr-only">
+              <label htmlFor="last-name" className="sr-only">
                 Last name
               </label>
               <input
                 value={lastNameInput}
                 onChange={(evt) => setLastNameInput(evt.target.value)}
-                id="org-name"
+                id="last-name"
                 name="text"
                 type="text"
                 autoComplete="family-name"
