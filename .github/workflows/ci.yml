@@ -24,14 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v2
-        with:
-          extra_plugins: |
-            @semantic-release/exec
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: create .env
         run: cp accounter/server/.env.example accounter/server/.env
 
@@ -132,19 +124,11 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
 
-      - name: deploy images to registry
+      - name: Semantic Release
         if: github.ref == 'refs/heads/master'
-        run: |
-          doctl registry login
-          docker tag server.production $IMAGE_REGISTRY/server:$GITHUB_SHA
-          docker tag web.production $IMAGE_REGISTRY/web:$GITHUB_SHA
-          docker tag loadbalancer $IMAGE_REGISTRY/loadbalancer:$GITHUB_SHA
-          docker push $IMAGE_REGISTRY/server:$GITHUB_SHA
-          docker push $IMAGE_REGISTRY/web:$GITHUB_SHA
-          docker push $IMAGE_REGISTRY/loadbalancer:$GITHUB_SHA
-
-      - name: Deploy
-        if: github.ref == 'refs/heads/master'
-        run: |
-          terraform -chdir=provider apply -auto-approve
-          terraform -chdir=accounter apply -auto-approve
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          extra_plugins: |
+            @semantic-release/exec
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
