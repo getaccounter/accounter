@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Content_profile } from "./__generated__/Content_profile.graphql";
+import DescriptionList from "./components/DescriptionList";
 
 type BreadcrumbProps = {
   title: ReactNode;
@@ -62,54 +63,6 @@ const Tabs = () => {
   );
 };
 
-const Description = (props: {
-  long?: boolean;
-  term: ReactNode;
-  children: ReactNode;
-}) => {
-  return (
-    <div className={`sm:col-span-${props.long ? 2 : 1}`}>
-      <dt className="text-sm font-medium text-gray-500">{props.term}</dt>
-      <dd
-        className={`mt-1 text-sm text-gray-900 ${props.long && "max-w-prose"}`}
-      >
-        {props.children}
-      </dd>
-    </div>
-  );
-};
-
-const DescriptionList = () => {
-  return (
-    <div className="mt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-        <Description term="Phone">(555) 123-4567</Description>
-        <Description term="Email">ricardocooper@example.com</Description>
-        <Description term="Title">Senior Front-End Developer</Description>
-        <Description term="Team">Product Development</Description>
-        <Description term="Location">San Francisco</Description>
-        <Description term="Sits">Oasis, 4th floor</Description>
-        <Description term="Salary">$145,000</Description>
-        <Description term="Birthday">June 8, 1990</Description>
-        <Description long term="About">
-          <p>
-            Tincidunt quam neque in cursus viverra orci, dapibus nec tristique.
-            Nullam ut sit dolor consectetur urna, dui cras nec sed. Cursus risus
-            congue arcu aenean posuere aliquam.
-          </p>
-          <p className="mt-5">
-            Et vivamus lorem pulvinar nascetur non. Pulvinar a sed platea
-            rhoncus ac mauris amet. Urna, sem pretium sit pretium urna, senectus
-            vitae. Scelerisque fermentum, cursus felis dui suspendisse velit
-            pharetra. Augue et duis cursus maecenas eget quam lectus. Accumsan
-            vitae nascetur pharetra rhoncus praesent dictum risus suspendisse.
-          </p>
-        </Description>
-      </dl>
-    </div>
-  );
-};
-
 const TeamMember = () => {
   return (
     <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-pink-500">
@@ -157,7 +110,7 @@ const Content = ({ title, profile }: Props) => (
     <article>
       <Header profile={profile} />
       <Tabs />
-      <DescriptionList />
+      <DescriptionList profile={profile} />
       <TeamMemberList />
     </article>
   </>
@@ -167,6 +120,7 @@ export default createFragmentContainer(Content, {
   profile: graphql`
     fragment Content_profile on ProfileNode {
       ...Header_profile
+      ...DescriptionList_profile
     }
   `,
 });
