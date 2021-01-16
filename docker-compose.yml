@@ -105,6 +105,7 @@ services:
     depends_on:
       - loadbalancer
       - mockserver
+    ipc: host # https://github.com/cypress-io/cypress/issues/350#issuecomment-267704772
 
 volumes:
   shared-graphql:
