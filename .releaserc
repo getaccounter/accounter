@@ -4,10 +4,12 @@
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
       "@semantic-release/github",
-      "@semantic-release/exec",
-      {
-        "publishCmd": "./deploy.sh ${nextRelease.version}"
-      }
+      [
+        "@semantic-release/exec",
+        {
+          "publishCmd": "./deploy.sh ${nextRelease.version}"
+        }
+      ]
     ]
   ]
 }
