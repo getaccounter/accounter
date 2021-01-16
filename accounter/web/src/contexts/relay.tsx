@@ -21,6 +21,6 @@ export default function RelayProvider({ children, environment }: Props) {
 }
 
 export const useEnvironment = () => {
-  const {environment} = useContext(relayContext)
+  const { environment } = useContext(relayContext);
   return environment;
 };

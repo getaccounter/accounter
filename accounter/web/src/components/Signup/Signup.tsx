@@ -5,8 +5,20 @@ import { useNotifications } from "../../contexts/notification";
 import { LockClosed } from "../icons/solid";
 
 export const SIGNUP_MUTATION = gql`
-  mutation Signup($orgName: String!, $firstName: String!, $lastName: String!, $email: String!, $password: String!) {
-    signup(orgName: $orgName, firstName: $firstName, lastName: $lastName, email: $email, password: $password) {
+  mutation Signup(
+    $orgName: String!
+    $firstName: String!
+    $lastName: String!
+    $email: String!
+    $password: String!
+  ) {
+    signup(
+      orgName: $orgName
+      firstName: $firstName
+      lastName: $lastName
+      email: $email
+      password: $password
+    ) {
       status
     }
   }

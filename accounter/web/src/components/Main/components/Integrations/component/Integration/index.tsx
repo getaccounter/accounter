@@ -20,10 +20,7 @@ const Integration = (props: {
       </div>
       <div className="flex-1 min-w-0">
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <Link
-          to={`${url}/details/5`}
-          className="focus:outline-none"
-        >
+        <Link to={`${url}/details/5`} className="focus:outline-none">
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
           <p className="text-sm font-medium text-gray-900">

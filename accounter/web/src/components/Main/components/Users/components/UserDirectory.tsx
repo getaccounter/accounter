@@ -2,19 +2,19 @@ import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import React from "react";
 import Directory, { DirectoryEntryList, DirectoryEntry } from "../../Directory";
-import { UserDirectory_organization } from "./__generated__/UserDirectory_organization.graphql";
 import User from "./components/User";
+import { UserDirectory_profiles } from "./__generated__/UserDirectory_profiles.graphql";
 
 type Props = {
-  organization: UserDirectory_organization;
+  profiles: UserDirectory_profiles;
 };
 
-type Profile = UserDirectory_organization["profiles"]["edges"][0];
+type ProfileEdge = UserDirectory_profiles["edges"][0];
 
-const UserDirectory = ({ organization }: Props) => {
-  const groupedUsers = organization.profiles.edges
+const UserDirectory = ({ profiles }: Props) => {
+  const groupedUsers = profiles.edges
     .map((edge) => edge!)
-    .reduce((grouped: Record<string, Array<Profile>>, profile) => {
+    .reduce((grouped: Record<string, Array<ProfileEdge>>, profile) => {
       const groupLabel = profile.node!.lastName[0].toUpperCase();
       const group = grouped[groupLabel] || [];
       return {
@@ -23,7 +23,7 @@ const UserDirectory = ({ organization }: Props) => {
       };
     }, {});
   return (
-    <Directory title="Users" subtitle={`${9999} users`}>
+    <Directory title="Users" subtitle={`${profiles.totalCount} users`}>
       {Object.entries(groupedUsers).map(([groupLabel, profiles]) => (
         <DirectoryEntryList key={groupLabel} title={groupLabel}>
           {profiles.map((edge) => (
@@ -38,17 +38,14 @@ const UserDirectory = ({ organization }: Props) => {
 };
 
 export default createFragmentContainer(UserDirectory, {
-  organization: graphql`
-    fragment UserDirectory_organization on OrganizationNode {
-      profiles(
-        first: 100 # max GraphQLInt
-      ) @connection(key: "UserDirectory_profiles") {
-        edges {
-          node {
-            id
-            lastName
-            ...User_profile
-          }
+  profiles: graphql`
+    fragment UserDirectory_profiles on ProfileNodeConnection {
+      totalCount
+      edges {
+        node {
+          id
+          lastName
+          ...User_profile
         }
       }
     }

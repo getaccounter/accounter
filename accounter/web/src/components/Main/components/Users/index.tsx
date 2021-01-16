@@ -10,19 +10,36 @@ type Props = {
   organization: Users_organization;
 };
 
-const Users = (props: Props) => (
-  <div className="flex-1 relative z-0 flex overflow-hidden">
-    <DetailLayout
-      mainColumn={<Content title="Users" />}
-      secondaryColumn={<UserDirectory organization={props.organization} />}
-    />
-  </div>
-);
+const Users = (props: Props) => {
+  return (
+    <div className="flex-1 relative z-0 flex overflow-hidden">
+      <DetailLayout
+        mainColumn={(id) => {
+          const profile = props.organization.profiles.edges.find(
+            (p) => p!.node!.id === id
+          );
+          return <Content title="Users" profile={profile!.node!} />;
+        }}
+        secondaryColumn={() => (
+          <UserDirectory profiles={props.organization.profiles} />
+        )}
+      />
+    </div>
+  );
+};
 
 export default createFragmentContainer(Users, {
   organization: graphql`
     fragment Users_organization on OrganizationNode {
-      ...UserDirectory_organization
+      profiles(first: 100) @connection(key: "Users_profiles") {
+        edges {
+          node {
+            id
+            ...Content_profile
+          }
+        }
+        ...UserDirectory_profiles
+      }
     }
   `,
 });

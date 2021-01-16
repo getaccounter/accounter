@@ -1,12 +1,9 @@
 import React from "react";
 import Loading from "../../../Loading";
-import Content from "../Content";
 import Directory, { DirectoryEntry, DirectoryEntryList } from "../Directory";
 import { QueryRenderer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import {
-  IntegrationsQuery,
-} from "./__generated__/IntegrationsQuery.graphql";
+import { IntegrationsQuery } from "./__generated__/IntegrationsQuery.graphql";
 import { useEnvironment } from "../../../../contexts/relay";
 import Integration from "./component/Integration";
 import DetailLayout from "../DetailLayout";
@@ -31,8 +28,8 @@ const Integrations = () => {
           <Loading />
         ) : (
           <DetailLayout
-            mainColumn={<Content title={TITLE} />}
-            secondaryColumn={
+            mainColumn={() => "TODO"}
+            secondaryColumn={() => (
               <Directory
                 title={TITLE}
                 subtitle={`${props.integrations.length} installed apps`}
@@ -45,7 +42,7 @@ const Integrations = () => {
                   ))}
                 </DirectoryEntryList>
               </Directory>
-            }
+            )}
           />
         );
       }}

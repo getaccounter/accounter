@@ -8,7 +8,7 @@ type Props = {
 };
 
 const User = ({ profile }: Props) => {
-  const name = `${profile.firstName} ${profile.lastName}`
+  const name = `${profile.firstName} ${profile.lastName}`;
   let { url } = useRouteMatch();
   return (
     <div className="flex items-center space-x-3">
@@ -20,11 +20,16 @@ const User = ({ profile }: Props) => {
         />
       </div>
       <div className="flex-1 min-w-0">
-        <Link to={`${url}/details/5`} className="focus:outline-none">
+        <Link
+          to={`${url}/details/${profile.id}`}
+          className="focus:outline-none"
+        >
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
           <p className="text-sm font-medium text-gray-900">{name}</p>
-          {profile.title && <p className="text-sm text-gray-500 truncate">{profile.title}</p>}
+          {profile.title && (
+            <p className="text-sm text-gray-500 truncate">{profile.title}</p>
+          )}
         </Link>
       </div>
     </div>
@@ -34,6 +39,7 @@ const User = ({ profile }: Props) => {
 export default createFragmentContainer(User, {
   profile: graphql`
     fragment User_profile on ProfileNode {
+      id
       firstName
       lastName
       title

@@ -4,17 +4,15 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type User_profile = {
-    readonly id: string;
+export type Header_profile = {
     readonly firstName: string;
     readonly lastName: string;
-    readonly title: string | null;
-    readonly " $refType": "User_profile";
+    readonly " $refType": "Header_profile";
 };
-export type User_profile$data = User_profile;
-export type User_profile$key = {
-    readonly " $data"?: User_profile$data;
-    readonly " $fragmentRefs": FragmentRefs<"User_profile">;
+export type Header_profile$data = Header_profile;
+export type Header_profile$key = {
+    readonly " $data"?: Header_profile$data;
+    readonly " $fragmentRefs": FragmentRefs<"Header_profile">;
 };
 
 
@@ -23,15 +21,8 @@ const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "User_profile",
+  "name": "Header_profile",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -45,17 +36,10 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "lastName",
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "title",
-      "storageKey": null
     }
   ],
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = '4ddf0ed5bcf79d6b19c7a86c6c498a38';
+(node as any).hash = '50d670cbab31713c90790c3273f87cea';
 export default node;

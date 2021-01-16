@@ -64,6 +64,7 @@ export default function Main() {
             ...Sidebar_profile
             organization {
               ...Users_organization
+              ...AddUsers_organization
             }
           }
         }
@@ -100,7 +101,7 @@ export default function Main() {
               path: "/add-users",
               Icon: UserAdd,
             },
-            content: <AddUsers />,
+            content: <AddUsers organization={props.currentUser.organization} />,
           },
           {
             tab: {

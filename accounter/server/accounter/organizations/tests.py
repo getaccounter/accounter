@@ -3,26 +3,32 @@ import json
 from django.contrib.auth import authenticate, get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
+from graphql_relay.node.node import from_global_id, to_global_id
 
 from .models import Organization, Profile
+from .schemas import DepartmentNode
 
 User = get_user_model()
 
 
 class OrganizationTestCase(GraphQLTestCase):
     def setUp(self):
-        admin = baker.make(
-            Profile, is_admin=True, user=baker.make(User, _fill_optional=True)
+        admin_profile = baker.make(
+            Profile,
+            is_admin=True,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
         )
-        self.profiles = [
-            baker.make(
-                Profile,
-                organization=admin.organization,
-                user=baker.make(User, _fill_optional=True),
-                _fill_optional=True,
-            )
-        ]
-        self.user = admin.user
+        user_profile = baker.make(
+            Profile,
+            is_admin=False,
+            organization=admin_profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+        self.profiles = [user_profile]
+        self.admin = admin_profile.user
+        self.user = user_profile.user
 
     def test_signup_mutation(self):
         email = "user@internet.cat"
@@ -32,25 +38,25 @@ class OrganizationTestCase(GraphQLTestCase):
         org_name = "SuperOrg"
         response = self.query(
             """
-            mutation SignUp(
-              $orgName: String!
-              $firstName: String!
-              $lastName: String!
-              $email: String!
-              $password: String!
+          mutation SignUp(
+            $orgName: String!
+            $firstName: String!
+            $lastName: String!
+            $email: String!
+            $password: String!
+          ) {
+            signup(
+              orgName: $orgName
+              firstName: $firstName
+              lastName: $lastName
+              email: $email
+              password: $password
             ) {
-              signup(
-                orgName: $orgName
-                firstName: $firstName
-                lastName: $lastName
-                email: $email
-                password: $password
-              ) {
-                status
-              }
+              status
             }
+          }
 
-            """,
+          """,
             variables={
                 "email": email,
                 "firstName": first_name,
@@ -109,7 +115,7 @@ class OrganizationTestCase(GraphQLTestCase):
         assert len(orgs) == 0
 
     def test_get_organization(self):
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
         response = self.query(
             """
             {
@@ -138,7 +144,7 @@ class OrganizationTestCase(GraphQLTestCase):
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
         organization = content["data"]["currentUser"]["organization"]
-        assert organization["name"] == self.user.profile.organization.name
+        assert organization["name"] == self.admin.profile.organization.name
         assert len(organization["profiles"]["edges"]) == 2
         response_profile = organization["profiles"]["edges"][1]["node"]
         assert response_profile["email"] == self.profiles[0].user.email
@@ -151,7 +157,7 @@ class OrganizationTestCase(GraphQLTestCase):
         )
 
     def test_get_current_user(self):
-        self.client.force_login(self.user)
+        self.client.force_login(self.admin)
         response = self.query(
             """
             {
@@ -164,4 +170,153 @@ class OrganizationTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        assert content["data"]["currentUser"]["email"] == self.user.email
+        assert content["data"]["currentUser"]["email"] == self.admin.email
+
+    def test_create_user(self):
+        self.client.force_login(self.admin)
+        email = "user@internet.cat"
+        first_name = "somefirstname"
+        last_name = "somelastname"
+        title = "some title"
+        response = self.query(
+            """
+          mutation CreateUser (
+            $email: String!
+            $firstName: String!
+            $lastName: String!
+            $title: String!
+            $department: ID
+          ) {
+            createUser(
+              input: {
+                email: $email
+                firstName: $firstName
+                lastName: $lastName
+                title: $title
+                department: $department
+              }
+            ) {
+              profile {
+                id
+                email
+                firstName
+                lastName
+                title
+                department {
+                  name
+                }
+              }
+            }
+          }
+
+          """,
+            variables={
+                "email": email,
+                "firstName": first_name,
+                "lastName": last_name,
+                "title": title,
+                "department": to_global_id(
+                    DepartmentNode._meta.name, self.admin.profile.department.pk
+                ),
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["createUser"]["profile"]
+        _, db_pk = from_global_id(returned_profile["id"])
+        profile = Profile.objects.get(id=int(db_pk))
+
+        assert profile.user.first_name == returned_profile["firstName"] == first_name
+        assert profile.user.last_name == returned_profile["lastName"] == last_name
+        assert profile.user.email == returned_profile["email"] == email
+        assert profile.title == returned_profile["title"] == title
+        assert (
+            profile.department.name
+            == returned_profile["department"]["name"]
+            == self.admin.profile.department.name
+        )
+
+    def test_create_user_without_optional_fields(self):
+        self.client.force_login(self.admin)
+        response = self.query(
+            """
+          mutation CreateUser (
+            $email: String!
+            $firstName: String!
+            $lastName: String!
+          ) {
+            createUser(
+              input: {
+                email: $email
+                firstName: $firstName
+                lastName: $lastName
+              }
+            ) {
+              profile {
+                id
+                email
+                firstName
+                lastName
+                title
+                department {
+                  name
+                }
+              }
+            }
+          }
+
+          """,
+            variables={
+                "email": "user@internet.cat",
+                "firstName": "firstname",
+                "lastName": "lastname",
+                "title": "some title",
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["createUser"]["profile"]
+        _, db_pk = from_global_id(returned_profile["id"])
+        profile = Profile.objects.get(id=int(db_pk))
+        assert profile.title is None
+        assert returned_profile["title"] is None
+
+    def test_create_user_requires_admin(self):
+        self.client.force_login(self.user)
+        response = self.query(
+            """
+          mutation CreateUser (
+            $email: String!
+            $firstName: String!
+            $lastName: String!
+            $title: String!
+          ) {
+            createUser(
+              input: {
+                email: $email
+                firstName: $firstName
+                lastName: $lastName
+                title: $title
+              }
+            ) {
+              profile {
+                id
+              }
+            }
+          }
+
+          """,
+            variables={
+                "email": "user@internet.cat",
+                "firstName": "firstname",
+                "lastName": "lastname",
+                "title": "some title",
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )

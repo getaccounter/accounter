@@ -10,11 +10,7 @@ const DirectoryHeader = ({
 }) => (
   <div className="px-6 pt-6 pb-4">
     <h2 className="text-lg font-medium text-gray-900">{title}</h2>
-    {subtitle && (
-      <p className="mt-1 text-sm text-gray-600">
-        {subtitle}
-      </p>
-    )}
+    {subtitle && <p className="mt-1 text-sm text-gray-600">{subtitle}</p>}
     <form className="mt-6 flex space-x-4" action="#">
       <div className="flex-1 min-w-0">
         <label htmlFor="search" className="sr-only">
@@ -83,7 +79,7 @@ const DirectoryList = ({ children }: { children: ReactNode }) => (
 
 type Props = {
   title: string;
-  subtitle?: string,
+  subtitle?: string;
   children: ReactNode;
 };
 
