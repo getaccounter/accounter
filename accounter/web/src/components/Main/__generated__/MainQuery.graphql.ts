@@ -8,7 +8,7 @@ export type MainQueryVariables = {};
 export type MainQueryResponse = {
     readonly currentUser: {
         readonly organization: {
-            readonly " $fragmentRefs": FragmentRefs<"Users_organization">;
+            readonly " $fragmentRefs": FragmentRefs<"Users_organization" | "AddUsers_organization">;
         };
         readonly " $fragmentRefs": FragmentRefs<"Sidebar_profile">;
     };
@@ -26,10 +26,32 @@ query MainQuery {
     ...Sidebar_profile
     organization {
       ...Users_organization
+      ...AddUsers_organization
       id
     }
     id
   }
+}
+
+fragment AddUsers_organization on OrganizationNode {
+  id
+  departments {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}
+
+fragment Content_profile on ProfileNode {
+  ...Header_profile
+}
+
+fragment Header_profile on ProfileNode {
+  firstName
+  lastName
 }
 
 fragment Profile_profile on ProfileNode {
@@ -41,32 +63,40 @@ fragment Sidebar_profile on ProfileNode {
   ...Profile_profile
 }
 
-fragment UserDirectory_organization on OrganizationNode {
-  profiles(first: 100) {
-    edges {
-      node {
-        id
-        lastName
-        ...User_profile
-        __typename
-      }
-      cursor
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
+fragment UserDirectory_profiles on ProfileNodeConnection {
+  totalCount
+  edges {
+    node {
+      id
+      lastName
+      ...User_profile
     }
   }
 }
 
 fragment User_profile on ProfileNode {
+  id
   firstName
   lastName
   title
 }
 
 fragment Users_organization on OrganizationNode {
-  ...UserDirectory_organization
+  profiles(first: 100) {
+    edges {
+      node {
+        id
+        ...Content_profile
+        __typename
+      }
+      cursor
+    }
+    ...UserDirectory_profiles
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
 }
 */
 
@@ -126,6 +156,11 @@ return {
                 "args": null,
                 "kind": "FragmentSpread",
                 "name": "Users_organization"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "AddUsers_organization"
               }
             ],
             "storageKey": null
@@ -191,20 +226,20 @@ return {
                         "plural": false,
                         "selections": [
                           (v3/*: any*/),
-                          (v1/*: any*/),
                           (v0/*: any*/),
+                          (v1/*: any*/),
                           {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
-                            "name": "title",
+                            "name": "__typename",
                             "storageKey": null
                           },
                           {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
-                            "name": "__typename",
+                            "name": "title",
                             "storageKey": null
                           }
                         ],
@@ -218,6 +253,13 @@ return {
                         "storageKey": null
                       }
                     ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "totalCount",
                     "storageKey": null
                   },
                   {
@@ -253,11 +295,52 @@ return {
                 "args": (v2/*: any*/),
                 "filters": null,
                 "handle": "connection",
-                "key": "UserDirectory_profiles",
+                "key": "Users_profiles",
                 "kind": "LinkedHandle",
                 "name": "profiles"
               },
-              (v3/*: any*/)
+              (v3/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "DepartmentNodeConnection",
+                "kind": "LinkedField",
+                "name": "departments",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "DepartmentNodeEdge",
+                    "kind": "LinkedField",
+                    "name": "edges",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "DepartmentNode",
+                        "kind": "LinkedField",
+                        "name": "node",
+                        "plural": false,
+                        "selections": [
+                          (v3/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "name",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
             ],
             "storageKey": null
           },
@@ -268,14 +351,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dc919b3aa00aebf861757d1931f45956",
+    "cacheID": "3fd41da31c225aaa16eb57ca4a2da9ce",
     "id": null,
     "metadata": {},
     "name": "MainQuery",
     "operationKind": "query",
-    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    organization {\n      ...Users_organization\n      id\n    }\n    id\n  }\n}\n\nfragment Profile_profile on ProfileNode {\n  firstName\n  lastName\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_organization on OrganizationNode {\n  profiles(first: 100) {\n    edges {\n      node {\n        id\n        lastName\n        ...User_profile\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment User_profile on ProfileNode {\n  firstName\n  lastName\n  title\n}\n\nfragment Users_organization on OrganizationNode {\n  ...UserDirectory_organization\n}\n"
+    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    organization {\n      ...Users_organization\n      ...AddUsers_organization\n      id\n    }\n    id\n  }\n}\n\nfragment AddUsers_organization on OrganizationNode {\n  id\n  departments {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n}\n\nfragment Profile_profile on ProfileNode {\n  firstName\n  lastName\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      ...User_profile\n    }\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  title\n}\n\nfragment Users_organization on OrganizationNode {\n  profiles(first: 100) {\n    edges {\n      node {\n        id\n        ...Content_profile\n        __typename\n      }\n      cursor\n    }\n    ...UserDirectory_profiles\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'c247a86b27e7f205746a23b5d4c5ee68';
+(node as any).hash = '03b3d72ebd1b23596e8ac6d506f6cf95';
 export default node;

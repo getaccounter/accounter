@@ -42,6 +42,7 @@ const generateUser = () => {
     firstName,
     lastName,
     email: faker.internet.email(firstName, lastName),
+    title: faker.name.jobTitle(),
     password: faker.internet.password(),
   };
 };
@@ -76,6 +77,46 @@ describe("Mobile", () => {
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", { name: "SLACK" }).should("exist");
+      });
+    });
+  });
+
+  describe("Users", () => {
+    it("add user", () => {
+      const user = generateUser();
+      const userToRegister = generateUser();
+
+      cy.visit("/");
+      cy.findByRole("link", { name: "register" }).click();
+      cy.register(
+        user.organization,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.password
+      );
+      cy.login(user.email, user.password);
+
+      cy.mobileNavigateTo("Add Users");
+
+      cy.findByLabelText("First name").type(userToRegister.firstName);
+      cy.findByLabelText("Last name").type(userToRegister.lastName);
+      cy.findByLabelText("Email address").type(userToRegister.email);
+      cy.findByLabelText("Title").type(userToRegister.title);
+      cy.findByRole("button", { name: "Create" }).click();
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("heading", {
+          name: `${userToRegister.firstName} ${userToRegister.lastName}`,
+        }).should("exist");
+
+        cy.findByRole("link", { name: "Users" }).click()
+      });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+        });
       });
     });
   });
@@ -114,6 +155,46 @@ describe("Desktop - window", () => {
       });
     });
   });
+
+  describe("Users", () => {
+    it("add user", () => {
+      const user = generateUser();
+      const userToRegister = generateUser();
+
+      cy.visit("/");
+      cy.findByRole("link", { name: "register" }).click();
+      cy.register(
+        user.organization,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.password
+      );
+      cy.login(user.email, user.password);
+
+      cy.navigateTo("Add Users");
+
+      cy.findByLabelText("First name").type(userToRegister.firstName);
+      cy.findByLabelText("Last name").type(userToRegister.lastName);
+      cy.findByLabelText("Email address").type(userToRegister.email);
+      cy.findByLabelText("Title").type(userToRegister.title);
+      cy.findByRole("button", { name: "Create" }).click();
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("heading", {
+          name: `${userToRegister.firstName} ${userToRegister.lastName}`,
+        }).should("exist");
+
+        cy.findByRole("link", { name: "Users" }).click()
+      });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+        });
+      });
+    });
+  });
 });
 
 describe("Desktop - full screen", () => {
@@ -146,6 +227,44 @@ describe("Desktop - full screen", () => {
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", { name: "SLACK" }).should("exist");
+      });
+    });
+  });
+
+  describe("Users", () => {
+    it("add user", () => {
+      const user = generateUser();
+      const userToRegister = generateUser();
+
+      cy.visit("/");
+      cy.findByRole("link", { name: "register" }).click();
+      cy.register(
+        user.organization,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.password
+      );
+      cy.login(user.email, user.password);
+
+      cy.navigateTo("Add Users");
+
+      cy.findByLabelText("First name").type(userToRegister.firstName);
+      cy.findByLabelText("Last name").type(userToRegister.lastName);
+      cy.findByLabelText("Email address").type(userToRegister.email);
+      cy.findByLabelText("Title").type(userToRegister.title);
+      cy.findByRole("button", { name: "Create" }).click();
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+        }).should("exist");
+      });
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("heading", {
+          name: `${userToRegister.firstName} ${userToRegister.lastName}`,
+        }).should("exist");
       });
     });
   });

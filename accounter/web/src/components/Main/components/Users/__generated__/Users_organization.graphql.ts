@@ -5,7 +5,15 @@
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type Users_organization = {
-    readonly " $fragmentRefs": FragmentRefs<"UserDirectory_organization">;
+    readonly profiles: {
+        readonly edges: ReadonlyArray<{
+            readonly node: {
+                readonly id: string;
+                readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
+            } | null;
+        } | null>;
+        readonly " $fragmentRefs": FragmentRefs<"UserDirectory_profiles">;
+    };
     readonly " $refType": "Users_organization";
 };
 export type Users_organization$data = Users_organization;
@@ -19,17 +27,112 @@ export type Users_organization$key = {
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": null,
+  "metadata": {
+    "connection": [
+      {
+        "count": null,
+        "cursor": null,
+        "direction": "forward",
+        "path": [
+          "profiles"
+        ]
+      }
+    ]
+  },
   "name": "Users_organization",
   "selections": [
     {
+      "alias": "profiles",
       "args": null,
-      "kind": "FragmentSpread",
-      "name": "UserDirectory_organization"
+      "concreteType": "ProfileNodeConnection",
+      "kind": "LinkedField",
+      "name": "__Users_profiles_connection",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ProfileNodeEdge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProfileNode",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "__typename",
+                  "storageKey": null
+                },
+                {
+                  "args": null,
+                  "kind": "FragmentSpread",
+                  "name": "Content_profile"
+                }
+              ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "cursor",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "PageInfo",
+          "kind": "LinkedField",
+          "name": "pageInfo",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "endCursor",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "hasNextPage",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "UserDirectory_profiles"
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "OrganizationNode",
   "abstractKey": null
 };
-(node as any).hash = 'b16fe78c0b838aea6f84908370280230';
+(node as any).hash = 'e79d2221060036b2b6a57f7a370b331f';
 export default node;

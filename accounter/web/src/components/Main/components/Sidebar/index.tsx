@@ -4,7 +4,7 @@ import Tab, { TabType } from "./components/Tab";
 import Profile from "./components/Profile";
 import { Link, useLocation } from "react-router-dom";
 import { useBooleanQueryString } from "../../../../utils/querystring";
-import queryString from 'query-string'
+import queryString from "query-string";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Sidebar_profile } from "./__generated__/Sidebar_profile.graphql";
@@ -12,13 +12,15 @@ import { Sidebar_profile } from "./__generated__/Sidebar_profile.graphql";
 interface Props {
   mainTabs: Array<TabType>;
   extraTabs: Array<TabType>;
-  profile: Sidebar_profile
+  profile: Sidebar_profile;
 }
 
 const MobileSidebar = (props: Props) => {
   const location = useLocation();
-  const {showMobileSidebar, ...qsObject } = queryString.parse(location.search)
-  const closeSidebarLink = `${location.pathname}?${queryString.stringify(qsObject)}`
+  const { showMobileSidebar, ...qsObject } = queryString.parse(location.search);
+  const closeSidebarLink = `${location.pathname}?${queryString.stringify(
+    qsObject
+  )}`;
   return (
     <>
       {/* Off-canvas menu for mobile, show/hide based on off-canvas menu state. */}

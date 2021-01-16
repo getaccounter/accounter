@@ -2,7 +2,9 @@ import graphene
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from graphene_django import DjangoObjectType
-from ..utils import signin_required
+from ..utils import signin_required, ExtendedConnection
+from ..utils import admin_required
+from graphql_relay.node.node import from_global_id
 
 from .models import Department, Organization, Profile
 
@@ -44,18 +46,20 @@ class Signup(graphene.Mutation):
 class OrganizationNode(DjangoObjectType):
     class Meta:
         model = Organization
-        fields = ("name", "profiles")
+        fields = ("name", "profiles", "departments")
         interfaces = (graphene.relay.Node,)
 
 
-class DepartmentType(DjangoObjectType):
+class DepartmentNode(DjangoObjectType):
     class Meta:
         model = Department
         fields = ("name", "id")
+        interfaces = (graphene.relay.Node,)
 
 
 class ProfileNode(DjangoObjectType):
     class Meta:
+        connection_class = ExtendedConnection
         model = Profile
         fields = (
             "email",
@@ -81,9 +85,6 @@ class ProfileNode(DjangoObjectType):
         first_name = profile.user.first_name
         if len(first_name) > 0:
             return first_name
-        print("!!!!!")
-        print(profile.user.__dict__)
-        print(len(first_name))
         return None
 
     @staticmethod
@@ -92,6 +93,46 @@ class ProfileNode(DjangoObjectType):
         if len(last_name) > 0:
             return last_name
         return None
+
+
+class CreateUser(graphene.relay.ClientIDMutation):
+    class Input:
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+        email = graphene.String(required=True)
+        title = graphene.String()
+        department = graphene.ID()
+
+    profile = graphene.Field(ProfileNode, required=True)
+
+    @admin_required
+    def mutate_and_get_payload(root, info, *args, **input):
+        organization = info.context.user.profile.organization
+
+        department = None
+        if input.get("department") is not None:
+            department_relay_id = input.get("department")
+            _, db_pk = from_global_id(department_relay_id)
+            department = Department.objects.get(pk=int(db_pk))
+
+        User = get_user_model()
+        user = User.objects.create(
+            username=input.get("email"),
+            email=input.get("email"),
+            first_name=input.get("first_name"),
+            last_name=input.get("last_name"),
+        )
+        user.save()
+        profile = Profile.objects.create(
+            user=user,
+            organization=organization,
+            title=input.get("title", None),
+            is_admin=False,
+            department=department,
+        )
+        profile.save()
+
+        return CreateUser(profile=profile)
 
 
 class Query(graphene.ObjectType):
@@ -106,3 +147,8 @@ class Query(graphene.ObjectType):
     @signin_required
     def resolve_current_user(parent, info, **kwargs):
         return info.context.user.profile
+
+
+class Mutation(graphene.ObjectType):
+    signup = Signup.Field()
+    create_user = CreateUser.Field()

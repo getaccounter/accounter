@@ -5,8 +5,8 @@ import SecondaryColumn from "./components/SecondaryColumn";
 import MainColumn from "./components/MainColumn";
 
 type Props = {
-  secondaryColumn: ReactNode;
-  mainColumn: ReactNode;
+  secondaryColumn: () => ReactNode;
+  mainColumn: (id: string) => ReactNode;
 };
 const DetailLayout = ({ secondaryColumn, mainColumn }: Props) => {
   let { path } = useRouteMatch();
@@ -17,19 +17,27 @@ const DetailLayout = ({ secondaryColumn, mainColumn }: Props) => {
           xlAndBigger ? (
             <>
               <Route path={`${path}/details/:id`}>
-                <MainColumn>{mainColumn}</MainColumn>
+                {({ match }) => (
+                  <MainColumn>
+                    {match && mainColumn(match!.params.id)}
+                  </MainColumn>
+                )}
               </Route>
               <Route path={`${path}/`}>
-                <SecondaryColumn>{secondaryColumn}</SecondaryColumn>
+                <SecondaryColumn>{secondaryColumn()}</SecondaryColumn>
               </Route>
             </>
           ) : (
             <Switch>
               <Route path={`${path}/details/:id`}>
-                <MainColumn>{mainColumn}</MainColumn>
+                {({ match }) => (
+                  <MainColumn>
+                    {match && mainColumn(match!.params.id)}
+                  </MainColumn>
+                )}
               </Route>
               <Route path={`${path}/`}>
-                <SecondaryColumn isMobile>{secondaryColumn}</SecondaryColumn>
+                <SecondaryColumn isMobile>{secondaryColumn()}</SecondaryColumn>
               </Route>
             </Switch>
           )

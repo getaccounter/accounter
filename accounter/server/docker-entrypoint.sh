@@ -8,7 +8,7 @@ echo "Create super user if not existing"
 cat <<EOF | python manage.py shell
 from django.contrib.auth import get_user_model
 
-username = 'admin@getaccounter.io'
+username = 'admin@accounter.io'
 
 User = get_user_model()
 
