@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Phone, Pencil, XCircle } from "../../../../icons/solid";
+import { Pencil, XCircle } from "../../../../icons/solid";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Header_profile } from "./__generated__/Header_profile.graphql";
