@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
-import { Phone } from "../../../../icons/solid";
-import { Mail } from "../../../../icons/solid";
+import { Phone, Pencil, XCircle } from "../../../../icons/solid";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Header_profile } from "./__generated__/Header_profile.graphql";
@@ -45,15 +44,15 @@ const Header = (props: Props) => {
                 type="button"
                 className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
               >
-                <Mail className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                <span>Message</span>
+                <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                <span>Edit</span>
               </button>
               <button
                 type="button"
-                className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                className="inline-flex justify-center px-4 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
               >
-                <Phone className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                <span>Call</span>
+                <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                <span>Offboard</span>
               </button>
             </div>
           </div>
