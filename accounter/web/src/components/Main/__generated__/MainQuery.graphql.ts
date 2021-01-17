@@ -34,15 +34,7 @@ query MainQuery {
 }
 
 fragment AddUsers_organization on OrganizationNode {
-  id
-  departments {
-    edges {
-      node {
-        id
-        name
-      }
-    }
-  }
+  ...UserForm_organization
 }
 
 fragment Content_profile on ProfileNode {
@@ -51,6 +43,8 @@ fragment Content_profile on ProfileNode {
 }
 
 fragment DescriptionList_profile on ProfileNode {
+  firstName
+  lastName
   email
   title
   department {
@@ -80,6 +74,18 @@ fragment UserDirectory_profiles on ProfileNodeConnection {
       id
       lastName
       ...User_profile
+    }
+  }
+}
+
+fragment UserForm_organization on OrganizationNode {
+  id
+  departments {
+    edges {
+      node {
+        id
+        name
+      }
     }
   }
 }
@@ -382,12 +388,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ba4136fc4c5edb20bd2e9b22f7fd7648",
+    "cacheID": "972748b70cf279dd404eee46f04b89ca",
     "id": null,
     "metadata": {},
     "name": "MainQuery",
     "operationKind": "query",
-    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    organization {\n      ...Users_organization\n      ...AddUsers_organization\n      id\n    }\n    id\n  }\n}\n\nfragment AddUsers_organization on OrganizationNode {\n  id\n  departments {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n}\n\nfragment Profile_profile on ProfileNode {\n  firstName\n  lastName\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      ...User_profile\n    }\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  title\n}\n\nfragment Users_organization on OrganizationNode {\n  profiles(first: 100) {\n    edges {\n      node {\n        id\n        ...Content_profile\n        __typename\n      }\n      cursor\n    }\n    ...UserDirectory_profiles\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    organization {\n      ...Users_organization\n      ...AddUsers_organization\n      id\n    }\n    id\n  }\n}\n\nfragment AddUsers_organization on OrganizationNode {\n  ...UserForm_organization\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n}\n\nfragment Profile_profile on ProfileNode {\n  firstName\n  lastName\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_organization on OrganizationNode {\n  id\n  departments {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  title\n}\n\nfragment Users_organization on OrganizationNode {\n  profiles(first: 100) {\n    edges {\n      node {\n        id\n        ...Content_profile\n        __typename\n      }\n      cursor\n    }\n    ...UserDirectory_profiles\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
