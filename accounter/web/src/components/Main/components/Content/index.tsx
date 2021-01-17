@@ -1,5 +1,12 @@
 import React, { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  Redirect,
+  Route,
+  Switch,
+  useLocation,
+  useRouteMatch,
+} from "react-router-dom";
 import { ChevronLeft } from "../../../icons/solid";
 import Header from "./components/Header";
 import { createFragmentContainer } from "react-relay";
@@ -27,7 +34,29 @@ const Breadcrumb = ({ title }: BreadcrumbProps) => {
   );
 };
 
+const Tab = (props: { children: ReactNode; to: string }) => {
+  const location = useLocation();
+  const isSelected = props.to === location.pathname;
+
+  const sharedClassNames =
+    "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+  const selectedClassNames = "border-pink-500 text-gray-900";
+  const unSelectedClassNames =
+    "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300";
+  return (
+    <Link
+      to={props.to}
+      className={`${
+        isSelected ? selectedClassNames : unSelectedClassNames
+      } ${sharedClassNames}`}
+    >
+      {props.children}
+    </Link>
+  );
+};
+
 const Tabs = () => {
+  let { url } = useRouteMatch();
   return (
     <div className="mt-6 sm:mt-2 2xl:mt-5">
       <div className="border-b border-gray-200">
@@ -35,27 +64,8 @@ const Tabs = () => {
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
             {/* Current: "border-pink-500 text-indigo-600", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" */}
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a
-              href="#"
-              className="border-pink-500 text-gray-900 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-              aria-current="page"
-            >
-              Profile
-            </a>
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a
-              href="#"
-              className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-            >
-              Calendar
-            </a>
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a
-              href="#"
-              className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-            >
-              Recognition
-            </a>
+            <Tab to={`${url}/profile`}>Profile</Tab>
+            <Tab to={`${url}/apps`}>Apps</Tab>
           </nav>
         </div>
       </div>
@@ -87,7 +97,7 @@ const TeamMember = () => {
 
 const TeamMemberList = () => {
   return (
-    <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
+    <div>
       <h2 className="text-sm font-medium text-gray-500">Team members</h2>
       <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TeamMember />
@@ -104,17 +114,33 @@ type Props = {
   profile: Content_profile;
 };
 
-const Content = ({ title, profile }: Props) => (
-  <>
-    <Breadcrumb title={title} />
-    <article>
-      <Header profile={profile} />
-      <Tabs />
-      <DescriptionList profile={profile} />
-      <TeamMemberList />
-    </article>
-  </>
-);
+const Content = ({ title, profile }: Props) => {
+  let { path } = useRouteMatch();
+  let { url } = useRouteMatch();
+  return (
+    <>
+      <Breadcrumb title={title} />
+      <article>
+        <Header profile={profile} />
+        <Tabs />
+        <div className="mt-6 pb-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Switch>
+            <Route path={`${path}/profile`}>
+              <DescriptionList profile={profile} />
+            </Route>
+            <Route path={`${path}/apps`}>
+              TODO: Replace teammebers with apps
+              <TeamMemberList />
+            </Route>
+            <Route>
+              <Redirect to={`${url}/profile`} />
+            </Route>
+          </Switch>
+        </div>
+      </article>
+    </>
+  );
+};
 
 export default createFragmentContainer(Content, {
   profile: graphql`
