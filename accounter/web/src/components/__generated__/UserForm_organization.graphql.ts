@@ -4,7 +4,7 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type AddUsers_organization = {
+export type UserForm_organization = {
     readonly id: string;
     readonly departments: {
         readonly edges: ReadonlyArray<{
@@ -14,12 +14,12 @@ export type AddUsers_organization = {
             } | null;
         } | null>;
     };
-    readonly " $refType": "AddUsers_organization";
+    readonly " $refType": "UserForm_organization";
 };
-export type AddUsers_organization$data = AddUsers_organization;
-export type AddUsers_organization$key = {
-    readonly " $data"?: AddUsers_organization$data;
-    readonly " $fragmentRefs": FragmentRefs<"AddUsers_organization">;
+export type UserForm_organization$data = UserForm_organization;
+export type UserForm_organization$key = {
+    readonly " $data"?: UserForm_organization$data;
+    readonly " $fragmentRefs": FragmentRefs<"UserForm_organization">;
 };
 
 
@@ -36,7 +36,7 @@ return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "AddUsers_organization",
+  "name": "UserForm_organization",
   "selections": [
     (v0/*: any*/),
     {
@@ -85,5 +85,5 @@ return {
   "abstractKey": null
 };
 })();
-(node as any).hash = 'a1a5b92beac7d232eae89ae4bd2823c3';
+(node as any).hash = '1efb5b0e9513502bb644639d8123f3bd';
 export default node;

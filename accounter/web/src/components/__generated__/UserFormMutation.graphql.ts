@@ -3,14 +3,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type AddUsersMutationVariables = {
+export type UserFormMutationVariables = {
     email: string;
     firstName: string;
     lastName: string;
     title?: string | null;
     department?: string | null;
 };
-export type AddUsersMutationResponse = {
+export type UserFormMutationResponse = {
     readonly createUser: {
         readonly profile: {
             readonly id: string;
@@ -24,15 +24,15 @@ export type AddUsersMutationResponse = {
         };
     } | null;
 };
-export type AddUsersMutation = {
-    readonly response: AddUsersMutationResponse;
-    readonly variables: AddUsersMutationVariables;
+export type UserFormMutation = {
+    readonly response: UserFormMutationResponse;
+    readonly variables: UserFormMutationVariables;
 };
 
 
 
 /*
-mutation AddUsersMutation(
+mutation UserFormMutation(
   $email: String!
   $firstName: String!
   $lastName: String!
@@ -167,7 +167,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddUsersMutation",
+    "name": "UserFormMutation",
     "selections": [
       {
         "alias": null,
@@ -222,7 +222,7 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AddUsersMutation",
+    "name": "UserFormMutation",
     "selections": [
       {
         "alias": null,
@@ -267,14 +267,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7353173392a1cf8a14d1da40564b802d",
+    "cacheID": "c8dadbcd3507b2832ceced227050085d",
     "id": null,
     "metadata": {},
-    "name": "AddUsersMutation",
+    "name": "UserFormMutation",
     "operationKind": "mutation",
-    "text": "mutation AddUsersMutation(\n  $email: String!\n  $firstName: String!\n  $lastName: String!\n  $title: String\n  $department: ID\n) {\n  createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {\n    profile {\n      id\n      email\n      firstName\n      lastName\n      title\n      department {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "mutation UserFormMutation(\n  $email: String!\n  $firstName: String!\n  $lastName: String!\n  $title: String\n  $department: ID\n) {\n  createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {\n    profile {\n      id\n      email\n      firstName\n      lastName\n      title\n      department {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '9185e30f9c66f586dcd671b15b2c810c';
+(node as any).hash = 'dac2948d978f243d6eb148bff93ee516';
 export default node;
