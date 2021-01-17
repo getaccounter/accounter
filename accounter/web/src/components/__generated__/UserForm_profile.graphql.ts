@@ -4,30 +4,40 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type DescriptionList_profile = {
+export type UserForm_profile = {
+    readonly id: string;
     readonly firstName: string;
     readonly lastName: string;
     readonly email: string;
     readonly title: string | null;
     readonly department: {
-        readonly name: string;
+        readonly id: string;
     } | null;
-    readonly " $refType": "DescriptionList_profile";
+    readonly " $refType": "UserForm_profile";
 };
-export type DescriptionList_profile$data = DescriptionList_profile;
-export type DescriptionList_profile$key = {
-    readonly " $data"?: DescriptionList_profile$data;
-    readonly " $fragmentRefs": FragmentRefs<"DescriptionList_profile">;
+export type UserForm_profile$data = UserForm_profile;
+export type UserForm_profile$key = {
+    readonly " $data"?: UserForm_profile$data;
+    readonly " $fragmentRefs": FragmentRefs<"UserForm_profile">;
 };
 
 
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "DescriptionList_profile",
+  "name": "UserForm_profile",
   "selections": [
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -64,13 +74,7 @@ const node: ReaderFragment = {
       "name": "department",
       "plural": false,
       "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        }
+        (v0/*: any*/)
       ],
       "storageKey": null
     }
@@ -78,5 +82,6 @@ const node: ReaderFragment = {
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = 'c33ff84b48acc97547ee62ab0a1d09c0';
+})();
+(node as any).hash = '0b8146345ac02e14368406fb46f6bc75';
 export default node;

@@ -135,6 +135,47 @@ class CreateUser(graphene.relay.ClientIDMutation):
         return CreateUser(profile=profile)
 
 
+class UpdateUser(graphene.relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+        first_name = graphene.String()
+        last_name = graphene.String()
+        email = graphene.String()
+        title = graphene.String()
+        department = graphene.ID()
+
+    profile = graphene.Field(ProfileNode, required=True)
+
+    @admin_required
+    def mutate_and_get_payload(root, info, *args, **input):
+        profile_pk = from_global_id(input.get("id"))[1]
+        organization = info.context.user.profile.organization
+        profile = Profile.objects.get(pk=profile_pk, organization=organization)
+
+        if input.get("first_name") is not None:
+            profile.user.first_name = input.get("first_name")
+
+        if input.get("last_name") is not None:
+            profile.user.last_name = input.get("last_name")
+
+        if input.get("email") is not None:
+            profile.user.email = input.get("email")
+
+        if input.get("title") is not None:
+            profile.title = input.get("title")
+
+        if input.get("department") is not None:
+            department_relay_id = input.get("department")
+            _, db_pk = from_global_id(department_relay_id)
+            department = Department.objects.get(pk=int(db_pk))
+            profile.department = department
+
+        profile.save()
+        profile.user.save()
+
+        return UpdateUser(profile=profile)
+
+
 class Query(graphene.ObjectType):
     @staticmethod
     @signin_required
@@ -152,3 +193,4 @@ class Query(graphene.ObjectType):
 class Mutation(graphene.ObjectType):
     signup = Signup.Field()
     create_user = CreateUser.Field()
+    update_user = UpdateUser.Field()

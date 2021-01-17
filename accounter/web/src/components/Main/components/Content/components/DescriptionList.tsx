@@ -27,6 +27,8 @@ type Props = {
 const DescriptionList = ({ profile }: Props) => {
   return (
     <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+      <Description term="First name">{profile.firstName}</Description>
+      <Description term="Last name">{profile.lastName}</Description>
       <Description term="Email">{profile.email}</Description>
       <Description term="Title">{profile.title ?? "-"}</Description>
       <Description term="Team">
@@ -40,6 +42,8 @@ const DescriptionList = ({ profile }: Props) => {
 export default createFragmentContainer(DescriptionList, {
   profile: graphql`
     fragment DescriptionList_profile on ProfileNode {
+      firstName
+      lastName
       email
       title
       department {

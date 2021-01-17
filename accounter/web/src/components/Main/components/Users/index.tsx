@@ -18,7 +18,13 @@ const Users = (props: Props) => {
           const profile = props.organization.profiles.edges.find(
             (p) => p!.node!.id === id
           );
-          return <Content title="Users" profile={profile!.node!} />;
+          return (
+            <Content
+              title="Users"
+              profile={profile!.node!}
+              organization={props.organization}
+            />
+          );
         }}
         secondaryColumn={() => (
           <UserDirectory profiles={props.organization.profiles} />
@@ -31,6 +37,7 @@ const Users = (props: Props) => {
 export default createFragmentContainer(Users, {
   organization: graphql`
     fragment Users_organization on OrganizationNode {
+      ...Content_organization
       profiles(first: 100) @connection(key: "Users_profiles") {
         edges {
           node {

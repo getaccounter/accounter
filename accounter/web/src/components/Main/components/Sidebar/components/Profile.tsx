@@ -8,7 +8,6 @@ type Props = {
 };
 
 const Profile = ({ desktop, profile }: Props) => {
-  const name = `${profile.firstName} ${profile.lastName}`;
   return (
     <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
       {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
@@ -32,7 +31,7 @@ const Profile = ({ desktop, profile }: Props) => {
                 desktop ? "text-sm" : "text-base"
               } font-medium text-gray-700 group-hover:text-gray-900`}
             >
-              {name}
+              {profile.firstName} {profile.lastName}
             </p>
             <p
               className={`${

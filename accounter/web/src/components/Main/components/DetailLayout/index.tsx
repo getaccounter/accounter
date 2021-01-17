@@ -9,7 +9,7 @@ type Props = {
   mainColumn: (id: string) => ReactNode;
 };
 const DetailLayout = ({ secondaryColumn, mainColumn }: Props) => {
-  let { path } = useRouteMatch();
+  const { path } = useRouteMatch();
   return (
     <div className="flex-1 relative z-0 flex overflow-hidden">
       <Media query="(min-width: 1280px)">
