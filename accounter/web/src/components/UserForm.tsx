@@ -1,42 +1,122 @@
 import { createFragmentContainer, commitMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { ConnectionHandler } from "relay-runtime";
+import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import {
+  ConnectionHandler,
+  Environment,
+  PayloadError,
+  SelectorStoreUpdater,
+} from "relay-runtime";
 import { useEnvironment } from "../contexts/relay";
-import { UserFormMutation } from "./__generated__/UserFormMutation.graphql";
+import {
+  UserFormCreateMutation,
+  UserFormCreateMutationResponse,
+  UserFormCreateMutationVariables,
+} from "./__generated__/UserFormCreateMutation.graphql";
 import { UserForm_organization } from "./__generated__/UserForm_organization.graphql";
+import { UserForm_profile } from "./__generated__/UserForm_profile.graphql";
+import {
+  UserFormUpdateMutationVariables,
+  UserFormUpdateMutationResponse,
+  UserFormUpdateMutation,
+} from "./__generated__/UserFormUpdateMutation.graphql";
 
-const mutation = graphql`
-  mutation UserFormMutation(
-    $email: String!
-    $firstName: String!
-    $lastName: String!
-    $title: String
-    $department: ID
-  ) {
-    createUser(
-      input: {
-        email: $email
-        firstName: $firstName
-        lastName: $lastName
-        title: $title
-        department: $department
-      }
-    ) {
-      profile {
-        id
-        email
-        firstName
-        lastName
-        title
-        department {
-          name
+const createUser = (
+  environment: Environment,
+  variables: UserFormCreateMutationVariables,
+  updater: SelectorStoreUpdater<UserFormCreateMutationResponse>,
+  onCompleted: (
+    response: UserFormCreateMutationResponse,
+    errors?: ReadonlyArray<PayloadError> | null
+  ) => void,
+  onError: (error: Error) => void
+) => {
+  commitMutation<UserFormCreateMutation>(environment, {
+    mutation: graphql`
+      mutation UserFormCreateMutation(
+        $email: String!
+        $firstName: String!
+        $lastName: String!
+        $title: String
+        $department: ID
+      ) {
+        createUser(
+          input: {
+            email: $email
+            firstName: $firstName
+            lastName: $lastName
+            title: $title
+            department: $department
+          }
+        ) {
+          profile {
+            id
+            email
+            firstName
+            lastName
+            title
+            department {
+              name
+            }
+          }
         }
       }
-    }
-  }
-`;
+    `,
+    variables,
+    updater,
+    onCompleted,
+    onError,
+  });
+};
+
+const updateUser = (
+  environment: Environment,
+  variables: UserFormUpdateMutationVariables,
+  onCompleted: (
+    response: UserFormUpdateMutationResponse,
+    errors?: ReadonlyArray<PayloadError> | null
+  ) => void,
+  onError: ((error: Error) => void) | null
+) => {
+  commitMutation<UserFormUpdateMutation>(environment, {
+    mutation: graphql`
+      mutation UserFormUpdateMutation(
+        $id: ID!
+        $email: String
+        $firstName: String
+        $lastName: String
+        $title: String
+        $department: ID
+      ) {
+        updateUser(
+          input: {
+            id: $id
+            email: $email
+            firstName: $firstName
+            lastName: $lastName
+            title: $title
+            department: $department
+          }
+        ) {
+          profile {
+            id
+            email
+            firstName
+            lastName
+            title
+            department {
+              name
+            }
+          }
+        }
+      }
+    `,
+    variables,
+    onCompleted,
+    onError,
+  });
+};
 
 type DepartmentEdge = NonNullable<
   UserForm_organization["departments"]["edges"][0]
@@ -47,17 +127,27 @@ const NO_DEPARTMENT = "NO_DEPARTMENT";
 
 type Props = {
   organization: UserForm_organization;
+  profile: UserForm_profile | null;
+  cancelRoute: string;
 };
 
-const UserForm = ({ organization }: Props) => {
+const UserForm = ({ organization, profile, cancelRoute }: Props) => {
+  const isUpdate = !!profile;
+
   const environment = useEnvironment();
   const history = useHistory();
-  const [emailInput, setEmailInput] = useState("");
-  const [firstNameInput, setFirstNameInput] = useState("");
-  const [lastNameInput, setLastNameInput] = useState("");
-  const [titleInput, setTitleInput] = useState("");
+  const [emailInput, setEmailInput] = useState(isUpdate ? profile!.email : "");
+  const [firstNameInput, setFirstNameInput] = useState(
+    isUpdate ? profile!.firstName : ""
+  );
+  const [lastNameInput, setLastNameInput] = useState(
+    isUpdate ? profile!.lastName : ""
+  );
+  const [titleInput, setTitleInput] = useState(
+    isUpdate && profile!.title ? profile!.title : ""
+  );
   const [departmentInput, setDepartmentInput] = useState<DepartmentNode["id"]>(
-    NO_DEPARTMENT
+    isUpdate && profile!.department ? profile!.department.id : NO_DEPARTMENT
   );
   return (
     <form
@@ -65,48 +155,75 @@ const UserForm = ({ organization }: Props) => {
       onSubmit={(e) => {
         e.preventDefault();
 
-        const variables = {
-          email: emailInput,
-          firstName: firstNameInput,
-          lastName: lastNameInput,
-          title: titleInput.length > 0 ? titleInput : undefined,
-          department:
-            departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
-        };
-        commitMutation<UserFormMutation>(environment, {
-          mutation,
-          variables,
-          updater: (store) => {
-            // TODO invalidate the connection instead
-            // https://relay.dev/docs/en/relay-store.html#invalidaterecord-void
-            const payload = store.getRootField("createUser");
-            const newProfile = payload.getLinkedRecord("profile");
-            const organizationRecord = store.get(organization.id)!;
-            const connection = ConnectionHandler.getConnection(
-              organizationRecord,
-              "Users_profiles"
-            )!;
-            const newEdge = ConnectionHandler.createEdge(
-              store,
-              connection,
-              newProfile,
-              "ProfileNodeEdge"
-            );
-            ConnectionHandler.insertEdgeAfter(connection, newEdge);
-            organizationRecord.invalidateRecord();
-            connection.invalidateRecord();
-            const profiles = organizationRecord.getLinkedRecord("profiles");
-            profiles?.invalidateRecord();
-          },
-          onCompleted: (response, errors) => {
-            if (errors) {
-              console.error(errors);
-            } else {
-              history.push(`/users/details/${response.createUser?.profile.id}`);
-            }
-          },
-          onError: (err) => console.error(err),
-        });
+        if (isUpdate) {
+          const variables = {
+            id: profile!.id,
+            email: emailInput,
+            firstName: firstNameInput,
+            lastName: lastNameInput,
+            title: titleInput.length > 0 ? titleInput : undefined,
+            department:
+              departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
+          };
+          updateUser(
+            environment,
+            variables,
+            (response, errors) => {
+              if (errors) {
+                console.error(errors);
+              } else {
+                history.push(
+                  `/users/details/${response.updateUser!.profile.id}`
+                );
+              }
+            },
+            (err) => console.error(err)
+          );
+        } else {
+          const variables = {
+            email: emailInput,
+            firstName: firstNameInput,
+            lastName: lastNameInput,
+            title: titleInput.length > 0 ? titleInput : undefined,
+            department:
+              departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
+          };
+
+          createUser(
+            environment,
+            variables,
+            (store) => {
+              const payload = store.getRootField("createUser");
+              const newProfile = payload.getLinkedRecord("profile");
+              const organizationRecord = store.get(organization.id)!;
+              const connection = ConnectionHandler.getConnection(
+                organizationRecord,
+                "Users_profiles"
+              )!;
+              const newEdge = ConnectionHandler.createEdge(
+                store,
+                connection,
+                newProfile,
+                "ProfileNodeEdge"
+              );
+              ConnectionHandler.insertEdgeAfter(connection, newEdge);
+              organizationRecord.invalidateRecord();
+              connection.invalidateRecord();
+              const profiles = organizationRecord.getLinkedRecord("profiles");
+              profiles?.invalidateRecord();
+            },
+            (response, errors) => {
+              if (errors) {
+                console.error(errors);
+              } else {
+                history.push(
+                  `/users/details/${response.createUser!.profile.id}`
+                );
+              }
+            },
+            (err) => console.error(err)
+          );
+        }
       }}
     >
       <div className="space-y-8 divide-y divide-gray-200 sm:space-y-5">
@@ -229,11 +346,19 @@ const UserForm = ({ organization }: Props) => {
       </div>
       <div className="pt-5">
         <div className="flex justify-end">
+          <Link to={cancelRoute}>
+            <button
+              type="button"
+              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Cancel
+            </button>
+          </Link>
           <button
             type="submit"
             className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Create
+            {isUpdate ? "Update" : "Create"}
           </button>
         </div>
       </div>
@@ -242,6 +367,18 @@ const UserForm = ({ organization }: Props) => {
 };
 
 export default createFragmentContainer(UserForm, {
+  profile: graphql`
+    fragment UserForm_profile on ProfileNode {
+      id
+      firstName
+      lastName
+      email
+      title
+      department {
+        id
+      }
+    }
+  `,
   organization: graphql`
     fragment UserForm_organization on OrganizationNode {
       id

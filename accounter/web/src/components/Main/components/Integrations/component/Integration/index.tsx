@@ -8,7 +8,7 @@ const Integration = (props: {
   className?: string;
   integration: Integration_integration;
 }) => {
-  let { url } = useRouteMatch();
+  const { url } = useRouteMatch();
   return (
     <div className="flex items-center space-x-3">
       <div className="flex-shrink-0">

@@ -9,7 +9,7 @@ type Props = {
 
 const User = ({ profile }: Props) => {
   const name = `${profile.firstName} ${profile.lastName}`;
-  let { url } = useRouteMatch();
+  const { url } = useRouteMatch();
   return (
     <div className="flex items-center space-x-3">
       <div className="flex-shrink-0">

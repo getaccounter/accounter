@@ -1,5 +1,5 @@
 import React, { ReactNode, ComponentType } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 
 export type TabType = {
   label: ReactNode;
@@ -13,8 +13,8 @@ type TabProps = {
 };
 
 const Tab = (props: TabProps) => {
-  const location = useLocation();
-  const isSelected = props.tab.path === location.pathname;
+  const { url } = useRouteMatch();
+  const isSelected = props.tab.path === url;
   return (
     <Link
       to={props.tab.path}

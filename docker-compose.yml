@@ -98,6 +98,7 @@ services:
       - LOADBALANCER_HOST=loadbalancer
       - LOADBALANCER_PORT=8080
       - CYPRESS_baseUrl=http://loadbalancer:8080
+      - CYPRESS_retries=${CYPRESS_retries:-0}
     working_dir: /e2e
     volumes:
       - ./e2e-tests:/e2e

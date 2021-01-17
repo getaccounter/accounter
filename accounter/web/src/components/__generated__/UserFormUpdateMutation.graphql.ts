@@ -3,15 +3,16 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type UserFormMutationVariables = {
-    email: string;
-    firstName: string;
-    lastName: string;
+export type UserFormUpdateMutationVariables = {
+    id: string;
+    email?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
     title?: string | null;
     department?: string | null;
 };
-export type UserFormMutationResponse = {
-    readonly createUser: {
+export type UserFormUpdateMutationResponse = {
+    readonly updateUser: {
         readonly profile: {
             readonly id: string;
             readonly email: string;
@@ -24,22 +25,23 @@ export type UserFormMutationResponse = {
         };
     } | null;
 };
-export type UserFormMutation = {
-    readonly response: UserFormMutationResponse;
-    readonly variables: UserFormMutationVariables;
+export type UserFormUpdateMutation = {
+    readonly response: UserFormUpdateMutationResponse;
+    readonly variables: UserFormUpdateMutationVariables;
 };
 
 
 
 /*
-mutation UserFormMutation(
-  $email: String!
-  $firstName: String!
-  $lastName: String!
+mutation UserFormUpdateMutation(
+  $id: ID!
+  $email: String
+  $firstName: String
+  $lastName: String
   $title: String
   $department: ID
 ) {
-  createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {
+  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {
     profile {
       id
       email
@@ -74,14 +76,19 @@ v2 = {
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "lastName"
+  "name": "id"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "lastName"
+},
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "title"
 },
-v5 = [
+v6 = [
   {
     "fields": [
       {
@@ -101,6 +108,11 @@ v5 = [
       },
       {
         "kind": "Variable",
+        "name": "id",
+        "variableName": "id"
+      },
+      {
+        "kind": "Variable",
         "name": "lastName",
         "variableName": "lastName"
       },
@@ -114,42 +126,42 @@ v5 = [
     "name": "input"
   }
 ],
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "email",
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "firstName",
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "lastName",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "title",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -163,18 +175,19 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserFormMutation",
+    "name": "UserFormUpdateMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
-        "concreteType": "CreateUserPayload",
+        "args": (v6/*: any*/),
+        "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
-        "name": "createUser",
+        "name": "updateUser",
         "plural": false,
         "selections": [
           {
@@ -185,11 +198,11 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
-              (v6/*: any*/),
               (v7/*: any*/),
               (v8/*: any*/),
               (v9/*: any*/),
               (v10/*: any*/),
+              (v11/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -198,7 +211,7 @@ return {
                 "name": "department",
                 "plural": false,
                 "selections": [
-                  (v11/*: any*/)
+                  (v12/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -215,21 +228,22 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v3/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/),
       (v4/*: any*/),
+      (v5/*: any*/),
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "UserFormMutation",
+    "name": "UserFormUpdateMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
-        "concreteType": "CreateUserPayload",
+        "args": (v6/*: any*/),
+        "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
-        "name": "createUser",
+        "name": "updateUser",
         "plural": false,
         "selections": [
           {
@@ -240,11 +254,11 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
-              (v6/*: any*/),
               (v7/*: any*/),
               (v8/*: any*/),
               (v9/*: any*/),
               (v10/*: any*/),
+              (v11/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -253,8 +267,8 @@ return {
                 "name": "department",
                 "plural": false,
                 "selections": [
-                  (v11/*: any*/),
-                  (v6/*: any*/)
+                  (v12/*: any*/),
+                  (v7/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -267,14 +281,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c8dadbcd3507b2832ceced227050085d",
+    "cacheID": "2637bd16c23054926fd19afcf0e55561",
     "id": null,
     "metadata": {},
-    "name": "UserFormMutation",
+    "name": "UserFormUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserFormMutation(\n  $email: String!\n  $firstName: String!\n  $lastName: String!\n  $title: String\n  $department: ID\n) {\n  createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {\n    profile {\n      id\n      email\n      firstName\n      lastName\n      title\n      department {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n  $department: ID\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {\n    profile {\n      id\n      email\n      firstName\n      lastName\n      title\n      department {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'dac2948d978f243d6eb148bff93ee516';
+(node as any).hash = '4ad464cd7cdc40b2c14d32c2ab26eb1b';
 export default node;

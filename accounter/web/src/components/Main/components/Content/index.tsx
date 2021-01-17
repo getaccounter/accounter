@@ -1,18 +1,13 @@
 import React, { ReactNode } from "react";
-import {
-  Link,
-  Redirect,
-  Route,
-  Switch,
-  useLocation,
-  useRouteMatch,
-} from "react-router-dom";
+import { Link, Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { ChevronLeft } from "../../../icons/solid";
 import Header from "./components/Header";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Content_profile } from "./__generated__/Content_profile.graphql";
 import DescriptionList from "./components/DescriptionList";
+import { Content_organization } from "./__generated__/Content_organization.graphql";
+import EditUser from "./components/EditUser";
 
 type BreadcrumbProps = {
   title: ReactNode;
@@ -35,8 +30,8 @@ const Breadcrumb = ({ title }: BreadcrumbProps) => {
 };
 
 const Tab = (props: { children: ReactNode; to: string }) => {
-  const location = useLocation();
-  const isSelected = props.to === location.pathname;
+  const { url } = useRouteMatch();
+  const isSelected = props.to === url;
 
   const sharedClassNames =
     "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
@@ -56,7 +51,7 @@ const Tab = (props: { children: ReactNode; to: string }) => {
 };
 
 const Tabs = () => {
-  let { url } = useRouteMatch();
+  const { url } = useRouteMatch();
   return (
     <div className="mt-6 sm:mt-2 2xl:mt-5">
       <div className="border-b border-gray-200">
@@ -112,41 +107,56 @@ const TeamMemberList = () => {
 type Props = {
   title: ReactNode;
   profile: Content_profile;
+  organization: Content_organization;
 };
 
-const Content = ({ title, profile }: Props) => {
-  let { path } = useRouteMatch();
-  let { url } = useRouteMatch();
+const Content = ({ title, profile, organization }: Props) => {
+  const { path, url } = useRouteMatch();
   return (
-    <>
-      <Breadcrumb title={title} />
-      <article>
-        <Header profile={profile} />
-        <Tabs />
-        <div className="mt-6 pb-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Switch>
-            <Route path={`${path}/profile`}>
-              <DescriptionList profile={profile} />
-            </Route>
-            <Route path={`${path}/apps`}>
-              TODO: Replace teammebers with apps
-              <TeamMemberList />
-            </Route>
-            <Route>
-              <Redirect to={`${url}/profile`} />
-            </Route>
-          </Switch>
-        </div>
-      </article>
-    </>
+    <Switch>
+      <Route path={`${path}/edit`}>
+        <EditUser
+          profile={profile}
+          organization={organization}
+          cancelRoute={url}
+        />
+      </Route>
+      <Route>
+        <Breadcrumb title={title} />
+        <article>
+          <Header profile={profile} />
+          <Tabs />
+          <div className="mt-6 pb-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Switch>
+              <Route path={`${path}/profile`}>
+                <DescriptionList profile={profile} />
+              </Route>
+              <Route path={`${path}/apps`}>
+                TODO: Replace teammebers with apps
+                <TeamMemberList />
+              </Route>
+              <Route>
+                <Redirect to={`${url}/profile`} />
+              </Route>
+            </Switch>
+          </div>
+        </article>
+      </Route>
+    </Switch>
   );
 };
 
 export default createFragmentContainer(Content, {
+  organization: graphql`
+    fragment Content_organization on OrganizationNode {
+      ...EditUser_organization
+    }
+  `,
   profile: graphql`
     fragment Content_profile on ProfileNode {
       ...Header_profile
       ...DescriptionList_profile
+      ...EditUser_profile
     }
   `,
 });

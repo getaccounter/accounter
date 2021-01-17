@@ -14,6 +14,7 @@ export type Users_organization = {
         } | null>;
         readonly " $fragmentRefs": FragmentRefs<"UserDirectory_profiles">;
     };
+    readonly " $fragmentRefs": FragmentRefs<"Content_organization">;
     readonly " $refType": "Users_organization";
 };
 export type Users_organization$data = Users_organization;
@@ -129,10 +130,15 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "Content_organization"
     }
   ],
   "type": "OrganizationNode",
   "abstractKey": null
 };
-(node as any).hash = 'e79d2221060036b2b6a57f7a370b331f';
+(node as any).hash = '8513fe91220efdc18ce9048bb6978cb0';
 export default node;
