@@ -85,7 +85,7 @@ class Service(models.Model):
     @property
     def _redirect_uri(self):
         # base url should be env var
-        return "http://localhost:8080/slack/oauth/callback"
+        return settings.BASE_URL + "/slack/oauth/callback"
 
     @property
     def _oauth_expiration_seconds(self):

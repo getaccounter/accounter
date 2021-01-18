@@ -170,6 +170,10 @@ resource "kubernetes_deployment" "server" {
               }
             }
           }
+          env {
+            name = "BASE_URL"
+            value = "https://app.accounter.io"
+          }
         }
       }
     }
