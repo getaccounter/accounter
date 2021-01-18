@@ -208,3 +208,5 @@ AWS_S3_ENDPOINT_URL = get_env_value("AWS_S3_ENDPOINT_URL")
 AWS_LOCATIAWS_DEFAULT_REGIONON = get_env_value("AWS_DEFAULT_REGION")
 AWS_S3_CUSTOM_DOMAIN = get_optional_env_value("AWS_S3_CUSTOM_DOMAIN", None)
 AWS_S3_SECURE_URLS = get_optional_bool_env_value("AWS_S3_SECURE_URLS", True)
+
+BASE_URL = get_env_value("BASE_URL")
