@@ -1,5 +1,12 @@
 import React, { ReactNode } from "react";
-import { Link, Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import {
+  Link,
+  Redirect,
+  Route,
+  Switch,
+  useLocation,
+  useRouteMatch,
+} from "react-router-dom";
 import { ChevronLeft } from "../../../icons/solid";
 import Header from "./components/Header";
 import { createFragmentContainer } from "react-relay";
@@ -30,8 +37,8 @@ const Breadcrumb = ({ title }: BreadcrumbProps) => {
 };
 
 const Tab = (props: { children: ReactNode; to: string }) => {
-  const { url } = useRouteMatch();
-  const isSelected = props.to === url;
+  const { pathname } = useLocation();
+  const isSelected = props.to === pathname;
 
   const sharedClassNames =
     "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";

@@ -7,6 +7,7 @@ from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from slack_sdk.oauth import AuthorizeUrlGenerator
 from slack_sdk.web import WebClient
+from .fields import TokenField
 
 from ..organizations.models import Organization, Profile
 
@@ -84,7 +85,7 @@ class Service(models.Model):
     @property
     def _redirect_uri(self):
         # base url should be env var
-        return "http://localhost:8080/slack/oauth/callback"
+        return settings.BASE_URL + "/slack/oauth/callback"
 
     @property
     def _oauth_expiration_seconds(self):
@@ -98,7 +99,7 @@ class Service(models.Model):
 # Abstract Classes
 class AbstractIntegration(models.Model):
     id = models.TextField(primary_key=True)
-    token = models.TextField()
+    token = TokenField()
     organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
 
     @property

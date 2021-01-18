@@ -46,3 +46,9 @@ variable "slack" {
   })
   sensitive = true
 }
+
+variable "db_token_encryption_key" {
+  description = "encryption key for service tokens"
+  type        = string
+  sensitive   = true
+}

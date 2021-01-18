@@ -73,6 +73,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "-7k-e#5^w@00zsxi$0+i!n$&4w#m-i@x4+i@(lp$e1q3m#0p$-"
+ENCRYPTION_KEY = get_env_value("ENCRYPTION_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_bool_env_value("DEBUG")
@@ -207,3 +208,5 @@ AWS_S3_ENDPOINT_URL = get_env_value("AWS_S3_ENDPOINT_URL")
 AWS_LOCATIAWS_DEFAULT_REGIONON = get_env_value("AWS_DEFAULT_REGION")
 AWS_S3_CUSTOM_DOMAIN = get_optional_env_value("AWS_S3_CUSTOM_DOMAIN", None)
 AWS_S3_SECURE_URLS = get_optional_bool_env_value("AWS_S3_SECURE_URLS", True)
+
+BASE_URL = get_env_value("BASE_URL")

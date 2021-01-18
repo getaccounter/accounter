@@ -36,6 +36,17 @@ resource "kubernetes_secret" "slack-credentials" {
   }
 }
 
+resource "kubernetes_secret" "db-token-encryption" {
+  type = "Opaque"
+  metadata {
+    name = "db-token-encryption"
+  }
+
+  data = {
+    value = var.db_token_encryption_key
+  }
+}
+
 resource "kubernetes_deployment" "server" {
   metadata {
     name = "server"
@@ -103,7 +114,7 @@ resource "kubernetes_deployment" "server" {
             value = var.database.port
           }
           env {
-            name  = "SLACK_CLIENT_ID"
+            name = "SLACK_CLIENT_ID"
             value_from {
               secret_key_ref {
                 name = kubernetes_secret.slack-credentials.metadata[0].name
@@ -112,7 +123,7 @@ resource "kubernetes_deployment" "server" {
             }
           }
           env {
-            name  = "SLACK_CLIENT_SECRET"
+            name = "SLACK_CLIENT_SECRET"
             value_from {
               secret_key_ref {
                 name = kubernetes_secret.slack-credentials.metadata[0].name
@@ -149,6 +160,19 @@ resource "kubernetes_deployment" "server" {
                 key  = "secret_key"
               }
             }
+          }
+          env {
+            name = "ENCRYPTION_KEY"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.db-token-encryption.metadata[0].name
+                key  = "value"
+              }
+            }
+          }
+          env {
+            name = "BASE_URL"
+            value = "https://app.accounter.io"
           }
         }
       }
