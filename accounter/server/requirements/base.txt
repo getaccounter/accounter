@@ -7,3 +7,4 @@ slack-scim==1.1.0
 Pillow==8.1.0
 django-storages==1.11.1
 boto3==1.16.56
+cryptography==3.3.1 

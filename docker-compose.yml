@@ -7,6 +7,8 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
 
   s3:
     image: adobe/s3mock
@@ -58,6 +60,9 @@ services:
       - USE_MOCK_PROXY=True
       # - HTTP_PROXY=mockserver:1080
       - HTTPS_PROXY=mockserver:1080
+
+      # Dev only
+      - ENCRYPTION_KEY=FFduybnMteN1piSjWsxUdxQd2SAJ1Kx1FKPOmgUIhSQ=
     env_file:
       - ./accounter/server/.env
     volumes:
