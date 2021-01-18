@@ -6,5 +6,5 @@ export const useQueryString = (name: string) => {
 
 export const useBooleanQueryString = (name: string) => {
   const stringValue = useQueryString(name);
-  return stringValue == "true";
+  return stringValue === "true";
 };
