@@ -1,8 +1,6 @@
 FROM node:15.5.1-alpine as development
 ENV PORT=3000
 
-RUN apk update && apk add bash
-
 RUN mkdir /code
 WORKDIR /code
 COPY package*.json ./
@@ -21,7 +19,6 @@ COPY --from=development /code /code
 RUN npm run build
 
 FROM node:15.5.1-alpine as production
-RUN apk update && apk add bash
 ENV PORT=3000
 RUN mkdir /build
 COPY --from=builder /code/build /build
