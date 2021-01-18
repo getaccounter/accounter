@@ -105,6 +105,8 @@ module "server" {
     client_id     = var.slack_client_id
     client_secret = var.slack_client_secret
   }
+
+  db_token_encryption_key = var.db_token_encryption_key
 }
 
 module "web" {
