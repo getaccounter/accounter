@@ -49,6 +49,24 @@ export type LoginParameters = {
   password: string;
 };
 
+export const LOGOUT_MUTATION = gql`
+  mutation Signout {
+    signout {
+      status
+      message
+    }
+  }
+`;
+
+export type LogoutResponse = {
+  signin: {
+    status: "success";
+    message: string;
+  };
+};
+
+export type LogoutParameters = {};
+
 const authContext = createContext<{
   isSignedIn?: boolean;
   signInError?: string;
@@ -61,8 +79,15 @@ type Props = {
 };
 
 export default function AuthProvider({ children }: Props) {
-  const [login, { data, error }] = useMutation<LoginResponse, LoginParameters>(
+  const [login, { data: loginData, error: loginError }] = useMutation<LoginResponse, LoginParameters>(
     LOGIN_MUTATION,
+    {
+      errorPolicy: "all",
+      onError: () => undefined,
+    }
+  );
+  const [logout, { data: logoutData }] = useMutation<LoginResponse, LoginParameters>(
+    LOGOUT_MUTATION,
     {
       errorPolicy: "all",
       onError: () => undefined,
@@ -73,21 +98,23 @@ export default function AuthProvider({ children }: Props) {
 
   useEffect(() => {
     recheck();
-  }, [recheck, data]);
+  }, [recheck, loginData, logoutData]);
 
   const signIn = (email: string, password: string) => {
     login({
       variables: { email, password },
     });
   };
-  const signOut = () => "TODO";
+  const signOut = () => {
+    logout();
+  };
 
   return (
     <authContext.Provider
       children={children}
       value={{
         isSignedIn,
-        signInError: error && error.message,
+        signInError: loginError && loginError.message,
         signIn,
         signOut,
       }}
