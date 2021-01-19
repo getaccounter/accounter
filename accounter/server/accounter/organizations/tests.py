@@ -159,10 +159,10 @@ class OrganizationTestCase(GraphQLTestCase):
             response_user_profile["department"]["name"]
             == self.profiles[0].department.name
         )
-        assert response_admin_profile["isCurrentUser"] == True
-        assert response_admin_profile["isAdmin"] == True
-        assert response_user_profile["isCurrentUser"] == False
-        assert response_user_profile["isAdmin"] == False
+        assert response_admin_profile["isCurrentUser"] is True
+        assert response_admin_profile["isAdmin"] is True
+        assert response_user_profile["isCurrentUser"] is False
+        assert response_user_profile["isAdmin"] is False
 
     def test_get_current_user(self):
         self.client.force_login(self.admin)

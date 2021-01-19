@@ -228,4 +228,4 @@ EMAIL_HOST_PASSWORD = get_env_value("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = get_int_env_value("EMAIL_PORT")
 EMAIL_USE_TLS = get_bool_env_value("EMAIL_USE_TLS")
 
-LOGIN_URL="/shiiiiit"
+LOGIN_URL = "/shiiiiit"
