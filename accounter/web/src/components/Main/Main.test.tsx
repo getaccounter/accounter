@@ -5,6 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
 import RelayProvider from "../../contexts/relay";
 import { Environment } from "react-relay";
+import userEvent from "@testing-library/user-event";
 
 const Providers = ({
   children,
@@ -18,21 +19,23 @@ const Providers = ({
   </RelayProvider>
 );
 
-describe("Profile", () => {
+describe.only("Profile", () => {
   it("renders name", async () => {
     const environment = createMockEnvironment();
     const firstName = "Peter";
     const lastName = "Pan";
+    const title = "CEO";
 
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation, {
-        ProfileNode(context) {
+        ProfileNode() {
           return {
             id: "some-id",
             firstName,
-            lastName
-          }
-        }
+            lastName,
+            title,
+          };
+        },
       })
     );
     environment.mock.queueOperationResolver((operation) =>
@@ -44,25 +47,29 @@ describe("Profile", () => {
       </Providers>
     );
 
-    expect(await main.findByRole("link", {
-      name: `${firstName} ${lastName} View profile`,
-    })).toBeInTheDocument()
+    expect(
+      await main.findByRole("button", {
+        name: `${firstName} ${lastName} ${title}`,
+      })
+    ).toBeInTheDocument();
   });
 
   it("links you to profile page", async () => {
     const environment = createMockEnvironment();
     const firstName = "Peter";
     const lastName = "Pan";
+    const title = "CEO";
 
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation, {
-        ProfileNode(context) {
+        ProfileNode() {
           return {
             id: "some-id",
             firstName,
-            lastName
-          }
-        }
+            lastName,
+            title,
+          };
+        },
       })
     );
     environment.mock.queueOperationResolver((operation) =>
@@ -74,16 +81,20 @@ describe("Profile", () => {
       </Providers>
     );
 
-    const profile = await main.findByRole("link", {
-      name: `${firstName} ${lastName} View profile`,
-    })
+    userEvent.click(
+      await main.findByRole("button", {
+        name: `${firstName} ${lastName} ${title}`,
+      })
+    );
 
-    expect(profile).toBeInTheDocument();
+    userEvent.click(
+      main.getByRole("menuitem", {
+        name: "View profile",
+      })
+    );
 
-    profile.click()
-
-    const mainContainer = within(await main.getByRole("main"))
-    mainContainer.getAllByRole("heading", {name: `${firstName} ${lastName}`})
+    const mainContainer = within(await main.getByRole("main"));
+    mainContainer.getAllByRole("heading", { name: `${firstName} ${lastName}` });
   });
 });
 
