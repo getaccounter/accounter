@@ -120,7 +120,70 @@ describe("Mobile", () => {
       });
     });
 
-    // it.todo("edit user")
+    it("edit user", () => {
+      const user = generateUser();
+      const newUserData = generateUser();
+
+      cy.visit("/");
+      cy.findByRole("link", { name: "register" }).click();
+      cy.register(
+        user.organization,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.password
+      );
+      cy.login(user.email, user.password);
+
+      cy.mobileNavigateTo("Users");
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${user.firstName} ${user.lastName}`,
+        }).click();
+      });
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("heading", {
+          name: `${user.firstName} ${user.lastName}`,
+        }).should("exist");
+
+        cy.findByRole("article").within(() => {
+          cy.findByText(user.firstName).should("exist");
+          cy.findByText(user.lastName).should("exist");
+          cy.findByText(user.email).should("exist");
+        });
+
+        cy.findByRole("button", { name: "Edit" }).click();
+      });
+
+      cy.findByLabelText("First name").clear().type(newUserData.firstName);
+      cy.findByLabelText("Last name").clear().type(newUserData.lastName);
+      cy.findByLabelText("Email address").clear().type(newUserData.email);
+      cy.findByLabelText("Title").clear().type(newUserData.title);
+      cy.findByRole("button", { name: "Update" }).click();
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("heading", {
+          name: `${newUserData.firstName} ${newUserData.lastName}`,
+        }).should("exist");
+
+        cy.findByRole("article").within(() => {
+          cy.findByText(newUserData.firstName).should("exist");
+          cy.findByText(newUserData.lastName).should("exist");
+          cy.findByText(newUserData.email).should("exist");
+          cy.findByText(newUserData.title).should("exist");
+        });
+
+        cy.findByRole("link", { name: "Users" }).click();
+      });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        }).should("exist");
+      });
+    });
   });
 });
 
@@ -197,7 +260,70 @@ describe("Desktop - window", () => {
       });
     });
 
-    // it.todo("edit user")
+    it("edit user", () => {
+      const user = generateUser();
+      const newUserData = generateUser();
+
+      cy.visit("/");
+      cy.findByRole("link", { name: "register" }).click();
+      cy.register(
+        user.organization,
+        user.firstName,
+        user.lastName,
+        user.email,
+        user.password
+      );
+      cy.login(user.email, user.password);
+
+      cy.navigateTo("Users");
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${user.firstName} ${user.lastName}`,
+        }).click();
+      });
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("heading", {
+          name: `${user.firstName} ${user.lastName}`,
+        }).should("exist");
+
+        cy.findByRole("article").within(() => {
+          cy.findByText(user.firstName).should("exist");
+          cy.findByText(user.lastName).should("exist");
+          cy.findByText(user.email).should("exist");
+        });
+
+        cy.findByRole("button", { name: "Edit" }).click();
+      });
+
+      cy.findByLabelText("First name").clear().type(newUserData.firstName);
+      cy.findByLabelText("Last name").clear().type(newUserData.lastName);
+      cy.findByLabelText("Email address").clear().type(newUserData.email);
+      cy.findByLabelText("Title").clear().type(newUserData.title);
+      cy.findByRole("button", { name: "Update" }).click();
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("heading", {
+          name: `${newUserData.firstName} ${newUserData.lastName}`,
+        }).should("exist");
+
+        cy.findByRole("article").within(() => {
+          cy.findByText(newUserData.firstName).should("exist");
+          cy.findByText(newUserData.lastName).should("exist");
+          cy.findByText(newUserData.email).should("exist");
+          cy.findByText(newUserData.title).should("exist");
+        });
+
+        cy.findByRole("link", { name: "Users" }).click();
+      });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        }).should("exist");
+      });
+    });
   });
 });
 
