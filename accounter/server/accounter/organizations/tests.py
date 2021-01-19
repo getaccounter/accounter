@@ -130,6 +130,7 @@ class OrganizationTestCase(GraphQLTestCase):
                         lastName
                         title
                         isActive
+                        isCurrentUser
                         department {
                           name
                         }
@@ -154,6 +155,12 @@ class OrganizationTestCase(GraphQLTestCase):
         assert response_profile["isActive"] == self.profiles[0].is_active
         assert (
             response_profile["department"]["name"] == self.profiles[0].department.name
+        )
+        assert (
+            organization["profiles"]["edges"][0]["node"]["isCurrentUser"] == True
+        )
+        assert (
+            organization["profiles"]["edges"][1]["node"]["isCurrentUser"] == False
         )
 
     def test_get_current_user(self):

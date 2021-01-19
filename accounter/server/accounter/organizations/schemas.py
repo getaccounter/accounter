@@ -75,6 +75,7 @@ class ProfileNode(DjangoObjectType):
     email = graphene.String(required=True)
     first_name = graphene.String(required=True)
     last_name = graphene.String(required=True)
+    is_current_user = graphene.Boolean(required=True)
 
     @staticmethod
     def resolve_email(profile, info, **kwargs):
@@ -93,6 +94,11 @@ class ProfileNode(DjangoObjectType):
         if len(last_name) > 0:
             return last_name
         return None
+
+    @staticmethod
+    def resolve_is_current_user(profile, info, **kwargs):
+        user = info.context.user
+        return profile.user == user
 
 
 class CreateUser(graphene.relay.ClientIDMutation):
