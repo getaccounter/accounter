@@ -1,6 +1,8 @@
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Profile_profile } from "./__generated__/Profile_profile.graphql";
+import React from "react";
+import { Link } from "react-router-dom";
 
 type Props = {
   desktop?: boolean;
@@ -10,9 +12,8 @@ type Props = {
 const Profile = ({ desktop, profile }: Props) => {
   return (
     <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-      <a
-        href="#"
+      <Link
+        to={`/users/details/${profile.id}`}
         className={`flex-shrink-0 group block ${desktop ? "w-full" : ""}`}
       >
         <div className="flex items-center">
@@ -42,7 +43,7 @@ const Profile = ({ desktop, profile }: Props) => {
             </p>
           </div>
         </div>
-      </a>
+      </Link>
     </div>
   );
 };
@@ -50,6 +51,7 @@ const Profile = ({ desktop, profile }: Props) => {
 export default createFragmentContainer(Profile, {
   profile: graphql`
     fragment Profile_profile on ProfileNode {
+      id
       firstName
       lastName
     }

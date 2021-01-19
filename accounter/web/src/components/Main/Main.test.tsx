@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { render } from "@testing-library/react";
+import { render, within } from "@testing-library/react";
 import Main from "./";
 import { MemoryRouter } from "react-router-dom";
 import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
@@ -19,8 +19,72 @@ const Providers = ({
 );
 
 describe("Profile", () => {
-  test.todo("Shows name when present");
-  test.todo("Shows email when name not present");
+  it("renders name", async () => {
+    const environment = createMockEnvironment();
+    const firstName = "Peter";
+    const lastName = "Pan";
+
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        ProfileNode(context) {
+          return {
+            id: "some-id",
+            firstName,
+            lastName
+          }
+        }
+      })
+    );
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation)
+    );
+    const main = render(
+      <Providers environment={environment}>
+        <Main />
+      </Providers>
+    );
+
+    expect(await main.findByRole("link", {
+      name: `${firstName} ${lastName} View profile`,
+    })).toBeInTheDocument()
+  });
+
+  it("links you to profile page", async () => {
+    const environment = createMockEnvironment();
+    const firstName = "Peter";
+    const lastName = "Pan";
+
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        ProfileNode(context) {
+          return {
+            id: "some-id",
+            firstName,
+            lastName
+          }
+        }
+      })
+    );
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation)
+    );
+    const main = render(
+      <Providers environment={environment}>
+        <Main />
+      </Providers>
+    );
+
+    const profile = await main.findByRole("link", {
+      name: `${firstName} ${lastName} View profile`,
+    })
+
+    expect(profile).toBeInTheDocument();
+
+    profile.click()
+
+    const mainContainer = within(await main.getByRole("main"))
+    mainContainer.getAllByRole("heading", {name: `${firstName} ${lastName}`})
+  });
 });
 
 test("show Services by default", async () => {
