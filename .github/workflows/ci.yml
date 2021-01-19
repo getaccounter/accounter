@@ -18,8 +18,7 @@ env:
   TF_VAR_slack_client_id: ${{ secrets.SLACK_CLIENT_ID }}
   TF_VAR_slack_client_secret: ${{ secrets.SLACK_CLIENT_SECRET }}
   TF_VAR_db_token_encryption_key: ${{ secrets.ENCRYPTION_KEY }}
-  TF_VAR_sendgrid_api_key : ${{secrets.SENDGRID_API_KEY}}
-
+  TF_VAR_sendgrid_api_key: ${{secrets.SENDGRID_API_KEY}}
 
 jobs:
   health-checks:
@@ -43,9 +42,6 @@ jobs:
         run: |
           docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
           docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
-
-      - name: typechecking
-        run: docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run typecheck
 
       - name: unit tests
         run: |
