@@ -47,6 +47,17 @@ resource "kubernetes_secret" "db-token-encryption" {
   }
 }
 
+resource "kubernetes_secret" "sendgrid" {
+  type = "Opaque"
+  metadata {
+    name = "sendgrid"
+  }
+
+  data = {
+    value = var.sendgrid_api_key
+  }
+}
+
 resource "kubernetes_deployment" "server" {
   metadata {
     name = "server"
@@ -171,8 +182,35 @@ resource "kubernetes_deployment" "server" {
             }
           }
           env {
-            name = "BASE_URL"
+            name  = "BASE_URL"
             value = "https://app.accounter.io"
+          }
+
+          # sendgrid
+          env {
+            name  = "EMAIL_HOST"
+            value = "smtp.sendgrid.net"
+          }
+          env {
+            name  = "EMAIL_HOST_USER"
+            value = "apikey"
+          }
+          env {
+            name = "EMAIL_HOST_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.sendgrid.metadata[0].name
+                key  = "sendgrid_api_key"
+              }
+            }
+          }
+          env {
+            name  = "EMAIL_PORT"
+            value = 587
+          }
+          env {
+            name  = "EMAIL_USE_TLS"
+            value = "True"
           }
         }
       }

@@ -7,8 +7,6 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    ports:
-      - 5432:5432
 
   s3:
     image: adobe/s3mock
@@ -34,6 +32,12 @@ services:
     depends_on:
       - web
       - server
+
+  mailserver:
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
 
   server:
     image: server.development
@@ -64,6 +68,13 @@ services:
 
       # Dev only
       - ENCRYPTION_KEY=FFduybnMteN1piSjWsxUdxQd2SAJ1Kx1FKPOmgUIhSQ=
+
+      # Email
+      - EMAIL_HOST=mailserver
+      - EMAIL_HOST_USER=
+      - EMAIL_HOST_PASSWORD=
+      - EMAIL_PORT=1025
+      - EMAIL_USE_TLS=False
     env_file:
       - ./accounter/server/.env
     volumes:

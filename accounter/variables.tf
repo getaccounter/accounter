@@ -40,3 +40,8 @@ variable "db_token_encryption_key" {
   sensitive   = true
 }
 
+variable "sendgrid_api_key" {
+  description = "API key for sending emails"
+  type        = string
+  sensitive   = true
+}
