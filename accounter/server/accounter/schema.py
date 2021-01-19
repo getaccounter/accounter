@@ -11,19 +11,19 @@ from .organizations.schemas import (
     Query as OrganizationQuery,
     Mutation as OrganizationMutation,
 )
-from .users.schemas import SessionInfoQuery, Signin
+from .users.schemas import (
+    Query as UserQuery,
+    Mutation as UserMutation,
+)
 from .utils import signin_required
 
 
-class Mutation(OrganizationMutation, graphene.ObjectType):
-    signin = Signin.Field()
+class Mutation(UserMutation, OrganizationMutation, graphene.ObjectType):
     oauth = graphene.Field(Oauth, default_value={})
 
 
-class Query(OrganizationQuery, graphene.ObjectType):
+class Query(UserQuery, OrganizationQuery, graphene.ObjectType):
     node = graphene.relay.Node.Field()
-
-    session_info = graphene.Field(SessionInfoQuery, default_value={})
 
     services = graphene.List(graphene.NonNull(ServiceType), required=True)
 
