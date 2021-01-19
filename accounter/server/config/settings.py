@@ -42,6 +42,18 @@ def get_env_value(env_variable):
         raise ImproperlyConfigured(error_msg) from key_error
 
 
+def get_int_env_value(env_variable):
+    string_value = get_env_value(env_variable)
+    try:
+        int_value = int(string_value)
+        return int_value
+    except Exception:
+        error_msg = "The {} environment variable must be a valid integer".format(
+            env_variable
+        )
+        raise ImproperlyConfigured(error_msg)
+
+
 def get_bool_env_value(env_variable):
     valid_boolean_values = ["True", "False"]
     string_value = get_env_value(env_variable)
@@ -210,3 +222,8 @@ AWS_S3_CUSTOM_DOMAIN = get_optional_env_value("AWS_S3_CUSTOM_DOMAIN", None)
 AWS_S3_SECURE_URLS = get_optional_bool_env_value("AWS_S3_SECURE_URLS", True)
 
 BASE_URL = get_env_value("BASE_URL")
+EMAIL_HOST = get_env_value("EMAIL_HOST")
+EMAIL_HOST_USER = get_env_value("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_env_value("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = get_int_env_value("EMAIL_PORT")
+EMAIL_USE_TLS = get_bool_env_value("EMAIL_USE_TLS")

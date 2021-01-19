@@ -107,6 +107,8 @@ module "server" {
   }
 
   db_token_encryption_key = var.db_token_encryption_key
+
+  sendgrid_api_key = var.sendgrid_api_key
 }
 
 module "web" {
