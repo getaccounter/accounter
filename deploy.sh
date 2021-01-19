@@ -1,4 +1,3 @@
-doctl registry login
 docker tag server.production $IMAGE_REGISTRY/server:$@
 docker tag web.production $IMAGE_REGISTRY/web:$@
 docker tag loadbalancer $IMAGE_REGISTRY/loadbalancer:$@

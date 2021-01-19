@@ -5,8 +5,18 @@ services:
     image: web.production
     build:
       target: production
+      cache_from: 
+        - registry.digitalocean.com/accounter/web
 
   server:
     image: server.production
     build:
       target: production
+      cache_from: 
+        - registry.digitalocean.com/accounter/server
+
+  loadbalancer:
+    image: loadbalancer
+    build:
+      cache_from: 
+        - registry.digitalocean.com/accounter/loadbalancer
