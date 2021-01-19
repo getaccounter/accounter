@@ -19,16 +19,16 @@ class OrganizationTestCase(GraphQLTestCase):
             user=baker.make(User, _fill_optional=True),
             _fill_optional=True,
         )
-        user_profile = baker.make(
+        response_user_profile = baker.make(
             Profile,
             is_admin=False,
             organization=admin_profile.organization,
             user=baker.make(User, _fill_optional=True),
             _fill_optional=True,
         )
-        self.profiles = [user_profile]
+        self.profiles = [response_user_profile]
         self.admin = admin_profile.user
-        self.user = user_profile.user
+        self.user = response_user_profile.user
 
     def test_signup_mutation(self):
         email = "user@internet.cat"
@@ -131,6 +131,7 @@ class OrganizationTestCase(GraphQLTestCase):
                         title
                         isActive
                         isCurrentUser
+                        isAdmin
                         department {
                           name
                         }
@@ -147,21 +148,21 @@ class OrganizationTestCase(GraphQLTestCase):
         organization = content["data"]["currentUser"]["organization"]
         assert organization["name"] == self.admin.profile.organization.name
         assert len(organization["profiles"]["edges"]) == 2
-        response_profile = organization["profiles"]["edges"][1]["node"]
-        assert response_profile["email"] == self.profiles[0].user.email
-        assert response_profile["firstName"] == self.profiles[0].user.first_name
-        assert response_profile["lastName"] == self.profiles[0].user.last_name
-        assert response_profile["title"] == self.profiles[0].title
-        assert response_profile["isActive"] == self.profiles[0].is_active
+        response_admin_profile = organization["profiles"]["edges"][0]["node"]
+        response_user_profile = organization["profiles"]["edges"][1]["node"]
+        assert response_user_profile["email"] == self.profiles[0].user.email
+        assert response_user_profile["firstName"] == self.profiles[0].user.first_name
+        assert response_user_profile["lastName"] == self.profiles[0].user.last_name
+        assert response_user_profile["title"] == self.profiles[0].title
+        assert response_user_profile["isActive"] == self.profiles[0].is_active
         assert (
-            response_profile["department"]["name"] == self.profiles[0].department.name
+            response_user_profile["department"]["name"]
+            == self.profiles[0].department.name
         )
-        assert (
-            organization["profiles"]["edges"][0]["node"]["isCurrentUser"] == True
-        )
-        assert (
-            organization["profiles"]["edges"][1]["node"]["isCurrentUser"] == False
-        )
+        assert response_admin_profile["isCurrentUser"] == True
+        assert response_admin_profile["isAdmin"] == True
+        assert response_user_profile["isCurrentUser"] == False
+        assert response_user_profile["isAdmin"] == False
 
     def test_get_current_user(self):
         self.client.force_login(self.admin)
@@ -330,7 +331,7 @@ class OrganizationTestCase(GraphQLTestCase):
 
     def test_update_user(self):
         self.client.force_login(self.admin)
-        user_profile_to_update = baker.make(
+        response_user_profile_to_update = baker.make(
             Profile,
             is_admin=False,
             organization=self.admin.profile.organization,
@@ -379,7 +380,9 @@ class OrganizationTestCase(GraphQLTestCase):
 
           """,
             variables={
-                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "id": to_global_id(
+                    ProfileNode._meta.name, response_user_profile_to_update.pk
+                ),
                 "email": email,
                 "firstName": first_name,
                 "lastName": last_name,
@@ -405,7 +408,7 @@ class OrganizationTestCase(GraphQLTestCase):
 
     def test_update_user_without_optional_fields(self):
         self.client.force_login(self.admin)
-        user_profile_to_update = baker.make(
+        response_user_profile_to_update = baker.make(
             Profile,
             is_admin=False,
             organization=self.admin.profile.organization,
@@ -438,7 +441,9 @@ class OrganizationTestCase(GraphQLTestCase):
 
           """,
             variables={
-                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "id": to_global_id(
+                    ProfileNode._meta.name, response_user_profile_to_update.pk
+                ),
             },
         )
         self.assertResponseNoErrors(response)
@@ -449,32 +454,34 @@ class OrganizationTestCase(GraphQLTestCase):
         # Assert that nothing changed and the return type is correct
         profile = Profile.objects.get(id=int(db_pk))
         assert (
-            user_profile_to_update.user.first_name
+            response_user_profile_to_update.user.first_name
             == profile.user.first_name
             == returned_profile["firstName"]
         )
         assert (
-            user_profile_to_update.user.last_name
+            response_user_profile_to_update.user.last_name
             == profile.user.last_name
             == returned_profile["lastName"]
         )
         assert (
-            user_profile_to_update.user.email
+            response_user_profile_to_update.user.email
             == profile.user.email
             == returned_profile["email"]
         )
         assert (
-            user_profile_to_update.title == profile.title == returned_profile["title"]
+            response_user_profile_to_update.title
+            == profile.title
+            == returned_profile["title"]
         )
         assert (
-            user_profile_to_update.department.name
+            response_user_profile_to_update.department.name
             == profile.department.name
             == returned_profile["department"]["name"]
         )
 
     def test_update_user_has_to_be_admin(self):
         self.client.force_login(self.user)
-        user_profile_to_update = baker.make(
+        response_user_profile_to_update = baker.make(
             Profile,
             organization=self.admin.profile.organization,
             user=baker.make(User, _fill_optional=True),
@@ -499,7 +506,9 @@ class OrganizationTestCase(GraphQLTestCase):
 
           """,
             variables={
-                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "id": to_global_id(
+                    ProfileNode._meta.name, response_user_profile_to_update.pk
+                ),
             },
         )
         self.assertResponseHasErrors(response)
