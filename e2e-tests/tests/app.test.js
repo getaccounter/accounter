@@ -154,7 +154,7 @@ describe("Mobile", () => {
           cy.findByText(user.email).should("exist");
         });
 
-        cy.findByRole("button", { name: "Edit" }).click();
+        cy.findByRole("link", { name: "Edit" }).click();
       });
 
       cy.findByLabelText("First name").clear().type(newUserData.firstName);
@@ -294,7 +294,7 @@ describe("Desktop - window", () => {
           cy.findByText(user.email).should("exist");
         });
 
-        cy.findByRole("button", { name: "Edit" }).click();
+        cy.findByRole("link", { name: "Edit" }).click();
       });
 
       cy.findByLabelText("First name").clear().type(newUserData.firstName);
@@ -432,7 +432,7 @@ describe("Desktop - full screen", () => {
           cy.findByText(user.email).should("exist");
         });
 
-        cy.findByRole("button", { name: "Edit" }).click();
+        cy.findByRole("link", { name: "Edit" }).click();
       });
 
       cy.findByLabelText("First name").clear().type(newUserData.firstName);
