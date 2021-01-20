@@ -4,39 +4,29 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type UserFormCreateMutationVariables = {
-    email: string;
-    firstName: string;
-    lastName: string;
-    title?: string | null;
-    department?: string | null;
-    isAdmin?: boolean | null;
+export type OffboardUserMutationVariables = {
+    id: string;
 };
-export type UserFormCreateMutationResponse = {
-    readonly createUser: {
+export type OffboardUserMutationResponse = {
+    readonly offboardUser: {
         readonly profile: {
             readonly id: string;
             readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
         };
     } | null;
 };
-export type UserFormCreateMutation = {
-    readonly response: UserFormCreateMutationResponse;
-    readonly variables: UserFormCreateMutationVariables;
+export type OffboardUserMutation = {
+    readonly response: OffboardUserMutationResponse;
+    readonly variables: OffboardUserMutationVariables;
 };
 
 
 
 /*
-mutation UserFormCreateMutation(
-  $email: String!
-  $firstName: String!
-  $lastName: String!
-  $title: String
-  $department: ID
-  $isAdmin: Boolean
+mutation OffboardUserMutation(
+  $id: ID!
 ) {
-  createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department, isAdmin: $isAdmin}) {
+  offboardUser(input: {id: $id}) {
     profile {
       id
       ...Content_profile
@@ -92,75 +82,27 @@ fragment UserForm_profile on ProfileNode {
 */
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "department"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "email"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "firstName"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "isAdmin"
-},
-v4 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "lastName"
-},
-v5 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "title"
-},
-v6 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
+  }
+],
+v1 = [
   {
     "fields": [
       {
         "kind": "Variable",
-        "name": "department",
-        "variableName": "department"
-      },
-      {
-        "kind": "Variable",
-        "name": "email",
-        "variableName": "email"
-      },
-      {
-        "kind": "Variable",
-        "name": "firstName",
-        "variableName": "firstName"
-      },
-      {
-        "kind": "Variable",
-        "name": "isAdmin",
-        "variableName": "isAdmin"
-      },
-      {
-        "kind": "Variable",
-        "name": "lastName",
-        "variableName": "lastName"
-      },
-      {
-        "kind": "Variable",
-        "name": "title",
-        "variableName": "title"
+        "name": "id",
+        "variableName": "id"
       }
     ],
     "kind": "ObjectValue",
     "name": "input"
   }
 ],
-v7 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -169,24 +111,17 @@ v7 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/),
-      (v5/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserFormCreateMutation",
+    "name": "OffboardUserMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v6/*: any*/),
-        "concreteType": "CreateUserPayload",
+        "args": (v1/*: any*/),
+        "concreteType": "OffboardUserPayload",
         "kind": "LinkedField",
-        "name": "createUser",
+        "name": "offboardUser",
         "plural": false,
         "selections": [
           {
@@ -197,7 +132,7 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
-              (v7/*: any*/),
+              (v2/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -215,23 +150,16 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v2/*: any*/),
-      (v4/*: any*/),
-      (v5/*: any*/),
-      (v0/*: any*/),
-      (v3/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "UserFormCreateMutation",
+    "name": "OffboardUserMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v6/*: any*/),
-        "concreteType": "CreateUserPayload",
+        "args": (v1/*: any*/),
+        "concreteType": "OffboardUserPayload",
         "kind": "LinkedField",
-        "name": "createUser",
+        "name": "offboardUser",
         "plural": false,
         "selections": [
           {
@@ -242,7 +170,7 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
-              (v7/*: any*/),
+              (v2/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -300,7 +228,7 @@ return {
                     "name": "name",
                     "storageKey": null
                   },
-                  (v7/*: any*/)
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -320,14 +248,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cf8b0a4d7946644eb8eeed26329c11b7",
+    "cacheID": "963951315ee1c780e765ec7e97a05cd8",
     "id": null,
     "metadata": {},
-    "name": "UserFormCreateMutation",
+    "name": "OffboardUserMutation",
     "operationKind": "mutation",
-    "text": "mutation UserFormCreateMutation(\n  $email: String!\n  $firstName: String!\n  $lastName: String!\n  $title: String\n  $department: ID\n  $isAdmin: Boolean\n) {\n  createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department, isAdmin: $isAdmin}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isActive\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n"
+    "text": "mutation OffboardUserMutation(\n  $id: ID!\n) {\n  offboardUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isActive\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '8cd0d750c09445ca341ceecf25958aee';
+(node as any).hash = '30b7253a47493fee1b05b4de98057386';
 export default node;

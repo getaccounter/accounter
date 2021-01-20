@@ -5,7 +5,7 @@
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type Content_profile = {
-    readonly " $fragmentRefs": FragmentRefs<"Header_profile" | "DescriptionList_profile" | "EditUser_profile">;
+    readonly " $fragmentRefs": FragmentRefs<"Header_profile" | "DescriptionList_profile" | "EditUser_profile" | "OffboardUser_profile">;
     readonly " $refType": "Content_profile";
 };
 export type Content_profile$data = Content_profile;
@@ -36,10 +36,15 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "FragmentSpread",
       "name": "EditUser_profile"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "OffboardUser_profile"
     }
   ],
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = 'f9ef44fa4145264e1010ed9628a0182e';
+(node as any).hash = '0eed1951914ad55720036828e222f584';
 export default node;
