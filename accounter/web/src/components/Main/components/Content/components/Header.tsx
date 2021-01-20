@@ -4,15 +4,23 @@ import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Header_profile } from "./__generated__/Header_profile.graphql";
 import { Link, useRouteMatch } from "react-router-dom";
+import Badge from "../../../../Badge";
 
 type Props = {
   profile: Header_profile;
 };
 
-const Name = (props: { children: ReactNode }) => (
-  <h1 className="text-2xl font-bold text-gray-900 truncate">
-    {props.children}
-  </h1>
+const Name = (props: { children: ReactNode; isAdmin: boolean }) => (
+  <div className="inline-flex items-center">
+    <h1 className="text-2xl font-bold text-gray-900 truncate">
+      {props.children}
+    </h1>
+    {props.isAdmin && (
+      <Badge>
+        Admin
+      </Badge>
+    )}
+  </div>
 );
 
 const Header = (props: Props) => {
@@ -37,7 +45,7 @@ const Header = (props: Props) => {
           </div>
           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
-              <Name>
+              <Name isAdmin={props.profile.isAdmin}>
                 {props.profile.firstName} {props.profile.lastName}
               </Name>
             </div>
@@ -62,7 +70,7 @@ const Header = (props: Props) => {
           </div>
         </div>
         <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
-          <Name>
+          <Name isAdmin={props.profile.isAdmin}>
             {props.profile.firstName} {props.profile.lastName}
           </Name>
         </div>
@@ -76,6 +84,7 @@ export default createFragmentContainer(Header, {
     fragment Header_profile on ProfileNode {
       firstName
       lastName
+      isAdmin
     }
   `,
 });
