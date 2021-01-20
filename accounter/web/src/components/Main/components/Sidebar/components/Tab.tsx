@@ -14,7 +14,7 @@ type TabProps = {
 
 const Tab = (props: TabProps) => {
   const { pathname } = useLocation();
-  const isSelected = props.tab.path === pathname;
+  const isSelected = pathname.startsWith(props.tab.path)
   return (
     <Link
       to={props.tab.path}

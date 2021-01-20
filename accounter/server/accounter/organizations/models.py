@@ -27,4 +27,11 @@ class Profile(models.Model):
         null=True,
     )
     is_admin = models.BooleanField(default=False)
+    is_owner = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        if self.is_owner:
+            # owners are always admins
+            self.is_admin = True
+        super(Profile, self).save(*args, **kwargs)

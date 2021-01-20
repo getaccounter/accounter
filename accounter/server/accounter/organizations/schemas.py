@@ -5,6 +5,7 @@ from graphene_django import DjangoObjectType
 from ..utils import signin_required, ExtendedConnection
 from ..utils import admin_required
 from graphql_relay.node.node import from_global_id
+from django.core.exceptions import PermissionDenied
 
 from .models import Department, Organization, Profile
 
@@ -33,12 +34,17 @@ class Signup(graphene.Mutation):
         org = Organization.objects.create(name=org_name)
         org.save()
         user = User.objects.create(
-            username=email, email=email, first_name=first_name, last_name=last_name
+            username=email,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
         )
         user.set_password(password)
         user.save()
-        admin = Profile.objects.create(user=user, organization=org, is_admin=True)
-        admin.save()
+        profile = Profile.objects.create(
+            user=user, organization=org, is_admin=True, is_owner=True
+        )
+        profile.save()
 
         return Signup(status="success")
 
@@ -57,6 +63,22 @@ class DepartmentNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
 
 
+def can_user_edit_other_user(user_to_be_edited, editor):
+    if user_to_be_edited.pk == editor.pk:
+        # user can always edit themselves
+        return True
+
+    if user_to_be_edited.profile.is_owner and user_to_be_edited.pk != editor.pk:
+        # nobody can edit owners but themselves
+        return False
+
+    if user_to_be_edited.profile.is_admin and not editor.profile.is_owner:
+        # admins can only be edited by owners
+        return False
+
+    return True
+
+
 class ProfileNode(DjangoObjectType):
     class Meta:
         connection_class = ExtendedConnection
@@ -70,6 +92,7 @@ class ProfileNode(DjangoObjectType):
             "department",
             "organization",
             "is_admin",
+            "is_owner",
         )
         interfaces = (graphene.relay.Node,)
 
@@ -77,6 +100,7 @@ class ProfileNode(DjangoObjectType):
     first_name = graphene.String(required=True)
     last_name = graphene.String(required=True)
     is_current_user = graphene.Boolean(required=True)
+    current_user_can_edit = graphene.Boolean(required=True)
 
     @staticmethod
     def resolve_email(profile, info, **kwargs):
@@ -100,6 +124,11 @@ class ProfileNode(DjangoObjectType):
     def resolve_is_current_user(profile, info, **kwargs):
         user = info.context.user
         return profile.user == user
+
+    @staticmethod
+    def resolve_current_user_can_edit(profile, info, **kwargs):
+        user = info.context.user
+        return can_user_edit_other_user(profile.user, user)
 
 
 class CreateUser(graphene.relay.ClientIDMutation):
@@ -150,6 +179,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         email = graphene.String()
         title = graphene.String()
         department = graphene.ID()
+        is_admin = graphene.Boolean()
 
     profile = graphene.Field(ProfileNode, required=True)
 
@@ -158,6 +188,16 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         profile_pk = from_global_id(input.get("id"))[1]
         organization = info.context.user.profile.organization
         profile = Profile.objects.get(pk=profile_pk, organization=organization)
+
+        if not can_user_edit_other_user(profile.user, info.context.user):
+            raise PermissionDenied("You do not have permission to perform this action")
+
+        if input.get("is_admin") is not None:
+            if info.context.user.profile.is_owner is False:
+                raise PermissionDenied(
+                    "You do not have permission to perform this action"
+                )
+            profile.is_admin = input.get("is_admin")
 
         if input.get("first_name") is not None:
             profile.user.first_name = input.get("first_name")

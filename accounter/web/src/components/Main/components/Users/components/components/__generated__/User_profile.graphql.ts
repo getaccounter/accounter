@@ -9,6 +9,7 @@ export type User_profile = {
     readonly firstName: string;
     readonly lastName: string;
     readonly title: string | null;
+    readonly isAdmin: boolean;
     readonly " $refType": "User_profile";
 };
 export type User_profile$data = User_profile;
@@ -52,10 +53,17 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "title",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isAdmin",
+      "storageKey": null
     }
   ],
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = '4ddf0ed5bcf79d6b19c7a86c6c498a38';
+(node as any).hash = 'c381a45db9337c95c0cb3b9f0e6c675c';
 export default node;
