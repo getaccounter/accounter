@@ -13,8 +13,8 @@ import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Content_profile } from "./__generated__/Content_profile.graphql";
 import DescriptionList from "./components/DescriptionList";
-import { Content_organization } from "./__generated__/Content_organization.graphql";
 import EditUser from "./components/EditUser";
+import { Content_currentUser } from "./__generated__/Content_currentUser.graphql";
 
 type BreadcrumbProps = {
   title: ReactNode;
@@ -114,17 +114,17 @@ const TeamMemberList = () => {
 type Props = {
   title: ReactNode;
   profile: Content_profile;
-  organization: Content_organization;
+  currentUser: Content_currentUser
 };
 
-const Content = ({ title, profile, organization }: Props) => {
+const Content = ({ title, profile, currentUser }: Props) => {
   const { path, url } = useRouteMatch();
   return (
     <Switch>
       <Route path={`${path}/edit`}>
         <EditUser
+          currentUser={currentUser}
           profile={profile}
-          organization={organization}
           cancelRoute={url}
         />
       </Route>
@@ -154,9 +154,9 @@ const Content = ({ title, profile, organization }: Props) => {
 };
 
 export default createFragmentContainer(Content, {
-  organization: graphql`
-    fragment Content_organization on OrganizationNode {
-      ...EditUser_organization
+  currentUser: graphql`
+    fragment Content_currentUser on ProfileNode {
+      ...EditUser_currentUser
     }
   `,
   profile: graphql`

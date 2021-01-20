@@ -355,6 +355,92 @@ class OrganizationTestCase(GraphQLTestCase):
             errors[0]["message"] == "You do not have permission to perform this action"
         )
 
+    def test_create_user_admin_cannot_create_admin(self):
+        self.client.force_login(self.admin)
+        response = self.query(
+            """
+          mutation CreateUser (
+            $email: String!
+            $firstName: String!
+            $lastName: String!
+            $title: String!
+            $isAdmin: Boolean
+          ) {
+            createUser(
+              input: {
+                email: $email
+                firstName: $firstName
+                lastName: $lastName
+                title: $title
+                isAdmin: $isAdmin
+              }
+            ) {
+              profile {
+                id
+                isAdmin
+              }
+            }
+          }
+
+          """,
+            variables={
+                "email": "user@internet.cat",
+                "firstName": "firstname",
+                "lastName": "lastname",
+                "title": "some title",
+                "isAdmin": True,
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )
+
+    def test_create_user_owner_create_admin(self):
+        self.client.force_login(self.owner)
+        response = self.query(
+            """
+          mutation CreateUser (
+            $email: String!
+            $firstName: String!
+            $lastName: String!
+            $title: String!
+            $isAdmin: Boolean
+          ) {
+            createUser(
+              input: {
+                email: $email
+                firstName: $firstName
+                lastName: $lastName
+                title: $title
+                isAdmin: $isAdmin
+              }
+            ) {
+              profile {
+                id
+                isAdmin
+              }
+            }
+          }
+
+          """,
+            variables={
+                "email": "user@internet.cat",
+                "firstName": "firstname",
+                "lastName": "lastname",
+                "title": "some title",
+                "isAdmin": True,
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["createUser"]["profile"]
+        assert returned_profile["isAdmin"] is True
+
     def test_update_user(self):
         self.client.force_login(self.admin)
         user_profile_to_update = baker.make(

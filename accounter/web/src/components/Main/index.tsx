@@ -62,10 +62,8 @@ export default function Main() {
         query MainQuery {
           currentUser {
             ...Sidebar_profile
-            organization {
-              ...Users_organization
-              ...AddUsers_organization
-            }
+            ...Users_currentUser
+            ...AddUsers_currentUser
           }
         }
       `}
@@ -90,7 +88,7 @@ export default function Main() {
               path: "/users",
               Icon: UserGroup,
             },
-            content: <Users organization={props.currentUser.organization} />,
+            content: <Users currentUser={props.currentUser} />,
           },
         ];
 
@@ -101,7 +99,7 @@ export default function Main() {
               path: "/add-users",
               Icon: UserAdd,
             },
-            content: <AddUsers organization={props.currentUser.organization} />,
+            content: <AddUsers currentUser={props.currentUser} />,
           },
           {
             tab: {

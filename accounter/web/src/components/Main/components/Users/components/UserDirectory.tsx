@@ -12,8 +12,12 @@ type Props = {
 type ProfileEdge = UserDirectory_profiles["edges"][0];
 
 const UserDirectory = ({ profiles }: Props) => {
-  const groupedUsers = profiles.edges
-    .map((edge) => edge!)
+  const groupedUsers = [...profiles.edges.map((edge) => edge!)]
+    .sort((a, b) => {
+      if(a.node!.lastName < b.node!.lastName) { return -1; }
+      if(a.node!.lastName > b.node!.lastName) { return 1; }
+      return 0;
+  })
     .reduce((grouped: Record<string, Array<ProfileEdge>>, profile) => {
       const groupLabel = profile.node!.lastName[0].toUpperCase();
       const group = grouped[groupLabel] || [];

@@ -14,13 +14,13 @@ import {
   UserFormCreateMutationResponse,
   UserFormCreateMutationVariables,
 } from "./__generated__/UserFormCreateMutation.graphql";
-import { UserForm_organization } from "./__generated__/UserForm_organization.graphql";
 import { UserForm_profile } from "./__generated__/UserForm_profile.graphql";
 import {
   UserFormUpdateMutationVariables,
   UserFormUpdateMutationResponse,
   UserFormUpdateMutation,
 } from "./__generated__/UserFormUpdateMutation.graphql";
+import { UserForm_currentUser } from "./__generated__/UserForm_currentUser.graphql";
 
 const createUser = (
   environment: Environment,
@@ -40,6 +40,7 @@ const createUser = (
         $lastName: String!
         $title: String
         $department: ID
+        $isAdmin: Boolean
       ) {
         createUser(
           input: {
@@ -48,17 +49,12 @@ const createUser = (
             lastName: $lastName
             title: $title
             department: $department
+            isAdmin: $isAdmin
           }
         ) {
           profile {
             id
-            email
-            firstName
-            lastName
-            title
-            department {
-              name
-            }
+            ...Content_profile
           }
         }
       }
@@ -88,6 +84,7 @@ const updateUser = (
         $lastName: String
         $title: String
         $department: ID
+        $isAdmin: Boolean
       ) {
         updateUser(
           input: {
@@ -97,17 +94,12 @@ const updateUser = (
             lastName: $lastName
             title: $title
             department: $department
+            isAdmin: $isAdmin
           }
         ) {
           profile {
             id
-            email
-            firstName
-            lastName
-            title
-            department {
-              name
-            }
+            ...Content_profile
           }
         }
       }
@@ -119,21 +111,20 @@ const updateUser = (
 };
 
 type DepartmentEdge = NonNullable<
-  UserForm_organization["departments"]["edges"][0]
+  UserForm_currentUser["organization"]["departments"]["edges"][0]
 >;
 type DepartmentNode = NonNullable<DepartmentEdge["node"]>;
 
 const NO_DEPARTMENT = "NO_DEPARTMENT";
 
 type Props = {
-  organization: UserForm_organization;
   profile: UserForm_profile | null;
   cancelRoute: string;
+  currentUser: UserForm_currentUser;
 };
 
-const UserForm = ({ organization, profile, cancelRoute }: Props) => {
+const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
   const isUpdate = !!profile;
-
   const environment = useEnvironment();
   const history = useHistory();
   const [emailInput, setEmailInput] = useState(isUpdate ? profile!.email : "");
@@ -148,6 +139,9 @@ const UserForm = ({ organization, profile, cancelRoute }: Props) => {
   );
   const [departmentInput, setDepartmentInput] = useState<DepartmentNode["id"]>(
     isUpdate && profile!.department ? profile!.department.id : NO_DEPARTMENT
+  );
+  const [isAdminCheckbox, setIsAdminCheckbox] = useState(
+    isUpdate ? profile!.isAdmin : false
   );
   return (
     <form
@@ -164,6 +158,7 @@ const UserForm = ({ organization, profile, cancelRoute }: Props) => {
             title: titleInput.length > 0 ? titleInput : undefined,
             department:
               departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
+            isAdmin: currentUser.isOwner ? isAdminCheckbox : undefined,
           };
           updateUser(
             environment,
@@ -187,6 +182,7 @@ const UserForm = ({ organization, profile, cancelRoute }: Props) => {
             title: titleInput.length > 0 ? titleInput : undefined,
             department:
               departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
+            isAdmin: currentUser.isOwner ? isAdminCheckbox : undefined,
           };
 
           createUser(
@@ -195,7 +191,9 @@ const UserForm = ({ organization, profile, cancelRoute }: Props) => {
             (store) => {
               const payload = store.getRootField("createUser");
               const newProfile = payload.getLinkedRecord("profile");
-              const organizationRecord = store.get(organization.id)!;
+              const organizationRecord = store.get(
+                currentUser.organization.id
+              )!;
               const connection = ConnectionHandler.getConnection(
                 organizationRecord,
                 "Users_profiles"
@@ -333,17 +331,65 @@ const UserForm = ({ organization, profile, cancelRoute }: Props) => {
                   className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                 >
                   <option value={NO_DEPARTMENT}>No department</option>
-                  {organization.departments.edges.map((departmentEdge) => (
-                    <option value={departmentEdge!.node!.id}>
-                      {departmentEdge!.node!.name}
-                    </option>
-                  ))}
+                  {currentUser.organization.departments.edges.map(
+                    (departmentEdge) => (
+                      <option value={departmentEdge!.node!.id}>
+                        {departmentEdge!.node!.name}
+                      </option>
+                    )
+                  )}
                 </select>
               </div>
             </div>
           </div>
         </div>
       </div>
+      {currentUser.isOwner && (
+        <div className="pt-6 sm:pt-5">
+          <div role="group" aria-labelledby="label-email">
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
+              <div>
+                <div
+                  className="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700"
+                  id="label-email"
+                >
+                  Role
+                </div>
+              </div>
+              <div className="mt-4 sm:mt-0 sm:col-span-2">
+                <div className="max-w-lg space-y-4">
+                  <div className="relative flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        checked={isAdminCheckbox}
+                        onChange={(evt) =>
+                          setIsAdminCheckbox(evt.target.checked)
+                        }
+                        id="comments"
+                        name="comments"
+                        type="checkbox"
+                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                      />
+                    </div>
+                    <div className="ml-3 text-sm">
+                      <label
+                        htmlFor="comments"
+                        className="font-medium text-gray-700"
+                      >
+                        Admin
+                      </label>
+                      <p className="text-gray-500">
+                        Can on- and offboard users
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="pt-5">
         <div className="flex justify-end">
           <Link to={cancelRoute}>
@@ -367,6 +413,22 @@ const UserForm = ({ organization, profile, cancelRoute }: Props) => {
 };
 
 export default createFragmentContainer(UserForm, {
+  currentUser: graphql`
+    fragment UserForm_currentUser on ProfileNode {
+      isOwner
+      organization {
+        id
+        departments {
+          edges {
+            node {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  `,
   profile: graphql`
     fragment UserForm_profile on ProfileNode {
       id
@@ -374,21 +436,9 @@ export default createFragmentContainer(UserForm, {
       lastName
       email
       title
+      isAdmin
       department {
         id
-      }
-    }
-  `,
-  organization: graphql`
-    fragment UserForm_organization on OrganizationNode {
-      id
-      departments {
-        edges {
-          node {
-            id
-            name
-          }
-        }
       }
     }
   `,
