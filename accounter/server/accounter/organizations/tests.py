@@ -516,6 +516,49 @@ class OrganizationTestCase(GraphQLTestCase):
             == department.name
         )
 
+    def test_update_user_cannot_update_user_from_other_org(self):
+        self.client.force_login(self.admin)
+
+        other_organization = baker.make(Organization)
+        user_from_other_organization = baker.make(
+            Profile,
+            organization=other_organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $email: String
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                email: $email
+              }
+            ) {
+              profile {
+                id
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(
+                    ProfileNode._meta.name, user_from_other_organization.pk
+                ),
+                "email": "some@email.internet",
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert errors[0]["message"] == "Profile matching query does not exist."
+
     def test_update_user_without_optional_fields(self):
         self.client.force_login(self.admin)
         user_profile_to_update = baker.make(
@@ -860,3 +903,234 @@ class OrganizationTestCase(GraphQLTestCase):
         returned_profile = content["data"]["updateUser"]["profile"]
         self.admin.refresh_from_db()
         assert self.admin.email == returned_profile["email"] == email
+
+    def test_offboard_user(self):
+        self.client.force_login(self.admin)
+        user_profile_to_offboard = baker.make(
+            Profile,
+            is_admin=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation OffboardUser (
+            $id: ID!
+          ) {
+            offboardUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_offboard.pk),
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["offboardUser"]["profile"]
+        _, db_pk = from_global_id(returned_profile["id"])
+        profile = Profile.objects.get(id=int(db_pk))
+
+        assert profile.is_active is False
+
+    def test_offboard_user_only_admins(self):
+        self.client.force_login(self.user)
+        user_profile_to_offboard = baker.make(
+            Profile,
+            is_admin=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation OffboardUser (
+            $id: ID!
+          ) {
+            offboardUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_offboard.pk),
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )
+
+    def test_offboard_user_admins_cannot_offboard_admins(self):
+        self.client.force_login(self.admin)
+        user_profile_to_offboard = baker.make(
+            Profile,
+            is_admin=True,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation OffboardUser (
+            $id: ID!
+          ) {
+            offboardUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_offboard.pk),
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )
+
+    def test_offboard_user_owners_cannot_be_offboarded(self):
+        self.client.force_login(self.owner)
+        user_profile_to_offboard = baker.make(
+            Profile,
+            is_admin=True,
+            is_owner=True,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation OffboardUser (
+            $id: ID!
+          ) {
+            offboardUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_offboard.pk),
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert errors[0]["message"] == "Owner cannot be offboarded"
+
+    def test_offboard_user_cannot_offboard_themselves(self):
+        self.client.force_login(self.admin)
+
+        response = self.query(
+            """
+          mutation OffboardUser (
+            $id: ID!
+          ) {
+            offboardUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, self.admin.profile.pk),
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert errors[0]["message"] == "You cannot offboard yourself"
+
+    def test_offboard_user_cannot_offboard_people_from_other_orgs(self):
+        self.client.force_login(self.admin)
+
+        other_organization = baker.make(Organization)
+        user_from_other_organization = baker.make(
+            Profile,
+            organization=other_organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation OffboardUser (
+            $id: ID!
+          ) {
+            offboardUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(
+                    ProfileNode._meta.name, user_from_other_organization.pk
+                ),
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert errors[0]["message"] == "Profile matching query does not exist."

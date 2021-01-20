@@ -47,6 +47,8 @@ const generateUser = () => {
   };
 };
 
+// TODO: offboarding, adding admin
+
 describe("Mobile", () => {
   beforeEach(() => {
     cy.viewport("iphone-5");

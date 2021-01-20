@@ -230,6 +230,33 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         return UpdateUser(profile=profile)
 
 
+class OffboardUser(graphene.relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+
+    profile = graphene.Field(ProfileNode, required=True)
+
+    @admin_required
+    def mutate_and_get_payload(root, info, *args, **input):
+        profile_pk = from_global_id(input.get("id"))[1]
+        organization = info.context.user.profile.organization
+        profile = Profile.objects.get(pk=profile_pk, organization=organization)
+
+        if profile.is_owner:
+            raise PermissionDenied("Owner cannot be offboarded")
+
+        if profile.user.pk == info.context.user.pk:
+            raise PermissionDenied("You cannot offboard yourself")
+
+        if not can_user_edit_other_user(profile.user, info.context.user):
+            raise PermissionDenied("You do not have permission to perform this action")
+
+        profile.is_active = False
+        profile.save()
+
+        return OffboardUser(profile=profile)
+
+
 class Query(graphene.ObjectType):
     @staticmethod
     @signin_required
@@ -248,3 +275,4 @@ class Mutation(graphene.ObjectType):
     signup = Signup.Field()
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
+    offboard_user = OffboardUser.Field()
