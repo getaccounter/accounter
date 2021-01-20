@@ -13,22 +13,33 @@ User = get_user_model()
 
 class OrganizationTestCase(GraphQLTestCase):
     def setUp(self):
+        owner_profile = baker.make(
+            Profile,
+            is_admin=True,
+            is_owner=True,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
         admin_profile = baker.make(
             Profile,
             is_admin=True,
+            is_owner=False,
+            organization=owner_profile.organization,
             user=baker.make(User, _fill_optional=True),
             _fill_optional=True,
         )
-        response_user_profile = baker.make(
+        user_profile = baker.make(
             Profile,
             is_admin=False,
-            organization=admin_profile.organization,
+            is_owner=False,
+            organization=owner_profile.organization,
             user=baker.make(User, _fill_optional=True),
             _fill_optional=True,
         )
-        self.profiles = [response_user_profile]
+        self.profiles = [user_profile]
+        self.owner = owner_profile.user
         self.admin = admin_profile.user
-        self.user = response_user_profile.user
+        self.user = user_profile.user
 
     def test_signup_mutation(self):
         email = "user@internet.cat"
@@ -132,6 +143,8 @@ class OrganizationTestCase(GraphQLTestCase):
                         isActive
                         isCurrentUser
                         isAdmin
+                        isOwner
+                        currentUserCanEdit
                         department {
                           name
                         }
@@ -147,9 +160,12 @@ class OrganizationTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         organization = content["data"]["currentUser"]["organization"]
         assert organization["name"] == self.admin.profile.organization.name
-        assert len(organization["profiles"]["edges"]) == 2
-        response_admin_profile = organization["profiles"]["edges"][0]["node"]
-        response_user_profile = organization["profiles"]["edges"][1]["node"]
+        assert len(organization["profiles"]["edges"]) == 3
+
+        response_owner_profile = organization["profiles"]["edges"][0]["node"]
+        response_admin_profile = organization["profiles"]["edges"][1]["node"]
+        response_user_profile = organization["profiles"]["edges"][2]["node"]
+
         assert response_user_profile["email"] == self.profiles[0].user.email
         assert response_user_profile["firstName"] == self.profiles[0].user.first_name
         assert response_user_profile["lastName"] == self.profiles[0].user.last_name
@@ -159,10 +175,20 @@ class OrganizationTestCase(GraphQLTestCase):
             response_user_profile["department"]["name"]
             == self.profiles[0].department.name
         )
+        assert response_owner_profile["isCurrentUser"] is False
+        assert response_owner_profile["isAdmin"] is True
+        assert response_owner_profile["isOwner"] is True
+        assert response_owner_profile["currentUserCanEdit"] is False
+
         assert response_admin_profile["isCurrentUser"] is True
         assert response_admin_profile["isAdmin"] is True
+        assert response_admin_profile["isOwner"] is False
+        assert response_admin_profile["currentUserCanEdit"] is True
+
         assert response_user_profile["isCurrentUser"] is False
         assert response_user_profile["isAdmin"] is False
+        assert response_user_profile["isOwner"] is False
+        assert response_user_profile["currentUserCanEdit"] is True
 
     def test_get_current_user(self):
         self.client.force_login(self.admin)
@@ -331,7 +357,7 @@ class OrganizationTestCase(GraphQLTestCase):
 
     def test_update_user(self):
         self.client.force_login(self.admin)
-        response_user_profile_to_update = baker.make(
+        user_profile_to_update = baker.make(
             Profile,
             is_admin=False,
             organization=self.admin.profile.organization,
@@ -380,9 +406,7 @@ class OrganizationTestCase(GraphQLTestCase):
 
           """,
             variables={
-                "id": to_global_id(
-                    ProfileNode._meta.name, response_user_profile_to_update.pk
-                ),
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
                 "email": email,
                 "firstName": first_name,
                 "lastName": last_name,
@@ -408,7 +432,7 @@ class OrganizationTestCase(GraphQLTestCase):
 
     def test_update_user_without_optional_fields(self):
         self.client.force_login(self.admin)
-        response_user_profile_to_update = baker.make(
+        user_profile_to_update = baker.make(
             Profile,
             is_admin=False,
             organization=self.admin.profile.organization,
@@ -441,9 +465,7 @@ class OrganizationTestCase(GraphQLTestCase):
 
           """,
             variables={
-                "id": to_global_id(
-                    ProfileNode._meta.name, response_user_profile_to_update.pk
-                ),
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
             },
         )
         self.assertResponseNoErrors(response)
@@ -454,35 +476,34 @@ class OrganizationTestCase(GraphQLTestCase):
         # Assert that nothing changed and the return type is correct
         profile = Profile.objects.get(id=int(db_pk))
         assert (
-            response_user_profile_to_update.user.first_name
+            user_profile_to_update.user.first_name
             == profile.user.first_name
             == returned_profile["firstName"]
         )
         assert (
-            response_user_profile_to_update.user.last_name
+            user_profile_to_update.user.last_name
             == profile.user.last_name
             == returned_profile["lastName"]
         )
         assert (
-            response_user_profile_to_update.user.email
+            user_profile_to_update.user.email
             == profile.user.email
             == returned_profile["email"]
         )
         assert (
-            response_user_profile_to_update.title
-            == profile.title
-            == returned_profile["title"]
+            user_profile_to_update.title == profile.title == returned_profile["title"]
         )
         assert (
-            response_user_profile_to_update.department.name
+            user_profile_to_update.department.name
             == profile.department.name
             == returned_profile["department"]["name"]
         )
 
     def test_update_user_has_to_be_admin(self):
         self.client.force_login(self.user)
-        response_user_profile_to_update = baker.make(
+        user_profile_to_update = baker.make(
             Profile,
+            is_admin=False,
             organization=self.admin.profile.organization,
             user=baker.make(User, _fill_optional=True),
             _fill_optional=True,
@@ -506,9 +527,7 @@ class OrganizationTestCase(GraphQLTestCase):
 
           """,
             variables={
-                "id": to_global_id(
-                    ProfileNode._meta.name, response_user_profile_to_update.pk
-                ),
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
             },
         )
         self.assertResponseHasErrors(response)
@@ -557,3 +576,201 @@ class OrganizationTestCase(GraphQLTestCase):
         errors = content["errors"]
         assert (len(errors)) == 1
         assert errors[0]["message"] == "Profile matching query does not exist."
+
+    def test_update_user_non_owner_can_edit_themselves(self):
+        self.client.force_login(self.owner)
+        user_profile_to_update = baker.make(
+            Profile,
+            is_admin=True,
+            is_owner=True,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $email: String
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                email: $email
+              }
+            ) {
+              profile {
+                id
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "email": "some@email.internet",
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )
+
+    def test_update_user_admin_cannot_edit_other_admins(self):
+        self.client.force_login(self.admin)
+        user_profile_to_update = baker.make(
+            Profile,
+            is_admin=True,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $email: String
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                email: $email
+              }
+            ) {
+              profile {
+                id
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "email": "some@email.internet",
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        print(errors)
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )
+
+    def test_update_user_admin_cannot_raise_other_admins(self):
+        self.client.force_login(self.admin)
+        user_profile_to_update = baker.make(
+            Profile,
+            is_admin=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $isAdmin: Boolean
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                isAdmin: $isAdmin
+              }
+            ) {
+              profile {
+                id
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "isAdmin": True,
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )
+
+    def test_update_owners_can_edit_themselves(self):
+        self.client.force_login(self.owner)
+        email = "some@email.internet"
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $email: String
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                email: $email
+              }
+            ) {
+              profile {
+                id
+                email
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, self.owner.profile.pk),
+                "email": email,
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["updateUser"]["profile"]
+        self.owner.refresh_from_db()
+        assert self.owner.email == returned_profile["email"] == email
+
+    def test_update_user_can_edit_themselves(self):
+        self.client.force_login(self.admin)
+        email = "some@email.internet"
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $email: String
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                email: $email
+              }
+            ) {
+              profile {
+                id
+                email
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, self.admin.profile.pk),
+                "email": email,
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["updateUser"]["profile"]
+        self.admin.refresh_from_db()
+        assert self.admin.email == returned_profile["email"] == email

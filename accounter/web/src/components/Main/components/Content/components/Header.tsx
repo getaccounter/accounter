@@ -15,13 +15,38 @@ const Name = (props: { children: ReactNode; isAdmin: boolean }) => (
     <h1 className="text-2xl font-bold text-gray-900 truncate">
       {props.children}
     </h1>
-    {props.isAdmin && (
-      <Badge>
-        Admin
-      </Badge>
-    )}
+    {props.isAdmin && <Badge>Admin</Badge>}
   </div>
 );
+
+const MainButton = (props: {
+  children: ReactNode;
+  to: string;
+  disabled?: boolean;
+  danger?: boolean;
+}) => {
+  const button = (
+    <span
+      className={`${
+        props.disabled && "cursor-not-allowed opacity-50"
+      } flex-1 inline-flex justify-center text-sm font-medium`}
+    >
+      {props.children}
+    </span>
+  );
+  const wrapperClassName = `inline-flex px-4 py-2 border border-${
+    props.danger ? "red" : "gray"
+  }-300 shadow-sm rounded-md text-${
+    props.danger ? "red" : "gray"
+  }-700 bg-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`;
+  return props.disabled ? (
+    <span className={`cursor-not-allowed ${wrapperClassName}`}>{button}</span>
+  ) : (
+    <Link className={`hover:bg-gray-50 ${wrapperClassName}`} to={props.to}>
+      {button}
+    </Link>
+  );
+};
 
 const Header = (props: Props) => {
   const { url } = useRouteMatch();
@@ -50,22 +75,14 @@ const Header = (props: Props) => {
               </Name>
             </div>
             <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <Link className="inline-flex" to={`${url}/edit`}>
-                <button
-                  type="button"
-                  className="flex-1 inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                >
-                  <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                  <span>Edit</span>
-                </button>
-              </Link>
-              <button
-                type="button"
-                className="inline-flex justify-center px-4 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-              >
+              <MainButton disabled={!props.profile.currentUserCanEdit} to={`${url}/edit`}>
+                <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                <span>Edit</span>
+              </MainButton>
+              <MainButton danger to={`${url}/edit`}>
                 <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
                 <span>Offboard</span>
-              </button>
+              </MainButton>
             </div>
           </div>
         </div>
@@ -85,6 +102,7 @@ export default createFragmentContainer(Header, {
       firstName
       lastName
       isAdmin
+      currentUserCanEdit
     }
   `,
 });
