@@ -22,7 +22,6 @@ env:
 
 jobs:
   health-checks:
-    if: github.event.pull_request.draft == false
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
