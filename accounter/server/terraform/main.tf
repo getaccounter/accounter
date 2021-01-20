@@ -47,10 +47,10 @@ resource "kubernetes_secret" "db-token-encryption" {
   }
 }
 
-resource "kubernetes_secret" "sendgrid" {
+resource "kubernetes_secret" "sendgrid_api_key" {
   type = "Opaque"
   metadata {
-    name = "sendgrid"
+    name = "sendgrid_api_key"
   }
 
   data = {
@@ -199,8 +199,8 @@ resource "kubernetes_deployment" "server" {
             name = "EMAIL_HOST_PASSWORD"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.sendgrid.metadata[0].name
-                key  = "sendgrid_api_key"
+                name = kubernetes_secret.sendgrid_api_key.metadata[0].name
+                key  = "value"
               }
             }
           }
