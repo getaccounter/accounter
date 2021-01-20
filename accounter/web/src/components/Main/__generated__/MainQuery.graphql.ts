@@ -7,10 +7,7 @@ import { FragmentRefs } from "relay-runtime";
 export type MainQueryVariables = {};
 export type MainQueryResponse = {
     readonly currentUser: {
-        readonly organization: {
-            readonly " $fragmentRefs": FragmentRefs<"Users_organization" | "AddUsers_organization">;
-        };
-        readonly " $fragmentRefs": FragmentRefs<"Sidebar_profile">;
+        readonly " $fragmentRefs": FragmentRefs<"Sidebar_profile" | "Users_currentUser" | "AddUsers_currentUser">;
     };
 };
 export type MainQuery = {
@@ -24,21 +21,18 @@ export type MainQuery = {
 query MainQuery {
   currentUser {
     ...Sidebar_profile
-    organization {
-      ...Users_organization
-      ...AddUsers_organization
-      id
-    }
+    ...Users_currentUser
+    ...AddUsers_currentUser
     id
   }
 }
 
-fragment AddUsers_organization on OrganizationNode {
-  ...UserForm_organization
+fragment AddUsers_currentUser on ProfileNode {
+  ...UserForm_currentUser
 }
 
-fragment Content_organization on OrganizationNode {
-  ...EditUser_organization
+fragment Content_currentUser on ProfileNode {
+  ...EditUser_currentUser
 }
 
 fragment Content_profile on ProfileNode {
@@ -62,8 +56,8 @@ fragment Dropdown_profile on ProfileNode {
   id
 }
 
-fragment EditUser_organization on OrganizationNode {
-  ...UserForm_organization
+fragment EditUser_currentUser on ProfileNode {
+  ...UserForm_currentUser
 }
 
 fragment EditUser_profile on ProfileNode {
@@ -99,13 +93,16 @@ fragment UserDirectory_profiles on ProfileNodeConnection {
   }
 }
 
-fragment UserForm_organization on OrganizationNode {
-  id
-  departments {
-    edges {
-      node {
-        id
-        name
+fragment UserForm_currentUser on ProfileNode {
+  isOwner
+  organization {
+    id
+    departments {
+      edges {
+        node {
+          id
+          name
+        }
       }
     }
   }
@@ -117,6 +114,7 @@ fragment UserForm_profile on ProfileNode {
   lastName
   email
   title
+  isAdmin
   department {
     id
   }
@@ -130,22 +128,25 @@ fragment User_profile on ProfileNode {
   isAdmin
 }
 
-fragment Users_organization on OrganizationNode {
-  ...Content_organization
-  profiles(first: 100) {
-    edges {
-      node {
-        id
-        ...Content_profile
-        __typename
+fragment Users_currentUser on ProfileNode {
+  ...Content_currentUser
+  organization {
+    profiles(first: 100) {
+      edges {
+        node {
+          id
+          ...Content_profile
+          __typename
+        }
+        cursor
       }
-      cursor
+      ...UserDirectory_profiles
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
     }
-    ...UserDirectory_profiles
-    pageInfo {
-      endCursor
-      hasNextPage
-    }
+    id
   }
 }
 */
@@ -209,30 +210,19 @@ return {
         "plural": false,
         "selections": [
           {
-            "alias": null,
             "args": null,
-            "concreteType": "OrganizationNode",
-            "kind": "LinkedField",
-            "name": "organization",
-            "plural": false,
-            "selections": [
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "Users_organization"
-              },
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "AddUsers_organization"
-              }
-            ],
-            "storageKey": null
+            "kind": "FragmentSpread",
+            "name": "Sidebar_profile"
           },
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "Sidebar_profile"
+            "name": "Users_currentUser"
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "AddUsers_currentUser"
           }
         ],
         "storageKey": null
@@ -259,6 +249,13 @@ return {
           (v1/*: any*/),
           (v2/*: any*/),
           (v3/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "isOwner",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -438,14 +435,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ed863512c480e59df37c9b6882b94e45",
+    "cacheID": "d5d116c809c0ce00d6ce28ba1384cdae",
     "id": null,
     "metadata": {},
     "name": "MainQuery",
     "operationKind": "query",
-    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    organization {\n      ...Users_organization\n      ...AddUsers_organization\n      id\n    }\n    id\n  }\n}\n\nfragment AddUsers_organization on OrganizationNode {\n  ...UserForm_organization\n}\n\nfragment Content_organization on OrganizationNode {\n  ...EditUser_organization\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment Dropdown_profile on ProfileNode {\n  id\n}\n\nfragment EditUser_organization on OrganizationNode {\n  ...UserForm_organization\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n}\n\nfragment Profile_profile on ProfileNode {\n  ...Dropdown_profile\n  firstName\n  lastName\n  title\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_organization on OrganizationNode {\n  id\n  departments {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  title\n  isAdmin\n}\n\nfragment Users_organization on OrganizationNode {\n  ...Content_organization\n  profiles(first: 100) {\n    edges {\n      node {\n        id\n        ...Content_profile\n        __typename\n      }\n      cursor\n    }\n    ...UserDirectory_profiles\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    ...Users_currentUser\n    ...AddUsers_currentUser\n    id\n  }\n}\n\nfragment AddUsers_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...EditUser_currentUser\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment Dropdown_profile on ProfileNode {\n  id\n}\n\nfragment EditUser_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n}\n\nfragment Profile_profile on ProfileNode {\n  ...Dropdown_profile\n  firstName\n  lastName\n  title\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  isOwner\n  organization {\n    id\n    departments {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  title\n  isAdmin\n}\n\nfragment Users_currentUser on ProfileNode {\n  ...Content_currentUser\n  organization {\n    profiles(first: 100) {\n      edges {\n        node {\n          id\n          ...Content_profile\n          __typename\n        }\n        cursor\n      }\n      ...UserDirectory_profiles\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '03b3d72ebd1b23596e8ac6d506f6cf95';
+(node as any).hash = 'ce54f8f04c3b2ce1830aeeff7ac287c5';
 export default node;

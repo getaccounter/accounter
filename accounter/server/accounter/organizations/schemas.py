@@ -138,12 +138,19 @@ class CreateUser(graphene.relay.ClientIDMutation):
         email = graphene.String(required=True)
         title = graphene.String()
         department = graphene.ID()
+        is_admin = graphene.Boolean()
 
     profile = graphene.Field(ProfileNode, required=True)
 
     @admin_required
     def mutate_and_get_payload(root, info, *args, **input):
         organization = info.context.user.profile.organization
+
+        if input.get("is_admin") is True:
+            if info.context.user.profile.is_owner is False:
+                raise PermissionDenied(
+                    "You do not have permission to perform this action"
+                )
 
         department = None
         if input.get("department") is not None:
@@ -163,7 +170,7 @@ class CreateUser(graphene.relay.ClientIDMutation):
             user=user,
             organization=organization,
             title=input.get("title", None),
-            is_admin=False,
+            is_admin=input.get("is_admin", False),
             department=department,
         )
         profile.save()

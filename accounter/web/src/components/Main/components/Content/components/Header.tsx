@@ -22,28 +22,20 @@ const Name = (props: { children: ReactNode; isAdmin: boolean }) => (
 const MainButton = (props: {
   children: ReactNode;
   to: string;
-  disabled?: boolean;
   danger?: boolean;
 }) => {
-  const button = (
-    <span
-      className={`${
-        props.disabled && "cursor-not-allowed opacity-50"
-      } flex-1 inline-flex justify-center text-sm font-medium`}
+  return (
+    <Link
+      className={`hover:bg-gray-50 inline-flex px-4 py-2 border border-${
+        props.danger ? "red" : "gray"
+      }-300 shadow-sm rounded-md text-${
+        props.danger ? "red" : "gray"
+      }-700 bg-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`}
+      to={props.to}
     >
-      {props.children}
-    </span>
-  );
-  const wrapperClassName = `inline-flex px-4 py-2 border border-${
-    props.danger ? "red" : "gray"
-  }-300 shadow-sm rounded-md text-${
-    props.danger ? "red" : "gray"
-  }-700 bg-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`;
-  return props.disabled ? (
-    <span className={`cursor-not-allowed ${wrapperClassName}`}>{button}</span>
-  ) : (
-    <Link className={`hover:bg-gray-50 ${wrapperClassName}`} to={props.to}>
-      {button}
+      <span className="flex-1 inline-flex justify-center text-sm font-medium">
+        {props.children}
+      </span>
     </Link>
   );
 };
@@ -74,16 +66,18 @@ const Header = (props: Props) => {
                 {props.profile.firstName} {props.profile.lastName}
               </Name>
             </div>
-            <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <MainButton disabled={!props.profile.currentUserCanEdit} to={`${url}/edit`}>
-                <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                <span>Edit</span>
-              </MainButton>
-              <MainButton danger to={`${url}/edit`}>
-                <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
-                <span>Offboard</span>
-              </MainButton>
-            </div>
+            {props.profile.currentUserCanEdit && (
+              <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
+                <MainButton to={`${url}/edit`}>
+                  <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                  <span>Edit</span>
+                </MainButton>
+                <MainButton danger to={`${url}/edit`}>
+                  <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                  <span>Offboard</span>
+                </MainButton>
+              </div>
+            )}
           </div>
         </div>
         <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">

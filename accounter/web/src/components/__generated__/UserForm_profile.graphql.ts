@@ -10,6 +10,7 @@ export type UserForm_profile = {
     readonly lastName: string;
     readonly email: string;
     readonly title: string | null;
+    readonly isAdmin: boolean;
     readonly department: {
         readonly id: string;
     } | null;
@@ -69,6 +70,13 @@ return {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "isAdmin",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "DepartmentNode",
       "kind": "LinkedField",
       "name": "department",
@@ -83,5 +91,5 @@ return {
   "abstractKey": null
 };
 })();
-(node as any).hash = '0b8146345ac02e14368406fb46f6bc75';
+(node as any).hash = '46b33bd93236c300c503a1974c111cd3';
 export default node;

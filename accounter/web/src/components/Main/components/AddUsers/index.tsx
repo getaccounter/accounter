@@ -1,26 +1,30 @@
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { AddUsers_organization } from "./__generated__/AddUsers_organization.graphql";
 import UserForm from "../../../UserForm";
+import { AddUsers_currentUser } from "./__generated__/AddUsers_currentUser.graphql";
 
 type Props = {
-  organization: AddUsers_organization;
+  currentUser: AddUsers_currentUser;
 };
 
-const AddUsers = ({ organization }: Props) => {
+const AddUsers = ({ currentUser }: Props) => {
   return (
     <main className="flex-1 overflow-y-auto focus:outline-none">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <UserForm profile={null} organization={organization} cancelRoute="/" />
+        <UserForm
+          profile={null}
+          currentUser={currentUser}
+          cancelRoute="/"
+        />
       </div>
     </main>
   );
 };
 
 export default createFragmentContainer(AddUsers, {
-  organization: graphql`
-    fragment AddUsers_organization on OrganizationNode {
-      ...UserForm_organization
+  currentUser: graphql`
+    fragment AddUsers_currentUser on ProfileNode {
+      ...UserForm_currentUser
     }
   `,
 });

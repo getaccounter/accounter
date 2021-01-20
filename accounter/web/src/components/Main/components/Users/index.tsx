@@ -4,10 +4,10 @@ import graphql from "babel-plugin-relay/macro";
 import DetailLayout from "../DetailLayout";
 import Content from "../Content";
 import UserDirectory from "./components/UserDirectory";
-import { Users_organization } from "./__generated__/Users_organization.graphql";
+import { Users_currentUser } from "./__generated__/Users_currentUser.graphql";
 
 type Props = {
-  organization: Users_organization;
+  currentUser: Users_currentUser;
 };
 
 const Users = (props: Props) => {
@@ -15,19 +15,19 @@ const Users = (props: Props) => {
     <div className="flex-1 relative z-0 flex overflow-hidden">
       <DetailLayout
         mainColumn={(id) => {
-          const profile = props.organization.profiles.edges.find(
+          const profile = props.currentUser.organization.profiles.edges.find(
             (p) => p!.node!.id === id
           );
           return (
             <Content
               title="Users"
               profile={profile!.node!}
-              organization={props.organization}
+              currentUser={props.currentUser}
             />
           );
         }}
         secondaryColumn={() => (
-          <UserDirectory profiles={props.organization.profiles} />
+          <UserDirectory profiles={props.currentUser.organization.profiles} />
         )}
       />
     </div>
@@ -35,17 +35,19 @@ const Users = (props: Props) => {
 };
 
 export default createFragmentContainer(Users, {
-  organization: graphql`
-    fragment Users_organization on OrganizationNode {
-      ...Content_organization
-      profiles(first: 100) @connection(key: "Users_profiles") {
-        edges {
-          node {
-            id
-            ...Content_profile
+  currentUser: graphql`
+    fragment Users_currentUser on ProfileNode {
+      ...Content_currentUser
+      organization {
+        profiles(first: 100) @connection(key: "Users_profiles") {
+          edges {
+            node {
+              id
+              ...Content_profile
+            }
           }
+          ...UserDirectory_profiles
         }
-        ...UserDirectory_profiles
       }
     }
   `,
