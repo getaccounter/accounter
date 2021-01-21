@@ -8,3 +8,4 @@ Pillow==8.1.0
 django-storages==1.11.1
 boto3==1.16.57
 cryptography==3.3.1
+django-filter==2.4.0

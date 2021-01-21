@@ -83,6 +83,7 @@ class ProfileNode(DjangoObjectType):
     class Meta:
         connection_class = ExtendedConnection
         model = Profile
+        filter_fields = ['is_active']
         fields = (
             "email",
             "first_name",
