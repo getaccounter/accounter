@@ -1,4 +1,4 @@
-FROM node:15.5.1-alpine as development
+FROM node:15.6.0-alpine as development
 ENV PORT=3000
 
 RUN mkdir /code
@@ -12,13 +12,13 @@ RUN cp -R node_modules/heroicons/react/ src/components/icons
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD [ "npm", "start" ]
 
-FROM node:15.5.1-alpine as builder
+FROM node:15.6.0-alpine as builder
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code /code
 RUN npm run build
 
-FROM node:15.5.1-alpine as production
+FROM node:15.6.0-alpine as production
 ENV PORT=3000
 RUN mkdir /build
 COPY --from=builder /code/build /build
