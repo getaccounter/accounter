@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
-import { Filter, Search } from "../../../icons/solid";
+import { Search } from "../../../icons/solid";
+import Filters from "./components/Filters";
 
 const DirectoryHeader = ({
   title,
@@ -7,38 +8,41 @@ const DirectoryHeader = ({
 }: {
   title: string;
   subtitle?: string;
-}) => (
-  <div className="px-6 pt-6 pb-4">
-    <h2 className="text-lg font-medium text-gray-900">{title}</h2>
-    {subtitle && <p className="mt-1 text-sm text-gray-600">{subtitle}</p>}
-    <form className="mt-6 flex space-x-4" action="#">
-      <div className="flex-1 min-w-0">
-        <label htmlFor="search" className="sr-only">
-          Search
-        </label>
-        <div className="relative rounded-md shadow-sm">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+}) => {
+  return (
+    <div className="px-6 pt-6 pb-4">
+      <h2 className="text-lg font-medium text-gray-900">{title}</h2>
+      {subtitle && <p className="mt-1 text-sm text-gray-600">{subtitle}</p>}
+      <form className="mt-6 flex space-x-4" action="#">
+        <div className="flex-1 min-w-0">
+          <label htmlFor="search" className="sr-only">
+            Search
+          </label>
+          <div className="relative rounded-md shadow-sm">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="search"
+              name="search"
+              id="search"
+              className="focus:ring-pink-500 focus:border-pink-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
+              placeholder="Search"
+            />
           </div>
-          <input
-            type="search"
-            name="search"
-            id="search"
-            className="focus:ring-pink-500 focus:border-pink-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-            placeholder="Search"
-          />
         </div>
-      </div>
-      <button
-        type="submit"
-        className="inline-flex justify-center px-3.5 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-      >
-        <Filter className="h-5 w-5 text-gray-400" />
-        <span className="sr-only">Search</span>
-      </button>
-    </form>
-  </div>
-);
+        <Filters
+          filters={[
+            {
+              label: "Active",
+              value: "isActive",
+            },
+          ]}
+        />
+      </form>
+    </div>
+  );
+};
 
 export const DirectoryEntryList = (props: {
   title?: ReactNode;
