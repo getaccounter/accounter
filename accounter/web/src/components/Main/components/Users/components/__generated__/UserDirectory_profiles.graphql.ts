@@ -10,6 +10,7 @@ export type UserDirectory_profiles = {
         readonly node: {
             readonly id: string;
             readonly lastName: string;
+            readonly isActive: boolean;
             readonly " $fragmentRefs": FragmentRefs<"User_profile">;
         } | null;
     } | null>;
@@ -67,6 +68,13 @@ const node: ReaderFragment = {
               "storageKey": null
             },
             {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "isActive",
+              "storageKey": null
+            },
+            {
               "args": null,
               "kind": "FragmentSpread",
               "name": "User_profile"
@@ -81,5 +89,5 @@ const node: ReaderFragment = {
   "type": "ProfileNodeConnection",
   "abstractKey": null
 };
-(node as any).hash = 'ac719a041bcc635364b87a8046d596d2';
+(node as any).hash = 'b21d5cee1b7700ecc0c355bdcf118f72';
 export default node;

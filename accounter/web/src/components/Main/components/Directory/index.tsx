@@ -1,13 +1,15 @@
 import React, { ReactNode } from "react";
 import { Search } from "../../../icons/solid";
-import Filters from "./components/Filters";
+import Filters, { Filter } from "./components/Filters";
 
 const DirectoryHeader = ({
   title,
   subtitle,
+  filters,
 }: {
   title: string;
   subtitle?: string;
+  filters: Array<Filter> | void;
 }) => {
   return (
     <div className="px-6 pt-6 pb-4">
@@ -31,14 +33,7 @@ const DirectoryHeader = ({
             />
           </div>
         </div>
-        <Filters
-          filters={[
-            {
-              label: "Active",
-              value: "isActive",
-            },
-          ]}
-        />
+        {filters && <Filters filters={filters} />}
       </form>
     </div>
   );
@@ -85,11 +80,12 @@ type Props = {
   title: string;
   subtitle?: string;
   children: ReactNode;
+  filters?: Array<Filter>
 };
 
-const Directory = ({ children, title, subtitle }: Props) => (
+const Directory = ({ children, title, subtitle, filters }: Props) => (
   <>
-    <DirectoryHeader title={title} subtitle={subtitle} />
+    <DirectoryHeader filters={filters} title={title} subtitle={subtitle} />
     <DirectoryList>{children}</DirectoryList>
   </>
 );

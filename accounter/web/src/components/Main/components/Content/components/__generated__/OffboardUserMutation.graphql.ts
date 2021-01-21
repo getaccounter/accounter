@@ -61,6 +61,7 @@ fragment Header_profile on ProfileNode {
   lastName
   isAdmin
   currentUserCanEdit
+  isActive
 }
 
 fragment OffboardUser_profile on ProfileNode {
@@ -203,6 +204,13 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "isActive",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "email",
                 "storageKey": null
               },
@@ -231,13 +239,6 @@ return {
                   (v2/*: any*/)
                 ],
                 "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "isActive",
-                "storageKey": null
               }
             ],
             "storageKey": null
@@ -248,12 +249,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "963951315ee1c780e765ec7e97a05cd8",
+    "cacheID": "dfadb334c93a5308805a796fcc8ae4a0",
     "id": null,
     "metadata": {},
     "name": "OffboardUserMutation",
     "operationKind": "mutation",
-    "text": "mutation OffboardUserMutation(\n  $id: ID!\n) {\n  offboardUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isActive\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n"
+    "text": "mutation OffboardUserMutation(\n  $id: ID!\n) {\n  offboardUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isActive\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isActive\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n"
   }
 };
 })();

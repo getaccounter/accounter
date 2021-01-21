@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Filter } from "../../../../icons/solid";
 import ClickAwayListener from "react-click-away-listener";
 
-type Filter = {
+export type Filter = {
+  id: string;
   label: string;
-  value: string | number;
+  value: boolean;
+  onChange: (newVal: boolean) => void
 };
 
 type Props = {
@@ -49,13 +51,13 @@ const Filters = ({ filters }: Props) => {
             >
               {filters.map((filter) => (
                 <label
-                  key={filter.value}
+                  key={filter.id}
                   htmlFor="comments"
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
                 >
                   <input
-                    // checked={isAdminCheckbox}
-                    // onChange={(evt) => setIsAdminCheckbox(evt.target.checked)}
+                    checked={filter.value}
+                    onChange={(evt) => filter.onChange(evt.target.checked)}
                     className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
                     id="comments"
                     name="comments"
