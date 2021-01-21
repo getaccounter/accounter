@@ -67,7 +67,7 @@ const OffboardUser = ({ profile }: Props) => {
   ) : (
     <Redirect
       to={{
-        pathname: `/users/details/${profile.id}`,
+        pathname: `/users`,
         state: { from: location },
       }}
     />

@@ -43,6 +43,12 @@ Cypress.Commands.add("login", (email, password) => {
   cy.findByText("Sign in").click();
 });
 
+Cypress.Commands.add("selectUserFromDirectory", (name) => {
+  cy.findByRole("navigation", { name: "Directory" }).within(() => {
+    cy.findByRole("link", { name }).click();
+  });
+});
+
 Cypress.Commands.add("navigateTo", (entryName) => {
   cy.findByRole("navigation", {name: "Sidebar"}).should("exist").within(() => {
     cy.findByRole("link", { name: entryName }).click();

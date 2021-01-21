@@ -226,8 +226,8 @@ class OrganizationTestCase(GraphQLTestCase):
         response__profiles = organization["profiles"]["edges"]
 
         for profile in response__profiles:
-          print(profile['node']['email'])
-          assert profile['node']['email'] != deactivated_profile.user.email
+            print(profile["node"]["email"])
+            assert profile["node"]["email"] != deactivated_profile.user.email
 
     def test_get_current_user(self):
         self.client.force_login(self.admin)
