@@ -9,6 +9,9 @@ export type Header_profile = {
     readonly lastName: string;
     readonly isAdmin: boolean;
     readonly currentUserCanEdit: boolean;
+    readonly isActive: boolean;
+    readonly isOwner: boolean;
+    readonly isCurrentUser: boolean;
     readonly " $refType": "Header_profile";
 };
 export type Header_profile$data = Header_profile;
@@ -52,10 +55,31 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "currentUserCanEdit",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isActive",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isOwner",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isCurrentUser",
+      "storageKey": null
     }
   ],
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = 'd3f8cb099b0be479dffbe7bb8f8bc32d';
+(node as any).hash = '5c9e53bb91e9d19b0b0cb97877dc8a4c';
 export default node;

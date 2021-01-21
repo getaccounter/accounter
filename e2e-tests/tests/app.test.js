@@ -84,9 +84,10 @@ describe("Mobile", () => {
   });
 
   describe("Users", () => {
-    it("add user", () => {
+    it("Add, edit and offboard", () => {
       const user = generateUser();
       const userToRegister = generateUser();
+      const newUserData = generateUser();
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
@@ -107,6 +108,8 @@ describe("Mobile", () => {
       cy.findByLabelText("Title").type(userToRegister.title);
       cy.findByRole("button", { name: "Create" }).click();
 
+      cy.wait(500);
+
       cy.findByRole("main").within(() => {
         cy.findByRole("heading", {
           name: `${userToRegister.firstName} ${userToRegister.lastName}`,
@@ -118,42 +121,22 @@ describe("Mobile", () => {
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", {
           name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
-        });
+        }).should('exist')
       });
-    });
 
-    it("edit user", () => {
-      const user = generateUser();
-      const newUserData = generateUser();
-
-      cy.visit("/");
-      cy.findByRole("link", { name: "register" }).click();
-      cy.register(
-        user.organization,
-        user.firstName,
-        user.lastName,
-        user.email,
-        user.password
+      cy.selectUserFromDirectory(
+        `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`
       );
-      cy.login(user.email, user.password);
-
-      cy.mobileNavigateTo("Users");
-
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${user.firstName} ${user.lastName}`,
-        }).click();
-      });
 
       cy.findByRole("main").within(() => {
         cy.findByRole("heading", {
-          name: `${user.firstName} ${user.lastName}`,
+          name: `${userToRegister.firstName} ${userToRegister.lastName}`,
         }).should("exist");
 
         cy.findByRole("article").within(() => {
-          cy.findByText(user.firstName).should("exist");
-          cy.findByText(user.lastName).should("exist");
-          cy.findByText(user.email).should("exist");
+          cy.findByText(userToRegister.firstName).should("exist");
+          cy.findByText(userToRegister.lastName).should("exist");
+          cy.findByText(userToRegister.email).should("exist");
         });
 
         cy.findByRole("link", { name: "Edit" }).click();
@@ -179,6 +162,29 @@ describe("Mobile", () => {
 
         cy.findByRole("link", { name: "Users" }).click();
       });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        }).should("exist");
+      });
+
+      cy.selectUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`
+      );
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("link", { name: "Offboard" }).click();
+      });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        }).should("not.exist");
+      });
+
+      cy.findByRole("button", { name: "Filter" }).click();
+      cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", {
@@ -224,9 +230,10 @@ describe("Desktop - window", () => {
   });
 
   describe("Users", () => {
-    it("add user", () => {
+    it("Add, edit and offboard", () => {
       const user = generateUser();
       const userToRegister = generateUser();
+      const newUserData = generateUser();
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
@@ -246,7 +253,7 @@ describe("Desktop - window", () => {
       cy.findByLabelText("Email address").type(userToRegister.email);
       cy.findByLabelText("Title").type(userToRegister.title);
       cy.findByRole("button", { name: "Create" }).click();
-
+      cy.wait(500);
       cy.findByRole("main").within(() => {
         cy.findByRole("heading", {
           name: `${userToRegister.firstName} ${userToRegister.lastName}`,
@@ -260,40 +267,22 @@ describe("Desktop - window", () => {
           name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
         });
       });
-    });
-
-    it("edit user", () => {
-      const user = generateUser();
-      const newUserData = generateUser();
-
-      cy.visit("/");
-      cy.findByRole("link", { name: "register" }).click();
-      cy.register(
-        user.organization,
-        user.firstName,
-        user.lastName,
-        user.email,
-        user.password
-      );
-      cy.login(user.email, user.password);
-
-      cy.navigateTo("Users");
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", {
-          name: `${user.firstName} ${user.lastName}`,
+          name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
         }).click();
       });
 
       cy.findByRole("main").within(() => {
         cy.findByRole("heading", {
-          name: `${user.firstName} ${user.lastName}`,
+          name: `${userToRegister.firstName} ${userToRegister.lastName}`,
         }).should("exist");
 
         cy.findByRole("article").within(() => {
-          cy.findByText(user.firstName).should("exist");
-          cy.findByText(user.lastName).should("exist");
-          cy.findByText(user.email).should("exist");
+          cy.findByText(userToRegister.firstName).should("exist");
+          cy.findByText(userToRegister.lastName).should("exist");
+          cy.findByText(userToRegister.email).should("exist");
         });
 
         cy.findByRole("link", { name: "Edit" }).click();
@@ -319,6 +308,29 @@ describe("Desktop - window", () => {
 
         cy.findByRole("link", { name: "Users" }).click();
       });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        }).should("exist");
+      });
+
+      cy.selectUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`
+      );
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("link", { name: "Offboard" }).click();
+      });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        }).should("not.exist");
+      });
+
+      cy.findByRole("button", { name: "Filter" }).click();
+      cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", {
@@ -364,9 +376,10 @@ describe("Desktop - full screen", () => {
   });
 
   describe("Users", () => {
-    it("add user", () => {
+    it("Add, edit and offboard", () => {
       const user = generateUser();
       const userToRegister = generateUser();
+      const newUserData = generateUser();
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
@@ -386,7 +399,7 @@ describe("Desktop - full screen", () => {
       cy.findByLabelText("Email address").type(userToRegister.email);
       cy.findByLabelText("Title").type(userToRegister.title);
       cy.findByRole("button", { name: "Create" }).click();
-
+      cy.wait(500);
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", {
           name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
@@ -398,40 +411,20 @@ describe("Desktop - full screen", () => {
           name: `${userToRegister.firstName} ${userToRegister.lastName}`,
         }).should("exist");
       });
-    });
 
-    it("edit user", () => {
-      const user = generateUser();
-      const newUserData = generateUser();
-
-      cy.visit("/");
-      cy.findByRole("link", { name: "register" }).click();
-      cy.register(
-        user.organization,
-        user.firstName,
-        user.lastName,
-        user.email,
-        user.password
+      cy.selectUserFromDirectory(
+        `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`
       );
-      cy.login(user.email, user.password);
-
-      cy.navigateTo("Users");
-
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${user.firstName} ${user.lastName}`,
-        }).click();
-      });
 
       cy.findByRole("main").within(() => {
         cy.findByRole("heading", {
-          name: `${user.firstName} ${user.lastName}`,
+          name: `${userToRegister.firstName} ${userToRegister.lastName}`,
         }).should("exist");
 
         cy.findByRole("article").within(() => {
-          cy.findByText(user.firstName).should("exist");
-          cy.findByText(user.lastName).should("exist");
-          cy.findByText(user.email).should("exist");
+          cy.findByText(userToRegister.firstName).should("exist");
+          cy.findByText(userToRegister.lastName).should("exist");
+          cy.findByText(userToRegister.email).should("exist");
         });
 
         cy.findByRole("link", { name: "Edit" }).click();
@@ -460,6 +453,23 @@ describe("Desktop - full screen", () => {
           cy.findByText(newUserData.email).should("exist");
           cy.findByText(newUserData.title).should("exist");
         });
+
+        cy.findByRole("link", { name: "Offboard" }).click();
+      });
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        }).should("not.exist");
+      });
+
+      cy.findByRole("button", { name: "Filter" }).click();
+      cy.findByRole("checkbox", { name: "Offboarded" }).click();
+
+      cy.findByRole("navigation", { name: "Directory" }).within(() => {
+        cy.findByRole("link", {
+          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        }).should("exist");
       });
     });
   });

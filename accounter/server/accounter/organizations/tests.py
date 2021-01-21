@@ -190,6 +190,45 @@ class OrganizationTestCase(GraphQLTestCase):
         assert response_user_profile["isOwner"] is False
         assert response_user_profile["currentUserCanEdit"] is True
 
+    def test_get_organization_only_active_profiles(self):
+        self.client.force_login(self.admin)
+        deactivated_profile = baker.make(
+            Profile,
+            is_admin=False,
+            is_owner=False,
+            is_active=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+            {
+              currentUser {
+                organization {
+                  name
+                  profiles(isActive: true) {
+                    edges {
+                      node {
+                        email
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            """,
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        organization = content["data"]["currentUser"]["organization"]
+        response__profiles = organization["profiles"]["edges"]
+
+        for profile in response__profiles:
+            print(profile["node"]["email"])
+            assert profile["node"]["email"] != deactivated_profile.user.email
+
     def test_get_current_user(self):
         self.client.force_login(self.admin)
         response = self.query(
