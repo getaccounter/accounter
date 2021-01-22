@@ -8,6 +8,14 @@
       {
         "publishCmd": "./deploy.sh ${nextRelease.version}"
       }
+    ],
+    [
+      "semantic-release-slack-bot",
+      {
+        "notifyOnSuccess": true,
+        "notifyOnFail": true,
+        "markdownReleaseNotes": true
+      }
     ]
   ]
 }
