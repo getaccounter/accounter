@@ -15,7 +15,7 @@ from .users.schemas import (
     Query as UserQuery,
     Mutation as UserMutation,
 )
-from .utils import signin_required
+from .utils import admin_required
 
 
 class Mutation(UserMutation, OrganizationMutation, graphene.ObjectType):
@@ -28,14 +28,14 @@ class Query(UserQuery, OrganizationQuery, graphene.ObjectType):
     services = graphene.List(graphene.NonNull(ServiceType), required=True)
 
     @staticmethod
-    @signin_required
+    @admin_required
     def resolve_services(parent, info, **kwargs):
         return Service.objects.all()
 
     integrations = graphene.List(graphene.NonNull(IntegrationInterface), required=True)
 
     @staticmethod
-    @signin_required
+    @admin_required
     def resolve_integrations(parent, info, **kwargs):
         organization = info.context.user.profile.organization
         slack_integrations = SlackIntegration.objects.filter(organization=organization)

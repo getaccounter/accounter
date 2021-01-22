@@ -1173,3 +1173,85 @@ class OrganizationTestCase(GraphQLTestCase):
         errors = content["errors"]
         assert (len(errors)) == 1
         assert errors[0]["message"] == "Profile matching query does not exist."
+
+    def test_reactivate_user(self):
+        self.client.force_login(self.admin)
+        user_profile_to_reactivate = baker.make(
+            Profile,
+            is_active=False,
+            is_admin=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation ReactivateUser (
+            $id: ID!
+          ) {
+            reactivateUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_reactivate.pk),
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["reactivateUser"]["profile"]
+        _, db_pk = from_global_id(returned_profile["id"])
+        profile = Profile.objects.get(id=int(db_pk))
+
+        assert profile.is_active is True
+
+    def test_reactivate_user_only_admins(self):
+        self.client.force_login(self.user)
+        user_profile_to_reactivate = baker.make(
+            Profile,
+            is_active=False,
+            is_admin=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation ReactivateUser (
+            $id: ID!
+          ) {
+            reactivateUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_reactivate.pk),
+            },
+        )
+        self.assertResponseHasErrors(response)
+        content = json.loads(response.content)
+        errors = content["errors"]
+        assert (len(errors)) == 1
+        assert (
+            errors[0]["message"] == "You do not have permission to perform this action"
+        )
