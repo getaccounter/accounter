@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from graphene_django import DjangoObjectType
 from ..utils import admin_required, ExtendedConnection
-from ..utils import admin_required
 from graphql_relay.node.node import from_global_id
 from django.core.exceptions import PermissionDenied
 
@@ -253,7 +252,7 @@ class OffboardUser(graphene.relay.ClientIDMutation):
             raise PermissionDenied("You do not have permission to perform this action")
 
         profile.is_active = False
-        profile.is_admin = False 
+        profile.is_admin = False
         profile.is_owner = False
         profile.save()
 

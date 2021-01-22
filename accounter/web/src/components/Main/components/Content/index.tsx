@@ -16,6 +16,7 @@ import DescriptionList from "./components/DescriptionList";
 import EditUser from "./components/EditUser";
 import { Content_currentUser } from "./__generated__/Content_currentUser.graphql";
 import OffboardUser from "./components/OffboardUser";
+import ReactivateUser from "./components/ReactivateUser";
 
 type BreadcrumbProps = {
   title: ReactNode;
@@ -132,6 +133,9 @@ const Content = ({ title, profile, currentUser }: Props) => {
       <Route path={`${path}/offboard`}>
         <OffboardUser profile={profile} />
       </Route>
+      <Route path={`${path}/reactivate`}>
+        <ReactivateUser profile={profile} />
+      </Route>
       <Route>
         <Breadcrumb title={title} />
         <article>
@@ -169,6 +173,7 @@ export default createFragmentContainer(Content, {
       ...DescriptionList_profile
       ...EditUser_profile
       ...OffboardUser_profile
+      ...ReactivateUser_profile
     }
   `,
 });
