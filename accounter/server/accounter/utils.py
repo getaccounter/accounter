@@ -4,7 +4,10 @@ import graphene
 
 def signin_required(func):
     def wrapper(*args, **kwargs):
-        if not args[1].context.user.is_authenticated:
+        if (
+            not args[1].context.user.is_authenticated
+            or not args[1].context.user.profile.is_active
+        ):
             raise PermissionDenied("You do not have permission to perform this action")
         else:
             return func(*args, **kwargs)

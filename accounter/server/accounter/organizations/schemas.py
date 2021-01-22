@@ -2,8 +2,7 @@ import graphene
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from graphene_django import DjangoObjectType
-from ..utils import signin_required, ExtendedConnection
-from ..utils import admin_required
+from ..utils import admin_required, ExtendedConnection
 from graphql_relay.node.node import from_global_id
 from django.core.exceptions import PermissionDenied
 
@@ -253,21 +252,47 @@ class OffboardUser(graphene.relay.ClientIDMutation):
             raise PermissionDenied("You do not have permission to perform this action")
 
         profile.is_active = False
+        profile.is_admin = False
+        profile.is_owner = False
+        profile.save()
+
+        return OffboardUser(profile=profile)
+
+
+class ReactivateUser(graphene.relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+
+    profile = graphene.Field(ProfileNode, required=True)
+
+    @admin_required
+    def mutate_and_get_payload(root, info, *args, **input):
+        profile_pk = from_global_id(input.get("id"))[1]
+        organization = info.context.user.profile.organization
+        profile = Profile.objects.get(pk=profile_pk, organization=organization)
+
+        if profile.is_owner:
+            # Should be an edge case, but disallowing it for now
+            raise PermissionDenied("Owner cannot be reactivated")
+
+        if profile.user.pk == info.context.user.pk:
+            # Should be impossible to arrive here, but just in case ...
+            raise PermissionDenied("You cannot reactivate yourself")
+
+        if not can_user_edit_other_user(profile.user, info.context.user):
+            raise PermissionDenied("You do not have permission to perform this action")
+
+        profile.is_active = True
         profile.save()
 
         return OffboardUser(profile=profile)
 
 
 class Query(graphene.ObjectType):
-    @staticmethod
-    @signin_required
-    def resolve_organization(parent, info, **kwargs):
-        return info.context.user.profile.organization
-
     current_user = graphene.Field(ProfileNode, required=True)
 
     @staticmethod
-    @signin_required
+    @admin_required
     def resolve_current_user(parent, info, **kwargs):
         return info.context.user.profile
 
@@ -277,3 +302,4 @@ class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
     offboard_user = OffboardUser.Field()
+    reactivate_user = ReactivateUser.Field()

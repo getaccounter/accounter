@@ -34,7 +34,8 @@ const User = ({ profile }: Props) => {
           )}
         </Link>
       </div>
-      {profile.isAdmin && <Badge>Admin</Badge>}
+      {profile.isAdmin && <Badge color="blue">Admin</Badge>}
+      {!profile.isActive && <Badge color="gray">Offboarded</Badge>}
     </div>
   );
 };
@@ -47,6 +48,7 @@ export default createFragmentContainer(User, {
       lastName
       title
       isAdmin
+      isActive
     }
   `,
 });

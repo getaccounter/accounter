@@ -34,4 +34,9 @@ class Profile(models.Model):
         if self.is_owner:
             # owners are always admins
             self.is_admin = True
+
+        if not self.is_active:
+            # strip rights from offboarded users
+            self.is_admin = False
+            self.is_owner = False
         super(Profile, self).save(*args, **kwargs)

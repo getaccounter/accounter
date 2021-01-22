@@ -10,12 +10,25 @@ type Props = {
   profile: Header_profile;
 };
 
-const Name = (props: { children: ReactNode; isAdmin: boolean }) => (
+const Name = (props: {
+  children: ReactNode;
+  isAdmin: boolean;
+  isActive: boolean;
+}) => (
   <div className="inline-flex items-center">
     <h1 className="text-2xl font-bold text-gray-900 truncate">
       {props.children}
     </h1>
-    {props.isAdmin && <Badge>Admin</Badge>}
+    {props.isAdmin && (
+      <span className="pl-2">
+        <Badge color="blue">Admin</Badge>
+      </span>
+    )}
+    {!props.isActive && (
+      <span className="pl-2">
+        <Badge color="gray">Offboarded</Badge>
+      </span>
+    )}
   </div>
 );
 
@@ -62,7 +75,10 @@ const Header = (props: Props) => {
           </div>
           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
-              <Name isAdmin={props.profile.isAdmin}>
+              <Name
+                isAdmin={props.profile.isAdmin}
+                isActive={props.profile.isActive}
+              >
                 {props.profile.firstName} {props.profile.lastName}
               </Name>
             </div>
@@ -72,20 +88,30 @@ const Header = (props: Props) => {
                   <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                   <span>Edit</span>
                 </MainButton>
-                {props.profile.isActive &&
-                  !props.profile.isCurrentUser &&
-                  !props.profile.isOwner && (
-                    <MainButton danger to={`${url}/offboard`}>
-                      <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
-                      <span>Offboard</span>
-                    </MainButton>
-                  )}
+                {!props.profile.isCurrentUser && !props.profile.isOwner && (
+                  <>
+                    {props.profile.isActive ? (
+                      <MainButton danger to={`${url}/offboard`}>
+                        <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                        <span>Offboard</span>
+                      </MainButton>
+                    ) : (
+                      <MainButton danger to={`${url}/reactivate`}>
+                        <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                        <span>Reactivate</span>
+                      </MainButton>
+                    )}
+                  </>
+                )}
               </div>
             )}
           </div>
         </div>
         <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
-          <Name isAdmin={props.profile.isAdmin}>
+          <Name
+            isAdmin={props.profile.isAdmin}
+            isActive={props.profile.isActive}
+          >
             {props.profile.firstName} {props.profile.lastName}
           </Name>
         </div>

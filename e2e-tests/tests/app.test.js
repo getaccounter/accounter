@@ -121,11 +121,12 @@ describe("Mobile", () => {
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", {
           name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
-        }).should('exist')
+        }).should("exist");
       });
 
-      cy.selectUserFromDirectory(
-        `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`
+      cy.getUserFromDirectory(
+        `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+        (user) => user.click()
       );
 
       cy.findByRole("main").within(() => {
@@ -169,12 +170,14 @@ describe("Mobile", () => {
         }).should("exist");
       });
 
-      cy.selectUserFromDirectory(
-        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.click()
       );
 
       cy.findByRole("main").within(() => {
         cy.findByRole("link", { name: "Offboard" }).click();
+        cy.findByRole("link", { name: "Users" }).click();
       });
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
@@ -186,11 +189,26 @@ describe("Mobile", () => {
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-        }).should("exist");
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => {
+          user.should("exist");
+          user.click();
+        }
+      );
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("link", { name: "Reactivate" }).click();
+        cy.findByRole("link", { name: "Users" }).click();
       });
+
+      cy.findByRole("button", { name: "Filter" }).click();
+      cy.findByRole("checkbox", { name: "Offboarded" }).click();
+
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.should("exist")
+      );
     });
   });
 });
@@ -230,7 +248,7 @@ describe("Desktop - window", () => {
   });
 
   describe("Users", () => {
-    it("Add, edit and offboard", () => {
+    it("Add, edit, offboard and reactivate", () => {
       const user = generateUser();
       const userToRegister = generateUser();
       const newUserData = generateUser();
@@ -262,17 +280,13 @@ describe("Desktop - window", () => {
         cy.findByRole("link", { name: "Users" }).click();
       });
 
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
-        });
-      });
-
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
-        }).click();
-      });
+      cy.getUserFromDirectory(
+        `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+        (user) => {
+          user.should("exist");
+          user.click();
+        }
+      );
 
       cy.findByRole("main").within(() => {
         cy.findByRole("heading", {
@@ -309,34 +323,49 @@ describe("Desktop - window", () => {
         cy.findByRole("link", { name: "Users" }).click();
       });
 
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-        }).should("exist");
-      });
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.should("exist")
+      );
 
-      cy.selectUserFromDirectory(
-        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.click()
       );
 
       cy.findByRole("main").within(() => {
         cy.findByRole("link", { name: "Offboard" }).click();
+        cy.findByRole("link", { name: "Users" }).click();
       });
 
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-        }).should("not.exist");
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.should("not.exist")
+      );
+
+      cy.findByRole("button", { name: "Filter" }).click();
+      cy.findByRole("checkbox", { name: "Offboarded" }).click();
+
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => {
+          user.should("exist");
+          user.click();
+        }
+      );
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("link", { name: "Reactivate" }).click();
+        cy.findByRole("link", { name: "Users" }).click();
       });
 
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-        }).should("exist");
-      });
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.should("exist")
+      );
     });
   });
 });
@@ -376,7 +405,7 @@ describe("Desktop - full screen", () => {
   });
 
   describe("Users", () => {
-    it("Add, edit and offboard", () => {
+    it("Add, edit, offboard and reactivate", () => {
       const user = generateUser();
       const userToRegister = generateUser();
       const newUserData = generateUser();
@@ -412,8 +441,9 @@ describe("Desktop - full screen", () => {
         }).should("exist");
       });
 
-      cy.selectUserFromDirectory(
-        `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`
+      cy.getUserFromDirectory(
+        `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+        (user) => user.click()
       );
 
       cy.findByRole("main").within(() => {
@@ -436,11 +466,10 @@ describe("Desktop - full screen", () => {
       cy.findByLabelText("Title").clear().type(newUserData.title);
       cy.findByRole("button", { name: "Update" }).click();
 
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-        }).should("exist");
-      });
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.should("exist")
+      );
 
       cy.findByRole("main").within(() => {
         cy.findByRole("heading", {
@@ -457,20 +486,33 @@ describe("Desktop - full screen", () => {
         cy.findByRole("link", { name: "Offboard" }).click();
       });
 
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-        }).should("not.exist");
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.should("not.exist")
+      );
+
+      cy.findByRole("button", { name: "Filter" }).click();
+      cy.findByRole("checkbox", { name: "Offboarded" }).click();
+
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => {
+          user.should("exist");
+          user.click();
+        }
+      );
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("link", { name: "Reactivate" }).click();
       });
 
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.findByRole("navigation", { name: "Directory" }).within(() => {
-        cy.findByRole("link", {
-          name: `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-        }).should("exist");
-      });
+      cy.getUserFromDirectory(
+        `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
+        (user) => user.should("exist")
+      );
     });
   });
 });

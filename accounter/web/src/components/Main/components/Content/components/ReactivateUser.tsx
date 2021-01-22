@@ -7,25 +7,25 @@ import { Environment } from "relay-runtime/lib/store/RelayStoreTypes";
 import { useEnvironment } from "../../../../../contexts/relay";
 import Loading from "../../../../Loading";
 import {
-  OffboardUserMutationVariables,
-  OffboardUserMutationResponse,
-  OffboardUserMutation,
-} from "./__generated__/OffboardUserMutation.graphql";
-import { OffboardUser_profile } from "./__generated__/OffboardUser_profile.graphql";
+  ReactivateUserMutationVariables,
+  ReactivateUserMutationResponse,
+  ReactivateUserMutation,
+} from "./__generated__/ReactivateUserMutation.graphql";
+import { ReactivateUser_profile } from "./__generated__/ReactivateUser_profile.graphql";
 
 const offboardUser = (
   environment: Environment,
-  variables: OffboardUserMutationVariables,
+  variables: ReactivateUserMutationVariables,
   onCompleted: (
-    response: OffboardUserMutationResponse,
+    response: ReactivateUserMutationResponse,
     errors?: ReadonlyArray<PayloadError> | null
   ) => void,
   onError: ((error: Error) => void) | null
 ) => {
-  commitMutation<OffboardUserMutation>(environment, {
+  commitMutation<ReactivateUserMutation>(environment, {
     mutation: graphql`
-      mutation OffboardUserMutation($id: ID!) {
-        offboardUser(input: { id: $id }) {
+      mutation ReactivateUserMutation($id: ID!) {
+        reactivateUser(input: { id: $id }) {
           profile {
             id
             ...Content_profile
@@ -40,10 +40,10 @@ const offboardUser = (
 };
 
 type Props = {
-  profile: OffboardUser_profile;
+  profile: ReactivateUser_profile;
 };
 
-const OffboardUser = ({ profile }: Props) => {
+const ReactivateUser = ({ profile }: Props) => {
   const environment = useEnvironment();
   const location = useLocation();
   useEffect(() => {
@@ -74,9 +74,9 @@ const OffboardUser = ({ profile }: Props) => {
   );
 };
 
-export default createFragmentContainer(OffboardUser, {
+export default createFragmentContainer(ReactivateUser, {
   profile: graphql`
-    fragment OffboardUser_profile on ProfileNode {
+    fragment ReactivateUser_profile on ProfileNode {
       id
       isActive
     }
