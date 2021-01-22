@@ -14,7 +14,8 @@
       {
         "notifyOnSuccess": true,
         "notifyOnFail": true,
-        "markdownReleaseNotes": true
+        "markdownReleaseNotes": true,
+        "packageName": "Accounter"
       }
     ]
   ]
