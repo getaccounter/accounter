@@ -745,7 +745,7 @@ class OrganizationTestCase(GraphQLTestCase):
         assert (len(errors)) == 1
         assert errors[0]["message"] == "Profile matching query does not exist."
 
-    def test_update_user_non_owner_can_edit_themselves(self):
+    def test_update_user_owner_cannot_edit_other_owner(self):
         self.client.force_login(self.owner)
         user_profile_to_update = baker.make(
             Profile,
@@ -1063,6 +1063,48 @@ class OrganizationTestCase(GraphQLTestCase):
             errors[0]["message"] == "You do not have permission to perform this action"
         )
 
+    def test_offboard_user_owners_can_offboard_admins(self):
+        self.client.force_login(self.owner)
+        user_profile_to_offboard = baker.make(
+            Profile,
+            is_admin=True,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation OffboardUser (
+            $id: ID!
+          ) {
+            offboardUser(
+              input: {
+                id: $id
+              }
+            ) {
+              profile {
+                id
+                isActive
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_offboard.pk),
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["offboardUser"]["profile"]
+        _, db_pk = from_global_id(returned_profile["id"])
+        profile = Profile.objects.get(id=int(db_pk))
+        user_profile_to_offboard.refresh_from_db()
+
+        assert profile.is_active is user_profile_to_offboard.is_active is False
+        assert profile.is_admin is user_profile_to_offboard.is_admin is False
+
     def test_offboard_user_owners_cannot_be_offboarded(self):
         self.client.force_login(self.owner)
         user_profile_to_offboard = baker.make(
@@ -1204,7 +1246,9 @@ class OrganizationTestCase(GraphQLTestCase):
 
           """,
             variables={
-                "id": to_global_id(ProfileNode._meta.name, user_profile_to_reactivate.pk),
+                "id": to_global_id(
+                    ProfileNode._meta.name, user_profile_to_reactivate.pk
+                ),
             },
         )
         self.assertResponseNoErrors(response)
@@ -1245,7 +1289,9 @@ class OrganizationTestCase(GraphQLTestCase):
 
           """,
             variables={
-                "id": to_global_id(ProfileNode._meta.name, user_profile_to_reactivate.pk),
+                "id": to_global_id(
+                    ProfileNode._meta.name, user_profile_to_reactivate.pk
+                ),
             },
         )
         self.assertResponseHasErrors(response)

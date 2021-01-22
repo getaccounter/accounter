@@ -253,6 +253,8 @@ class OffboardUser(graphene.relay.ClientIDMutation):
             raise PermissionDenied("You do not have permission to perform this action")
 
         profile.is_active = False
+        profile.is_admin = False 
+        profile.is_owner = False
         profile.save()
 
         return OffboardUser(profile=profile)
@@ -273,6 +275,10 @@ class ReactivateUser(graphene.relay.ClientIDMutation):
         if profile.is_owner:
             # Should be an edge case, but disallowing it for now
             raise PermissionDenied("Owner cannot be reactivated")
+
+        if profile.user.pk == info.context.user.pk:
+            # Should be impossible to arrive here, but just in case ...
+            raise PermissionDenied("You cannot reactivate yourself")
 
         if not can_user_edit_other_user(profile.user, info.context.user):
             raise PermissionDenied("You do not have permission to perform this action")
