@@ -130,5 +130,6 @@ jobs:
         with:
           extra_plugins: |
             @semantic-release/exec
+            semantic-release-slack-bot
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
