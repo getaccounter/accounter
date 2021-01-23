@@ -14,15 +14,22 @@ const Name = (props: {
   children: ReactNode;
   isAdmin: boolean;
   isOffboarded: boolean;
+  isOwner: boolean;
 }) => (
   <div className="inline-flex items-center">
     <h1 className="text-2xl font-bold text-gray-900 truncate">
       {props.children}
     </h1>
-    {props.isAdmin && (
+    {props.isOwner ? (
       <span className="pl-2">
-        <Badge color="blue">Admin</Badge>
+        <Badge color="blue">Owner</Badge>
       </span>
+    ) : (
+      props.isAdmin && (
+        <span className="pl-2">
+          <Badge color="blue">Admin</Badge>
+        </span>
+      )
     )}
     {props.isOffboarded && (
       <span className="pl-2">
@@ -76,6 +83,7 @@ const Header = (props: Props) => {
           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
               <Name
+                isOwner={props.profile.isOwner}
                 isAdmin={props.profile.isAdmin}
                 isOffboarded={props.profile.isOffboarded}
               >
@@ -109,6 +117,7 @@ const Header = (props: Props) => {
         </div>
         <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
           <Name
+            isOwner={props.profile.isOwner}
             isAdmin={props.profile.isAdmin}
             isOffboarded={props.profile.isOffboarded}
           >

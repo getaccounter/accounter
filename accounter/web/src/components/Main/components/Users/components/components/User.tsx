@@ -34,7 +34,11 @@ const User = ({ profile }: Props) => {
           )}
         </Link>
       </div>
-      {profile.isAdmin && <Badge color="blue">Admin</Badge>}
+      {profile.isOwner ? (
+        <Badge color="blue">Owner</Badge>
+      ) : (
+        profile.isAdmin && <Badge color="blue">Admin</Badge>
+      )}
       {profile.isOffboarded && <Badge color="gray">Offboarded</Badge>}
     </div>
   );
@@ -48,6 +52,7 @@ export default createFragmentContainer(User, {
       lastName
       title
       isAdmin
+      isOwner
       isOffboarded
     }
   `,

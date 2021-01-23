@@ -103,6 +103,8 @@ class Profile(models.Model):
         self.save()
 
     def demote_to_regular_user(self, demoted_by: Type["Profile"]):
+        if self.is_owner:
+            raise ValueError("Cannot demote owner")
         self.is_admin = False
         self.removeLogin()
         self.save()
