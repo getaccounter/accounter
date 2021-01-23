@@ -1,5 +1,14 @@
 from django.conf import settings
 from django.db import models
+from typing import Type
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.exceptions import PermissionDenied
+
+
+token_generator = PasswordResetTokenGenerator()
 
 
 class Organization(models.Model):
@@ -30,13 +39,77 @@ class Profile(models.Model):
     is_owner = models.BooleanField(default=False)
     is_offboarded = models.BooleanField(default=False)
 
+    def send_invite_email(self, inviter: Type["Profile"]):
+        token = token_generator.make_token(self.user)
+        organization_name = self.organization.name
+        subject = f"{inviter.user.first_name} invited you to join {organization_name} on accounter.io"
+        html_message = render_to_string(
+            "admin_email.html",
+            {
+                "invitee_first_name": self.user.first_name,
+                "inviter_first_name": inviter.user.first_name,
+                "organization_name": organization_name,
+                "registration_link": settings.BASE_URL
+                + f"/reset-password?username={self.user.username}&token={token}",
+            },
+        )
+        plain_message = strip_tags(html_message)
+        from_email = "accounter.io <noreply@accounter.io>"
+        to = self.user.email
+
+        send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+
+    def reset_password(self, token: str, password: str):
+        is_token_valid = token_generator.check_token(self.user, token)
+        if not is_token_valid:
+            raise PermissionDenied("Token is not valid")
+
+        if not self.user.is_active:
+            raise PermissionDenied("User is not active")
+
+        self.user.set_password(password)
+        self.user.save()
+        self.save()
+
+    def setupLogin(self, granted_by):
+        self.user.is_active = True
+        self.user.save()
+        self.send_invite_email(granted_by)
+
+    def removeLogin(self):
+        self.user.is_active = False
+        self.user.set_unusable_password()
+        self.user.save()
+
+    def offboard(self):
+        self.is_offboarded = True
+        self.is_admin = False
+        self.is_owner = False
+        self.save()
+
+    def reactivate(self):
+        self.is_offboarded = False
+        self.save()
+
+    def promote_to_admin(self, promoted_by: Type["Profile"]):
+        if self.is_admin:
+            # Already admin
+            return
+        self.is_admin = True
+
+        self.setupLogin(promoted_by)
+
+        self.user.save()
+        self.save()
+
+    def demote_to_regular_user(self, demoted_by: Type["Profile"]):
+        self.is_admin = False
+        self.removeLogin()
+        self.save()
+
     def save(self, *args, **kwargs):
         if self.is_owner:
             # owners are always admins
             self.is_admin = True
 
-        if self.is_offboarded:
-            # strip rights from offboarded users
-            self.is_admin = False
-            self.is_owner = False
         super(Profile, self).save(*args, **kwargs)

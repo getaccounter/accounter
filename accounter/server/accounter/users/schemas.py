@@ -1,6 +1,9 @@
 import graphene
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Signin(graphene.Mutation):
@@ -22,6 +25,30 @@ class Signin(graphene.Mutation):
         else:
             login(info.context, user)
             return Signin(status="success", message="Successfully signed in.")
+
+
+class ResetPassword(graphene.Mutation):
+    class Arguments:
+        username = graphene.String(required=True)
+        token = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    status = graphene.String(required=True)
+    message = graphene.String(required=True)
+
+    def mutate(self, info, username: str, token: str, password: str):
+        user = User.objects.get(username=username)
+        try:
+            user.profile.reset_password(token, password)
+        except PermissionDenied as e:
+            if str(e) == "User is not active":
+                raise PermissionDenied(
+                    "You do not have permission to perform this action"
+                )
+            else:
+                raise PermissionDenied("Link is expired")
+
+        return Signin(status="success", message="Successfully signed in.")
 
 
 class Signout(graphene.Mutation):
@@ -48,3 +75,4 @@ class Query(graphene.ObjectType):
 class Mutation(graphene.ObjectType):
     signin = Signin.Field()
     signout = Signout.Field()
+    reset_password = ResetPassword.Field()

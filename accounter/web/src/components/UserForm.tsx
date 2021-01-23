@@ -30,7 +30,7 @@ const createUser = (
     response: UserFormCreateMutationResponse,
     errors?: ReadonlyArray<PayloadError> | null
   ) => void,
-  onError: (error: Error) => void
+  onError: (error: PayloadError) => void
 ) => {
   commitMutation<UserFormCreateMutation>(environment, {
     mutation: graphql`
