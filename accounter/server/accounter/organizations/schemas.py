@@ -2,11 +2,11 @@ import graphene
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from graphene_django import DjangoObjectType
-from ..utils import admin_required, ExtendedConnection
 from graphql_relay.node.node import from_global_id
 from django.core.exceptions import PermissionDenied
 
 from .models import Department, Organization, Profile
+from ..utils import admin_required, ExtendedConnection
 
 
 class Signup(graphene.Mutation):
@@ -163,6 +163,7 @@ class CreateUser(graphene.relay.ClientIDMutation):
             email=input.get("email"),
             first_name=input.get("first_name"),
             last_name=input.get("last_name"),
+            is_active=False,
         )
         user.save()
         profile = Profile.objects.create(
@@ -198,12 +199,20 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         if not can_user_edit_other_user(profile.user, info.context.user):
             raise PermissionDenied("You do not have permission to perform this action")
 
-        if input.get("is_admin") is not None:
+        if input.get("is_admin", None) is not None:
             if info.context.user.profile.is_owner is False:
                 raise PermissionDenied(
                     "You do not have permission to perform this action"
                 )
-            profile.is_admin = input.get("is_admin")
+
+            is_admin = input.get("is_admin")
+            is_admin_changed = is_admin != profile.is_admin
+
+            if is_admin_changed and is_admin:
+                profile.promote_to_admin(info.context.user.profile)
+
+            if is_admin_changed and not is_admin:
+                profile.demote_to_regular_user(info.context.user.profile)
 
         if input.get("first_name") is not None:
             profile.user.first_name = input.get("first_name")
@@ -250,10 +259,7 @@ class OffboardUser(graphene.relay.ClientIDMutation):
         if not can_user_edit_other_user(profile.user, info.context.user):
             raise PermissionDenied("You do not have permission to perform this action")
 
-        profile.is_offboarded = True
-        profile.is_admin = False
-        profile.is_owner = False
-        profile.save()
+        profile.offboard()
 
         return OffboardUser(profile=profile)
 
@@ -281,8 +287,7 @@ class ReactivateUser(graphene.relay.ClientIDMutation):
         if not can_user_edit_other_user(profile.user, info.context.user):
             raise PermissionDenied("You do not have permission to perform this action")
 
-        profile.is_offboarded = False
-        profile.save()
+        profile.reactivate()
 
         return OffboardUser(profile=profile)
 

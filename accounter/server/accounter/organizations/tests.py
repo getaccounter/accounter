@@ -1,12 +1,13 @@
 import json
 
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 from graphql_relay.node.node import from_global_id, to_global_id
 
 from .models import Organization, Profile, Department
 from .schemas import DepartmentNode, ProfileNode
+from django.core import mail
 
 User = get_user_model()
 
@@ -40,90 +41,6 @@ class OrganizationTestCase(GraphQLTestCase):
         self.owner = owner_profile.user
         self.admin = admin_profile.user
         self.user = user_profile.user
-
-    def test_signup_mutation(self):
-        email = "user@internet.cat"
-        first_name = "firstname"
-        last_name = "lastname"
-        password = "some password"
-        org_name = "SuperOrg"
-        response = self.query(
-            """
-          mutation SignUp(
-            $orgName: String!
-            $firstName: String!
-            $lastName: String!
-            $email: String!
-            $password: String!
-          ) {
-            signup(
-              orgName: $orgName
-              firstName: $firstName
-              lastName: $lastName
-              email: $email
-              password: $password
-            ) {
-              status
-            }
-          }
-
-          """,
-            variables={
-                "email": email,
-                "firstName": first_name,
-                "lastName": last_name,
-                "password": password,
-                "orgName": org_name,
-            },
-        )
-        self.assertResponseNoErrors(response)
-        user = authenticate(username=email, password=password)
-        assert user is not None
-        assert user.first_name == first_name
-        assert user.last_name == last_name
-        assert user.profile is not None
-        assert user.profile.organization is not None
-        assert user.profile.organization.name == org_name
-
-    def test_signup_is_atomic(self):
-        email = "duplicated email"
-        org_name = "some org"
-        # create user, so other user cannot be created because of duplication
-        User.objects.create(username=email, email=email, password="somepassword")
-        response = self.query(
-            """
-            mutation SignUp(
-              $orgName: String!
-              $firstName: String!
-              $lastName: String!
-              $email: String!
-              $password: String!
-            ) {
-              signup(
-                orgName: $orgName
-                firstName: $firstName
-                lastName: $lastName
-                email: $email
-                password: $password
-              ) {
-                status
-              }
-            }
-            """,
-            variables={
-                "email": email,
-                "firstName": "firstname",
-                "lastName": "lastname",
-                "password": "some password",
-                "orgName": org_name,
-            },
-        )
-        self.assertResponseHasErrors(response)
-        users = User.objects.filter(email=email)
-        orgs = Organization.objects.filter(name=org_name)
-
-        assert len(users) == 1
-        assert len(orgs) == 0
 
     def test_get_organization(self):
         self.client.force_login(self.admin)
@@ -786,13 +703,12 @@ class OrganizationTestCase(GraphQLTestCase):
         self.assertResponseHasErrors(response)
         content = json.loads(response.content)
         errors = content["errors"]
-        print(errors)
         assert (len(errors)) == 1
         assert (
             errors[0]["message"] == "You do not have permission to perform this action"
         )
 
-    def test_update_user_admin_cannot_raise_other_admins(self):
+    def test_update_user_admin_cannot_promote_other_admins(self):
         self.client.force_login(self.admin)
         user_profile_to_update = baker.make(
             Profile,
@@ -833,6 +749,100 @@ class OrganizationTestCase(GraphQLTestCase):
         assert (
             errors[0]["message"] == "You do not have permission to perform this action"
         )
+
+    def test_update_user_owner_can_promote_other_admins(self):
+        self.client.force_login(self.owner)
+        user_profile_to_update = baker.make(
+            Profile,
+            is_admin=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $isAdmin: Boolean
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                isAdmin: $isAdmin
+              }
+            ) {
+              profile {
+                id
+                isAdmin
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "isAdmin": True,
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["updateUser"]["profile"]
+        _, db_pk = from_global_id(returned_profile["id"])
+
+        profile = Profile.objects.get(id=int(db_pk))
+        assert profile.is_admin == returned_profile["isAdmin"] is True
+        assert profile.user.is_active is True
+        assert len(mail.outbox) == 1
+        assert (
+            mail.outbox[0].subject
+            == f"{self.owner.first_name} invited you to join {self.owner.profile.organization.name} on accounter.io"
+        )
+        assert mail.outbox[0].to[0] == user_profile_to_update.user.email
+
+    def test_update_user_owner_can_demote_other_admins(self):
+        self.client.force_login(self.owner)
+        user_profile_to_update = baker.make(
+            Profile,
+            is_admin=True,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $isAdmin: Boolean
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                isAdmin: $isAdmin
+              }
+            ) {
+              profile {
+                id
+                isAdmin
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "isAdmin": False,
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        returned_profile = content["data"]["updateUser"]["profile"]
+        _, db_pk = from_global_id(returned_profile["id"])
+
+        profile = Profile.objects.get(id=int(db_pk))
+        assert profile.is_admin == returned_profile["isAdmin"] is False
+        assert profile.user.is_active is False
 
     def test_update_owners_can_edit_themselves(self):
         self.client.force_login(self.owner)

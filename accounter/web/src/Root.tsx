@@ -6,6 +6,7 @@ import Main from "./components/Main";
 import PrivateRoute from "./components/ProtectedRoute";
 import Signup from "./components/Signup/Signup";
 import Logout from "./components/Logout";
+import ResetPassword from "./components/ResetPassword";
 
 export default function Root() {
   return (
@@ -18,7 +19,11 @@ export default function Root() {
           <Logout />
         </Route>
         <Route path="/signup">
+          {/* TODO: make /signup redirect to the app if you're already loged in */}
           <Signup />
+        </Route>
+        <Route path="/reset-password">
+          <ResetPassword />
         </Route>
         <Route exact path="/slack/oauth/callback">
           <OAuthSlackCallback />

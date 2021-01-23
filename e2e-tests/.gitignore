@@ -4,3 +4,4 @@
 .pnp.js
 cypress/videos
 cypress/screenshots
+tmp-test-data

@@ -27,14 +27,17 @@
 import "@testing-library/cypress/add-commands";
 import querystring from "querystring";
 
-Cypress.Commands.add("register", (organization, firstName, lastName, email, password) => {
-  cy.findByLabelText("Org name").type(organization);
-  cy.findByLabelText("First name").type(firstName);
-  cy.findByLabelText("Last name").type(lastName);
-  cy.findByLabelText("Email address").type(email);
-  cy.findByLabelText("Password").type(password);
-  cy.findByRole("button", { name: "Sign up" }).click();
-});
+Cypress.Commands.add(
+  "register",
+  (organization, firstName, lastName, email, password) => {
+    cy.findByLabelText("Org name").type(organization);
+    cy.findByLabelText("First name").type(firstName);
+    cy.findByLabelText("Last name").type(lastName);
+    cy.findByLabelText("Email address").type(email);
+    cy.findByLabelText("Password").type(password);
+    cy.findByRole("button", { name: "Sign up" }).click();
+  }
+);
 
 Cypress.Commands.add("login", (email, password) => {
   cy.findByText("Sign in to your account").should("exist");
@@ -45,21 +48,25 @@ Cypress.Commands.add("login", (email, password) => {
 
 Cypress.Commands.add("getUserFromDirectory", (name, cb) => {
   cy.findByRole("navigation", { name: "Directory" }).within(() => {
-    cb(cy.findByRole("link", { name }))
+    cb(cy.findByRole("link", { name }));
   });
 });
 
 Cypress.Commands.add("navigateTo", (entryName) => {
-  cy.findByRole("navigation", {name: "Sidebar"}).should("exist").within(() => {
-    cy.findByRole("link", { name: entryName }).click();
-  });
+  cy.findByRole("navigation", { name: "Sidebar" })
+    .should("exist")
+    .within(() => {
+      cy.findByRole("link", { name: entryName }).click();
+    });
 });
 
 Cypress.Commands.add("mobileNavigateTo", (entryName) => {
-  cy.findByRole("button", {name: "Open sidebar"}).click()
-  cy.findByRole("navigation", {name: "Sidebar"}).should("exist").within(() => {
-    cy.findByRole("link", { name: entryName }).click();
-  });
+  cy.findByRole("button", { name: "Open sidebar" }).click();
+  cy.findByRole("navigation", { name: "Sidebar" })
+    .should("exist")
+    .within(() => {
+      cy.findByRole("link", { name: entryName }).click();
+    });
 });
 
 Cypress.Commands.add("mockSlackOauth", () => {
@@ -80,3 +87,48 @@ Cypress.Commands.add("mockSlackOauth", () => {
     }
   });
 });
+
+Cypress.Commands.add("getMailHogEmailContent", () => {
+  const getIframeDocument = () => {
+    return (
+      cy
+        .get("#preview-html")
+        // Cypress yields jQuery element, which has the real
+        // DOM element under property "0".
+        // From the real DOM iframe element we can get
+        // the "document" element, it is stored in "contentDocument" property
+        // Cypress "its" command can access deep properties using dot notation
+        // https://on.cypress.io/its
+        .its("0.contentDocument")
+        .should("exist")
+    );
+  };
+
+  const getIframeBody = () => {
+    // get the document
+    return (
+      getIframeDocument()
+        // automatically retries until body is loaded
+        .its("body")
+        .should("not.be.undefined")
+        // wraps "body" DOM element to allow
+        // chaining more Cypress commands, like ".find(...)"
+        .then(cy.wrap)
+    );
+  };
+
+  return getIframeBody()
+});
+
+
+
+Cypress.Commands.add("saveResetUrl", (url) => {
+  // this is a temp fix and hopefully soon not neccessary anymore
+  cy.writeFile('tmp-test-data/resetUrl.txt', url);
+});
+
+Cypress.Commands.add("loadResetUrl", (url) => {
+  // this is a temp fix and hopefully soon not neccessary anymore
+  return cy.readFile('tmp-test-data/resetUrl.txt')
+});
+

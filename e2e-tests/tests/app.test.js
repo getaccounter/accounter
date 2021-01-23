@@ -1,6 +1,6 @@
 const faker = require("faker");
 
-var mockServerClient = require("mockserver-client").mockServerClient;
+const mockServerClient = require("mockserver-client").mockServerClient;
 
 const mockSlack = () => {
   mockServerClient("mockserver", 1080)
@@ -34,16 +34,16 @@ const mockSlack = () => {
     );
 };
 
-const generateUser = () => {
-  const firstName = faker.name.firstName();
-  const lastName = faker.name.lastName();
+const generateUser = (options = {}) => {
+  const firstName = options.firstName || faker.name.firstName();
+  const lastName = options.lastName || faker.name.lastName();
   return {
-    organization: faker.company.companyName(),
+    organization: options.organization || faker.company.companyName(),
     firstName,
     lastName,
-    email: faker.internet.email(firstName, lastName),
-    title: faker.name.jobTitle(),
-    password: faker.internet.password(),
+    email: options.email || faker.internet.email(firstName, lastName),
+    title: options.title || faker.name.jobTitle(),
+    password: options.password || faker.internet.password(),
   };
 };
 
@@ -86,8 +86,12 @@ describe("Mobile", () => {
   describe("Users", () => {
     it("Add, edit and offboard", () => {
       const user = generateUser();
-      const userToRegister = generateUser();
-      const newUserData = generateUser();
+      const userToRegister = generateUser({
+        organization: user.organization,
+      });
+      const newUserData = generateUser({
+        organization: user.organization,
+      });
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
@@ -250,8 +254,12 @@ describe("Desktop - window", () => {
   describe("Users", () => {
     it("Add, edit, offboard and reactivate", () => {
       const user = generateUser();
-      const userToRegister = generateUser();
-      const newUserData = generateUser();
+      const userToRegister = generateUser({
+        organization: user.organization,
+      });
+      const newUserData = generateUser({
+        organization: user.organization,
+      });
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
@@ -407,8 +415,12 @@ describe("Desktop - full screen", () => {
   describe("Users", () => {
     it("Add, edit, offboard and reactivate", () => {
       const user = generateUser();
-      const userToRegister = generateUser();
-      const newUserData = generateUser();
+      const userToRegister = generateUser({
+        organization: user.organization,
+      });
+      const newUserData = generateUser({
+        organization: user.organization,
+      });
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
@@ -513,6 +525,137 @@ describe("Desktop - full screen", () => {
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.should("exist")
       );
+    });
+
+    describe("Add user and then make him admin", () => {
+      const user = generateUser({
+        organization: "Greenfelder and Volkman",
+        firstName: "Peter",
+        lastName: "Greenfelder",
+        email: "Peter@petergreenfelder.internet",
+        title: "Jefe",
+        password: "mysecretpassword"
+      });
+      const userToRegister = generateUser({
+        organization: user.organization,
+        firstName: "Jack",
+        lastName: "Volkman",
+        email: "Jack@petergreenfelder.internet",
+        title: "Co-Jefe",
+      });
+
+      // only broken up in different tests to be able to access different domains
+      // See this: https://github.com/cypress-io/cypress/issues/944
+      it("Part 1", () => {
+        cy.visit("/");
+        cy.findByRole("link", { name: "register" }).click();
+        cy.register(
+          user.organization,
+          user.firstName,
+          user.lastName,
+          user.email,
+          user.password
+        );
+        cy.login(user.email, user.password);
+
+        cy.navigateTo("Add Users");
+
+        cy.findByLabelText("First name").type(userToRegister.firstName);
+        cy.findByLabelText("Last name").type(userToRegister.lastName);
+        cy.findByLabelText("Email address").type(userToRegister.email);
+        cy.findByLabelText("Title").type(userToRegister.title);
+        cy.findByRole("button", { name: "Create" }).click();
+        cy.wait(500);
+        cy.findByRole("navigation", { name: "Directory" }).within(() => {
+          cy.findByRole("link", {
+            name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+          }).should("exist");
+        });
+
+        cy.getUserFromDirectory(
+          `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+          (user) => user.click()
+        );
+
+        cy.findByRole("main").within(() => {
+          cy.findByRole("link", { name: "Edit" }).click();
+        });
+
+        cy.findByLabelText("Admin").click();
+        cy.findByRole("button", { name: "Update" }).click();
+
+        cy.findByRole("button", {
+          name: `${user.firstName} ${user.lastName}`,
+        }).click();
+        cy.findByRole("menuitem", { name: "Logout" }).click();
+
+        cy.findByRole("heading", { name: "Sign in to your account" }).should(
+          "exist"
+        );
+      });
+
+      it("part 2", () => {
+        cy.visit("http://mailserver:8025/");
+        cy.findByText(
+          `${user.firstName} invited you to join ${user.organization} on accounter.io`
+        ).click();
+        cy.getMailHogEmailContent()
+          .findByRole("link", { name: "Join" })
+          .then((link) => {
+            cy.saveResetUrl(link.attr("href").replace("localhost", "loadbalancer"))
+          });
+      });
+
+      it("part 3", function () {
+        cy.loadResetUrl().then(url => {
+          cy.visit(url)
+        })
+
+        cy.findByLabelText("Password").type(userToRegister.password);
+        cy.findByLabelText("Password Confirmation").type(userToRegister.password);
+        cy.findByRole("button", { name: "Set password" }).click();
+
+
+        cy.login(userToRegister.email, userToRegister.password);
+        
+        cy.findByRole("button", {
+          name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+        }).click();
+        cy.findByRole("menuitem", { name: "Logout" }).click();
+        
+        cy.findByRole("heading", { name: "Sign in to your account" }).should(
+          "exist"
+        );
+
+        cy.login(user.email, user.password);
+        
+        cy.navigateTo("Users");
+
+        cy.getUserFromDirectory(
+          `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+          (user) => user.click()
+        );
+
+        cy.findByRole("main").within(() => {
+          cy.findByRole("link", { name: "Edit" }).click();
+        });
+
+        cy.findByLabelText("Admin").click();
+        cy.findByRole("button", { name: "Update" }).click();
+
+        cy.findByRole("button", {
+          name: `${user.firstName} ${user.lastName}`,
+        }).click();
+        cy.findByRole("menuitem", { name: "Logout" }).click();
+
+        cy.findByRole("heading", { name: "Sign in to your account" }).should(
+          "exist"
+        );
+
+        cy.login(userToRegister.email, userToRegister.password);
+
+        cy.findByText("Login Failed").should("exist")
+      });
     });
   });
 });
