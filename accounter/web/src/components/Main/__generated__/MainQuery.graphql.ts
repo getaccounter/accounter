@@ -33,6 +33,7 @@ fragment AddUsers_currentUser on ProfileNode {
 
 fragment Content_currentUser on ProfileNode {
   ...EditUser_currentUser
+  ...Header_currentUser
 }
 
 fragment Content_profile on ProfileNode {
@@ -66,7 +67,12 @@ fragment EditUser_profile on ProfileNode {
   ...UserForm_profile
 }
 
+fragment Header_currentUser on ProfileNode {
+  isOwner
+}
+
 fragment Header_profile on ProfileNode {
+  id
   firstName
   lastName
   isAdmin
@@ -110,7 +116,6 @@ fragment UserDirectory_profiles on ProfileNodeConnection {
 }
 
 fragment UserForm_currentUser on ProfileNode {
-  isOwner
   organization {
     id
     departments {
@@ -130,7 +135,6 @@ fragment UserForm_profile on ProfileNode {
   lastName
   email
   title
-  isAdmin
   department {
     id
   }
@@ -202,23 +206,23 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isOwner",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v6 = [
+v5 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 100
   }
-];
+],
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "isOwner",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -274,7 +278,6 @@ return {
           (v1/*: any*/),
           (v2/*: any*/),
           (v3/*: any*/),
-          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -309,7 +312,7 @@ return {
                         "plural": false,
                         "selections": [
                           (v0/*: any*/),
-                          (v5/*: any*/)
+                          (v4/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -321,7 +324,7 @@ return {
               },
               {
                 "alias": null,
-                "args": (v6/*: any*/),
+                "args": (v5/*: any*/),
                 "concreteType": "ProfileNodeConnection",
                 "kind": "LinkedField",
                 "name": "profiles",
@@ -367,7 +370,7 @@ return {
                             "name": "isOffboarded",
                             "storageKey": null
                           },
-                          (v4/*: any*/),
+                          (v6/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -391,7 +394,7 @@ return {
                             "name": "department",
                             "plural": false,
                             "selections": [
-                              (v5/*: any*/),
+                              (v4/*: any*/),
                               (v0/*: any*/)
                             ],
                             "storageKey": null
@@ -453,7 +456,7 @@ return {
               },
               {
                 "alias": null,
-                "args": (v6/*: any*/),
+                "args": (v5/*: any*/),
                 "filters": null,
                 "handle": "connection",
                 "key": "Users_profiles",
@@ -462,19 +465,20 @@ return {
               }
             ],
             "storageKey": null
-          }
+          },
+          (v6/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "8a38a76331ae5f3591bfb5b1badaa353",
+    "cacheID": "06c8e65c0651e7b7b9d01ae29bd4a8bb",
     "id": null,
     "metadata": {},
     "name": "MainQuery",
     "operationKind": "query",
-    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    ...Users_currentUser\n    ...AddUsers_currentUser\n    id\n  }\n}\n\nfragment AddUsers_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...EditUser_currentUser\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment Dropdown_profile on ProfileNode {\n  id\n}\n\nfragment EditUser_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment Profile_profile on ProfileNode {\n  ...Dropdown_profile\n  firstName\n  lastName\n  title\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      isOffboarded\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  isOwner\n  organization {\n    id\n    departments {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n  isOffboarded\n}\n\nfragment Users_currentUser on ProfileNode {\n  ...Content_currentUser\n  organization {\n    profiles(first: 100) {\n      edges {\n        node {\n          id\n          ...Content_profile\n          __typename\n        }\n        cursor\n      }\n      ...UserDirectory_profiles\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    ...Users_currentUser\n    ...AddUsers_currentUser\n    id\n  }\n}\n\nfragment AddUsers_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...EditUser_currentUser\n  ...Header_currentUser\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment Dropdown_profile on ProfileNode {\n  id\n}\n\nfragment EditUser_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_currentUser on ProfileNode {\n  isOwner\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment Profile_profile on ProfileNode {\n  ...Dropdown_profile\n  firstName\n  lastName\n  title\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      isOffboarded\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n    departments {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n  isOffboarded\n}\n\nfragment Users_currentUser on ProfileNode {\n  ...Content_currentUser\n  organization {\n    profiles(first: 100) {\n      edges {\n        node {\n          id\n          ...Content_profile\n          __typename\n        }\n        cursor\n      }\n      ...UserDirectory_profiles\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();

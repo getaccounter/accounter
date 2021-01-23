@@ -11,7 +11,6 @@ export type UserFormUpdateMutationVariables = {
     lastName?: string | null;
     title?: string | null;
     department?: string | null;
-    isAdmin?: boolean | null;
 };
 export type UserFormUpdateMutationResponse = {
     readonly updateUser: {
@@ -36,9 +35,8 @@ mutation UserFormUpdateMutation(
   $lastName: String
   $title: String
   $department: ID
-  $isAdmin: Boolean
 ) {
-  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department, isAdmin: $isAdmin}) {
+  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {
     profile {
       id
       ...Content_profile
@@ -70,6 +68,7 @@ fragment EditUser_profile on ProfileNode {
 }
 
 fragment Header_profile on ProfileNode {
+  id
   firstName
   lastName
   isAdmin
@@ -95,7 +94,6 @@ fragment UserForm_profile on ProfileNode {
   lastName
   email
   title
-  isAdmin
   department {
     id
   }
@@ -126,19 +124,14 @@ v3 = {
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "isAdmin"
+  "name": "lastName"
 },
 v5 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "lastName"
-},
-v6 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "title"
 },
-v7 = [
+v6 = [
   {
     "fields": [
       {
@@ -163,11 +156,6 @@ v7 = [
       },
       {
         "kind": "Variable",
-        "name": "isAdmin",
-        "variableName": "isAdmin"
-      },
-      {
-        "kind": "Variable",
         "name": "lastName",
         "variableName": "lastName"
       },
@@ -181,7 +169,7 @@ v7 = [
     "name": "input"
   }
 ],
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -196,8 +184,7 @@ return {
       (v2/*: any*/),
       (v3/*: any*/),
       (v4/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/)
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -205,7 +192,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v7/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
         "name": "updateUser",
@@ -219,7 +206,7 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
-              (v8/*: any*/),
+              (v7/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -241,17 +228,16 @@ return {
       (v3/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
+      (v4/*: any*/),
       (v5/*: any*/),
-      (v6/*: any*/),
-      (v0/*: any*/),
-      (v4/*: any*/)
+      (v0/*: any*/)
     ],
     "kind": "Operation",
     "name": "UserFormUpdateMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v7/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
         "name": "updateUser",
@@ -265,7 +251,7 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
-              (v8/*: any*/),
+              (v7/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -344,7 +330,7 @@ return {
                     "name": "name",
                     "storageKey": null
                   },
-                  (v8/*: any*/)
+                  (v7/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -357,14 +343,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d2e6b6d3462ebb470282bf488673779b",
+    "cacheID": "eb281e29e301bf544cae43cf1ae24c59",
     "id": null,
     "metadata": {},
     "name": "UserFormUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n  $department: ID\n  $isAdmin: Boolean\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department, isAdmin: $isAdmin}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n"
+    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n  $department: ID\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '46e6a417cfba658268f8cf02e01ab8e7';
+(node as any).hash = '7e6fceb6168dc86586051a04466e3bec';
 export default node;

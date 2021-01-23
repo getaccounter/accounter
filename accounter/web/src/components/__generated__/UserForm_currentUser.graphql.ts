@@ -5,7 +5,6 @@
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type UserForm_currentUser = {
-    readonly isOwner: boolean;
     readonly organization: {
         readonly id: string;
         readonly departments: {
@@ -41,13 +40,6 @@ return {
   "metadata": null,
   "name": "UserForm_currentUser",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "isOwner",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -106,5 +98,5 @@ return {
   "abstractKey": null
 };
 })();
-(node as any).hash = 'f5bca11d1ad234aad4b465b189f57395';
+(node as any).hash = '305ddec0e7a310b6618b0057cd685c80';
 export default node;

@@ -40,7 +40,6 @@ const createUser = (
         $lastName: String!
         $title: String
         $department: ID
-        $isAdmin: Boolean
       ) {
         createUser(
           input: {
@@ -49,7 +48,6 @@ const createUser = (
             lastName: $lastName
             title: $title
             department: $department
-            isAdmin: $isAdmin
           }
         ) {
           profile {
@@ -84,7 +82,6 @@ const updateUser = (
         $lastName: String
         $title: String
         $department: ID
-        $isAdmin: Boolean
       ) {
         updateUser(
           input: {
@@ -94,7 +91,6 @@ const updateUser = (
             lastName: $lastName
             title: $title
             department: $department
-            isAdmin: $isAdmin
           }
         ) {
           profile {
@@ -140,9 +136,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
   const [departmentInput, setDepartmentInput] = useState<DepartmentNode["id"]>(
     isUpdate && profile!.department ? profile!.department.id : NO_DEPARTMENT
   );
-  const [isAdminCheckbox, setIsAdminCheckbox] = useState(
-    isUpdate ? profile!.isAdmin : false
-  );
   return (
     <form
       className="space-y-8 divide-y divide-gray-200"
@@ -158,7 +151,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
             title: titleInput.length > 0 ? titleInput : undefined,
             department:
               departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
-            isAdmin: currentUser.isOwner ? isAdminCheckbox : undefined,
           };
           updateUser(
             environment,
@@ -182,7 +174,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
             title: titleInput.length > 0 ? titleInput : undefined,
             department:
               departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
-            isAdmin: currentUser.isOwner ? isAdminCheckbox : undefined,
           };
 
           createUser(
@@ -344,51 +335,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
           </div>
         </div>
       </div>
-      {currentUser.isOwner && (
-        <div className="pt-6 sm:pt-5">
-          <div role="group" aria-labelledby="label-email">
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
-              <div>
-                <div
-                  className="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700"
-                  id="label-email"
-                >
-                  Role
-                </div>
-              </div>
-              <div className="mt-4 sm:mt-0 sm:col-span-2">
-                <div className="max-w-lg space-y-4">
-                  <div className="relative flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        checked={isAdminCheckbox}
-                        onChange={(evt) =>
-                          setIsAdminCheckbox(evt.target.checked)
-                        }
-                        id="comments"
-                        name="comments"
-                        type="checkbox"
-                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label
-                        htmlFor="comments"
-                        className="font-medium text-gray-700"
-                      >
-                        Admin
-                      </label>
-                      <p className="text-gray-500">
-                        Can on- and offboard users
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="pt-5">
         <div className="flex justify-end">
@@ -415,7 +361,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
 export default createFragmentContainer(UserForm, {
   currentUser: graphql`
     fragment UserForm_currentUser on ProfileNode {
-      isOwner
       organization {
         id
         departments {
@@ -436,7 +381,6 @@ export default createFragmentContainer(UserForm, {
       lastName
       email
       title
-      isAdmin
       department {
         id
       }

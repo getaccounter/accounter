@@ -139,7 +139,7 @@ const Content = ({ title, profile, currentUser }: Props) => {
       <Route>
         <Breadcrumb title={title} />
         <article>
-          <Header profile={profile} />
+          <Header currentUser={currentUser} profile={profile} />
           <Tabs />
           <div className="mt-6 pb-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <Switch>
@@ -165,6 +165,7 @@ export default createFragmentContainer(Content, {
   currentUser: graphql`
     fragment Content_currentUser on ProfileNode {
       ...EditUser_currentUser
+      ...Header_currentUser
     }
   `,
   profile: graphql`

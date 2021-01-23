@@ -1,13 +1,55 @@
 import React, { ReactNode } from "react";
-import { Pencil, XCircle } from "../../../../icons/solid";
-import { createFragmentContainer } from "react-relay";
+import {
+  Briefcase,
+  MinusCircle,
+  Pencil,
+  PlusCircle,
+  XCircle,
+} from "../../../../icons/solid";
+import { createFragmentContainer, Environment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Header_profile } from "./__generated__/Header_profile.graphql";
 import { Link, useRouteMatch } from "react-router-dom";
 import Badge from "../../../../Badge";
+import { commitMutation, PayloadError } from "relay-runtime";
+import {
+  HeaderAdminMutation,
+  HeaderAdminMutationResponse,
+  HeaderAdminMutationVariables,
+} from "./__generated__/HeaderAdminMutation.graphql";
+import { useEnvironment } from "../../../../../contexts/relay";
+import { useNotifications } from "../../../../../contexts/notification";
+import { Header_currentUser } from "./__generated__/Header_currentUser.graphql";
+
+const toggleAdmin = (
+  environment: Environment,
+  variables: HeaderAdminMutationVariables,
+  onCompleted: (
+    response: HeaderAdminMutationResponse,
+    errors?: ReadonlyArray<PayloadError> | null
+  ) => void,
+  onError: (error: PayloadError) => void
+) => {
+  commitMutation<HeaderAdminMutation>(environment, {
+    mutation: graphql`
+      mutation HeaderAdminMutation($id: ID!, $isAdmin: Boolean!) {
+        updateUser(input: { id: $id, isAdmin: $isAdmin }) {
+          profile {
+            id
+            ...Content_profile
+          }
+        }
+      }
+    `,
+    variables,
+    onCompleted,
+    onError,
+  });
+};
 
 type Props = {
   profile: Header_profile;
+  currentUser: Header_currentUser
 };
 
 const Name = (props: {
@@ -41,27 +83,64 @@ const Name = (props: {
 
 const MainButton = (props: {
   children: ReactNode;
-  to: string;
+  to?: string;
+  onClick?: () => void;
   danger?: boolean;
 }) => {
-  return (
-    <Link
-      className={`hover:bg-gray-50 inline-flex px-4 py-2 border border-${
-        props.danger ? "red" : "gray"
-      }-300 shadow-sm rounded-md text-${
-        props.danger ? "red" : "gray"
-      }-700 bg-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`}
-      to={props.to}
-    >
-      <span className="flex-1 inline-flex justify-center text-sm font-medium">
-        {props.children}
-      </span>
+  const className = `hover:bg-gray-50 inline-flex px-4 py-2 border border-${
+    props.danger ? "red" : "gray"
+  }-300 shadow-sm rounded-md text-${
+    props.danger ? "red" : "gray"
+  }-700 bg-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`;
+  const content = (
+    <span className="flex-1 inline-flex justify-center text-sm font-medium">
+      {props.children}
+    </span>
+  );
+  return props.to ? (
+    <Link className={className} to={props.to}>
+      {content}
     </Link>
+  ) : (
+    <button type="button" className={className} onClick={props.onClick}>
+      {content}
+    </button>
   );
 };
 
 const Header = (props: Props) => {
   const { url } = useRouteMatch();
+  const environment = useEnvironment();
+  const { addNotification } = useNotifications();
+
+  const handleAdminToggle = (isAdmin: boolean) => {
+    console.log("BINGO")
+    const variables = {
+      id: props.profile.id,
+      isAdmin,
+    };
+    toggleAdmin(
+      environment,
+      variables,
+      (response, errors) => {
+        if (errors) {
+          addNotification({
+            type: "error",
+            title: "Setting password failed",
+            content: errors[0].message,
+          });
+        } else {
+        }
+      },
+      (err) =>
+        addNotification({
+          type: "error",
+          title: "Setting password failed",
+          content: err.message,
+        })
+    );
+  };
+
   return (
     <div>
       <div>
@@ -96,6 +175,21 @@ const Header = (props: Props) => {
                   <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                   <span>Edit</span>
                 </MainButton>
+                {props.currentUser.isOwner && !props.profile.isOwner && (
+                  <>
+                    {props.profile.isAdmin ? (
+                      <MainButton danger key="remove-admin" onClick={() => handleAdminToggle(false)} >
+                        <MinusCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                        <span>Remove admin</span>
+                      </MainButton>
+                    ) : (
+                      <MainButton key="make-admin" onClick={() => handleAdminToggle(true)} >
+                        <Briefcase className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                        <span>Make admin</span>
+                      </MainButton>
+                    )}
+                  </>
+                )}
                 {!props.profile.isCurrentUser && !props.profile.isOwner && (
                   <>
                     {!props.profile.isOffboarded ? (
@@ -105,7 +199,7 @@ const Header = (props: Props) => {
                       </MainButton>
                     ) : (
                       <MainButton danger to={`${url}/reactivate`}>
-                        <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                        <PlusCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
                         <span>Reactivate</span>
                       </MainButton>
                     )}
@@ -130,8 +224,14 @@ const Header = (props: Props) => {
 };
 
 export default createFragmentContainer(Header, {
+  currentUser: graphql`
+    fragment Header_currentUser on ProfileNode {
+      isOwner
+    }
+  `,
   profile: graphql`
     fragment Header_profile on ProfileNode {
+      id
       firstName
       lastName
       isAdmin
