@@ -28,14 +28,14 @@ class Profile(models.Model):
     )
     is_admin = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_offboarded = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self.is_owner:
             # owners are always admins
             self.is_admin = True
 
-        if not self.is_active:
+        if self.is_offboarded:
             # strip rights from offboarded users
             self.is_admin = False
             self.is_owner = False

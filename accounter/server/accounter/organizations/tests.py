@@ -140,7 +140,7 @@ class OrganizationTestCase(GraphQLTestCase):
                         firstName
                         lastName
                         title
-                        isActive
+                        isOffboarded
                         isCurrentUser
                         isAdmin
                         isOwner
@@ -170,7 +170,7 @@ class OrganizationTestCase(GraphQLTestCase):
         assert response_user_profile["firstName"] == self.profiles[0].user.first_name
         assert response_user_profile["lastName"] == self.profiles[0].user.last_name
         assert response_user_profile["title"] == self.profiles[0].title
-        assert response_user_profile["isActive"] == self.profiles[0].is_active
+        assert response_user_profile["isOffboarded"] == self.profiles[0].is_offboarded
         assert (
             response_user_profile["department"]["name"]
             == self.profiles[0].department.name
@@ -189,45 +189,6 @@ class OrganizationTestCase(GraphQLTestCase):
         assert response_user_profile["isAdmin"] is False
         assert response_user_profile["isOwner"] is False
         assert response_user_profile["currentUserCanEdit"] is True
-
-    def test_get_organization_only_active_profiles(self):
-        self.client.force_login(self.admin)
-        deactivated_profile = baker.make(
-            Profile,
-            is_admin=False,
-            is_owner=False,
-            is_active=False,
-            organization=self.admin.profile.organization,
-            user=baker.make(User, _fill_optional=True),
-            _fill_optional=True,
-        )
-
-        response = self.query(
-            """
-            {
-              currentUser {
-                organization {
-                  name
-                  profiles(isActive: true) {
-                    edges {
-                      node {
-                        email
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            """,
-        )
-        self.assertResponseNoErrors(response)
-        content = json.loads(response.content)
-        organization = content["data"]["currentUser"]["organization"]
-        response__profiles = organization["profiles"]["edges"]
-
-        for profile in response__profiles:
-            print(profile["node"]["email"])
-            assert profile["node"]["email"] != deactivated_profile.user.email
 
     def test_get_current_user(self):
         self.client.force_login(self.admin)
@@ -965,7 +926,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }
@@ -981,7 +942,7 @@ class OrganizationTestCase(GraphQLTestCase):
         _, db_pk = from_global_id(returned_profile["id"])
         profile = Profile.objects.get(id=int(db_pk))
 
-        assert profile.is_active is False
+        assert profile.is_offboarded is True
 
     def test_offboard_user_only_admins(self):
         self.client.force_login(self.user)
@@ -1005,7 +966,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }
@@ -1045,7 +1006,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }
@@ -1085,7 +1046,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }
@@ -1102,7 +1063,7 @@ class OrganizationTestCase(GraphQLTestCase):
         profile = Profile.objects.get(id=int(db_pk))
         user_profile_to_offboard.refresh_from_db()
 
-        assert profile.is_active is user_profile_to_offboard.is_active is False
+        assert profile.is_offboarded is user_profile_to_offboard.is_offboarded is True
         assert profile.is_admin is user_profile_to_offboard.is_admin is False
 
     def test_offboard_user_owners_cannot_be_offboarded(self):
@@ -1128,7 +1089,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }
@@ -1159,7 +1120,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }
@@ -1198,7 +1159,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }
@@ -1220,7 +1181,7 @@ class OrganizationTestCase(GraphQLTestCase):
         self.client.force_login(self.admin)
         user_profile_to_reactivate = baker.make(
             Profile,
-            is_active=False,
+            is_offboarded=True,
             is_admin=False,
             organization=self.admin.profile.organization,
             user=baker.make(User, _fill_optional=True),
@@ -1239,7 +1200,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }
@@ -1257,13 +1218,13 @@ class OrganizationTestCase(GraphQLTestCase):
         _, db_pk = from_global_id(returned_profile["id"])
         profile = Profile.objects.get(id=int(db_pk))
 
-        assert profile.is_active is True
+        assert profile.is_offboarded is False
 
     def test_reactivate_user_only_admins(self):
         self.client.force_login(self.user)
         user_profile_to_reactivate = baker.make(
             Profile,
-            is_active=False,
+            is_offboarded=True,
             is_admin=False,
             organization=self.admin.profile.organization,
             user=baker.make(User, _fill_optional=True),
@@ -1282,7 +1243,7 @@ class OrganizationTestCase(GraphQLTestCase):
             ) {
               profile {
                 id
-                isActive
+                isOffboarded
               }
             }
           }

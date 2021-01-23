@@ -62,7 +62,7 @@ const OffboardUser = ({ profile }: Props) => {
       (err) => console.error(err)
     );
   });
-  return profile.isActive ? (
+  return !profile.isOffboarded ? (
     <Loading />
   ) : (
     <Redirect
@@ -78,7 +78,7 @@ export default createFragmentContainer(OffboardUser, {
   profile: graphql`
     fragment OffboardUser_profile on ProfileNode {
       id
-      isActive
+      isOffboarded
     }
   `,
 });

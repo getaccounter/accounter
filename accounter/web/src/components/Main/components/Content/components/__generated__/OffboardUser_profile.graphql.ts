@@ -6,7 +6,7 @@ import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type OffboardUser_profile = {
     readonly id: string;
-    readonly isActive: boolean;
+    readonly isOffboarded: boolean;
     readonly " $refType": "OffboardUser_profile";
 };
 export type OffboardUser_profile$data = OffboardUser_profile;
@@ -34,12 +34,12 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "isActive",
+      "name": "isOffboarded",
       "storageKey": null
     }
   ],
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = '0ed75d150a597f67b541424954d355f7';
+(node as any).hash = '692c2ed201893e56b5987377776b3eb6';
 export default node;
