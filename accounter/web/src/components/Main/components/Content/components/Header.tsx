@@ -13,7 +13,7 @@ type Props = {
 const Name = (props: {
   children: ReactNode;
   isAdmin: boolean;
-  isActive: boolean;
+  isOffboarded: boolean;
 }) => (
   <div className="inline-flex items-center">
     <h1 className="text-2xl font-bold text-gray-900 truncate">
@@ -24,7 +24,7 @@ const Name = (props: {
         <Badge color="blue">Admin</Badge>
       </span>
     )}
-    {!props.isActive && (
+    {props.isOffboarded && (
       <span className="pl-2">
         <Badge color="gray">Offboarded</Badge>
       </span>
@@ -77,7 +77,7 @@ const Header = (props: Props) => {
             <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
               <Name
                 isAdmin={props.profile.isAdmin}
-                isActive={props.profile.isActive}
+                isOffboarded={props.profile.isOffboarded}
               >
                 {props.profile.firstName} {props.profile.lastName}
               </Name>
@@ -90,7 +90,7 @@ const Header = (props: Props) => {
                 </MainButton>
                 {!props.profile.isCurrentUser && !props.profile.isOwner && (
                   <>
-                    {props.profile.isActive ? (
+                    {!props.profile.isOffboarded ? (
                       <MainButton danger to={`${url}/offboard`}>
                         <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
                         <span>Offboard</span>
@@ -110,7 +110,7 @@ const Header = (props: Props) => {
         <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
           <Name
             isAdmin={props.profile.isAdmin}
-            isActive={props.profile.isActive}
+            isOffboarded={props.profile.isOffboarded}
           >
             {props.profile.firstName} {props.profile.lastName}
           </Name>
@@ -127,7 +127,7 @@ export default createFragmentContainer(Header, {
       lastName
       isAdmin
       currentUserCanEdit
-      isActive
+      isOffboarded
       isOwner
       isCurrentUser
     }

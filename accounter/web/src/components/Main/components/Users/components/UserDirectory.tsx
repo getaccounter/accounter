@@ -14,7 +14,7 @@ type ProfileEdge = UserDirectory_profiles["edges"][0];
 const UserDirectory = ({ profiles }: Props) => {
   const [showOffboardedUsers, setShowOffboardedUsers] = useState(false);
   const groupedUsers = [...profiles.edges.map((edge) => edge!)]
-    .filter(edge => showOffboardedUsers || edge.node!.isActive)
+    .filter(edge => showOffboardedUsers || !edge.node!.isOffboarded)
     .sort((a, b) => {
       if (a.node!.lastName < b.node!.lastName) {
         return -1;
@@ -66,7 +66,7 @@ export default createFragmentContainer(UserDirectory, {
         node {
           id
           lastName
-          isActive
+          isOffboarded
           ...User_profile
         }
       }

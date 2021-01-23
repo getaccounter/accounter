@@ -13,7 +13,7 @@ import {
 } from "./__generated__/ReactivateUserMutation.graphql";
 import { ReactivateUser_profile } from "./__generated__/ReactivateUser_profile.graphql";
 
-const offboardUser = (
+const reactivateUser = (
   environment: Environment,
   variables: ReactivateUserMutationVariables,
   onCompleted: (
@@ -51,7 +51,7 @@ const ReactivateUser = ({ profile }: Props) => {
       id: profile!.id,
     };
 
-    offboardUser(
+    reactivateUser(
       environment,
       variables,
       (response, errors) => {
@@ -62,7 +62,7 @@ const ReactivateUser = ({ profile }: Props) => {
       (err) => console.error(err)
     );
   });
-  return profile.isActive ? (
+  return !profile.isOffboarded ? (
     <Loading />
   ) : (
     <Redirect
@@ -78,7 +78,7 @@ export default createFragmentContainer(ReactivateUser, {
   profile: graphql`
     fragment ReactivateUser_profile on ProfileNode {
       id
-      isActive
+      isOffboarded
     }
   `,
 });

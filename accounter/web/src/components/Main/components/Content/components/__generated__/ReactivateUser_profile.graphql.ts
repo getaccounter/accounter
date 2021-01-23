@@ -6,7 +6,7 @@ import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type ReactivateUser_profile = {
     readonly id: string;
-    readonly isActive: boolean;
+    readonly isOffboarded: boolean;
     readonly " $refType": "ReactivateUser_profile";
 };
 export type ReactivateUser_profile$data = ReactivateUser_profile;
@@ -34,12 +34,12 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "isActive",
+      "name": "isOffboarded",
       "storageKey": null
     }
   ],
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = '9d563ae17ffaef549da63f10894249f8';
+(node as any).hash = '48e56cf78a5361567cc25e199420dc3f';
 export default node;

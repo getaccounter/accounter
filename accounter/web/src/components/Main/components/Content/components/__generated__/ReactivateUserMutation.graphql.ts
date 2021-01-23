@@ -62,19 +62,19 @@ fragment Header_profile on ProfileNode {
   lastName
   isAdmin
   currentUserCanEdit
-  isActive
+  isOffboarded
   isOwner
   isCurrentUser
 }
 
 fragment OffboardUser_profile on ProfileNode {
   id
-  isActive
+  isOffboarded
 }
 
 fragment ReactivateUser_profile on ProfileNode {
   id
-  isActive
+  isOffboarded
 }
 
 fragment UserForm_profile on ProfileNode {
@@ -212,7 +212,7 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "isActive",
+                "name": "isOffboarded",
                 "storageKey": null
               },
               {
@@ -271,12 +271,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ce1e23b3ad0198f031dcef067f4a02d8",
+    "cacheID": "ce55a4856fb1dd3ba2be5ca1429b101c",
     "id": null,
     "metadata": {},
     "name": "ReactivateUserMutation",
     "operationKind": "mutation",
-    "text": "mutation ReactivateUserMutation(\n  $id: ID!\n) {\n  reactivateUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isActive\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isActive\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isActive\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n"
+    "text": "mutation ReactivateUserMutation(\n  $id: ID!\n) {\n  reactivateUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  isAdmin\n  department {\n    id\n  }\n}\n"
   }
 };
 })();

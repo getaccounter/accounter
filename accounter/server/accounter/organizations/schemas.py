@@ -82,13 +82,12 @@ class ProfileNode(DjangoObjectType):
     class Meta:
         connection_class = ExtendedConnection
         model = Profile
-        filter_fields = ["is_active"]
         fields = (
             "email",
             "first_name",
             "last_name",
             "title",
-            "is_active",
+            "is_offboarded",
             "department",
             "organization",
             "is_admin",
@@ -251,7 +250,7 @@ class OffboardUser(graphene.relay.ClientIDMutation):
         if not can_user_edit_other_user(profile.user, info.context.user):
             raise PermissionDenied("You do not have permission to perform this action")
 
-        profile.is_active = False
+        profile.is_offboarded = True
         profile.is_admin = False
         profile.is_owner = False
         profile.save()
@@ -282,7 +281,7 @@ class ReactivateUser(graphene.relay.ClientIDMutation):
         if not can_user_edit_other_user(profile.user, info.context.user):
             raise PermissionDenied("You do not have permission to perform this action")
 
-        profile.is_active = True
+        profile.is_offboarded = False
         profile.save()
 
         return OffboardUser(profile=profile)
