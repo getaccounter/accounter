@@ -577,12 +577,7 @@ describe("Desktop - full screen", () => {
           (user) => user.click()
         );
 
-        cy.findByRole("main").within(() => {
-          cy.findByRole("link", { name: "Edit" }).click();
-        });
-
-        cy.findByLabelText("Admin").click();
-        cy.findByRole("button", { name: "Update" }).click();
+        cy.findByRole("button", { name: "Make admin" }).click();
 
         cy.findByRole("button", {
           name: `${user.firstName} ${user.lastName}`,
@@ -635,13 +630,8 @@ describe("Desktop - full screen", () => {
           `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
           (user) => user.click()
         );
-
-        cy.findByRole("main").within(() => {
-          cy.findByRole("link", { name: "Edit" }).click();
-        });
-
-        cy.findByLabelText("Admin").click();
-        cy.findByRole("button", { name: "Update" }).click();
+        
+        cy.findByRole("button", { name: "Remove admin" }).click();
 
         cy.findByRole("button", {
           name: `${user.firstName} ${user.lastName}`,

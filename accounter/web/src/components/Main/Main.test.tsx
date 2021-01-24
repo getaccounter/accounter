@@ -6,6 +6,7 @@ import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
 import RelayProvider from "../../contexts/relay";
 import { Environment } from "react-relay";
 import userEvent from "@testing-library/user-event";
+import NotificationProvider from "../../contexts/notification";
 
 const Providers = ({
   children,
@@ -14,12 +15,14 @@ const Providers = ({
   children: ReactNode;
   environment: Environment;
 }) => (
-  <RelayProvider environment={environment}>
-    <MemoryRouter>{children}</MemoryRouter>
-  </RelayProvider>
+  <NotificationProvider>
+    <RelayProvider environment={environment}>
+      <MemoryRouter>{children}</MemoryRouter>
+    </RelayProvider>
+  </NotificationProvider>
 );
 
-describe.only("Profile", () => {
+describe("Profile", () => {
   it("renders name", async () => {
     const environment = createMockEnvironment();
     const firstName = "Peter";

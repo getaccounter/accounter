@@ -10,6 +10,7 @@ export type User_profile = {
     readonly lastName: string;
     readonly title: string | null;
     readonly isAdmin: boolean;
+    readonly isOwner: boolean;
     readonly isOffboarded: boolean;
     readonly " $refType": "User_profile";
 };
@@ -66,6 +67,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "isOwner",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "isOffboarded",
       "storageKey": null
     }
@@ -73,5 +81,5 @@ const node: ReaderFragment = {
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = 'e6433df3ae3bcd6b7162f6b76ecf7c69';
+(node as any).hash = '90773d636aec34fe19ba62eaaaad8257';
 export default node;

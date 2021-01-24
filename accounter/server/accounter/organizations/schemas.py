@@ -62,22 +62,6 @@ class DepartmentNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
 
 
-def can_user_edit_other_user(user_to_be_edited, editor):
-    if user_to_be_edited.pk == editor.pk:
-        # user can always edit themselves
-        return True
-
-    if user_to_be_edited.profile.is_owner and user_to_be_edited.pk != editor.pk:
-        # nobody can edit owners but themselves
-        return False
-
-    if user_to_be_edited.profile.is_admin and not editor.profile.is_owner:
-        # admins can only be edited by owners
-        return False
-
-    return True
-
-
 class ProfileNode(DjangoObjectType):
     class Meta:
         connection_class = ExtendedConnection
@@ -127,7 +111,7 @@ class ProfileNode(DjangoObjectType):
     @staticmethod
     def resolve_current_user_can_edit(profile, info, **kwargs):
         user = info.context.user
-        return can_user_edit_other_user(profile.user, user)
+        return profile.can_be_edited_by(user.profile)
 
 
 class CreateUser(graphene.relay.ClientIDMutation):
@@ -196,7 +180,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         organization = info.context.user.profile.organization
         profile = Profile.objects.get(pk=profile_pk, organization=organization)
 
-        if not can_user_edit_other_user(profile.user, info.context.user):
+        if not profile.can_be_edited_by(info.context.user.profile):
             raise PermissionDenied("You do not have permission to perform this action")
 
         if input.get("is_admin", None) is not None:
@@ -256,7 +240,7 @@ class OffboardUser(graphene.relay.ClientIDMutation):
         if profile.user.pk == info.context.user.pk:
             raise PermissionDenied("You cannot offboard yourself")
 
-        if not can_user_edit_other_user(profile.user, info.context.user):
+        if not profile.can_be_edited_by(info.context.user.profile):
             raise PermissionDenied("You do not have permission to perform this action")
 
         profile.offboard()
@@ -284,7 +268,7 @@ class ReactivateUser(graphene.relay.ClientIDMutation):
             # Should be impossible to arrive here, but just in case ...
             raise PermissionDenied("You cannot reactivate yourself")
 
-        if not can_user_edit_other_user(profile.user, info.context.user):
+        if not profile.can_be_edited_by(info.context.user.profile):
             raise PermissionDenied("You do not have permission to perform this action")
 
         profile.reactivate()

@@ -4,29 +4,31 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ReactivateUserMutationVariables = {
+export type HeaderAdminMutationVariables = {
     id: string;
+    isAdmin: boolean;
 };
-export type ReactivateUserMutationResponse = {
-    readonly reactivateUser: {
+export type HeaderAdminMutationResponse = {
+    readonly updateUser: {
         readonly profile: {
             readonly id: string;
             readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
         };
     } | null;
 };
-export type ReactivateUserMutation = {
-    readonly response: ReactivateUserMutationResponse;
-    readonly variables: ReactivateUserMutationVariables;
+export type HeaderAdminMutation = {
+    readonly response: HeaderAdminMutationResponse;
+    readonly variables: HeaderAdminMutationVariables;
 };
 
 
 
 /*
-mutation ReactivateUserMutation(
+mutation HeaderAdminMutation(
   $id: ID!
+  $isAdmin: Boolean!
 ) {
-  reactivateUser(input: {id: $id}) {
+  updateUser(input: {id: $id, isAdmin: $isAdmin}) {
     profile {
       id
       ...Content_profile
@@ -96,6 +98,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "isAdmin"
   }
 ],
 v1 = [
@@ -105,6 +112,11 @@ v1 = [
         "kind": "Variable",
         "name": "id",
         "variableName": "id"
+      },
+      {
+        "kind": "Variable",
+        "name": "isAdmin",
+        "variableName": "isAdmin"
       }
     ],
     "kind": "ObjectValue",
@@ -123,14 +135,14 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ReactivateUserMutation",
+    "name": "HeaderAdminMutation",
     "selections": [
       {
         "alias": null,
         "args": (v1/*: any*/),
-        "concreteType": "ReactivateUserPayload",
+        "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
-        "name": "reactivateUser",
+        "name": "updateUser",
         "plural": false,
         "selections": [
           {
@@ -161,14 +173,14 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ReactivateUserMutation",
+    "name": "HeaderAdminMutation",
     "selections": [
       {
         "alias": null,
         "args": (v1/*: any*/),
-        "concreteType": "ReactivateUserPayload",
+        "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
-        "name": "reactivateUser",
+        "name": "updateUser",
         "plural": false,
         "selections": [
           {
@@ -271,14 +283,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c4e7a2fdb2fcb00110a19c38376f596d",
+    "cacheID": "0e50c6e23d89e52c59188654054e819d",
     "id": null,
     "metadata": {},
-    "name": "ReactivateUserMutation",
+    "name": "HeaderAdminMutation",
     "operationKind": "mutation",
-    "text": "mutation ReactivateUserMutation(\n  $id: ID!\n) {\n  reactivateUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
+    "text": "mutation HeaderAdminMutation(\n  $id: ID!\n  $isAdmin: Boolean!\n) {\n  updateUser(input: {id: $id, isAdmin: $isAdmin}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '7491e57927e4f6517461a3eb197d1a46';
+(node as any).hash = '8a8adaf3556ffcd3824d23fed24b6146';
 export default node;

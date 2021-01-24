@@ -39,6 +39,21 @@ class Profile(models.Model):
     is_owner = models.BooleanField(default=False)
     is_offboarded = models.BooleanField(default=False)
 
+    def can_be_edited_by(self, editor: Type["Profile"]):
+        if self.pk == editor.pk:
+            # user can always edit themselves
+            return True
+
+        if self.is_owner and self.pk != editor.pk:
+            # nobody can edit owners but themselves
+            return False
+
+        if self.is_admin and not editor.is_owner:
+            # admins can only be edited by owners
+            return False
+
+        return True
+
     def send_invite_email(self, inviter: Type["Profile"]):
         token = token_generator.make_token(self.user)
         organization_name = self.organization.name
@@ -92,9 +107,11 @@ class Profile(models.Model):
         self.save()
 
     def promote_to_admin(self, promoted_by: Type["Profile"]):
+        if not promoted_by.is_owner:
+            raise PermissionDenied("You do not have permission to perform this action")
         if self.is_admin:
-            # Already admin
-            return
+            raise ValueError("User is already admin")
+
         self.is_admin = True
 
         self.setupLogin(promoted_by)
@@ -103,6 +120,12 @@ class Profile(models.Model):
         self.save()
 
     def demote_to_regular_user(self, demoted_by: Type["Profile"]):
+        if not demoted_by.is_owner:
+            raise PermissionDenied("You do not have permission to perform this action")
+        if not self.is_admin:
+            raise ValueError("User is already regular user")
+        if self.is_owner:
+            raise ValueError("Cannot demote owner")
         self.is_admin = False
         self.removeLogin()
         self.save()
