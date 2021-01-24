@@ -4,8 +4,9 @@ from .integrations.models import Service, SlackIntegration
 from .integrations.schemas import (
     IntegrationInterface,
     Oauth,
-    ServiceType,
-    SlackIntegrationType,
+    ServiceNode,
+    SlackIntegrationNode,
+    SlackAccountNode,
 )
 from .organizations.schemas import (
     Query as OrganizationQuery,
@@ -25,7 +26,7 @@ class Mutation(UserMutation, OrganizationMutation, graphene.ObjectType):
 class Query(UserQuery, OrganizationQuery, graphene.ObjectType):
     node = graphene.relay.Node.Field()
 
-    services = graphene.List(graphene.NonNull(ServiceType), required=True)
+    services = graphene.List(graphene.NonNull(ServiceNode), required=True)
 
     @staticmethod
     @admin_required
@@ -38,8 +39,14 @@ class Query(UserQuery, OrganizationQuery, graphene.ObjectType):
     @admin_required
     def resolve_integrations(parent, info, **kwargs):
         organization = info.context.user.profile.organization
-        slack_integrations = SlackIntegration.objects.filter(organization=organization)
-        return slack_integrations
+        integrations = SlackIntegration.objects.filter(organization=organization)
+
+        for integration in integrations:
+            integration.refresh()
+
+        return integrations
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation, types=[SlackIntegrationType])
+schema = graphene.Schema(
+    query=Query, mutation=Mutation, types=[SlackIntegrationNode, SlackAccountNode]
+)

@@ -1,6 +1,7 @@
 import json
 import time
 from unittest.mock import patch
+from faker import Faker
 
 from django.contrib.auth import get_user_model
 from django.core.validators import URLValidator
@@ -10,9 +11,66 @@ from model_bakery import baker
 from slack_sdk.web import WebClient
 
 from ..organizations.models import Profile
-from .models import Service, SlackIntegration
+from .models import Service, SlackIntegration, SlackAccount
+
+fake = Faker()
 
 validateURL = URLValidator(message="not a valid url")
+
+
+def slack_user_fixture(
+    profile: Profile = baker.make(
+        Profile,
+        user=baker.make(get_user_model(), _fill_optional=True),
+        _fill_optional=True,
+    )
+):
+    real_name = f"{profile.user.first_name} {profile.user.last_name}"
+    return {
+        "id": "ASDASD123123",
+        "team_id": "XYZXYZ789789",
+        "name": "slack1",
+        "deleted": False,
+        "color": "9f69e7",
+        "real_name": real_name,
+        "tz": "Europe/Amsterdam",
+        "tz_label": "Central European Time",
+        "tz_offset": 3600,
+        "profile": {
+            "title": "",
+            "phone": "",
+            "skype": "",
+            "real_name": real_name,
+            "real_name_normalized": real_name,
+            "display_name": profile.user.first_name,
+            "display_name_normalized": profile.user.first_name,
+            "fields": None,
+            "status_text": "",
+            "status_emoji": "",
+            "status_expiration": 0,
+            "avatar_hash": "g3307d47b80c",
+            "email": profile.user.email,
+            "first_name": profile.user.first_name,
+            "last_name": profile.user.last_name,
+            "image_24": "https://secure.gravatar.com/",
+            "image_32": "https://secure.gravatar.com/",
+            "image_48": "https://secure.gravatar.com/avatar/mock",
+            "image_72": "https://secure.gravatar.com/avatar/mock",
+            "image_192": "https://secure.gravatar.com/avatar/mock",
+            "image_512": "https://secure.gravatar.com/avatar/mock",
+            "status_text_canonical": "",
+            "team": "EOEOEOEOE",
+        },
+        "is_admin": True,
+        "is_owner": True,
+        "is_primary_owner": True,
+        "is_restricted": False,
+        "is_ultra_restricted": False,
+        "is_bot": False,
+        "is_app_user": False,
+        "updated": 1607524353,
+        "has_2fa": False,
+    }
 
 
 class ServiceTestCase(GraphQLTestCase):
@@ -258,71 +316,48 @@ class ServiceTestCase(GraphQLTestCase):
 
 class IntegrationTestCase(GraphQLTestCase):
     def setUp(self):
-        email = "somerandomemail@internet.internet"
+        self.admin = self._signup_user(org_name="some company")
+        self.other_company_admin = self._signup_user(org_name="other company")
+
+    def _signup_user(self, **kwargs):
+        email = kwargs.get("email", fake.company_email())
+        first_name = kwargs.get("first_name", fake.first_name())
+        last_name = kwargs.get("last_name", fake.last_name())
+        password = kwargs.get("password", fake.password())
+        org_name = kwargs.get("org_name", fake.company())
         self.query(
             """
             mutation SignUp(
-              $orgName: String!
-              $firstName: String!
-              $lastName: String!
-              $email: String!
-              $password: String!
+                $orgName: String!
+                $firstName: String!
+                $lastName: String!
+                $email: String!
+                $password: String!
             ) {
-              signup(
-                orgName: $orgName
-                firstName: $firstName
-                lastName: $lastName
-                email: $email
-                password: $password
-              ) {
+                signup(
+                    orgName: $orgName
+                    firstName: $firstName
+                    lastName: $lastName
+                    email: $email
+                    password: $password
+                ) {
                 status
-              }
+                }
             }
             """,
             variables={
                 "email": email,
-                "firstName": "Some",
-                "lastName": "Name",
-                "password": "somepassword",
-                "orgName": "some_org",
+                "firstName": first_name,
+                "lastName": last_name,
+                "password": password,
+                "orgName": org_name,
             },
         )
-        self.admin = get_user_model().objects.get(username=email)
 
-        email_other_user = "different@dude.internet"
-        self.query(
-            """
-            mutation SignUp(
-              $orgName: String!
-              $firstName: String!
-              $lastName: String!
-              $email: String!
-              $password: String!
-            ) {
-              signup(
-                orgName: $orgName
-                firstName: $firstName
-                lastName: $lastName
-                email: $email
-                password: $password
-              ) {
-                status
-              }
-            }
-            """,
-            variables={
-                "email": email_other_user,
-                "firstName": "Other",
-                "lastName": "Person",
-                "password": "somepassword",
-                "orgName": "some_other_org",
-            },
-        )
-        self.other_company_admin = get_user_model().objects.get(
-            username=email_other_user
-        )
+        return get_user_model().objects.get(username=email)
 
-    def test_get_integrations(self):
+    @patch.object(WebClient, "users_list")
+    def test_get_integrations(self, slack_users_list_mock):
         slack_integration = SlackIntegration.objects.create(
             organization=self.admin.profile.organization, token="some_token"
         )
@@ -348,6 +383,102 @@ class IntegrationTestCase(GraphQLTestCase):
             == slack_integration.service.name
         )
 
+    @patch.object(WebClient, "users_list")
+    def test_get_integrations_slack_creates_accounts_if_email_matches(
+        self, slack_users_list_mock
+    ):
+        slack_users_list_mock.return_value = {
+            "ok": True,
+            "cache_ts": 1611515141,
+            "response_metadata": {"next_cursor": ""},
+            "members": [slack_user_fixture(self.admin.profile)],
+        }
+        slack_integration = SlackIntegration.objects.create(
+            organization=self.admin.profile.organization, token="some_token"
+        )
+        slack_integration.save()
+        self.client.force_login(self.admin)
+        response = self.query(
+            """
+            query {
+                integrations {
+                    ... on SlackIntegrationNode {
+                        accounts {
+                            edges {
+                                node {
+                                    username
+                                    email
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        account_edges = content["data"]["integrations"][0]["accounts"]["edges"]
+        assert len(account_edges) == 1
+        assert account_edges[0]["node"]["username"] == self.admin.first_name
+        assert account_edges[0]["node"]["email"] == self.admin.email
+
+    @patch.object(WebClient, "users_list")
+    def test_get_integrations_slack_updates_existing_accounts(
+        self, slack_users_list_mock
+    ):
+        user_fixture = slack_user_fixture(self.admin.profile)
+        slack_users_list_mock.return_value = {
+            "ok": True,
+            "cache_ts": 1611515141,
+            "response_metadata": {"next_cursor": ""},
+            "members": [user_fixture],
+        }
+        slack_integration = SlackIntegration.objects.create(
+            organization=self.admin.profile.organization, token="some_token"
+        )
+        account = SlackAccount.objects.create(
+            id=user_fixture["id"],
+            profile=self.admin.profile,
+            integration=slack_integration,
+            email="old@email.internet",
+            username="old displayname",
+        )
+        account.save()
+        slack_integration.save()
+        self.client.force_login(self.admin)
+        response = self.query(
+            """
+            query {
+                integrations {
+                    ... on SlackIntegrationNode {
+                        accounts {
+                            edges {
+                                node {
+                                    username
+                                    email
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        account.refresh_from_db()
+        account_edges = content["data"]["integrations"][0]["accounts"]["edges"]
+        assert len(account_edges) == 1
+        assert (
+            account_edges[0]["node"]["username"]
+            == self.admin.first_name
+            == account.username
+        )
+        assert account_edges[0]["node"]["email"] == self.admin.email == account.email
+
     def test_get_integrations_requires_authenticated_users(self):
         response = self.query(
             """
@@ -364,7 +495,8 @@ class IntegrationTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         assert content["data"] is None
 
-    def test_get_integrations_only_of_own_organization(self):
+    @patch.object(WebClient, "users_list")
+    def test_get_integrations_only_of_own_organization(self, slack_users_list_mock):
         # integration of this org
         SlackIntegration.objects.create(
             id="1",

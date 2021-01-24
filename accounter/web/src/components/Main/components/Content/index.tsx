@@ -17,6 +17,7 @@ import EditUser from "./components/EditUser";
 import { Content_currentUser } from "./__generated__/Content_currentUser.graphql";
 import OffboardUser from "./components/OffboardUser";
 import ReactivateUser from "./components/ReactivateUser";
+import Accounts from "./components/Accounts";
 
 type BreadcrumbProps = {
   title: ReactNode;
@@ -31,7 +32,7 @@ const Breadcrumb = ({ title }: BreadcrumbProps) => {
         to="/users"
         className="inline-flex items-center space-x-3 text-sm font-medium text-gray-900"
       >
-        <ChevronLeft className="-ml-2 h-5 w-5 text-gray-400" />
+        <ChevronLeft className="-mAppl-2 h-5 w-5 text-gray-400" />
         <span>{title}</span>
       </Link>
     </nav>
@@ -69,45 +70,9 @@ const Tabs = () => {
             {/* Current: "border-pink-500 text-indigo-600", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" */}
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <Tab to={`${url}/profile`}>Profile</Tab>
-            <Tab to={`${url}/apps`}>Apps</Tab>
+            <Tab to={`${url}/apps`}>Accounts</Tab>
           </nav>
         </div>
-      </div>
-    </div>
-  );
-};
-
-const TeamMember = () => {
-  return (
-    <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-pink-500">
-      <div className="flex-shrink-0">
-        <img
-          className="h-10 w-10 rounded-full"
-          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-          alt=""
-        />
-      </div>
-      <div className="flex-1 min-w-0">
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a href="#" className="focus:outline-none">
-          <span className="absolute inset-0" aria-hidden="true" />
-          <p className="text-sm font-medium text-gray-900">Leslie Alexander</p>
-          <p className="text-sm text-gray-500 truncate">Co-Founder / CEO</p>
-        </a>
-      </div>
-    </div>
-  );
-};
-
-const TeamMemberList = () => {
-  return (
-    <div>
-      <h2 className="text-sm font-medium text-gray-500">Team members</h2>
-      <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <TeamMember />
-        <TeamMember />
-        <TeamMember />
-        <TeamMember />
       </div>
     </div>
   );
@@ -116,7 +81,7 @@ const TeamMemberList = () => {
 type Props = {
   title: ReactNode;
   profile: Content_profile;
-  currentUser: Content_currentUser
+  currentUser: Content_currentUser;
 };
 
 const Content = ({ title, profile, currentUser }: Props) => {
@@ -147,8 +112,7 @@ const Content = ({ title, profile, currentUser }: Props) => {
                 <DescriptionList profile={profile} />
               </Route>
               <Route path={`${path}/apps`}>
-                TODO: Replace teammebers with apps
-                <TeamMemberList />
+                <Accounts profile={profile} />
               </Route>
               <Route>
                 <Redirect to={`${url}/profile`} />
@@ -175,6 +139,7 @@ export default createFragmentContainer(Content, {
       ...EditUser_profile
       ...OffboardUser_profile
       ...ReactivateUser_profile
+      ...Accounts_profile
     }
   `,
 });

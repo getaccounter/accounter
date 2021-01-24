@@ -89,7 +89,7 @@ const node: ConcreteRequest = {
           {
             "alias": null,
             "args": null,
-            "concreteType": "ServiceType",
+            "concreteType": "ServiceNode",
             "kind": "LinkedField",
             "name": "service",
             "plural": false,

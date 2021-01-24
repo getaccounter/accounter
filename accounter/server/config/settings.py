@@ -22,7 +22,7 @@ def get_optional_env_value(env_variable, default_value):
     """
     try:
         return os.environ[env_variable]
-    except KeyError as key_error:
+    except KeyError:
         error_msg = (
             "Optional environment variable {} not found. Defaulting to '{}'".format(
                 env_variable, default_value

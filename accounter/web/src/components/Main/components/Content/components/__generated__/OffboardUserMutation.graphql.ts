@@ -34,12 +34,42 @@ mutation OffboardUserMutation(
   }
 }
 
+fragment AccountList_accounts on AccountInterface {
+  __isAccountInterface: __typename
+  id
+  ...Account_account
+}
+
+fragment Account_account on AccountInterface {
+  __isAccountInterface: __typename
+  id
+  integration {
+    __typename
+    service {
+      name
+    }
+  }
+  ... on SlackAccountNode {
+    username
+    email
+  }
+}
+
+fragment Accounts_profile on ProfileNode {
+  accounts {
+    __typename
+    ...AccountList_accounts
+    id
+  }
+}
+
 fragment Content_profile on ProfileNode {
   ...Header_profile
   ...DescriptionList_profile
   ...EditUser_profile
   ...OffboardUser_profile
   ...ReactivateUser_profile
+  ...Accounts_profile
 }
 
 fragment DescriptionList_profile on ProfileNode {
@@ -116,6 +146,27 @@ v2 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "email",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
   "storageKey": null
 };
 return {
@@ -229,13 +280,7 @@ return {
                 "name": "isCurrentUser",
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "email",
-                "storageKey": null
-              },
+              (v3/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -251,14 +296,64 @@ return {
                 "name": "department",
                 "plural": false,
                 "selections": [
+                  (v4/*: any*/),
+                  (v2/*: any*/)
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": null,
+                "kind": "LinkedField",
+                "name": "accounts",
+                "plural": true,
+                "selections": [
+                  (v5/*: any*/),
+                  {
+                    "kind": "TypeDiscriminator",
+                    "abstractKey": "__isAccountInterface"
+                  },
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
+                    "concreteType": null,
+                    "kind": "LinkedField",
+                    "name": "integration",
+                    "plural": false,
+                    "selections": [
+                      (v5/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ServiceNode",
+                        "kind": "LinkedField",
+                        "name": "service",
+                        "plural": false,
+                        "selections": [
+                          (v4/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   },
-                  (v2/*: any*/)
+                  {
+                    "kind": "InlineFragment",
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "username",
+                        "storageKey": null
+                      },
+                      (v3/*: any*/)
+                    ],
+                    "type": "SlackAccountNode",
+                    "abstractKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -271,12 +366,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2f51a3c5083f03d3d9ac451a25cdad72",
+    "cacheID": "d7435b500ed7addb5291964f6c98371b",
     "id": null,
     "metadata": {},
     "name": "OffboardUserMutation",
     "operationKind": "mutation",
-    "text": "mutation OffboardUserMutation(\n  $id: ID!\n) {\n  offboardUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
+    "text": "mutation OffboardUserMutation(\n  $id: ID!\n) {\n  offboardUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment AccountList_accounts on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  ...Account_account\n}\n\nfragment Account_account on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  integration {\n    __typename\n    service {\n      name\n    }\n  }\n  ... on SlackAccountNode {\n    username\n    email\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    __typename\n    ...AccountList_accounts\n    id\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
   }
 };
 })();
