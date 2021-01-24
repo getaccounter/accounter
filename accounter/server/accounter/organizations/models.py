@@ -96,10 +96,10 @@ class Profile(models.Model):
         self.user.set_unusable_password()
         self.user.save()
 
-    def offboard(self):
+    def offboard(self, offboarded_by: Type["Profile"]):
+        if self.is_admin:
+            self.demote_to_regular_user(offboarded_by)
         self.is_offboarded = True
-        self.is_admin = False
-        self.is_owner = False
         self.save()
 
     def reactivate(self):

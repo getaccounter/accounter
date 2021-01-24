@@ -243,7 +243,7 @@ class OffboardUser(graphene.relay.ClientIDMutation):
         if not profile.can_be_edited_by(info.context.user.profile):
             raise PermissionDenied("You do not have permission to perform this action")
 
-        profile.offboard()
+        profile.offboard(info.context.user.profile)
 
         return OffboardUser(profile=profile)
 
