@@ -190,7 +190,7 @@ const Header = (props: Props) => {
                     )}
                   </>
                 )}
-                {!props.profile.isCurrentUser && !props.profile.isOwner && (
+                {!props.profile.isCurrentUser && !props.profile.isOwner && !props.profile.isAdmin && (
                   <>
                     {!props.profile.isOffboarded ? (
                       <MainButton danger to={`${url}/offboard`}>
