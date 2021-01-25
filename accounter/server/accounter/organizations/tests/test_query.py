@@ -3,11 +3,68 @@ import json
 from django.contrib.auth import get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
+from unittest.mock import patch
+from slack_sdk.web import WebClient
 
 from accounter.integrations.models import SlackAccount, SlackIntegration
 from ..models import Profile
 
 User = get_user_model()
+
+
+def slack_user_fixture(
+    profile: Profile = baker.make(
+        Profile,
+        user=baker.make(get_user_model(), _fill_optional=True),
+        _fill_optional=True,
+    )
+):
+    real_name = f"{profile.user.first_name} {profile.user.last_name}"
+    return {
+        "id": "ASDASD123123",
+        "team_id": "XYZXYZ789789",
+        "name": "slack1",
+        "deleted": False,
+        "color": "9f69e7",
+        "real_name": real_name,
+        "tz": "Europe/Amsterdam",
+        "tz_label": "Central European Time",
+        "tz_offset": 3600,
+        "profile": {
+            "title": "",
+            "phone": "",
+            "skype": "",
+            "real_name": real_name,
+            "real_name_normalized": real_name,
+            "display_name": profile.user.first_name,
+            "display_name_normalized": profile.user.first_name,
+            "fields": None,
+            "status_text": "",
+            "status_emoji": "",
+            "status_expiration": 0,
+            "avatar_hash": "g3307d47b80c",
+            "email": profile.user.email,
+            "first_name": profile.user.first_name,
+            "last_name": profile.user.last_name,
+            "image_24": "https://secure.gravatar.com/",
+            "image_32": "https://secure.gravatar.com/",
+            "image_48": "https://secure.gravatar.com/avatar/mock",
+            "image_72": "https://secure.gravatar.com/avatar/mock",
+            "image_192": "https://secure.gravatar.com/avatar/mock",
+            "image_512": "https://secure.gravatar.com/avatar/mock",
+            "status_text_canonical": "",
+            "team": "EOEOEOEOE",
+        },
+        "is_admin": True,
+        "is_owner": True,
+        "is_primary_owner": True,
+        "is_restricted": False,
+        "is_ultra_restricted": False,
+        "is_bot": False,
+        "is_app_user": False,
+        "updated": 1607524353,
+        "has_2fa": False,
+    }
 
 
 class OrganizationQueryTestCase(GraphQLTestCase):
@@ -121,7 +178,14 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         assert content["data"]["currentUser"]["email"] == self.admin.email
 
-    def test_get_profiles(self):
+    @patch.object(WebClient, "users_info")
+    def test_get_profiles_accounts_slack(self, users_info_mock):
+        users_info_mock.return_value = {
+            "ok": True,
+            "cache_ts": 1611515141,
+            "response_metadata": {"next_cursor": ""},
+            "user": slack_user_fixture(self.admin.profile),
+        }
         self.client.force_login(self.admin)
         integration = baker.make(
             SlackIntegration,
@@ -135,8 +199,8 @@ class OrganizationQueryTestCase(GraphQLTestCase):
             integration=integration,
             _fill_optional=True,
         )
-        integration.save()
         account.save()
+        integration.save()
         response = self.query(
             """
             {
@@ -171,12 +235,18 @@ class OrganizationQueryTestCase(GraphQLTestCase):
 
         response_admin_profile = organization["profiles"]["edges"][1]["node"]
 
-        response_account = response_admin_profile["accounts"][0]
+        updated_admin_account = response_admin_profile["accounts"][0]
 
-        assert response_account["id"] == str(account.id)
-        assert response_account["username"] == account.username
-        assert response_account["email"] == account.email
+        assert updated_admin_account["username"] == self.admin.first_name
+        assert updated_admin_account["email"] == self.admin.email
         assert (
-            response_account["integration"]["service"]["name"]
+            updated_admin_account["integration"]["service"]["name"]
+            == integration.service.name
+        )
+
+        assert updated_admin_account["username"] == self.admin.first_name
+        assert updated_admin_account["email"] == self.admin.email
+        assert (
+            updated_admin_account["integration"]["service"]["name"]
             == integration.service.name
         )

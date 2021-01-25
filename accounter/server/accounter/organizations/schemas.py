@@ -120,8 +120,8 @@ class ProfileNode(DjangoObjectType):
     @staticmethod
     def resolve_accounts(profile, info, **kwargs):
         accounts = SlackAccount.objects.filter(profile=profile)
-        # for account in accounts:
-        #     account.refresh()
+        for account in accounts:
+            account.refresh()
 
         return accounts
 
