@@ -1,11 +1,12 @@
 import graphene
 from graphene_django import DjangoObjectType
+from graphene import relay
 
 from ..utils import admin_required
-from .models import Service, SlackIntegration
+from .models import Service, SlackIntegration, SlackAccount
 
 
-class ServiceType(DjangoObjectType):
+class ServiceNode(DjangoObjectType):
     class Meta:
         model = Service
         fields = ("name",)
@@ -19,11 +20,20 @@ class ServiceType(DjangoObjectType):
 
 
 class IntegrationInterface(graphene.Interface):
-    service = graphene.Field(ServiceType, required=True)
+    service = graphene.Field(ServiceNode, required=True)
 
     @classmethod
     def resolve_type(cls, instance, info):
-        return SlackIntegrationType
+        return SlackIntegrationNode
+
+
+class AccountInterface(graphene.Interface):
+    id = graphene.ID(required=True)
+    integration = graphene.Field(IntegrationInterface, required=True)
+
+    @classmethod
+    def resolve_type(cls, instance, info):
+        return SlackAccountNode
 
 
 class HandleCallback(graphene.Mutation):
@@ -50,10 +60,18 @@ class SlackCallbackType(graphene.ObjectType):
     handleCallback = HandleCallback.Field()
 
 
-class SlackIntegrationType(DjangoObjectType):
+class SlackAccountNode(DjangoObjectType):
+    class Meta:
+        interfaces = (relay.Node, AccountInterface)
+        model = SlackAccount
+        filter_fields = ["profile"]
+
+
+class SlackIntegrationNode(DjangoObjectType):
     class Meta:
         interfaces = (IntegrationInterface,)
         model = SlackIntegration
+        fields = ("id", "accounts", "service")
 
 
 class Oauth(graphene.ObjectType):

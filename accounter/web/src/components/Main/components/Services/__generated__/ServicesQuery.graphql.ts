@@ -34,7 +34,7 @@ var v0 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "ServiceType",
+    "concreteType": "ServiceNode",
     "kind": "LinkedField",
     "name": "services",
     "plural": true,

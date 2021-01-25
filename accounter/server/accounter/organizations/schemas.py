@@ -5,6 +5,9 @@ from graphene_django import DjangoObjectType
 from graphql_relay.node.node import from_global_id
 from django.core.exceptions import PermissionDenied
 
+from accounter.integrations.schemas import AccountInterface
+from accounter.integrations.models import SlackAccount
+
 from .models import Department, Organization, Profile
 from ..utils import admin_required, ExtendedConnection
 
@@ -84,6 +87,7 @@ class ProfileNode(DjangoObjectType):
     last_name = graphene.String(required=True)
     is_current_user = graphene.Boolean(required=True)
     current_user_can_edit = graphene.Boolean(required=True)
+    accounts = graphene.List(graphene.NonNull(AccountInterface), required=True)
 
     @staticmethod
     def resolve_email(profile, info, **kwargs):
@@ -112,6 +116,14 @@ class ProfileNode(DjangoObjectType):
     def resolve_current_user_can_edit(profile, info, **kwargs):
         user = info.context.user
         return profile.can_be_edited_by(user.profile)
+
+    @staticmethod
+    def resolve_accounts(profile, info, **kwargs):
+        accounts = SlackAccount.objects.filter(profile=profile)
+        # for account in accounts:
+        #     account.refresh()
+
+        return accounts
 
 
 class CreateUser(graphene.relay.ClientIDMutation):

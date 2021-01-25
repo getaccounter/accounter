@@ -39,7 +39,7 @@ class Service(models.Model):
         authorize_url_generator = AuthorizeUrlGenerator(
             client_id=self._client_id,
             redirect_uri=self._redirect_uri,
-            user_scopes=["admin"],
+            user_scopes=["users:read", "users:read.email"],
         )
         return authorize_url_generator.generate(state)
 
@@ -106,11 +106,18 @@ class AbstractIntegration(models.Model):
     def service(self):
         raise NotImplementedError()
 
+    def refresh(self):
+        raise NotImplementedError()
+
+    def refresh_account(self, account):
+        raise NotImplementedError()
+
     class Meta:
         abstract = True
 
 
 class AbstractAccount(models.Model):
+    id = models.CharField(primary_key=True, max_length=100)
     profile = models.ForeignKey(Profile, on_delete=models.RESTRICT)
 
     @property
@@ -127,6 +134,63 @@ class SlackIntegration(AbstractIntegration):
     def service(self):
         return Service.objects.get(name=Service.Types.SLACK)
 
+    @property
+    def client(self):
+        return WebClient(token=self.token)
+
+    def refresh(self):
+        slack_response = self.client.users_list()
+        members = slack_response["members"]
+        members_without_slackbot = list(
+            filter(lambda m: m["id"] != "USLACKBOT", members)
+        )
+        members_without_any_bots = list(
+            filter(lambda m: not m["is_bot"], members_without_slackbot)
+        )
+        for member in members_without_any_bots:
+            email = member["profile"]["email"]
+            display_name = member["profile"]["display_name"]
+            slack_id = member["id"]
+
+            account = None
+            try:
+                account = SlackAccount.objects.get(
+                    pk=slack_id, profile__organization=self.organization
+                )
+            except SlackAccount.DoesNotExist:
+                pass
+
+            if account:
+                account.username = display_name
+                account.email = email
+            else:
+                profile = None
+                try:
+                    profile = Profile.objects.get(
+                        user__email=email, organization=self.organization
+                    )
+                except Profile.DoesNotExist:
+                    pass
+
+                if profile:
+                    account = SlackAccount.objects.create(
+                        id=slack_id,
+                        profile=profile,
+                        integration=self,
+                        email=email,
+                        username=display_name,
+                    )
+
+            if account:
+                account.save()
+
+    def refresh_account(self, account):
+        pass
+
 
 class SlackAccount(AbstractAccount):
-    integration = models.ForeignKey(SlackIntegration, on_delete=models.RESTRICT)
+    username = models.CharField(max_length=100)
+    email = models.EmailField()
+    integration = models.ForeignKey(
+        SlackIntegration, related_name="accounts", on_delete=models.RESTRICT
+    )
