@@ -12,7 +12,7 @@ const Account = ({ account }: Props) => {
       <div className="flex-shrink-0">
         <img
           className="h-10 w-10 rounded-full"
-          src="http://localhost:9090/developmentbucket/services/logos/slack_BtHWphY.svg"
+          src={account.integration.service.logo}
           alt=""
         />
       </div>
@@ -35,6 +35,7 @@ export default createFragmentContainer(Account, {
       integration {
         service {
           name
+          logo
         }
       }
       ... on SlackAccountNode {

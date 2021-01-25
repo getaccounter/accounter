@@ -295,7 +295,7 @@ describe("Mobile", () => {
   });
 
   describe("Services", () => {
-    it.only("add slack", () => {
+    it("add slack", () => {
       const user = generateUser();
 
       mockSlackOauthToken();

@@ -6,9 +6,10 @@ from django.conf import settings
 from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from slack_sdk.oauth import AuthorizeUrlGenerator
-from slack_sdk.web import WebClient
+from slack_sdk.web import WebClient, SlackResponse
 from .fields import TokenField
-
+from django.utils import timezone
+from datetime import timedelta
 from ..organizations.models import Organization, Profile
 
 
@@ -98,34 +99,54 @@ class Service(models.Model):
 
 # Abstract Classes
 class AbstractIntegration(models.Model):
+    class Meta:
+        abstract = True
+
+    REFRESH_INTERVAL_SECONDS = 60
+
     id = models.TextField(primary_key=True)
     token = TokenField()
     organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
+    last_refresh = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def is_fresh(self):
+        return (
+            timezone.now() - timedelta(seconds=self.REFRESH_INTERVAL_SECONDS)
+            > self.last_refresh
+        )
 
     @property
     def service(self):
         raise NotImplementedError()
 
-    def refresh(self):
+    def refresh(self, force=False):
         raise NotImplementedError()
-
-    def refresh_account(self, account):
-        raise NotImplementedError()
-
-    class Meta:
-        abstract = True
 
 
 class AbstractAccount(models.Model):
+    class Meta:
+        abstract = True
+
+    REFRESH_INTERVAL_SECONDS = 60
+
     id = models.CharField(primary_key=True, max_length=100)
     profile = models.ForeignKey(Profile, on_delete=models.RESTRICT)
+    last_refresh = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def is_fresh(self):
+        return (
+            timezone.now() - timedelta(seconds=self.REFRESH_INTERVAL_SECONDS)
+            > self.last_refresh
+        )
+
+    def refresh(self, force=False):
+        raise NotImplementedError()
 
     @property
     def integration(self):
         raise NotImplementedError()
-
-    class Meta:
-        abstract = True
 
 
 # Slack
@@ -138,7 +159,25 @@ class SlackIntegration(AbstractIntegration):
     def client(self):
         return WebClient(token=self.token)
 
-    def refresh(self):
+    def create_account_from_response(
+        self, profile: Profile, slack_user_info: SlackResponse
+    ):
+        email = slack_user_info["profile"]["email"]
+        display_name = slack_user_info["profile"]["display_name"]
+        slack_id = slack_user_info["id"]
+        account = SlackAccount.objects.create(
+            id=slack_id,
+            profile=profile,
+            integration=self,
+            email=email,
+            username=display_name,
+        )
+        return account
+
+    def refresh(self, force=False):
+        if not force and self.is_fresh:
+            return
+
         slack_response = self.client.users_list()
         members = slack_response["members"]
         members_without_slackbot = list(
@@ -147,22 +186,19 @@ class SlackIntegration(AbstractIntegration):
         members_without_any_bots = list(
             filter(lambda m: not m["is_bot"], members_without_slackbot)
         )
-        for member in members_without_any_bots:
-            email = member["profile"]["email"]
-            display_name = member["profile"]["display_name"]
-            slack_id = member["id"]
+        for user_info in members_without_any_bots:
+            email = user_info["profile"]["email"]
 
             account = None
             try:
                 account = SlackAccount.objects.get(
-                    pk=slack_id, profile__organization=self.organization
+                    pk=user_info["id"], profile__organization=self.organization
                 )
             except SlackAccount.DoesNotExist:
                 pass
 
             if account:
-                account.username = display_name
-                account.email = email
+                account.update_from_response(user_info)
             else:
                 profile = None
                 try:
@@ -173,24 +209,32 @@ class SlackIntegration(AbstractIntegration):
                     pass
 
                 if profile:
-                    account = SlackAccount.objects.create(
-                        id=slack_id,
-                        profile=profile,
-                        integration=self,
-                        email=email,
-                        username=display_name,
-                    )
+                    account = self.create_account_from_response(profile, user_info)
 
             if account:
                 account.save()
 
-    def refresh_account(self, account):
-        pass
+        self.last_refresh = timezone.now()
+        self.save()
 
 
 class SlackAccount(AbstractAccount):
-    username = models.CharField(max_length=100)
+    username = models.CharField(max_length=150)
     email = models.EmailField()
     integration = models.ForeignKey(
         SlackIntegration, related_name="accounts", on_delete=models.RESTRICT
     )
+
+    def update_from_response(self, slack_user_info: SlackResponse):
+        email = slack_user_info["profile"]["email"]
+        display_name = slack_user_info["profile"]["display_name"]
+        self.username = display_name
+        self.email = email
+        self.last_refresh = timezone.now()
+
+    def refresh(self, force=False):
+        if not force and self.is_fresh:
+            return
+        response = self.integration.client.users_info(user=self.id)
+        self.update_from_response(response["user"])
+        self.save()

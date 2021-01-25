@@ -10,6 +10,7 @@ export type Account_account = {
     readonly integration: {
         readonly service: {
             readonly name: ServiceName;
+            readonly logo: string;
         };
     };
     readonly username?: string;
@@ -59,6 +60,13 @@ const node: ReaderFragment = {
               "kind": "ScalarField",
               "name": "name",
               "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "logo",
+              "storageKey": null
             }
           ],
           "storageKey": null
@@ -91,5 +99,5 @@ const node: ReaderFragment = {
   "type": "AccountInterface",
   "abstractKey": "__isAccountInterface"
 };
-(node as any).hash = 'c777cd229a5cccf4c8b49242c71058f1';
+(node as any).hash = 'eb1f88f3ebe16c6bda48659680f7ea5a';
 export default node;
