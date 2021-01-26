@@ -132,12 +132,14 @@ class ServiceTestCase(GraphQLTestCase):
         code = "somecode"
         state = "somestate"
         token = "some token"
+        workspace_name = "myworkspace"
+        workspace_id = "abc"
         service = Service.objects.get(name=Service.Types.SLACK)
         service.state_store[f"{service._client_id}/{state}"] = time.time()
         service.save()
         oauth_call_mock.return_value = {
             "authed_user": {"access_token": token},
-            "team": {"id": "abc"},
+            "team": {"id": workspace_id, "name": workspace_name},
         }
         response = self.query(
             """
@@ -165,6 +167,8 @@ class ServiceTestCase(GraphQLTestCase):
         )
         assert len(slack_integration) == 1
         assert slack_integration.first().token == token
+        assert slack_integration.first().id == workspace_id
+        assert slack_integration.first().name == workspace_name
 
     def test_handle_callback_requires_admin(self):
         self.client.force_login(self.non_admin_user)
@@ -214,7 +218,7 @@ class ServiceTestCase(GraphQLTestCase):
         service.save()
         oauth_call_mock.return_value = {
             "authed_user": {"access_token": original_token},
-            "team": {"id": "abc"},
+            "team": {"id": "abc", "name": "someteam"},
         }
         # Calling endpoint twice
         self.query(
@@ -241,7 +245,7 @@ class ServiceTestCase(GraphQLTestCase):
         service.save()
         oauth_call_mock.return_value = {
             "authed_user": {"access_token": updated_token},
-            "team": {"id": "abc"},
+            "team": {"id": "abc", "name": "someteam"},
         }
         self.query(
             """

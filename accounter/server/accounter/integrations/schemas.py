@@ -21,6 +21,7 @@ class ServiceNode(DjangoObjectType):
 
 class IntegrationInterface(graphene.Interface):
     service = graphene.Field(ServiceNode, required=True)
+    name = graphene.String(required=True)
 
     @classmethod
     def resolve_type(cls, instance, info):
@@ -49,8 +50,10 @@ class HandleCallback(graphene.Mutation):
         slack_service = Service.objects.get(name=Service.Types.SLACK)
         callback_result = slack_service.handle_callback(code, state)
         slack_integration, _ = SlackIntegration.objects.get_or_create(
-            id=callback_result.integration_id, organization=organization
+            id=callback_result.integration_id,
+            organization=organization,
         )
+        slack_integration.name = callback_result.name
         slack_integration.token = callback_result.token
         slack_integration.save()
         return HandleCallback(status="success")

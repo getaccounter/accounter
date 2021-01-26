@@ -8,6 +8,7 @@ export type ServiceName = "SLACK" | "%future added value";
 export type Account_account = {
     readonly id: string;
     readonly integration: {
+        readonly name: string;
         readonly service: {
             readonly name: ServiceName;
             readonly logo: string;
@@ -25,7 +26,15 @@ export type Account_account$key = {
 
 
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -46,6 +55,7 @@ const node: ReaderFragment = {
       "name": "integration",
       "plural": false,
       "selections": [
+        (v0/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -54,13 +64,7 @@ const node: ReaderFragment = {
           "name": "service",
           "plural": false,
           "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "name",
-              "storageKey": null
-            },
+            (v0/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -99,5 +103,6 @@ const node: ReaderFragment = {
   "type": "AccountInterface",
   "abstractKey": "__isAccountInterface"
 };
-(node as any).hash = 'eb1f88f3ebe16c6bda48659680f7ea5a';
+})();
+(node as any).hash = 'df5649fe294b0438793c37e7e3f465fa';
 export default node;

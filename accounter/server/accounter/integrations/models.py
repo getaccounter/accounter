@@ -17,10 +17,12 @@ class Service(models.Model):
     class CallbackResult:
         integration_id: str
         token: str
+        name: str
 
-        def __init__(self, integration_id: str, token: str):
+        def __init__(self, integration_id: str, token: str, name: str):
             self.integration_id = integration_id
             self.token = token
+            self.name = name
 
     # Has a lot of slack specific logic, once we add a second service, lets fix this
     class Types(models.TextChoices):
@@ -59,7 +61,9 @@ class Service(models.Model):
         authed_user = oauth_response.get("authed_user")
         team = oauth_response.get("team")
         token = authed_user.get("access_token")
-        return Service.CallbackResult(integration_id=team.get("id"), token=token)
+        return Service.CallbackResult(
+            integration_id=team.get("id"), name=team.get("name"), token=token
+        )
 
     def _is_callback_still_valid(self, state: str):
         key = f"{self._client_id}/{state}"
@@ -108,6 +112,7 @@ class AbstractIntegration(models.Model):
     token = TokenField()
     organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
     last_refresh = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=100)
 
     @property
     def is_fresh(self):

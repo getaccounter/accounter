@@ -6,6 +6,7 @@ import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type ServiceName = "SLACK" | "%future added value";
 export type Integration_integration = {
+    readonly name: string;
     readonly service: {
         readonly name: ServiceName;
         readonly logo: string;
@@ -20,12 +21,21 @@ export type Integration_integration$key = {
 
 
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "Integration_integration",
   "selections": [
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -34,13 +44,7 @@ const node: ReaderFragment = {
       "name": "service",
       "plural": false,
       "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        },
+        (v0/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -55,5 +59,6 @@ const node: ReaderFragment = {
   "type": "IntegrationInterface",
   "abstractKey": "__isIntegrationInterface"
 };
-(node as any).hash = '5f9dcc326d085a56214449248a82dd2a';
+})();
+(node as any).hash = '2a18cd812b0d276def24d694f4464958';
 export default node;
