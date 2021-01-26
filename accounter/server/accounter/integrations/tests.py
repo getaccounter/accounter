@@ -9,68 +9,16 @@ from django.test import override_settings
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 from slack_sdk.web import WebClient
+from freezegun import freeze_time
 
 from ..organizations.models import Profile
 from .models import Service, SlackIntegration, SlackAccount
 
+from ..test_utils import create_slack_user_fixture
+
 fake = Faker()
 
 validateURL = URLValidator(message="not a valid url")
-
-
-def slack_user_fixture(
-    profile: Profile = baker.make(
-        Profile,
-        user=baker.make(get_user_model(), _fill_optional=True),
-        _fill_optional=True,
-    )
-):
-    real_name = f"{profile.user.first_name} {profile.user.last_name}"
-    return {
-        "id": "ASDASD123123",
-        "team_id": "XYZXYZ789789",
-        "name": "slack1",
-        "deleted": False,
-        "color": "9f69e7",
-        "real_name": real_name,
-        "tz": "Europe/Amsterdam",
-        "tz_label": "Central European Time",
-        "tz_offset": 3600,
-        "profile": {
-            "title": "",
-            "phone": "",
-            "skype": "",
-            "real_name": real_name,
-            "real_name_normalized": real_name,
-            "display_name": profile.user.first_name,
-            "display_name_normalized": profile.user.first_name,
-            "fields": None,
-            "status_text": "",
-            "status_emoji": "",
-            "status_expiration": 0,
-            "avatar_hash": "g3307d47b80c",
-            "email": profile.user.email,
-            "first_name": profile.user.first_name,
-            "last_name": profile.user.last_name,
-            "image_24": "https://secure.gravatar.com/",
-            "image_32": "https://secure.gravatar.com/",
-            "image_48": "https://secure.gravatar.com/avatar/mock",
-            "image_72": "https://secure.gravatar.com/avatar/mock",
-            "image_192": "https://secure.gravatar.com/avatar/mock",
-            "image_512": "https://secure.gravatar.com/avatar/mock",
-            "status_text_canonical": "",
-            "team": "EOEOEOEOE",
-        },
-        "is_admin": True,
-        "is_owner": True,
-        "is_primary_owner": True,
-        "is_restricted": False,
-        "is_ultra_restricted": False,
-        "is_bot": False,
-        "is_app_user": False,
-        "updated": 1607524353,
-        "has_2fa": False,
-    }
 
 
 class ServiceTestCase(GraphQLTestCase):
@@ -387,6 +335,9 @@ class IntegrationTestCase(GraphQLTestCase):
             == slack_integration.service.name
         )
 
+    @freeze_time(
+        auto_tick_seconds=SlackIntegration.REFRESH_INTERVAL_SECONDS,
+    )
     @patch.object(WebClient, "users_list")
     def test_get_integrations_slack_creates_accounts_if_email_matches(
         self, slack_users_list_mock
@@ -395,7 +346,7 @@ class IntegrationTestCase(GraphQLTestCase):
             "ok": True,
             "cache_ts": 1611515141,
             "response_metadata": {"next_cursor": ""},
-            "members": [slack_user_fixture(self.admin.profile)],
+            "members": [create_slack_user_fixture(self.admin.profile)],
         }
         slack_integration = SlackIntegration.objects.create(
             organization=self.admin.profile.organization, token="some_token"
@@ -428,11 +379,14 @@ class IntegrationTestCase(GraphQLTestCase):
         assert account_edges[0]["node"]["username"] == self.admin.first_name
         assert account_edges[0]["node"]["email"] == self.admin.email
 
+    @freeze_time(
+        auto_tick_seconds=SlackIntegration.REFRESH_INTERVAL_SECONDS,
+    )
     @patch.object(WebClient, "users_list")
     def test_get_integrations_slack_updates_existing_accounts(
         self, slack_users_list_mock
     ):
-        user_fixture = slack_user_fixture(self.admin.profile)
+        user_fixture = create_slack_user_fixture(self.admin.profile)
         slack_users_list_mock.return_value = {
             "ok": True,
             "cache_ts": 1611515141,

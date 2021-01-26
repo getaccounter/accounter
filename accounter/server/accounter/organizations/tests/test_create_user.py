@@ -4,9 +4,15 @@ from django.contrib.auth import get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 from graphql_relay.node.node import from_global_id, to_global_id
+from unittest.mock import patch
 
 from ..models import Profile
 from ..schemas import DepartmentNode
+
+from accounter.integrations.models import SlackIntegration
+from slack_sdk.web import WebClient
+
+from ...test_utils import create_slack_user_fixture
 
 User = get_user_model()
 
@@ -105,6 +111,66 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
             == self.admin.profile.department.name
         )
 
+    @patch.object(WebClient, "users_lookupByEmail")
+    def test_create_user_pulls_accounts(self, users_lookupByEmail_mock):
+
+        users_lookupByEmail_mock.return_value = {
+            "ok": True,
+            "cache_ts": 1611515141,
+            "response_metadata": {"next_cursor": ""},
+            "user": create_slack_user_fixture(self.admin.profile),
+        }
+
+        self.client.force_login(self.admin)
+        email = "user@internet.cat"
+        first_name = "somefirstname"
+        last_name = "somelastname"
+
+        slack_integration = baker.make(
+            SlackIntegration,
+            organization=self.admin.profile.organization,
+            token="some_token",
+        )
+        slack_integration.save()
+
+        response = self.query(
+            """
+          mutation CreateUser (
+            $email: String!
+            $firstName: String!
+            $lastName: String!
+          ) {
+            createUser(
+              input: {
+                email: $email
+                firstName: $firstName
+                lastName: $lastName
+              }
+            ) {
+              profile {
+                accounts {
+                  ... on SlackAccountNode {
+                    username
+                    email
+                  }
+                }
+              }
+            }
+          }
+
+          """,
+            variables={
+                "email": email,
+                "firstName": first_name,
+                "lastName": last_name,
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        account = content["data"]["createUser"]["profile"]["accounts"][0]
+        assert account["username"] == self.admin.first_name
+        assert account["email"] == self.admin.email
+
     def test_create_user_without_optional_fields(self):
         self.client.force_login(self.admin)
         response = self.query(
@@ -189,89 +255,3 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         assert (
             errors[0]["message"] == "You do not have permission to perform this action"
         )
-
-    def test_create_user_admin_cannot_create_admin(self):
-        self.client.force_login(self.admin)
-        response = self.query(
-            """
-          mutation CreateUser (
-            $email: String!
-            $firstName: String!
-            $lastName: String!
-            $title: String!
-            $isAdmin: Boolean
-          ) {
-            createUser(
-              input: {
-                email: $email
-                firstName: $firstName
-                lastName: $lastName
-                title: $title
-                isAdmin: $isAdmin
-              }
-            ) {
-              profile {
-                id
-                isAdmin
-              }
-            }
-          }
-
-          """,
-            variables={
-                "email": "user@internet.cat",
-                "firstName": "firstname",
-                "lastName": "lastname",
-                "title": "some title",
-                "isAdmin": True,
-            },
-        )
-        self.assertResponseHasErrors(response)
-        content = json.loads(response.content)
-        errors = content["errors"]
-        assert (len(errors)) == 1
-        assert (
-            errors[0]["message"] == "You do not have permission to perform this action"
-        )
-
-    def test_create_user_owner_create_admin(self):
-        self.client.force_login(self.owner)
-        response = self.query(
-            """
-          mutation CreateUser (
-            $email: String!
-            $firstName: String!
-            $lastName: String!
-            $title: String!
-            $isAdmin: Boolean
-          ) {
-            createUser(
-              input: {
-                email: $email
-                firstName: $firstName
-                lastName: $lastName
-                title: $title
-                isAdmin: $isAdmin
-              }
-            ) {
-              profile {
-                id
-                isAdmin
-              }
-            }
-          }
-
-          """,
-            variables={
-                "email": "user@internet.cat",
-                "firstName": "firstname",
-                "lastName": "lastname",
-                "title": "some title",
-                "isAdmin": True,
-            },
-        )
-        self.assertResponseNoErrors(response)
-        content = json.loads(response.content)
-        content = json.loads(response.content)
-        returned_profile = content["data"]["createUser"]["profile"]
-        assert returned_profile["isAdmin"] is True
