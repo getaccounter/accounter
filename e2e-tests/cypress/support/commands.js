@@ -46,7 +46,14 @@ Cypress.Commands.add("login", (email, password) => {
   cy.findByText("Sign in").click();
 });
 
-Cypress.Commands.add("getUserFromDirectory", (name, cb) => {
+Cypress.Commands.add("getUserFromDirectory", ({user, ignoreTitle = false}, cb) => {
+  const name = `${user.firstName} ${user.lastName}${ignoreTitle ? "" : " " + user.title}`
+  cy.findByRole("navigation", { name: "Directory" }).within(() => {
+    cb(cy.findByRole("link", { name }));
+  });
+});
+
+Cypress.Commands.add("old_getUserFromDirectory", (name, cb) => {
   cy.findByRole("navigation", { name: "Directory" }).within(() => {
     cb(cy.findByRole("link", { name }));
   });

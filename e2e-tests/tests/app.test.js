@@ -37,14 +37,18 @@ const mockSlackOauthToken = ({
 };
 
 const mockSlackUsersList = ({
-  token = faker.random.uuid(),
+  token,
   teamId = faker.random.uuid(),
+  users = [],
 } = {}) => {
   mockServerClient("mockserver", 1080)
     .mockAnyResponse({
       httpRequest: {
         method: "POST",
         path: "/api/users.list",
+        headers: {
+          Authorization: [`Bearer ${token}`],
+        },
       },
       httpResponse: {
         body: {
@@ -54,7 +58,7 @@ const mockSlackUsersList = ({
           members: [
             {
               id: "USLACKBOT",
-              team_id: "T01EY2EPFQU",
+              team_id: teamId,
               name: "slackbot",
               deleted: false,
               color: "757575",
@@ -87,7 +91,7 @@ const mockSlackUsersList = ({
                 image_512:
                   "https://a.slack-edge.com/80588/img/slackbot_512.png",
                 status_text_canonical: "",
-                team: "T01EY2EPFQU",
+                team: teamId,
               },
               is_admin: false,
               is_owner: false,
@@ -98,13 +102,13 @@ const mockSlackUsersList = ({
               is_app_user: false,
               updated: 0,
             },
-            {
-              id: "U01EK5KCC5U",
-              team_id: "T01EY2EPFQU",
+            ...users.map((user) => ({
+              id: faker.random.uuid(),
+              team_id: teamId,
               name: "slack1",
               deleted: false,
               color: "9f69e7",
-              real_name: "Mo Sattler",
+              real_name: `${user.firstName} ${user.lastName}`,
               tz: "Europe/Amsterdam",
               tz_label: "Central European Time",
               tz_offset: 3600,
@@ -112,18 +116,18 @@ const mockSlackUsersList = ({
                 title: "",
                 phone: "",
                 skype: "",
-                real_name: "Mo Sattler",
-                real_name_normalized: "Mo Sattler",
-                display_name: "Mo",
-                display_name_normalized: "Mo",
+                real_name: `${user.firstName} ${user.lastName}`,
+                real_name_normalized: `${user.firstName} ${user.lastName}`,
+                display_name: user.firstName,
+                display_name_normalized: user.firstName,
                 fields: null,
                 status_text: "",
                 status_emoji: "",
                 status_expiration: 0,
                 avatar_hash: "g3307d47b80c",
-                email: "mo@accounter.io",
-                first_name: "Mo",
-                last_name: "Sattler",
+                email: user.email,
+                first_name: user.firstName,
+                last_name: user.lastName,
                 image_24:
                   "https://secure.gravatar.com/avatar/5a2f23dbc37213ec824d279e9e0284d2.jpg?s=24&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0024-24.png",
                 image_32:
@@ -137,7 +141,7 @@ const mockSlackUsersList = ({
                 image_512:
                   "https://secure.gravatar.com/avatar/5a2f23dbc37213ec824d279e9e0284d2.jpg?s=512&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0024-512.png",
                 status_text_canonical: "",
-                team: "T01EY2EPFQU",
+                team: teamId,
               },
               is_admin: true,
               is_owner: true,
@@ -148,61 +152,10 @@ const mockSlackUsersList = ({
               is_app_user: false,
               updated: 1607524353,
               has_2fa: false,
-            },
-            {
-              id: "U01ER1SKB6J",
-              team_id: "T01EY2EPFQU",
-              name: "eulaliapk",
-              deleted: false,
-              color: "4bbe2e",
-              real_name: "Eulalia",
-              tz: "Europe/Amsterdam",
-              tz_label: "Central European Time",
-              tz_offset: 3600,
-              profile: {
-                title: "Ko-founder",
-                phone: "",
-                skype: "",
-                real_name: "Eulalia",
-                real_name_normalized: "Eulalia",
-                display_name: "Lali",
-                display_name_normalized: "Lali",
-                fields: null,
-                status_text: "",
-                status_emoji: "",
-                status_expiration: 0,
-                avatar_hash: "g439759fcead",
-                email: "lali@accounter.io",
-                first_name: "Eulalia",
-                last_name: "",
-                image_24:
-                  "https://secure.gravatar.com/avatar/eb9ef3b8947581438e061088647f304d.jpg?s=24&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0015-24.png",
-                image_32:
-                  "https://secure.gravatar.com/avatar/eb9ef3b8947581438e061088647f304d.jpg?s=32&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0015-32.png",
-                image_48:
-                  "https://secure.gravatar.com/avatar/eb9ef3b8947581438e061088647f304d.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0015-48.png",
-                image_72:
-                  "https://secure.gravatar.com/avatar/eb9ef3b8947581438e061088647f304d.jpg?s=72&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0015-72.png",
-                image_192:
-                  "https://secure.gravatar.com/avatar/eb9ef3b8947581438e061088647f304d.jpg?s=192&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0015-192.png",
-                image_512:
-                  "https://secure.gravatar.com/avatar/eb9ef3b8947581438e061088647f304d.jpg?s=512&d=https%3A%2F%2Fa.slack-edge.com%2Fdf10d%2Fimg%2Favatars%2Fava_0015-512.png",
-                status_text_canonical: "",
-                team: "T01EY2EPFQU",
-              },
-              is_admin: false,
-              is_owner: false,
-              is_primary_owner: false,
-              is_restricted: false,
-              is_ultra_restricted: false,
-              is_bot: false,
-              is_app_user: false,
-              updated: 1611336864,
-              has_2fa: false,
-            },
+            })),
             {
               id: "U01JUS6ED60",
-              team_id: "T01EY2EPFQU",
+              team_id: teamId,
               name: "zapier",
               deleted: false,
               color: "e7392d",
@@ -244,7 +197,7 @@ const mockSlackUsersList = ({
                 image_1024:
                   "https://avatars.slack-edge.com/2021-01-13/1658568361568_cb1331b16b0844483b18_1024.png",
                 status_text_canonical: "",
-                team: "T01EY2EPFQU",
+                team: teamId,
               },
               is_admin: false,
               is_owner: false,
@@ -287,8 +240,6 @@ const generateUser = (options = {}) => {
   };
 };
 
-// TODO: offboarding, adding admin
-
 describe("Mobile", () => {
   beforeEach(() => {
     cy.viewport("iphone-5");
@@ -297,9 +248,9 @@ describe("Mobile", () => {
   describe("Services", () => {
     it("add slack", () => {
       const user = generateUser();
-
-      mockSlackOauthToken();
-      mockSlackUsersList();
+      const token = "mytoken";
+      mockSlackOauthToken({ token });
+      mockSlackUsersList({ token, users: [user] });
 
       cy.visit("/");
       cy.findByRole("link", { name: "register" }).click();
@@ -320,6 +271,16 @@ describe("Mobile", () => {
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", { name: "SLACK" }).should("exist");
+      });
+
+      cy.mobileNavigateTo("Users");
+      cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
+        userRow.click()
+      );
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("link", { name: "Accounts" }).click();
+        cy.findByRole("link", { name: `SLACK @${user.firstName}` }).should('exist');
       });
     });
   });
@@ -369,7 +330,7 @@ describe("Mobile", () => {
         }).should("exist");
       });
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
         (user) => user.click()
       );
@@ -415,7 +376,7 @@ describe("Mobile", () => {
         }).should("exist");
       });
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.click()
       );
@@ -434,7 +395,7 @@ describe("Mobile", () => {
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => {
           user.should("exist");
@@ -450,7 +411,7 @@ describe("Mobile", () => {
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.should("exist")
       );
@@ -489,6 +450,16 @@ describe("Desktop - window", () => {
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", { name: "SLACK" }).should("exist");
+      });
+
+      cy.navigateTo("Users");
+      cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
+        userRow.click()
+      );
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("link", { name: "Accounts" }).click();
+        cy.findByRole("link", { name: `SLACK @${user.firstName}` }).should('exist');
       });
     });
   });
@@ -530,7 +501,7 @@ describe("Desktop - window", () => {
         cy.findByRole("link", { name: "Users" }).click();
       });
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
         (user) => {
           user.should("exist");
@@ -573,12 +544,12 @@ describe("Desktop - window", () => {
         cy.findByRole("link", { name: "Users" }).click();
       });
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.should("exist")
       );
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.click()
       );
@@ -588,7 +559,7 @@ describe("Desktop - window", () => {
         cy.findByRole("link", { name: "Users" }).click();
       });
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.should("not.exist")
       );
@@ -596,7 +567,7 @@ describe("Desktop - window", () => {
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => {
           user.should("exist");
@@ -612,7 +583,7 @@ describe("Desktop - window", () => {
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.should("exist")
       );
@@ -651,6 +622,16 @@ describe("Desktop - full screen", () => {
 
       cy.findByRole("navigation", { name: "Directory" }).within(() => {
         cy.findByRole("link", { name: "SLACK" }).should("exist");
+      });
+
+      cy.navigateTo("Users");
+      cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
+        userRow.click()
+      );
+
+      cy.findByRole("main").within(() => {
+        cy.findByRole("link", { name: "Accounts" }).click();
+        cy.findByRole("link", { name: `SLACK @${user.firstName}` }).should('exist');
       });
     });
   });
@@ -696,7 +677,7 @@ describe("Desktop - full screen", () => {
         }).should("exist");
       });
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
         (user) => user.click()
       );
@@ -721,7 +702,7 @@ describe("Desktop - full screen", () => {
       cy.findByLabelText("Title").clear().type(newUserData.title);
       cy.findByRole("button", { name: "Update" }).click();
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.should("exist")
       );
@@ -741,7 +722,7 @@ describe("Desktop - full screen", () => {
         cy.findByRole("link", { name: "Offboard" }).click();
       });
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.should("not.exist")
       );
@@ -749,7 +730,7 @@ describe("Desktop - full screen", () => {
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => {
           user.should("exist");
@@ -764,7 +745,7 @@ describe("Desktop - full screen", () => {
       cy.findByRole("button", { name: "Filter" }).click();
       cy.findByRole("checkbox", { name: "Offboarded" }).click();
 
-      cy.getUserFromDirectory(
+      cy.old_getUserFromDirectory(
         `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
         (user) => user.should("exist")
       );
@@ -815,7 +796,7 @@ describe("Desktop - full screen", () => {
           }).should("exist");
         });
 
-        cy.getUserFromDirectory(
+        cy.old_getUserFromDirectory(
           `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
           (user) => user.click()
         );
@@ -872,7 +853,7 @@ describe("Desktop - full screen", () => {
 
         cy.navigateTo("Users");
 
-        cy.getUserFromDirectory(
+        cy.old_getUserFromDirectory(
           `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
           (user) => user.click()
         );
