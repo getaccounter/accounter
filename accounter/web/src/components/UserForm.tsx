@@ -3,10 +3,8 @@ import graphql from "babel-plugin-relay/macro";
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
-  ConnectionHandler,
   Environment,
   PayloadError,
-  SelectorStoreUpdater,
 } from "relay-runtime";
 import { useEnvironment } from "../contexts/relay";
 import {
@@ -25,7 +23,6 @@ import { UserForm_currentUser } from "./__generated__/UserForm_currentUser.graph
 const createUser = (
   environment: Environment,
   variables: UserFormCreateMutationVariables,
-  updater: SelectorStoreUpdater<UserFormCreateMutationResponse>,
   onCompleted: (
     response: UserFormCreateMutationResponse,
     errors?: ReadonlyArray<PayloadError> | null
@@ -58,7 +55,6 @@ const createUser = (
       }
     `,
     variables,
-    updater,
     onCompleted,
     onError,
   });
@@ -179,28 +175,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
           createUser(
             environment,
             variables,
-            (store) => {
-              const payload = store.getRootField("createUser");
-              const newProfile = payload.getLinkedRecord("profile");
-              const organizationRecord = store.get(
-                currentUser.organization.id
-              )!;
-              const connection = ConnectionHandler.getConnection(
-                organizationRecord,
-                "Users_profiles"
-              )!;
-              const newEdge = ConnectionHandler.createEdge(
-                store,
-                connection,
-                newProfile,
-                "ProfileNodeEdge"
-              );
-              ConnectionHandler.insertEdgeAfter(connection, newEdge);
-              organizationRecord.invalidateRecord();
-              connection.invalidateRecord();
-              const profiles = organizationRecord.getLinkedRecord("profiles");
-              profiles?.invalidateRecord();
-            },
             (response, errors) => {
               if (errors) {
                 console.error(errors);

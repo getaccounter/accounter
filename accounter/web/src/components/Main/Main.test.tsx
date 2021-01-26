@@ -78,6 +78,19 @@ describe("Profile", () => {
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation)
     );
+
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        ProfileNode() {
+          return {
+            id: "some-id",
+            firstName,
+            lastName,
+            title,
+          };
+        },
+      })
+    );
     const main = render(
       <Providers environment={environment}>
         <Main />
