@@ -62,7 +62,6 @@ export default function Main() {
         query MainQuery {
           currentUser {
             ...Sidebar_profile
-            ...Users_currentUser
             ...AddUsers_currentUser
           }
         }
@@ -88,7 +87,7 @@ export default function Main() {
               path: "/users",
               Icon: UserGroup,
             },
-            content: <Users currentUser={props.currentUser} />,
+            content: <Users />,
           },
         ];
 
