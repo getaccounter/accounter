@@ -133,19 +133,18 @@ class CreateUser(graphene.relay.ClientIDMutation):
         email = graphene.String(required=True)
         title = graphene.String()
         department = graphene.ID()
-        is_admin = graphene.Boolean()
 
     profile = graphene.Field(ProfileNode, required=True)
 
+    @transaction.atomic
     @admin_required
     def mutate_and_get_payload(root, info, *args, **input):
         organization = info.context.user.profile.organization
 
-        if input.get("is_admin") is True:
-            if info.context.user.profile.is_owner is False:
-                raise PermissionDenied(
-                    "You do not have permission to perform this action"
-                )
+        first_name = input.get("first_name")
+        last_name = input.get("last_name")
+        email = input.get("email")
+        title = input.get("title")
 
         department = None
         if input.get("department") is not None:
@@ -153,23 +152,13 @@ class CreateUser(graphene.relay.ClientIDMutation):
             _, db_pk = from_global_id(department_relay_id)
             department = Department.objects.get(pk=int(db_pk))
 
-        User = get_user_model()
-        user = User.objects.create(
-            username=input.get("email"),
-            email=input.get("email"),
-            first_name=input.get("first_name"),
-            last_name=input.get("last_name"),
-            is_active=False,
-        )
-        user.save()
-        profile = Profile.objects.create(
-            user=user,
-            organization=organization,
-            title=input.get("title", None),
-            is_admin=input.get("is_admin", False),
+        profile = organization.create_profile(
+            email,
+            first_name,
+            last_name,
+            title=title,
             department=department,
         )
-        profile.save()
 
         return CreateUser(profile=profile)
 

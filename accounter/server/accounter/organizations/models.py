@@ -1,6 +1,8 @@
+from __future__ import annotations
 from django.conf import settings
 from django.db import models
 from typing import Type
+from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -9,10 +11,38 @@ from django.core.exceptions import PermissionDenied
 
 
 token_generator = PasswordResetTokenGenerator()
+User = get_user_model()
 
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
+
+    def create_profile(
+        self,
+        email: str,
+        first_name: str,
+        last_name: str,
+        title: str = None,
+        department: Department = None,
+    ):
+
+        user = User.objects.create(
+            username=email,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            is_active=False,
+        )
+        user.save()
+        profile = Profile.objects.create(
+            user=user,
+            organization=self,
+            title=title,
+            department=department,
+        )
+        profile.save()
+
+        return profile
 
 
 class Department(models.Model):

@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0014_auto_20210125_1628'),
+        ("integrations", "0014_auto_20210125_1628"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='slackintegration',
-            name='name',
-            field=models.CharField(default='Workspace', max_length=100),
+            model_name="slackintegration",
+            name="name",
+            field=models.CharField(default="Workspace", max_length=100),
             preserve_default=False,
         ),
     ]
