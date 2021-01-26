@@ -7,14 +7,16 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0012_slackintegration_last_refresh'),
+        ("integrations", "0012_slackintegration_last_refresh"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='slackaccount',
-            name='last_refresh',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="slackaccount",
+            name="last_refresh",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
     ]

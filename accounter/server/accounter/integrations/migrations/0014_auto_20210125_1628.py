@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0013_slackaccount_last_refresh'),
+        ("integrations", "0013_slackaccount_last_refresh"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='slackaccount',
-            name='username',
+            model_name="slackaccount",
+            name="username",
             field=models.CharField(max_length=150),
         ),
     ]

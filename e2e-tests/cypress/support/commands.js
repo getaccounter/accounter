@@ -59,7 +59,10 @@ Cypress.Commands.add("old_getUserFromDirectory", (name, cb) => {
   });
 });
 
-Cypress.Commands.add("navigateTo", (entryName) => {
+Cypress.Commands.add("navigateTo", (entryName, size) => {
+  if (size === "mobile") {
+    cy.findByRole("button", { name: "Open sidebar" }).click();
+  }
   cy.findByRole("navigation", { name: "Sidebar" })
     .should("exist")
     .within(() => {
@@ -76,7 +79,7 @@ Cypress.Commands.add("mobileNavigateTo", (entryName) => {
     });
 });
 
-Cypress.Commands.add("mockSlackOauth", () => {
+Cypress.Commands.add("mockSlackOauth", (oauthCode) => {
   // can we somehow prevent from going to the slack page by intercepting the new route
   // and routing back to the handler page immedietly?
   cy.url().should("include", "https://slack.com");
@@ -86,11 +89,11 @@ Cypress.Commands.add("mockSlackOauth", () => {
       const [, qs] = url.split("?");
       const [, redirQs] = querystring.parse(qs).redir.split("?");
       const { state } = querystring.parse(redirQs);
-      cy.visit(`/slack/oauth/callback?code=some-mock-code&state=${state}`);
+      cy.visit(`/slack/oauth/callback?code=${oauthCode}&state=${state}`);
     } else {
       const [, qs] = url.split("?");
       const { state } = querystring.parse(qs);
-      cy.visit(`/slack/oauth/callback?code=some-mock-code&state=${state}`);
+      cy.visit(`/slack/oauth/callback?code=${oauthCode}&state=${state}`);
     }
   });
 });
