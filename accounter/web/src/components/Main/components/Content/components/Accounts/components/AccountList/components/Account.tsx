@@ -20,8 +20,8 @@ const Account = ({ account }: Props) => {
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a href="#" className="focus:outline-none">
           <span className="absolute inset-0" aria-hidden="true" />
-          <p className="text-sm font-medium text-gray-900">{account.integration.service.name}</p>
-          <p className="text-sm text-gray-500 truncate">@{account.username}</p>
+          <p className="text-sm font-medium text-gray-900">@{account.username}</p>
+          <p className="text-sm text-gray-500 truncate">{account.integration.service.name} - {account.integration.name}</p>
         </a>
       </div>
     </div>
@@ -33,6 +33,7 @@ export default createFragmentContainer(Account, {
     fragment Account_account on AccountInterface {
       id
       integration {
+        name
         service {
           name
           logo

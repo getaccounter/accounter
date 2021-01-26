@@ -24,8 +24,9 @@ const Integration = (props: {
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
           <p className="text-sm font-medium text-gray-900">
-            {props.integration.service.name}
+            {props.integration.name}
           </p>
+          <p className="text-sm text-gray-500 truncate">{props.integration.service.name}</p>
         </Link>
       </div>
     </div>
@@ -35,6 +36,7 @@ const Integration = (props: {
 export default createFragmentContainer(Integration, {
   integration: graphql`
     fragment Integration_integration on IntegrationInterface {
+      name
       service {
         name
         logo

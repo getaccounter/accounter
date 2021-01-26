@@ -16,6 +16,7 @@ const generateUser = (options = {}) => {
 
 const mockSlackOauthToken = ({
   oauthCode,
+  user,
   token = faker.random.uuid(),
   teamId = faker.random.uuid(),
 } = {}) => {
@@ -34,6 +35,7 @@ const mockSlackOauthToken = ({
           },
           team: {
             id: teamId,
+            name: user.organization,
           },
         },
       },
@@ -343,7 +345,7 @@ sizes.forEach(({ name, viewport }) => {
         const token = faker.random.uuid();
         const slackAccountId = faker.random.uuid();
         const oauthCode = faker.random.uuid();
-        mockSlackOauthToken({ token, oauthCode });
+        mockSlackOauthToken({ user, token, oauthCode });
         mockSlackUsersList({ token, users: [{ user, slackAccountId }] });
         mockSlackUsersInfo({ token, user, slackAccountId });
 
@@ -365,7 +367,7 @@ sizes.forEach(({ name, viewport }) => {
         cy.mockSlackOauth(oauthCode);
 
         cy.findByRole("navigation", { name: "Directory" }).within(() => {
-          cy.findByRole("link", { name: "SLACK" }).should("exist");
+          cy.findByRole("link", { name: `${user.organization} SLACK` }).should("exist");
         });
 
         cy.navigateTo("Users", name);
@@ -376,7 +378,7 @@ sizes.forEach(({ name, viewport }) => {
 
         cy.findByRole("main").within(() => {
           cy.findByRole("link", { name: "Accounts" }).click();
-          cy.findByRole("link", { name: `SLACK @${user.firstName}` }).should(
+          cy.findByRole("link", { name: `@${user.firstName} SLACK - ${user.organization}` }).should(
             "exist"
           );
         });

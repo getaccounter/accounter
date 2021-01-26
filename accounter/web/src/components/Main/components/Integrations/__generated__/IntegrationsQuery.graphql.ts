@@ -27,6 +27,7 @@ query IntegrationsQuery {
 
 fragment Integration_integration on IntegrationInterface {
   __isIntegrationInterface: __typename
+  name
   service {
     name
     logo
@@ -34,7 +35,15 @@ fragment Integration_integration on IntegrationInterface {
 }
 */
 
-const node: ConcreteRequest = {
+const node: ConcreteRequest = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
+return {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -86,6 +95,7 @@ const node: ConcreteRequest = {
             "kind": "TypeDiscriminator",
             "abstractKey": "__isIntegrationInterface"
           },
+          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -94,13 +104,7 @@ const node: ConcreteRequest = {
             "name": "service",
             "plural": false,
             "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              },
+              (v0/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -117,13 +121,14 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "e3e81a8ad4997832dea013645fdd4c0a",
+    "cacheID": "5fb5541495fdace72a07232cd279a1ad",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    __typename\n    ...Integration_integration\n  }\n}\n\nfragment Integration_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    __typename\n    ...Integration_integration\n  }\n}\n\nfragment Integration_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  name\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
+})();
 (node as any).hash = '5c86abe77e2b691ddb481f3b19625459';
 export default node;
