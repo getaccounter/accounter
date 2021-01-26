@@ -42,6 +42,11 @@ class Organization(models.Model):
         )
         profile.save()
 
+        for integration in self.slackintegration_set.all():
+            account = integration.check_for_existing_account(profile)
+            if account:
+                account.save()
+
         return profile
 
 

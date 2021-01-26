@@ -111,18 +111,22 @@ class AbstractIntegration(models.Model):
     id = models.TextField(primary_key=True)
     token = TokenField()
     organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
-    last_refresh = models.DateTimeField(auto_now_add=True)
+    last_refresh = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=100)
 
     @property
     def is_fresh(self):
-        return (
-            timezone.now() - timedelta(seconds=self.REFRESH_INTERVAL_SECONDS)
-            > self.last_refresh
+        if not self.last_refresh:
+            return False
+        return timezone.now() < self.last_refresh + timedelta(
+            seconds=self.REFRESH_INTERVAL_SECONDS
         )
 
     @property
     def service(self):
+        raise NotImplementedError()
+
+    def check_for_existing_account(self, profile):
         raise NotImplementedError()
 
     def refresh(self, force=False):
@@ -141,9 +145,8 @@ class AbstractAccount(models.Model):
 
     @property
     def is_fresh(self):
-        return (
-            timezone.now() - timedelta(seconds=self.REFRESH_INTERVAL_SECONDS)
-            > self.last_refresh
+        return timezone.now() < self.last_refresh + timedelta(
+            seconds=self.REFRESH_INTERVAL_SECONDS
         )
 
     def refresh(self, force=False):
@@ -179,7 +182,22 @@ class SlackIntegration(AbstractIntegration):
         )
         return account
 
+    def check_for_existing_account(self, profile):
+        response = self.client.users_lookupByEmail(email=profile.user.email)
+        user_info = response["user"]
+        account = None
+        try:
+            account = SlackAccount.objects.get(
+                pk=user_info["id"], profile__organization=self.organization
+            )
+            account.update_from_response(user_info)
+        except SlackAccount.DoesNotExist:
+            account = self.create_account_from_response(profile, user_info)
+
+        return account
+
     def refresh(self, force=False):
+        # TODO disable a.io accounts that are disabled in slack
         if not force and self.is_fresh:
             return
 
@@ -199,22 +217,18 @@ class SlackIntegration(AbstractIntegration):
                 account = SlackAccount.objects.get(
                     pk=user_info["id"], profile__organization=self.organization
                 )
+                account.update_from_response(user_info)
             except SlackAccount.DoesNotExist:
                 pass
 
-            if account:
-                account.update_from_response(user_info)
-            else:
-                profile = None
+            if not account:
                 try:
                     profile = Profile.objects.get(
                         user__email=email, organization=self.organization
                     )
+                    account = self.create_account_from_response(profile, user_info)
                 except Profile.DoesNotExist:
                     pass
-
-                if profile:
-                    account = self.create_account_from_response(profile, user_info)
 
             if account:
                 account.save()
