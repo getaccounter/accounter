@@ -1,9 +1,9 @@
 import graphene
-from graphene_django import DjangoObjectType
 from graphene import relay
+from graphene_django import DjangoObjectType
 
 from ..utils import admin_required
-from .models import Service, SlackIntegration, SlackAccount
+from .models import Service, SlackAccount, SlackIntegration
 
 
 class ServiceNode(DjangoObjectType):

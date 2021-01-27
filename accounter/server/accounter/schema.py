@@ -5,17 +5,13 @@ from .integrations.schemas import (
     IntegrationInterface,
     Oauth,
     ServiceNode,
-    SlackIntegrationNode,
     SlackAccountNode,
+    SlackIntegrationNode,
 )
-from .organizations.schemas import (
-    Query as OrganizationQuery,
-    Mutation as OrganizationMutation,
-)
-from .users.schemas import (
-    Query as UserQuery,
-    Mutation as UserMutation,
-)
+from .organizations.schemas import Mutation as OrganizationMutation
+from .organizations.schemas import Query as OrganizationQuery
+from .users.schemas import Mutation as UserMutation
+from .users.schemas import Query as UserQuery
 from .utils import admin_required
 
 

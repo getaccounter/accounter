@@ -1,20 +1,19 @@
 import json
 import time
 from unittest.mock import patch
-from faker import Faker
 
 from django.contrib.auth import get_user_model
 from django.core.validators import URLValidator
 from django.test import override_settings
+from faker import Faker
+from freezegun import freeze_time
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 from slack_sdk.web import WebClient
-from freezegun import freeze_time
 
 from ..organizations.models import Profile
-from .models import Service, SlackIntegration, SlackAccount
-
 from ..test_utils import create_slack_user_fixture
+from .models import Service, SlackAccount, SlackIntegration
 
 fake = Faker()
 

@@ -1,13 +1,13 @@
 import json
 
 from django.contrib.auth import get_user_model
-from graphene_django.utils.testing import GraphQLTestCase
-from model_bakery import baker
-from graphql_relay.node.node import from_global_id, to_global_id
-
-from ..models import Organization, Profile, Department
-from ..schemas import DepartmentNode, ProfileNode
 from django.core import mail
+from graphene_django.utils.testing import GraphQLTestCase
+from graphql_relay.node.node import from_global_id, to_global_id
+from model_bakery import baker
+
+from ..models import Department, Organization, Profile
+from ..schemas import DepartmentNode, ProfileNode
 
 User = get_user_model()
 

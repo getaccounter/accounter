@@ -3,8 +3,8 @@ import graphql from "babel-plugin-relay/macro";
 import { Account_account } from "./__generated__/Account_account.graphql";
 
 type Props = {
-  account: Account_account
-}
+  account: Account_account;
+};
 
 const Account = ({ account }: Props) => {
   return (
@@ -20,8 +20,12 @@ const Account = ({ account }: Props) => {
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a href="#" className="focus:outline-none">
           <span className="absolute inset-0" aria-hidden="true" />
-          <p className="text-sm font-medium text-gray-900">@{account.username}</p>
-          <p className="text-sm text-gray-500 truncate">{account.integration.service.name} - {account.integration.name}</p>
+          <p className="text-sm font-medium text-gray-900">
+            @{account.username}
+          </p>
+          <p className="text-sm text-gray-500 truncate">
+            {account.integration.service.name} - {account.integration.name}
+          </p>
         </a>
       </div>
     </div>
@@ -45,4 +49,4 @@ export default createFragmentContainer(Account, {
       }
     }
   `,
-})
+});

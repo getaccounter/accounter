@@ -1,16 +1,16 @@
 import json
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from freezegun import freeze_time
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
-from unittest.mock import patch
 from slack_sdk.web import WebClient
-from freezegun import freeze_time
 
 from accounter.integrations.models import SlackAccount, SlackIntegration
-from ..models import Profile
 
 from ...test_utils import create_slack_user_fixture
+from ..models import Profile
 
 User = get_user_model()
 

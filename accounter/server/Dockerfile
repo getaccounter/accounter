@@ -18,7 +18,7 @@ ENV DEBUG=False
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code/requirements /code/requirements
-RUN pip install -r requirements/production.txt 
+RUN pip install -r requirements/production.txt
 RUN pip install daphne
 COPY --from=development /code /code
 WORKDIR /code

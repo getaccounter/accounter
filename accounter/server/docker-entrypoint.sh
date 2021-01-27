@@ -17,11 +17,11 @@ User.objects.filter(username=username).exists() or \
 EOF
 
 if [ "$USE_MOCK_PROXY" = "True" ]; then
-    echo "Adding mockserver certificates"
-    cp mockserver.crt /usr/local/share/ca-certificates/mockserver.crt
-    update-ca-certificates
+  echo "Adding mockserver certificates"
+  cp mockserver.crt /usr/local/share/ca-certificates/mockserver.crt
+  update-ca-certificates
 else
-    echo "Will NOT add mockserver certificates"
+  echo "Will NOT add mockserver certificates"
 fi
 
 exec "$@"

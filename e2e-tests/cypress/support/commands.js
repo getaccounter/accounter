@@ -46,12 +46,17 @@ Cypress.Commands.add("login", (email, password) => {
   cy.findByText("Sign in").click();
 });
 
-Cypress.Commands.add("getUserFromDirectory", ({user, ignoreTitle = false}, cb) => {
-  const name = `${user.firstName} ${user.lastName}${ignoreTitle ? "" : " " + user.title}`
-  cy.findByRole("navigation", { name: "Directory" }).within(() => {
-    cb(cy.findByRole("link", { name }));
-  });
-});
+Cypress.Commands.add(
+  "getUserFromDirectory",
+  ({ user, ignoreTitle = false }, cb) => {
+    const name = `${user.firstName} ${user.lastName}${
+      ignoreTitle ? "" : " " + user.title
+    }`;
+    cy.findByRole("navigation", { name: "Directory" }).within(() => {
+      cb(cy.findByRole("link", { name }));
+    });
+  }
+);
 
 Cypress.Commands.add("old_getUserFromDirectory", (name, cb) => {
   cy.findByRole("navigation", { name: "Directory" }).within(() => {
@@ -127,18 +132,15 @@ Cypress.Commands.add("getMailHogEmailContent", () => {
     );
   };
 
-  return getIframeBody()
+  return getIframeBody();
 });
-
-
 
 Cypress.Commands.add("saveResetUrl", (url) => {
   // this is a temp fix and hopefully soon not neccessary anymore
-  cy.writeFile('tmp-test-data/resetUrl.txt', url);
+  cy.writeFile("tmp-test-data/resetUrl.txt", url);
 });
 
 Cypress.Commands.add("loadResetUrl", (url) => {
   // this is a temp fix and hopefully soon not neccessary anymore
-  return cy.readFile('tmp-test-data/resetUrl.txt')
+  return cy.readFile("tmp-test-data/resetUrl.txt");
 });
-

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from model_bakery import baker
+
 from accounter.organizations.models import Profile
 
 

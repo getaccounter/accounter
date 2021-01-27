@@ -1,18 +1,17 @@
 import json
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
-from model_bakery import baker
 from graphql_relay.node.node import from_global_id, to_global_id
-from unittest.mock import patch
-
-from ..models import Profile
-from ..schemas import DepartmentNode
-
-from accounter.integrations.models import SlackIntegration
+from model_bakery import baker
 from slack_sdk.web import WebClient
 
+from accounter.integrations.models import SlackIntegration
+
 from ...test_utils import create_slack_user_fixture
+from ..models import Profile
+from ..schemas import DepartmentNode
 
 User = get_user_model()
 

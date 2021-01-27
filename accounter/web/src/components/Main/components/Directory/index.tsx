@@ -80,7 +80,7 @@ type Props = {
   title: string;
   subtitle?: string;
   children: ReactNode;
-  filters?: Array<Filter>
+  filters?: Array<Filter>;
 };
 
 const Directory = ({ children, title, subtitle, filters }: Props) => (

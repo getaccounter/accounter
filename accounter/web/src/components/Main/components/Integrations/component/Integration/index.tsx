@@ -26,7 +26,9 @@ const Integration = (props: {
           <p className="text-sm font-medium text-gray-900">
             {props.integration.name}
           </p>
-          <p className="text-sm text-gray-500 truncate">{props.integration.service.name}</p>
+          <p className="text-sm text-gray-500 truncate">
+            {props.integration.service.name}
+          </p>
         </Link>
       </div>
     </div>
