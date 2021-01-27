@@ -2,10 +2,7 @@ import { createFragmentContainer, commitMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import {
-  Environment,
-  PayloadError,
-} from "relay-runtime";
+import { Environment, PayloadError } from "relay-runtime";
 import { useEnvironment } from "../contexts/relay";
 import {
   UserFormCreateMutation,

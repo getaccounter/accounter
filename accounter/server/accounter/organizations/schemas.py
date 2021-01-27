@@ -1,15 +1,15 @@
 import graphene
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from graphene_django import DjangoObjectType
 from graphql_relay.node.node import from_global_id
-from django.core.exceptions import PermissionDenied
 
-from accounter.integrations.schemas import AccountInterface
 from accounter.integrations.models import SlackAccount
+from accounter.integrations.schemas import AccountInterface
 
+from ..utils import ExtendedConnection, admin_required
 from .models import Department, Organization, Profile
-from ..utils import admin_required, ExtendedConnection
 
 
 class Signup(graphene.Mutation):

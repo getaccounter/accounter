@@ -1,16 +1,17 @@
 import time
+from datetime import timedelta
 from typing import Optional
 from uuid import uuid4
 
 from django.conf import settings
 from django.contrib.postgres.fields import HStoreField
 from django.db import models
-from slack_sdk.oauth import AuthorizeUrlGenerator
-from slack_sdk.web import WebClient, SlackResponse
-from .fields import TokenField
 from django.utils import timezone
-from datetime import timedelta
+from slack_sdk.oauth import AuthorizeUrlGenerator
+from slack_sdk.web import SlackResponse, WebClient
+
 from ..organizations.models import Organization, Profile
+from .fields import TokenField
 
 
 class Service(models.Model):

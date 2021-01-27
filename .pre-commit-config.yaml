@@ -1,5 +1,11 @@
 fail_fast: true
 repos:
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.14.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
   - repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:
@@ -15,11 +21,11 @@ repos:
         entry: bash -c 'prettier --write "$@"; git add -u' --
         additional_dependencies:
           - prettier-plugin-organize-imports@1.1.1
-          - prettier-plugin-tailwind@2.2.0
+          - prettier-plugin-tailwind@2.2.8
           - prettier-plugin-sh@0.6.0
 
   - repo: https://github.com/pre-commit/mirrors-isort
-    rev: "v5.6.4"
+    rev: "v5.7.0"
     hooks:
       - id: isort
         entry: bash -c 'isort "$@"; git add -u' --
@@ -31,6 +37,11 @@ repos:
         name: linting-server
         args: ["--config=accounter/server/setup.cfg"]
 
+  - repo: git://github.com/antonbabenko/pre-commit-terraform
+    rev: "v1.45.0"
+    hooks:
+      - id: terraform_fmt
+
   - repo: local
     hooks:
       - id: lint-web
@@ -39,14 +50,3 @@ repos:
         language: system
         pass_filenames: false
         files: accounter/web
-
-  - repo: local
-    hooks:
-      - id: typecheck-web
-        name: typecheck-web
-        entry: docker-compose run --no-deps --entrypoint /usr/bin/env web npm run typecheck
-        language: system
-        pass_filenames: false
-        files: accounter/web
-        # push does not work at the moment for some reason
-        # stages: [push]

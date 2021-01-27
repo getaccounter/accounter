@@ -1,8 +1,9 @@
 import json
+
 from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 from accounter.organizations.models import Organization, Profile
 

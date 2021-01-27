@@ -6,7 +6,7 @@ export type Filter = {
   id: string;
   label: string;
   value: boolean;
-  onChange: (newVal: boolean) => void
+  onChange: (newVal: boolean) => void;
 };
 
 type Props = {

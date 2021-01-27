@@ -49,7 +49,7 @@ const toggleAdmin = (
 
 type Props = {
   profile: Header_profile;
-  currentUser: Header_currentUser
+  currentUser: Header_currentUser;
 };
 
 const Name = (props: {
@@ -114,7 +114,7 @@ const Header = (props: Props) => {
   const { addNotification } = useNotifications();
 
   const handleAdminToggle = (isAdmin: boolean) => {
-    console.log("BINGO")
+    console.log("BINGO");
     const variables = {
       id: props.profile.id,
       isAdmin,
@@ -178,33 +178,42 @@ const Header = (props: Props) => {
                 {props.currentUser.isOwner && !props.profile.isOwner && (
                   <>
                     {props.profile.isAdmin ? (
-                      <MainButton danger key="remove-admin" onClick={() => handleAdminToggle(false)} >
+                      <MainButton
+                        danger
+                        key="remove-admin"
+                        onClick={() => handleAdminToggle(false)}
+                      >
                         <MinusCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
                         <span>Remove admin</span>
                       </MainButton>
                     ) : (
-                      <MainButton key="make-admin" onClick={() => handleAdminToggle(true)} >
+                      <MainButton
+                        key="make-admin"
+                        onClick={() => handleAdminToggle(true)}
+                      >
                         <Briefcase className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                         <span>Make admin</span>
                       </MainButton>
                     )}
                   </>
                 )}
-                {!props.profile.isCurrentUser && !props.profile.isOwner && !props.profile.isAdmin && (
-                  <>
-                    {!props.profile.isOffboarded ? (
-                      <MainButton danger to={`${url}/offboard`}>
-                        <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
-                        <span>Offboard</span>
-                      </MainButton>
-                    ) : (
-                      <MainButton danger to={`${url}/reactivate`}>
-                        <PlusCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
-                        <span>Reactivate</span>
-                      </MainButton>
-                    )}
-                  </>
-                )}
+                {!props.profile.isCurrentUser &&
+                  !props.profile.isOwner &&
+                  !props.profile.isAdmin && (
+                    <>
+                      {!props.profile.isOffboarded ? (
+                        <MainButton danger to={`${url}/offboard`}>
+                          <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                          <span>Offboard</span>
+                        </MainButton>
+                      ) : (
+                        <MainButton danger to={`${url}/reactivate`}>
+                          <PlusCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                          <span>Reactivate</span>
+                        </MainButton>
+                      )}
+                    </>
+                  )}
               </div>
             )}
           </div>

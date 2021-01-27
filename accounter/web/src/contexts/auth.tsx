@@ -79,20 +79,20 @@ type Props = {
 };
 
 export default function AuthProvider({ children }: Props) {
-  const [login, { data: loginData, error: loginError }] = useMutation<LoginResponse, LoginParameters>(
-    LOGIN_MUTATION,
-    {
-      errorPolicy: "all",
-      onError: () => undefined,
-    }
-  );
-  const [logout, { data: logoutData }] = useMutation<LoginResponse, LoginParameters>(
-    LOGOUT_MUTATION,
-    {
-      errorPolicy: "all",
-      onError: () => undefined,
-    }
-  );
+  const [login, { data: loginData, error: loginError }] = useMutation<
+    LoginResponse,
+    LoginParameters
+  >(LOGIN_MUTATION, {
+    errorPolicy: "all",
+    onError: () => undefined,
+  });
+  const [logout, { data: logoutData }] = useMutation<
+    LoginResponse,
+    LoginParameters
+  >(LOGOUT_MUTATION, {
+    errorPolicy: "all",
+    onError: () => undefined,
+  });
 
   const { recheck, isSignedIn } = useIsSignedIn();
 
@@ -101,7 +101,7 @@ export default function AuthProvider({ children }: Props) {
       // stupid dumb hack, but for some reason sometimes it takes a bit for
       // the browser to set the cookie in time
       recheck();
-    }, 100)
+    }, 100);
   }, [recheck, loginData, logoutData]);
 
   const signIn = (email: string, password: string) => {
