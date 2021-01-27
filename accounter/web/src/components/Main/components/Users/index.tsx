@@ -2,7 +2,7 @@ import React from "react";
 import { QueryRenderer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import DetailLayout from "../DetailLayout";
-import Content from "../Content";
+import Content from "./components/Content";
 import UserDirectory from "./components/UserDirectory";
 import { UsersQuery } from "./__generated__/UsersQuery.graphql";
 import { useEnvironment } from "../../../../contexts/relay";

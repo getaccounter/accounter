@@ -358,12 +358,8 @@ class IntegrationTestCase(GraphQLTestCase):
                 integrations {
                     ... on SlackIntegrationNode {
                         accounts {
-                            edges {
-                                node {
-                                    username
-                                    email
-                                }
-                            }
+                            username
+                            email
                         }
                     }
                 }
@@ -373,10 +369,10 @@ class IntegrationTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         content = json.loads(response.content)
         self.assertResponseNoErrors(response)
-        account_edges = content["data"]["integrations"][0]["accounts"]["edges"]
-        assert len(account_edges) == 1
-        assert account_edges[0]["node"]["username"] == self.admin.first_name
-        assert account_edges[0]["node"]["email"] == self.admin.email
+        accounts = content["data"]["integrations"][0]["accounts"]
+        assert len(accounts) == 1
+        assert accounts[0]["username"] == self.admin.first_name
+        assert accounts[0]["email"] == self.admin.email
 
     @freeze_time(
         auto_tick_seconds=SlackIntegration.REFRESH_INTERVAL_SECONDS,
@@ -411,12 +407,8 @@ class IntegrationTestCase(GraphQLTestCase):
                 integrations {
                     ... on SlackIntegrationNode {
                         accounts {
-                            edges {
-                                node {
-                                    username
-                                    email
-                                }
-                            }
+                            username
+                            email
                         }
                     }
                 }
@@ -427,14 +419,10 @@ class IntegrationTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         self.assertResponseNoErrors(response)
         account.refresh_from_db()
-        account_edges = content["data"]["integrations"][0]["accounts"]["edges"]
-        assert len(account_edges) == 1
-        assert (
-            account_edges[0]["node"]["username"]
-            == self.admin.first_name
-            == account.username
-        )
-        assert account_edges[0]["node"]["email"] == self.admin.email == account.email
+        accounts = content["data"]["integrations"][0]["accounts"]
+        assert len(accounts) == 1
+        assert accounts[0]["username"] == self.admin.first_name == account.username
+        assert accounts[0]["email"] == self.admin.email == account.email
 
     def test_get_integrations_requires_authenticated_users(self):
         response = self.query(

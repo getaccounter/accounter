@@ -10,7 +10,7 @@ type Props = {
 const AccountList = ({ accounts }: Props) => {
   return (
     <div>
-      <h2 className="text-sm font-medium text-gray-500">Accounts</h2>
+      {/* <h2 className="text-sm font-medium text-gray-500">Accounts</h2> */}
       <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {accounts.map((account) => (
           <Account key={account.id} account={account} />
