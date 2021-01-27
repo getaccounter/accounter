@@ -37,6 +37,11 @@ repos:
         name: linting-server
         args: ["--config=accounter/server/setup.cfg"]
 
+  - repo: git://github.com/antonbabenko/pre-commit-terraform
+    rev: "v1.45.0"
+    hooks:
+      - id: terraform_fmt
+
   - repo: local
     hooks:
       - id: lint-web
