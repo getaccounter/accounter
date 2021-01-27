@@ -1,7 +1,7 @@
 fail_fast: true
 repos:
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: master
+    rev: v2.14.0
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -25,7 +25,7 @@ repos:
           - prettier-plugin-sh@0.6.0
 
   - repo: https://github.com/pre-commit/mirrors-isort
-    rev: "v5.6.4"
+    rev: "v5.7.0"
     hooks:
       - id: isort
         entry: bash -c 'isort "$@"; git add -u' --
