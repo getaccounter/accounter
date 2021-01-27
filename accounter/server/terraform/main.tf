@@ -96,7 +96,7 @@ resource "kubernetes_deployment" "server" {
               port = var.port
             }
             initial_delay_seconds = 120
-            period_seconds = 60
+            period_seconds        = 60
           }
           env {
             name  = "PORT"

@@ -11,7 +11,7 @@ variable "image_pull_secret_name" {
 variable "port" {
   description = "Port for web to listen to"
   type        = number
-  default = 3000
+  default     = 3000
 }
 
 variable "server" {
