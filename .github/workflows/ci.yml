@@ -93,7 +93,7 @@ jobs:
       - id: plan-cluster
         run: terraform -chdir=accounter plan -no-color
 
-      - uses: actions/github-script@0.9.0
+      - uses: actions/github-script@v3
         if: github.event_name == 'pull_request'
         env:
           PROVIDER_PLAN: "terraform\n${{ steps.plan-provider.outputs.stdout }}"
