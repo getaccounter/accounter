@@ -25,6 +25,11 @@ jobs:
   health-checks:
     runs-on: ubuntu-18.04
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.7.0
+        with:
+          access_token: ${{ github.token }}
+          
       - uses: actions/checkout@v2
 
       - name: create .env
@@ -88,7 +93,7 @@ jobs:
       - id: plan-cluster
         run: terraform -chdir=accounter plan -no-color
 
-      - uses: actions/github-script@0.9.0
+      - uses: actions/github-script@v3
         if: github.event_name == 'pull_request'
         env:
           PROVIDER_PLAN: "terraform\n${{ steps.plan-provider.outputs.stdout }}"
