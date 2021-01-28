@@ -3,6 +3,8 @@
   "devDependencies": {
     "@testing-library/cypress": "7.0.3",
     "@types/faker": "5.1.5",
+    "eslint": "7.18.0",
+    "eslint-plugin-cypress": "2.11.2",
     "faker": "5.2.0",
     "mockserver-client": "5.11.2"
   }
