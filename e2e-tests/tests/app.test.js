@@ -408,12 +408,7 @@ sizes.forEach(({ name, viewport }) => {
         cy.login(user.email, user.password);
 
         cy.navigateTo("Add Users", name);
-
-        cy.findByLabelText("First name").type(userToRegister.firstName);
-        cy.findByLabelText("Last name").type(userToRegister.lastName);
-        cy.findByLabelText("Email address").type(userToRegister.email);
-        cy.findByLabelText("Title").type(userToRegister.title);
-        cy.findByRole("button", { name: "Create" }).click();
+        cy.createUser(userToRegister)
         cy.wait(500);
 
         if (name !== FULLSCREEN) {
@@ -558,12 +553,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.login(user.email, user.password);
 
             cy.navigateTo("Add Users");
-
-            cy.findByLabelText("First name").type(userToRegister.firstName);
-            cy.findByLabelText("Last name").type(userToRegister.lastName);
-            cy.findByLabelText("Email address").type(userToRegister.email);
-            cy.findByLabelText("Title").type(userToRegister.title);
-            cy.findByRole("button", { name: "Create" }).click();
+            cy.createUser(userToRegister)
             cy.wait(500);
             cy.findByRole("navigation", { name: "Directory" }).within(() => {
               cy.findByRole("link", {
