@@ -90,6 +90,7 @@ Cypress.Commands.add("createUser", (user) => {
   cy.findByLabelText("Email address").type(user.email);
   cy.findByLabelText("Title").type(user.title);
   cy.findByRole("button", { name: "Create" }).click();
+  cy.wait(500);
 });
 
 Cypress.Commands.add("mockSlackOauth", (oauthCode) => {

@@ -11,6 +11,10 @@ const generateUser = (options = {}) => {
     email: options.email || faker.internet.email(firstName, lastName),
     title: options.title || faker.name.jobTitle(),
     password: options.password || faker.internet.password(),
+    slack: {
+      id: faker.random.uuid(),
+      displayName: faker.internet.userName(firstName),
+    },
   };
 };
 
@@ -119,8 +123,8 @@ const mockSlackUsersList = ({
               is_app_user: false,
               updated: 0,
             },
-            ...users.map(({ user, slackAccountId }) => ({
-              id: slackAccountId,
+            ...users.map((user) => ({
+              id: user.slack.id,
               team_id: teamId,
               name: "slack1",
               deleted: false,
@@ -135,8 +139,8 @@ const mockSlackUsersList = ({
                 skype: "",
                 real_name: `${user.firstName} ${user.lastName}`,
                 real_name_normalized: `${user.firstName} ${user.lastName}`,
-                display_name: user.firstName,
-                display_name_normalized: user.firstName,
+                display_name: user.slack.displayName,
+                display_name_normalized: user.slack.displayName,
                 fields: null,
                 status_text: "",
                 status_emoji: "",
@@ -241,7 +245,6 @@ const mockSlackUsersList = ({
 const mockSlackUsersInfo = ({
   token,
   user,
-  slackAccountId,
   teamId = faker.random.uuid(),
 } = {}) => {
   mockServerClient("mockserver", 1080)
@@ -252,7 +255,7 @@ const mockSlackUsersInfo = ({
         headers: {
           Authorization: [`Bearer ${token}`],
         },
-        body: `user=${slackAccountId}`,
+        body: `user=${user.slack.id}`,
       },
       httpResponse: {
         body: {
@@ -260,7 +263,7 @@ const mockSlackUsersInfo = ({
           cache_ts: 1611515141,
           response_metadata: { next_cursor: "" },
           user: {
-            id: slackAccountId,
+            id: user.slack.id,
             team_id: teamId,
             name: "slack1",
             deleted: false,
@@ -275,8 +278,8 @@ const mockSlackUsersInfo = ({
               skype: "",
               real_name: `${user.firstName} ${user.lastName}`,
               real_name_normalized: `${user.firstName} ${user.lastName}`,
-              display_name: user.firstName,
-              display_name_normalized: user.firstName,
+              display_name: user.slack.displayName,
+              display_name_normalized: user.slack.displayName,
               fields: null,
               status_text: "",
               status_emoji: "",
@@ -326,8 +329,8 @@ const FULLSCREEN = "macbook-13";
 
 const sizes = [
   { name: MOBILE, viewport: "iphone-5" },
-  { name: WINDOW, viewport: [1024, 800] },
-  { name: FULLSCREEN, viewport: "macbook-13" },
+  // { name: WINDOW, viewport: [1024, 800] },
+  // { name: FULLSCREEN, viewport: "macbook-13" },
 ];
 
 sizes.forEach(({ name, viewport }) => {
@@ -340,14 +343,13 @@ sizes.forEach(({ name, viewport }) => {
       }
     });
     describe("Services", () => {
-      it("add slack", () => {
+      it.only("add slack", () => {
         const user = generateUser();
         const token = faker.random.uuid();
-        const slackAccountId = faker.random.uuid();
         const oauthCode = faker.random.uuid();
         mockSlackOauthToken({ user, token, oauthCode });
-        mockSlackUsersList({ token, users: [{ user, slackAccountId }] });
-        mockSlackUsersInfo({ token, user, slackAccountId });
+        mockSlackUsersList({ token, users: [user] });
+        mockSlackUsersInfo({ token, user });
 
         cy.visit("/");
         cy.findByRole("link", { name: "register" }).click();
@@ -381,7 +383,7 @@ sizes.forEach(({ name, viewport }) => {
         cy.findByRole("main").within(() => {
           cy.findByRole("link", { name: "Accounts" }).click();
           cy.findByRole("link", {
-            name: `@${user.firstName} SLACK - ${user.organization}`,
+            name: `@${user.slack.displayName} SLACK - ${user.organization}`,
           }).should("exist");
         });
       });
@@ -408,8 +410,7 @@ sizes.forEach(({ name, viewport }) => {
         cy.login(user.email, user.password);
 
         cy.navigateTo("Add Users", name);
-        cy.createUser(userToRegister)
-        cy.wait(500);
+        cy.createUser(userToRegister);
 
         if (name !== FULLSCREEN) {
           cy.findByRole("main").within(() => {
@@ -553,8 +554,8 @@ sizes.forEach(({ name, viewport }) => {
             cy.login(user.email, user.password);
 
             cy.navigateTo("Add Users");
-            cy.createUser(userToRegister)
-            cy.wait(500);
+            cy.createUser(userToRegister);
+
             cy.findByRole("navigation", { name: "Directory" }).within(() => {
               cy.findByRole("link", {
                 name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
