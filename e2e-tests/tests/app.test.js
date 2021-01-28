@@ -4,6 +4,7 @@ import {
   mockSlackOauthToken,
   mockSlackUsersList,
   mockSlackUsersInfo,
+  mockSlackUsersLookupByEmail
 } from "../utils/slack";
 
 const MOBILE = "mobile";
@@ -12,8 +13,8 @@ const FULLSCREEN = "macbook-13";
 
 const sizes = [
   { name: MOBILE, viewport: "iphone-5" },
-  // { name: WINDOW, viewport: [1024, 800] },
-  // { name: FULLSCREEN, viewport: "macbook-13" },
+  { name: WINDOW, viewport: [1024, 800] },
+  { name: FULLSCREEN, viewport: "macbook-13" },
 ];
 
 sizes.forEach(({ name, viewport }) => {
@@ -26,49 +27,81 @@ sizes.forEach(({ name, viewport }) => {
       }
     });
     describe("Services", () => {
-      it.only("add slack", () => {
-        const user = generateUser();
-        const token = faker.random.uuid();
-        const oauthCode = faker.random.uuid();
-        mockSlackOauthToken({ user, token, oauthCode });
-        mockSlackUsersList({ token, users: [user] });
-        mockSlackUsersInfo({ token, user });
-
-        cy.visit("/");
-        cy.findByRole("link", { name: "register" }).click();
-        cy.register(user);
-        cy.login(user.email, user.password);
-
-        cy.navigateTo("Add Apps", name);
-
-        cy.findByRole("link", { name: "Add SLACK" }).click();
-
-        cy.mockSlackOauth(oauthCode);
-
-        cy.findByRole("navigation", { name: "Directory" }).within(() => {
-          cy.findByRole("link", { name: `${user.organization} SLACK` }).should(
-            "exist"
+      describe("slack", () => {
+        it("add integration and pull users accounts", () => {
+          const user = generateUser();
+          const token = faker.random.uuid();
+          const oauthCode = faker.random.uuid();
+          mockSlackOauthToken({ user, token, oauthCode });
+          mockSlackUsersList({ token, users: [user] });
+  
+          cy.visit("/");
+          cy.findByRole("link", { name: "register" }).click();
+          cy.register(user);
+          cy.login(user.email, user.password);
+  
+          cy.navigateTo("Add Apps", name);
+  
+          cy.findByRole("link", { name: "Add SLACK" }).click();
+  
+          cy.mockSlackOauth(oauthCode);
+  
+          cy.findByRole("navigation", { name: "Directory" }).within(() => {
+            cy.findByRole("link", { name: `${user.organization} SLACK` }).should(
+              "exist"
+            );
+          });
+  
+          cy.navigateTo("Users", name);
+  
+          cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
+            userRow.click()
           );
+  
+          cy.findByRole("main").within(() => {
+            cy.findByRole("link", { name: "Accounts" }).click();
+            cy.findByRole("link", {
+              name: `@${user.slack.displayName} SLACK - ${user.organization}`,
+            }).should("exist");
+          });
         });
+        it("pulls accounts for newly created users", () => {
+          const user = generateUser();
+          const userToCreate = generateUser({
+            organization: user.organization,
+          });
+          const token = faker.random.uuid();
+          const oauthCode = faker.random.uuid();
+          mockSlackOauthToken({ user, token, oauthCode });
+          mockSlackUsersLookupByEmail({ token, user: userToCreate })
+  
+          cy.visit("/");
+          cy.findByRole("link", { name: "register" }).click();
+          cy.register(user);
+          cy.login(user.email, user.password);
+  
+          cy.navigateTo("Add Apps", name);
+  
+          cy.findByRole("link", { name: "Add SLACK" }).click();
+  
+          cy.mockSlackOauth(oauthCode);
 
-        cy.navigateTo("Users", name);
-
-        cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
-          userRow.click()
-        );
-
-        cy.findByRole("main").within(() => {
-          cy.findByRole("link", { name: "Accounts" }).click();
-          cy.findByRole("link", {
-            name: `@${user.slack.displayName} SLACK - ${user.organization}`,
-          }).should("exist");
+          cy.navigateTo("Add Users", name);
+          cy.createUser(userToCreate);
+  
+          cy.findByRole("main").within(() => {
+            cy.findByRole("link", { name: "Accounts" }).click();
+            cy.findByRole("link", {
+              name: `@${userToCreate.slack.displayName} SLACK - ${userToCreate.organization}`,
+            }).should("exist");
+          });
         });
-      });
+      })
     });
     describe("Users", () => {
       it("Add, edit, offboard and reactivate", () => {
         const user = generateUser();
-        const userToRegister = generateUser({
+        const userToCreate = generateUser({
           organization: user.organization,
         });
         const newUserData = generateUser({
@@ -81,7 +114,7 @@ sizes.forEach(({ name, viewport }) => {
         cy.login(user.email, user.password);
 
         cy.navigateTo("Add Users", name);
-        cy.createUser(userToRegister);
+        cy.createUser(userToCreate);
 
         if (name !== FULLSCREEN) {
           cy.findByRole("main").within(() => {
@@ -91,29 +124,29 @@ sizes.forEach(({ name, viewport }) => {
 
         cy.findByRole("navigation", { name: "Directory" }).within(() => {
           cy.findByRole("link", {
-            name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+            name: `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
           }).should("exist");
         });
 
-        cy.getUserFromDirectory({ user: userToRegister }, (userRow) =>
+        cy.getUserFromDirectory({ user: userToCreate }, (userRow) =>
           userRow.click()
         );
 
         cy.findByRole("main").within(() => {
           cy.findByRole("heading", {
-            name: `${userToRegister.firstName} ${userToRegister.lastName}`,
+            name: `${userToCreate.firstName} ${userToCreate.lastName}`,
           }).should("exist");
         });
 
         cy.findByRole("main").within(() => {
           cy.findByRole("heading", {
-            name: `${userToRegister.firstName} ${userToRegister.lastName}`,
+            name: `${userToCreate.firstName} ${userToCreate.lastName}`,
           }).should("exist");
 
           cy.findByRole("article").within(() => {
-            cy.findByText(userToRegister.firstName).should("exist");
-            cy.findByText(userToRegister.lastName).should("exist");
-            cy.findByText(userToRegister.email).should("exist");
+            cy.findByText(userToCreate.firstName).should("exist");
+            cy.findByText(userToCreate.lastName).should("exist");
+            cy.findByText(userToCreate.email).should("exist");
           });
 
           cy.findByRole("link", { name: "Edit" }).click();
@@ -202,7 +235,7 @@ sizes.forEach(({ name, viewport }) => {
             title: "Jefe",
             password: "mysecretpassword",
           });
-          const userToRegister = generateUser({
+          const userToCreate = generateUser({
             organization: user.organization,
             firstName: "Jack",
             lastName: "Volkman",
@@ -219,16 +252,16 @@ sizes.forEach(({ name, viewport }) => {
             cy.login(user.email, user.password);
 
             cy.navigateTo("Add Users");
-            cy.createUser(userToRegister);
+            cy.createUser(userToCreate);
 
             cy.findByRole("navigation", { name: "Directory" }).within(() => {
               cy.findByRole("link", {
-                name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+                name: `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
               }).should("exist");
             });
 
             cy.old_getUserFromDirectory(
-              `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+              `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
               (user) => user.click()
             );
 
@@ -263,16 +296,16 @@ sizes.forEach(({ name, viewport }) => {
               cy.visit(url);
             });
 
-            cy.findByLabelText("Password").type(userToRegister.password);
+            cy.findByLabelText("Password").type(userToCreate.password);
             cy.findByLabelText("Password Confirmation").type(
-              userToRegister.password
+              userToCreate.password
             );
             cy.findByRole("button", { name: "Set password" }).click();
 
-            cy.login(userToRegister.email, userToRegister.password);
+            cy.login(userToCreate.email, userToCreate.password);
 
             cy.findByRole("button", {
-              name: `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+              name: `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
             }).click();
             cy.findByRole("menuitem", { name: "Logout" }).click();
 
@@ -285,7 +318,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.navigateTo("Users");
 
             cy.old_getUserFromDirectory(
-              `${userToRegister.firstName} ${userToRegister.lastName} ${userToRegister.title}`,
+              `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
               (user) => user.click()
             );
 
@@ -300,7 +333,7 @@ sizes.forEach(({ name, viewport }) => {
               name: "Sign in to your account",
             }).should("exist");
 
-            cy.login(userToRegister.email, userToRegister.password);
+            cy.login(userToCreate.email, userToCreate.password);
 
             cy.findByText("Login Failed").should("exist");
           });
