@@ -4,46 +4,34 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceName = "SLACK" | "%future added value";
-export type Integration_integration = {
-    readonly id: string;
+export type IntegrationContentHeader_integration = {
     readonly name: string;
     readonly service: {
-        readonly name: ServiceName;
         readonly logo: string;
     };
-    readonly " $refType": "Integration_integration";
+    readonly " $refType": "IntegrationContentHeader_integration";
 };
-export type Integration_integration$data = Integration_integration;
-export type Integration_integration$key = {
-    readonly " $data"?: Integration_integration$data;
-    readonly " $fragmentRefs": FragmentRefs<"Integration_integration">;
+export type IntegrationContentHeader_integration$data = IntegrationContentHeader_integration;
+export type IntegrationContentHeader_integration$key = {
+    readonly " $data"?: IntegrationContentHeader_integration$data;
+    readonly " $fragmentRefs": FragmentRefs<"IntegrationContentHeader_integration">;
 };
 
 
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "Integration_integration",
+  "name": "IntegrationContentHeader_integration",
   "selections": [
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "id",
+      "name": "name",
       "storageKey": null
     },
-    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -52,7 +40,6 @@ return {
       "name": "service",
       "plural": false,
       "selections": [
-        (v0/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -67,6 +54,5 @@ return {
   "type": "IntegrationInterface",
   "abstractKey": "__isIntegrationInterface"
 };
-})();
-(node as any).hash = 'ed3d783a89be1adf4616da21310787f9';
+(node as any).hash = 'f4605d6139c5e3b083b55ddaccba2d2e';
 export default node;

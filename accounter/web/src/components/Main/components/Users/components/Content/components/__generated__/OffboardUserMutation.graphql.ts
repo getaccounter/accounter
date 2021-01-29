@@ -4,31 +4,29 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type HeaderAdminMutationVariables = {
+export type OffboardUserMutationVariables = {
     id: string;
-    isAdmin: boolean;
 };
-export type HeaderAdminMutationResponse = {
-    readonly updateUser: {
+export type OffboardUserMutationResponse = {
+    readonly offboardUser: {
         readonly profile: {
             readonly id: string;
             readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
         };
     } | null;
 };
-export type HeaderAdminMutation = {
-    readonly response: HeaderAdminMutationResponse;
-    readonly variables: HeaderAdminMutationVariables;
+export type OffboardUserMutation = {
+    readonly response: OffboardUserMutationResponse;
+    readonly variables: OffboardUserMutationVariables;
 };
 
 
 
 /*
-mutation HeaderAdminMutation(
+mutation OffboardUserMutation(
   $id: ID!
-  $isAdmin: Boolean!
 ) {
-  updateUser(input: {id: $id, isAdmin: $isAdmin}) {
+  offboardUser(input: {id: $id}) {
     profile {
       id
       ...Content_profile
@@ -52,6 +50,7 @@ fragment Account_account on AccountInterface {
       name
       logo
     }
+    id
   }
   ... on SlackAccountNode {
     username
@@ -130,11 +129,6 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "id"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "isAdmin"
   }
 ],
 v1 = [
@@ -144,11 +138,6 @@ v1 = [
         "kind": "Variable",
         "name": "id",
         "variableName": "id"
-      },
-      {
-        "kind": "Variable",
-        "name": "isAdmin",
-        "variableName": "isAdmin"
       }
     ],
     "kind": "ObjectValue",
@@ -188,14 +177,14 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "HeaderAdminMutation",
+    "name": "OffboardUserMutation",
     "selections": [
       {
         "alias": null,
         "args": (v1/*: any*/),
-        "concreteType": "UpdateUserPayload",
+        "concreteType": "OffboardUserPayload",
         "kind": "LinkedField",
-        "name": "updateUser",
+        "name": "offboardUser",
         "plural": false,
         "selections": [
           {
@@ -226,14 +215,14 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "HeaderAdminMutation",
+    "name": "OffboardUserMutation",
     "selections": [
       {
         "alias": null,
         "args": (v1/*: any*/),
-        "concreteType": "UpdateUserPayload",
+        "concreteType": "OffboardUserPayload",
         "kind": "LinkedField",
-        "name": "updateUser",
+        "name": "offboardUser",
         "plural": false,
         "selections": [
           {
@@ -357,7 +346,8 @@ return {
                           }
                         ],
                         "storageKey": null
-                      }
+                      },
+                      (v2/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -388,14 +378,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5bb39b2389eadafb534b97ccb22a2169",
+    "cacheID": "69806359b8d170229c81747880e1c392",
     "id": null,
     "metadata": {},
-    "name": "HeaderAdminMutation",
+    "name": "OffboardUserMutation",
     "operationKind": "mutation",
-    "text": "mutation HeaderAdminMutation(\n  $id: ID!\n  $isAdmin: Boolean!\n) {\n  updateUser(input: {id: $id, isAdmin: $isAdmin}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment AccountList_accounts on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  ...Account_account\n}\n\nfragment Account_account on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  integration {\n    __typename\n    name\n    service {\n      name\n      logo\n    }\n  }\n  ... on SlackAccountNode {\n    username\n    email\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    __typename\n    ...AccountList_accounts\n    id\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
+    "text": "mutation OffboardUserMutation(\n  $id: ID!\n) {\n  offboardUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment AccountList_accounts on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  ...Account_account\n}\n\nfragment Account_account on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  integration {\n    __typename\n    name\n    service {\n      name\n      logo\n    }\n    id\n  }\n  ... on SlackAccountNode {\n    username\n    email\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    __typename\n    ...AccountList_accounts\n    id\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '8a8adaf3556ffcd3824d23fed24b6146';
+(node as any).hash = '30b7253a47493fee1b05b4de98057386';
 export default node;

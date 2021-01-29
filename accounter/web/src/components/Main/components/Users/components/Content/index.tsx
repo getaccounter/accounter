@@ -7,7 +7,6 @@ import {
   useLocation,
   useRouteMatch,
 } from "react-router-dom";
-import { ChevronLeft } from "../../../icons/solid";
 import Header from "./components/Header";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
@@ -18,27 +17,7 @@ import { Content_currentUser } from "./__generated__/Content_currentUser.graphql
 import OffboardUser from "./components/OffboardUser";
 import ReactivateUser from "./components/ReactivateUser";
 import Accounts from "./components/Accounts";
-
-type BreadcrumbProps = {
-  title: ReactNode;
-};
-const Breadcrumb = ({ title }: BreadcrumbProps) => {
-  return (
-    <nav
-      className="flex items-start px-4 py-3 sm:px-6 lg:px-8 xl:hidden"
-      aria-label="Breadcrumb"
-    >
-      <Link
-        to="/users"
-        className="inline-flex items-center space-x-3 text-sm font-medium text-gray-900"
-      >
-        <ChevronLeft className="-mAppl-2 h-5 w-5 text-gray-400" />
-        <span>{title}</span>
-      </Link>
-    </nav>
-  );
-};
-
+import Breadcrumb from "../../../Breadcrumb";
 const Tab = (props: { children: ReactNode; to: string }) => {
   const { pathname } = useLocation();
   const isSelected = props.to === pathname;
@@ -67,8 +46,6 @@ const Tabs = () => {
       <div className="border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            {/* Current: "border-pink-500 text-indigo-600", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" */}
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <Tab to={`${url}/profile`}>Profile</Tab>
             <Tab to={`${url}/apps`}>Accounts</Tab>
           </nav>
@@ -84,7 +61,7 @@ type Props = {
   currentUser: Content_currentUser;
 };
 
-const Content = ({ title, profile, currentUser }: Props) => {
+const Content = ({ profile, currentUser }: Props) => {
   const { path, url } = useRouteMatch();
   return (
     <Switch>
@@ -102,7 +79,7 @@ const Content = ({ title, profile, currentUser }: Props) => {
         <ReactivateUser profile={profile} />
       </Route>
       <Route>
-        <Breadcrumb title={title} />
+        <Breadcrumb title="Users" to="/users" />
         <article>
           <Header currentUser={currentUser} profile={profile} />
           <Tabs />

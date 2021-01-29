@@ -5,20 +5,20 @@ import {
   Pencil,
   PlusCircle,
   XCircle,
-} from "../../../../icons/solid";
+} from "../../../../../../icons/solid";
 import { createFragmentContainer, Environment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Header_profile } from "./__generated__/Header_profile.graphql";
 import { Link, useRouteMatch } from "react-router-dom";
-import Badge from "../../../../Badge";
+import Badge from "../../../../../../Badge";
 import { commitMutation, PayloadError } from "relay-runtime";
 import {
   HeaderAdminMutation,
   HeaderAdminMutationResponse,
   HeaderAdminMutationVariables,
 } from "./__generated__/HeaderAdminMutation.graphql";
-import { useEnvironment } from "../../../../../contexts/relay";
-import { useNotifications } from "../../../../../contexts/notification";
+import { useEnvironment } from "../../../../../../../contexts/relay";
+import { useNotifications } from "../../../../../../../contexts/notification";
 import { Header_currentUser } from "./__generated__/Header_currentUser.graphql";
 
 const toggleAdmin = (
@@ -114,7 +114,6 @@ const Header = (props: Props) => {
   const { addNotification } = useNotifications();
 
   const handleAdminToggle = (isAdmin: boolean) => {
-    console.log("BINGO");
     const variables = {
       id: props.profile.id,
       isAdmin,

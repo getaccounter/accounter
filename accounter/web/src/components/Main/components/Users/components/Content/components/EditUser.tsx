@@ -1,6 +1,6 @@
 import graphql from "babel-plugin-relay/macro";
 import { createFragmentContainer } from "react-relay";
-import UserForm from "../../../../UserForm";
+import UserForm from "../../../../../../UserForm";
 import { EditUser_currentUser } from "./__generated__/EditUser_currentUser.graphql";
 import { EditUser_profile } from "./__generated__/EditUser_profile.graphql";
 

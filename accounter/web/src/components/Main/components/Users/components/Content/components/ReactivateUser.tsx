@@ -4,8 +4,8 @@ import { commitMutation, createFragmentContainer } from "react-relay";
 import { Redirect, useLocation } from "react-router-dom";
 import { PayloadError } from "relay-runtime";
 import { Environment } from "relay-runtime/lib/store/RelayStoreTypes";
-import { useEnvironment } from "../../../../../contexts/relay";
-import Loading from "../../../../Loading";
+import { useEnvironment } from "../../../../../../../contexts/relay";
+import Loading from "../../../../../../Loading";
 import {
   ReactivateUserMutationVariables,
   ReactivateUserMutationResponse,

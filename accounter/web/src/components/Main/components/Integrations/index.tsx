@@ -7,6 +7,7 @@ import { IntegrationsQuery } from "./__generated__/IntegrationsQuery.graphql";
 import { useEnvironment } from "../../../../contexts/relay";
 import Integration from "./component/Integration";
 import DetailLayout from "../DetailLayout";
+import IntegrationContent from "./component/IntegrationContent";
 
 const TITLE = "Apps";
 
@@ -18,7 +19,9 @@ const Integrations = () => {
       query={graphql`
         query IntegrationsQuery {
           integrations {
+            id
             ...Integration_integration
+            ...IntegrationContent_integration
           }
         }
       `}
@@ -28,7 +31,16 @@ const Integrations = () => {
           <Loading />
         ) : (
           <DetailLayout
-            mainColumn={() => "TODO"}
+            mainColumn={(id) => {
+              const integration = props.integrations.find(
+                (p) => p.id === id
+              )!;
+              return (
+                <IntegrationContent
+                  integration={integration}
+              />
+              );
+            }}
             secondaryColumn={() => (
               <Directory
                 title={TITLE}
