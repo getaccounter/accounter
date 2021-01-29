@@ -5,14 +5,11 @@
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type IntegrationAccount_account = {
-    readonly id: string;
     readonly profile: {
         readonly firstName: string;
         readonly lastName: string;
-        readonly title: string | null;
     };
     readonly username?: string;
-    readonly email?: string;
     readonly " $refType": "IntegrationAccount_account";
 };
 export type IntegrationAccount_account$data = IntegrationAccount_account;
@@ -29,13 +26,6 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "IntegrationAccount_account",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -57,13 +47,6 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "lastName",
           "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "title",
-          "storageKey": null
         }
       ],
       "storageKey": null
@@ -77,13 +60,6 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "username",
           "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "email",
-          "storageKey": null
         }
       ],
       "type": "SlackAccountNode",
@@ -93,5 +69,5 @@ const node: ReaderFragment = {
   "type": "AccountInterface",
   "abstractKey": "__isAccountInterface"
 };
-(node as any).hash = 'c50dccff9c1d8be5d1602eb194b729d3';
+(node as any).hash = '37ffcedb1dd434ed1d82f6915fe49c34';
 export default node;

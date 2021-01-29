@@ -35,16 +35,13 @@ fragment IntegrationAccountList_accounts on SlackAccountNode {
 
 fragment IntegrationAccount_account on AccountInterface {
   __isAccountInterface: __typename
-  id
   profile {
     firstName
     lastName
-    title
     id
   }
   ... on SlackAccountNode {
     username
-    email
   }
 }
 
@@ -207,13 +204,6 @@ return {
                             "name": "lastName",
                             "storageKey": null
                           },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "title",
-                            "storageKey": null
-                          },
                           (v0/*: any*/)
                         ],
                         "storageKey": null
@@ -226,13 +216,6 @@ return {
                             "args": null,
                             "kind": "ScalarField",
                             "name": "username",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "email",
                             "storageKey": null
                           }
                         ],
@@ -256,12 +239,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "322ded2bfc7a0e22ce45f49b66f8b83e",
+    "cacheID": "01650a3471497f7a4c6f438f06d688aa",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    __typename\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on SlackAccountNode {\n  id\n  ...IntegrationAccount_account\n}\n\nfragment IntegrationAccount_account on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  ... on SlackAccountNode {\n    username\n    email\n  }\n}\n\nfragment IntegrationContentHeader_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on SlackIntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    __typename\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on SlackAccountNode {\n  id\n  ...IntegrationAccount_account\n}\n\nfragment IntegrationAccount_account on AccountInterface {\n  __isAccountInterface: __typename\n  profile {\n    firstName\n    lastName\n    id\n  }\n  ... on SlackAccountNode {\n    username\n  }\n}\n\nfragment IntegrationContentHeader_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on SlackIntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
 })();

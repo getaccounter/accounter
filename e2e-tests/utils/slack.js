@@ -1,9 +1,17 @@
 import { mockServerClient } from "mockserver-client";
 import faker from "faker";
 
-const createSlackbotUser = (teamId) => ({
+export const generateWorkspaceData = () => {
+  return {
+    name: faker.internet.domainWord(),
+    teamId: faker.random.uuid()
+  };
+};
+
+
+const createSlackbotUser = (workspace) => ({
   id: "USLACKBOT",
-  team_id: teamId,
+  team_id: workspace.teamId,
   name: "slackbot",
   deleted: false,
   color: "757575",
@@ -35,7 +43,7 @@ const createSlackbotUser = (teamId) => ({
       "https://a.slack-edge.com/80588/marketing/img/avatars/slackbot/avatar-slackbot.png",
     image_512: "https://a.slack-edge.com/80588/img/slackbot_512.png",
     status_text_canonical: "",
-    team: teamId,
+    team: workspace.teamId,
   },
   is_admin: false,
   is_owner: false,
@@ -47,9 +55,9 @@ const createSlackbotUser = (teamId) => ({
   updated: 0,
 });
 
-const createSlackIntegrationBotUser = (teamId) => ({
+const createSlackIntegrationBotUser = (workspace) => ({
   id: "U01JUS6ED60",
-  team_id: teamId,
+  team_id: workspace.teamId,
   name: "zapier",
   deleted: false,
   color: "e7392d",
@@ -91,7 +99,7 @@ const createSlackIntegrationBotUser = (teamId) => ({
     image_1024:
       "https://avatars.slack-edge.com/2021-01-13/1658568361568_cb1331b16b0844483b18_1024.png",
     status_text_canonical: "",
-    team: teamId,
+    team: workspace.teamId,
   },
   is_admin: false,
   is_owner: false,
@@ -103,9 +111,9 @@ const createSlackIntegrationBotUser = (teamId) => ({
   updated: 1610571838,
 });
 
-const createSlackProfile = (teamId, user) => ({
+const createSlackProfile = (workspace, user) => ({
   id: user.slack.id,
-  team_id: teamId,
+  team_id: workspace.teamId,
   name: "slack1",
   deleted: false,
   color: "9f69e7",
@@ -136,7 +144,7 @@ const createSlackProfile = (teamId, user) => ({
     image_192: "https://secure.gravatar.com/mock",
     image_512: "https://secure.gravatar.com/mock",
     status_text_canonical: "",
-    team: teamId,
+    team: workspace.teamId,
   },
   is_admin: true,
   is_owner: true,
@@ -151,9 +159,8 @@ const createSlackProfile = (teamId, user) => ({
 
 export const mockSlackOauthToken = ({
   oauthCode,
-  user,
+  workspace,
   token = faker.random.uuid(),
-  teamId = faker.random.uuid(),
 } = {}) => {
   mockServerClient("mockserver", 1080)
     .mockAnyResponse({
@@ -169,8 +176,8 @@ export const mockSlackOauthToken = ({
             access_token: token,
           },
           team: {
-            id: teamId,
-            name: user.organization,
+            id: workspace.teamId,
+            name: workspace.name,
           },
         },
       },
@@ -190,7 +197,7 @@ export const mockSlackOauthToken = ({
 
 export const mockSlackUsersList = ({
   token,
-  teamId = faker.random.uuid(),
+  workspace,
   users = [],
 } = {}) => {
   mockServerClient("mockserver", 1080)
@@ -208,9 +215,9 @@ export const mockSlackUsersList = ({
           cache_ts: 1611515141,
           response_metadata: { next_cursor: "" },
           members: [
-            createSlackbotUser(teamId),
-            createSlackIntegrationBotUser(teamId),
-            ...users.map((user) => createSlackProfile(teamId, user)),
+            createSlackbotUser(workspace),
+            createSlackIntegrationBotUser(workspace),
+            ...users.map((user) => createSlackProfile(workspace, user)),
           ],
           cache_ts: 1611515141,
           response_metadata: { next_cursor: "" },
@@ -233,7 +240,7 @@ export const mockSlackUsersList = ({
 export const mockSlackUsersInfo = ({
   token,
   user,
-  teamId = faker.random.uuid(),
+  workspace = generateWorkspaceData(),
 } = {}) => {
   mockServerClient("mockserver", 1080)
     .mockAnyResponse({
@@ -250,7 +257,7 @@ export const mockSlackUsersInfo = ({
           ok: true,
           cache_ts: 1611515141,
           response_metadata: { next_cursor: "" },
-          user: createSlackProfile(teamId, user),
+          user: createSlackProfile(workspace, user),
         },
       },
       times: {
@@ -270,7 +277,7 @@ export const mockSlackUsersInfo = ({
 export const mockSlackUsersLookupByEmail = ({
   token,
   user,
-  teamId = faker.random.uuid(),
+  workspace = generateWorkspaceData(),
 } = {}) => {
   mockServerClient("mockserver", 1080)
     .mockAnyResponse({
@@ -287,7 +294,7 @@ export const mockSlackUsersLookupByEmail = ({
           ok: true,
           cache_ts: 1611515141,
           response_metadata: { next_cursor: "" },
-          user: createSlackProfile(teamId, user),
+          user: createSlackProfile(workspace, user),
         },
       },
       times: {
