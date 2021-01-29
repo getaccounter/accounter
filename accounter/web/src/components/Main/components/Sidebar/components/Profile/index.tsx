@@ -33,7 +33,7 @@ const Profile = ({ desktop, profile }: Props) => {
                   className={`inline-block rounded-full ${
                     desktop ? "h-9 w-9" : "h-10 w-10 "
                   }`}
-                  src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+                  src={profile.image}
                   alt=""
                 />
               </span>
@@ -77,6 +77,7 @@ export default createFragmentContainer(Profile, {
       firstName
       lastName
       title
+      image
     }
   `,
 });

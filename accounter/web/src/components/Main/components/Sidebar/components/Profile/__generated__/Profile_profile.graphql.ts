@@ -8,6 +8,7 @@ export type Profile_profile = {
     readonly firstName: string;
     readonly lastName: string;
     readonly title: string | null;
+    readonly image: string;
     readonly " $fragmentRefs": FragmentRefs<"Dropdown_profile">;
     readonly " $refType": "Profile_profile";
 };
@@ -47,6 +48,13 @@ const node: ReaderFragment = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "image",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "Dropdown_profile"
@@ -55,5 +63,5 @@ const node: ReaderFragment = {
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = 'b881c2ba75053ad73cc8db09263a110d';
+(node as any).hash = '829ddd67cdb775c7da7faeeaed62837a';
 export default node;

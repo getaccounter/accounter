@@ -131,11 +131,12 @@ class OrganizationQueryTestCase(GraphQLTestCase):
     )
     @patch.object(WebClient, "users_info")
     def test_get_profiles_accounts_slack(self, users_info_mock):
+        user_fixture = create_slack_user_fixture(self.admin.profile)
         users_info_mock.return_value = {
             "ok": True,
             "cache_ts": 1611515141,
             "response_metadata": {"next_cursor": ""},
-            "user": create_slack_user_fixture(self.admin.profile),
+            "user": user_fixture,
         }
         self.client.force_login(self.admin)
         integration = baker.make(
@@ -162,6 +163,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                       node {
                         accounts {
                           id
+                          image
                           integration {
                             service {
                               name
@@ -200,3 +202,4 @@ class OrganizationQueryTestCase(GraphQLTestCase):
             updated_admin_account["integration"]["service"]["name"]
             == integration.service.name
         )
+        assert updated_admin_account["image"] == user_fixture["profile"]["image_48"]

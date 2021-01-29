@@ -125,6 +125,7 @@ fragment Header_currentUser on ProfileNode {
 
 fragment Header_profile on ProfileNode {
   id
+  image
   firstName
   lastName
   isAdmin
@@ -183,6 +184,7 @@ fragment UserForm_profile on ProfileNode {
 
 fragment User_profile on ProfileNode {
   id
+  image
   firstName
   lastName
   title
@@ -439,6 +441,13 @@ return {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
+                            "name": "image",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
                             "name": "firstName",
                             "storageKey": null
                           },
@@ -603,7 +612,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fa6f0339ab56c425e8c57e027435b92e",
+    "cacheID": "c0d555397c5fe1c8016cf88e40384533",
     "id": null,
     "metadata": {
       "connection": [
@@ -621,7 +630,7 @@ return {
     },
     "name": "UsersQuery",
     "operationKind": "query",
-    "text": "query UsersQuery {\n  currentUser {\n    ...Content_currentUser\n    organization {\n      profiles(first: 100) {\n        edges {\n          node {\n            id\n            ...Content_profile\n            __typename\n          }\n          cursor\n        }\n        ...UserDirectory_profiles\n        pageInfo {\n          endCursor\n          hasNextPage\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment AccountList_accounts on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  ...Account_account\n}\n\nfragment Account_account on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  integration {\n    __typename\n    name\n    service {\n      name\n      logo\n    }\n    id\n  }\n  ... on SlackAccountNode {\n    username\n    email\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    __typename\n    ...AccountList_accounts\n    id\n  }\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...EditUser_currentUser\n  ...Header_currentUser\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_currentUser on ProfileNode {\n  isOwner\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      isOffboarded\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n    departments {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n  isOffboarded\n}\n"
+    "text": "query UsersQuery {\n  currentUser {\n    ...Content_currentUser\n    organization {\n      profiles(first: 100) {\n        edges {\n          node {\n            id\n            ...Content_profile\n            __typename\n          }\n          cursor\n        }\n        ...UserDirectory_profiles\n        pageInfo {\n          endCursor\n          hasNextPage\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment AccountList_accounts on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  ...Account_account\n}\n\nfragment Account_account on AccountInterface {\n  __isAccountInterface: __typename\n  id\n  integration {\n    __typename\n    name\n    service {\n      name\n      logo\n    }\n    id\n  }\n  ... on SlackAccountNode {\n    username\n    email\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    __typename\n    ...AccountList_accounts\n    id\n  }\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...EditUser_currentUser\n  ...Header_currentUser\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_currentUser on ProfileNode {\n  isOwner\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      isOffboarded\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n    departments {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n\nfragment User_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n  isOffboarded\n}\n"
   }
 };
 })();

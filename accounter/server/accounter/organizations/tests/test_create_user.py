@@ -13,6 +13,10 @@ from ...test_utils import create_slack_user_fixture
 from ..models import Profile
 from ..schemas import DepartmentNode
 
+DEFAULT_PROFILE_IMAGE = (
+    "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+)
+
 User = get_user_model()
 
 
@@ -76,6 +80,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                 firstName
                 lastName
                 title
+                image
                 department {
                   name
                 }
@@ -104,6 +109,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         assert profile.user.last_name == returned_profile["lastName"] == last_name
         assert profile.user.email == returned_profile["email"] == email
         assert profile.title == returned_profile["title"] == title
+        assert profile.image == returned_profile["image"] == DEFAULT_PROFILE_IMAGE
         assert (
             profile.department.name
             == returned_profile["department"]["name"]
@@ -112,12 +118,12 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
 
     @patch.object(WebClient, "users_lookupByEmail")
     def test_create_user_pulls_accounts(self, users_lookupByEmail_mock):
-
+        user_fixture = create_slack_user_fixture(self.admin.profile)
         users_lookupByEmail_mock.return_value = {
             "ok": True,
             "cache_ts": 1611515141,
             "response_metadata": {"next_cursor": ""},
-            "user": create_slack_user_fixture(self.admin.profile),
+            "user": user_fixture,
         }
 
         self.client.force_login(self.admin)
@@ -148,6 +154,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
             ) {
               profile {
                 accounts {
+                  image
                   ... on SlackAccountNode {
                     username
                     email
@@ -169,6 +176,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         account = content["data"]["createUser"]["profile"]["accounts"][0]
         assert account["username"] == self.admin.first_name
         assert account["email"] == self.admin.email
+        assert account["image"] == user_fixture["profile"]["image_48"]
 
     def test_create_user_without_optional_fields(self):
         self.client.force_login(self.admin)
