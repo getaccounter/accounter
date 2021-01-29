@@ -143,6 +143,9 @@ class AbstractAccount(models.Model):
     id = models.CharField(primary_key=True, max_length=100)
     profile = models.ForeignKey(Profile, on_delete=models.RESTRICT)
     last_refresh = models.DateTimeField(auto_now_add=True)
+    image = models.URLField(
+        default="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+    )
 
     @property
     def is_fresh(self):
@@ -174,12 +177,14 @@ class SlackIntegration(AbstractIntegration):
         email = slack_user_info["profile"]["email"]
         display_name = slack_user_info["profile"]["display_name"]
         slack_id = slack_user_info["id"]
+        image = slack_user_info["profile"]["image_48"]
         account = SlackAccount.objects.create(
             id=slack_id,
             profile=profile,
             integration=self,
             email=email,
             username=display_name,
+            image=image,
         )
         return account
 
@@ -248,8 +253,10 @@ class SlackAccount(AbstractAccount):
     def update_from_response(self, slack_user_info: SlackResponse):
         email = slack_user_info["profile"]["email"]
         display_name = slack_user_info["profile"]["display_name"]
+        image = slack_user_info["profile"]["image_48"]
         self.username = display_name
         self.email = email
+        self.image = image
         self.last_refresh = timezone.now()
 
     def refresh(self, force=False):

@@ -13,7 +13,7 @@ const IntegrationAccount = ({ account }: Props) => {
     <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-pink-500">
       <EntryCard
         to="/"
-        imgSrc="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+        imgSrc={account.image}
         secondary={`@${account.username}`}
       >
         {account.profile.firstName} {account.profile.lastName}
@@ -25,6 +25,7 @@ const IntegrationAccount = ({ account }: Props) => {
 export default createFragmentContainer(IntegrationAccount, {
   account: graphql`
     fragment IntegrationAccount_account on AccountInterface {
+      image
       profile {
         firstName
         lastName

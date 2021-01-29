@@ -154,7 +154,7 @@ const Header = (props: Props) => {
           <div className="flex">
             <img
               className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
-              src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+              src={props.profile.image}
               alt=""
             />
           </div>
@@ -240,6 +240,7 @@ export default createFragmentContainer(Header, {
   profile: graphql`
     fragment Header_profile on ProfileNode {
       id
+      image
       firstName
       lastName
       isAdmin

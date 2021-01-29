@@ -5,6 +5,7 @@
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type IntegrationAccount_account = {
+    readonly image: string;
     readonly profile: {
         readonly firstName: string;
         readonly lastName: string;
@@ -26,6 +27,13 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "IntegrationAccount_account",
   "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "image",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -69,5 +77,5 @@ const node: ReaderFragment = {
   "type": "AccountInterface",
   "abstractKey": "__isAccountInterface"
 };
-(node as any).hash = '37ffcedb1dd434ed1d82f6915fe49c34';
+(node as any).hash = 'dc4710a2bd178e83a7665edc95585184';
 export default node;

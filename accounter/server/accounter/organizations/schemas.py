@@ -79,6 +79,7 @@ class ProfileNode(DjangoObjectType):
             "organization",
             "is_admin",
             "is_owner",
+            "image",
         )
         interfaces = (graphene.relay.Node,)
 

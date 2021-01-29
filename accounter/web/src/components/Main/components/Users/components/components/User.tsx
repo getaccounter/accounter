@@ -15,7 +15,7 @@ const User = ({ profile }: Props) => {
   return (
     <EntryCard
       to={`${url}/details/${profile.id}`}
-      imgSrc="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+      imgSrc={profile.image}
       secondary={profile.title}
       rightSide={
         <>
@@ -37,6 +37,7 @@ export default createFragmentContainer(User, {
   profile: graphql`
     fragment User_profile on ProfileNode {
       id
+      image
       firstName
       lastName
       title
