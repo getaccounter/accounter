@@ -1,10 +1,11 @@
 import faker from "faker";
 import { generateUser } from "../utils/users";
 import {
+  generateWorkspaceData,
   mockSlackOauthToken,
   mockSlackUsersList,
   mockSlackUsersInfo,
-  mockSlackUsersLookupByEmail
+  mockSlackUsersLookupByEmail,
 } from "../utils/slack";
 
 const MOBILE = "mobile";
@@ -30,38 +31,52 @@ sizes.forEach(({ name, viewport }) => {
       describe("slack", () => {
         it("add integration and pull users accounts", () => {
           const user = generateUser();
+          const slackWorkspace = generateWorkspaceData();
           const token = faker.random.uuid();
           const oauthCode = faker.random.uuid();
-          mockSlackOauthToken({ user, token, oauthCode });
-          mockSlackUsersList({ token, users: [user] });
-  
+          mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
+          mockSlackUsersList({
+            token,
+            workspace: slackWorkspace,
+            users: [user],
+          });
+
           cy.visit("/");
           cy.findByRole("link", { name: "register" }).click();
           cy.register(user);
           cy.login(user.email, user.password);
-  
+
           cy.navigateTo("Add Apps", name);
-  
+
           cy.findByRole("link", { name: "Add SLACK" }).click();
-  
+
           cy.mockSlackOauth(oauthCode);
-  
+
           cy.findByRole("navigation", { name: "Directory" }).within(() => {
-            cy.findByRole("link", { name: `${user.organization} SLACK` }).should(
-              "exist"
-            );
+            cy.findByRole("link", {
+              name: `${slackWorkspace.name} SLACK`,
+            }).click()
           });
-  
+
+          cy.findByRole("main").within(() => {
+            cy.findByRole("heading", {
+              name: slackWorkspace.name,
+            }).should("exist");
+            cy.findByRole("link", {
+              name: `${user.firstName} ${user.lastName} @${user.slack.displayName}`,
+            }).should("exist");
+          });
+
           cy.navigateTo("Users", name);
-  
+
           cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
             userRow.click()
           );
-  
+
           cy.findByRole("main").within(() => {
             cy.findByRole("link", { name: "Accounts" }).click();
             cy.findByRole("link", {
-              name: `@${user.slack.displayName} SLACK - ${user.organization}`,
+              name: `@${user.slack.displayName} SLACK - ${slackWorkspace.name}`,
             }).should("exist");
           });
         });
@@ -71,32 +86,37 @@ sizes.forEach(({ name, viewport }) => {
             organization: user.organization,
           });
           const token = faker.random.uuid();
+          const slackWorkspace = generateWorkspaceData();
           const oauthCode = faker.random.uuid();
-          mockSlackOauthToken({ user, token, oauthCode });
-          mockSlackUsersLookupByEmail({ token, user: userToCreate })
-  
+          mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
+          mockSlackUsersLookupByEmail({
+            token,
+            workspace: slackWorkspace,
+            user: userToCreate,
+          });
+
           cy.visit("/");
           cy.findByRole("link", { name: "register" }).click();
           cy.register(user);
           cy.login(user.email, user.password);
-  
+
           cy.navigateTo("Add Apps", name);
-  
+
           cy.findByRole("link", { name: "Add SLACK" }).click();
-  
+
           cy.mockSlackOauth(oauthCode);
 
           cy.navigateTo("Add Users", name);
           cy.createUser(userToCreate);
-  
+
           cy.findByRole("main").within(() => {
             cy.findByRole("link", { name: "Accounts" }).click();
             cy.findByRole("link", {
-              name: `@${userToCreate.slack.displayName} SLACK - ${userToCreate.organization}`,
+              name: `@${userToCreate.slack.displayName} SLACK - ${slackWorkspace.name}`,
             }).should("exist");
           });
         });
-      })
+      });
     });
     describe("Users", () => {
       it("Add, edit, offboard and reactivate", () => {

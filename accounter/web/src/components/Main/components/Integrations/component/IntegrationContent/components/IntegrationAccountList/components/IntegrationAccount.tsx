@@ -14,7 +14,7 @@ const IntegrationAccount = ({ account }: Props) => {
       <EntryCard
         to="/"
         imgSrc="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
-        secondary={account.profile.title}
+        secondary={`@${account.username}`}
       >
         {account.profile.firstName} {account.profile.lastName}
       </EntryCard>
@@ -25,15 +25,12 @@ const IntegrationAccount = ({ account }: Props) => {
 export default createFragmentContainer(IntegrationAccount, {
   account: graphql`
     fragment IntegrationAccount_account on AccountInterface {
-      id
       profile {
         firstName
         lastName
-        title
       }
       ... on SlackAccountNode {
         username
-        email
       }
     }
   `,
