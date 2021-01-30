@@ -1,7 +1,8 @@
 import json
-import time
 from unittest.mock import patch
 
+import requests_mock
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import URLValidator
 from django.test import override_settings
@@ -27,8 +28,18 @@ class ServiceTestCase(GraphQLTestCase):
             Profile, organization=self.admin.profile.organization, is_admin=False
         ).user
 
-    def test_services_query(self):
+    @override_settings(CONNECTOR_URL="http://some-connector.internet")
+    @requests_mock.Mocker()
+    def test_services_query(self, mock_request):
         self.client.force_login(self.admin)
+        oauthUrl = "https://some.url"
+        mock_request.get(
+            settings.CONNECTOR_URL
+            + "/slack/oauth?redirectUri=http%3A%2F%2Flocalhost%3A8080%2Fslack%2Foauth%2Fcallback",
+            json={
+                "url": oauthUrl,
+            },
+        )
         service = Service.objects.get(name=Service.Types.SLACK)
         response = self.query(
             """
@@ -48,7 +59,7 @@ class ServiceTestCase(GraphQLTestCase):
         assert len(services) == 1
         assert services[0]["name"] == service.name
         assert services[0]["logo"] == service.logo.url
-        validateURL(services[0]["oauthUrl"])
+        assert services[0]["oauthUrl"] == oauthUrl
 
     def test_services_query_requires_authenticated_users(self):
         response = self.query(
@@ -64,30 +75,25 @@ class ServiceTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         assert content["data"] is None
 
-    @override_settings(
-        INTEGRATIONS={
-            "SLACK": {
-                "CLIENT_ID": "SOME_CLIENT_ID",
-                "CLIENT_SECRET": "SOME_SECRET_KEY",
-            }
-        }
-    )
-    @patch.object(WebClient, "oauth_v2_access")
-    def test_handle_callback(self, oauth_call_mock):
+    @override_settings(CONNECTOR_URL="http://some-connector.internet")
+    @requests_mock.Mocker()
+    def test_handle_callback(self, mock_request):
         self.client.force_login(self.admin)
 
         code = "somecode"
         state = "somestate"
         token = "some token"
-        workspace_name = "myworkspace"
-        workspace_id = "abc"
-        service = Service.objects.get(name=Service.Types.SLACK)
-        service.state_store[f"{service._client_id}/{state}"] = time.time()
-        service.save()
-        oauth_call_mock.return_value = {
-            "authed_user": {"access_token": token},
-            "team": {"id": workspace_id, "name": workspace_name},
-        }
+        integration_name = "myworkspace"
+        integration_id = "abc"
+        mock_request.get(
+            settings.CONNECTOR_URL
+            + f"/slack/oauth/handleCallback?code={code}&state={state}",
+            json={
+                "token": token,
+                "integrationName": integration_name,
+                "integrationId": integration_id,
+            },
+        )
         response = self.query(
             """
             mutation SlackMutation($code: String!, $state: String!) {
@@ -103,27 +109,18 @@ class ServiceTestCase(GraphQLTestCase):
             variables={"code": code, "state": state},
         )
         self.assertResponseNoErrors(response)
-        oauth_call_mock.assert_called_with(
-            client_id="SOME_CLIENT_ID",
-            client_secret="SOME_SECRET_KEY",
-            redirect_uri="http://localhost:8080/slack/oauth/callback",
-            code=code,
-        )
         slack_integration = SlackIntegration.objects.filter(
             organization=self.admin.profile.organization
         )
         assert len(slack_integration) == 1
         assert slack_integration.first().token == token
-        assert slack_integration.first().id == workspace_id
-        assert slack_integration.first().name == workspace_name
+        assert slack_integration.first().id == integration_id
+        assert slack_integration.first().name == integration_name
 
     def test_handle_callback_requires_admin(self):
         self.client.force_login(self.non_admin_user)
 
         state = "somestate"
-        service = Service.objects.get(name=Service.Types.SLACK)
-        service.state_store[f"{service._client_id}/{state}"] = time.time() - 1000
-        service.save()
 
         response = self.query(
             """
@@ -147,26 +144,20 @@ class ServiceTestCase(GraphQLTestCase):
             errors[0]["message"] == "You do not have permission to perform this action"
         )
 
-    @override_settings(
-        INTEGRATIONS={
-            "SLACK": {
-                "CLIENT_ID": "SOME_CLIENT_ID",
-                "CLIENT_SECRET": "SOME_SECRET_KEY",
-            }
-        }
-    )
-    @patch.object(WebClient, "oauth_v2_access")
-    def test_handle_callback_duplicates_only_updates_token(self, oauth_call_mock):
+    @requests_mock.Mocker()
+    def test_handle_callback_duplicates_only_updates_token(self, mock_request):
         self.client.force_login(self.admin)
         first_state = "someFirstState"
         original_token = "some token"
-        service = Service.objects.get(name=Service.Types.SLACK)
-        service.state_store[f"{service._client_id}/{first_state}"] = time.time()
-        service.save()
-        oauth_call_mock.return_value = {
-            "authed_user": {"access_token": original_token},
-            "team": {"id": "abc", "name": "someteam"},
-        }
+        integration_id = "abc"
+        mock_request.get(
+            settings.CONNECTOR_URL + "/slack/oauth/handleCallback",
+            json={
+                "token": original_token,
+                "integrationName": "someteam",
+                "integrationId": integration_id,
+            },
+        )
         # Calling endpoint twice
         self.query(
             """
@@ -188,12 +179,14 @@ class ServiceTestCase(GraphQLTestCase):
 
         updated_token = "updated token"
         second_state = "some other state"
-        service.state_store[f"{service._client_id}/{second_state}"] = time.time()
-        service.save()
-        oauth_call_mock.return_value = {
-            "authed_user": {"access_token": updated_token},
-            "team": {"id": "abc", "name": "someteam"},
-        }
+        mock_request.get(
+            settings.CONNECTOR_URL + "/slack/oauth/handleCallback",
+            json={
+                "token": updated_token,
+                "integrationName": "someteam",
+                "integrationId": integration_id,
+            },
+        )
         self.query(
             """
             mutation SlackMutation($code: String!, $state: String!) {
@@ -211,58 +204,6 @@ class ServiceTestCase(GraphQLTestCase):
         assert SlackIntegration.objects.count() == 1
         slack_integration.refresh_from_db()
         assert slack_integration.token == updated_token
-
-    def test_handle_callback_expired_state(self):
-        self.client.force_login(self.admin)
-
-        state = "somestate"
-        service = Service.objects.get(name=Service.Types.SLACK)
-        service.state_store[f"{service._client_id}/{state}"] = time.time() - 1000
-        service.save()
-
-        response = self.query(
-            """
-            mutation SlackMutation($code: String!, $state: String!) {
-                oauth {
-                    slack {
-                        handleCallback(code: $code, state: $state) {
-                            status
-                        }
-                    }
-                }
-            }
-            """,
-            variables={"code": "somecode", "state": state},
-        )
-        self.assertResponseHasErrors(response)
-        content = json.loads(response.content)
-        errors = content["errors"]
-        assert (len(errors)) == 1
-        assert errors[0]["message"] == "the state value is expired"
-
-    def test_handle_callback_state_unknown(self):
-
-        self.client.force_login(self.admin)
-
-        response = self.query(
-            """
-            mutation SlackMutation($code: String!, $state: String!) {
-                oauth {
-                    slack {
-                        handleCallback(code: $code, state: $state) {
-                            status
-                        }
-                    }
-                }
-            }
-            """,
-            variables={"code": "somecode", "state": "unknown state"},
-        )
-        self.assertResponseHasErrors(response)
-        content = json.loads(response.content)
-        errors = content["errors"]
-        assert (len(errors)) == 1
-        assert errors[0]["message"] == "the state value is expired"
 
 
 class IntegrationTestCase(GraphQLTestCase):

@@ -4,10 +4,9 @@ import faker from "faker";
 export const generateWorkspaceData = () => {
   return {
     name: faker.internet.domainWord(),
-    teamId: faker.random.uuid()
+    teamId: faker.random.uuid(),
   };
 };
-
 
 const createSlackbotUser = (workspace) => ({
   id: "USLACKBOT",
@@ -157,17 +156,17 @@ const createSlackProfile = (workspace, user) => ({
   has_2fa: false,
 });
 
-export const mockSlackOauthToken = ({
-  oauthCode,
-  workspace,
-  token = faker.random.uuid(),
-} = {}) => {
+export const mockSlackOauthToken = ({ oauthCode, workspace, token } = {}) => {
   mockServerClient("mockserver", 1080)
     .mockAnyResponse({
       httpRequest: {
         method: "POST",
         path: "/api/oauth.v2.access",
-        body: `redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fslack%2Foauth%2Fcallback&code=${oauthCode}`,
+        body: {
+          type: "STRING",
+          string: `code=${oauthCode}`,
+          subString: true,
+        },
       },
       httpResponse: {
         body: {
@@ -195,11 +194,39 @@ export const mockSlackOauthToken = ({
     );
 };
 
-export const mockSlackUsersList = ({
-  token,
-  workspace,
-  users = [],
-} = {}) => {
+export const mockSlackAuthTest = ({ user, workspace, token } = {}) => {
+  mockServerClient("mockserver", 1080)
+    .mockAnyResponse({
+      httpRequest: {
+        method: "POST",
+        path: "/api/auth.test",
+        body: `token=${token}`,
+      },
+      httpResponse: {
+        body: {
+          ok: true,
+          url: `https://${workspace}.slack.com/`,
+          team: workspace,
+          user: user.slack.username,
+          team_id: "T12345678",
+          user_id: user.slack.id,
+        },
+      },
+      times: {
+        remainingTimes: 1,
+      },
+    })
+    .then(
+      function () {
+        console.log("expectation created");
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
+};
+
+export const mockSlackUsersList = ({ token, workspace, users = [] } = {}) => {
   mockServerClient("mockserver", 1080)
     .mockAnyResponse({
       httpRequest: {
@@ -283,7 +310,7 @@ export const mockSlackUsersLookupByEmail = ({
     .mockAnyResponse({
       httpRequest: {
         method: "POST",
-        "path" : "/api/users.lookupByEmail",
+        path: "/api/users.lookupByEmail",
         headers: {
           Authorization: [`Bearer ${token}`],
         },

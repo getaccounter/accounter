@@ -4,8 +4,8 @@ import {
   generateWorkspaceData,
   mockSlackOauthToken,
   mockSlackUsersList,
-  mockSlackUsersInfo,
   mockSlackUsersLookupByEmail,
+  mockSlackAuthTest,
 } from "../utils/slack";
 
 const MOBILE = "mobile";
@@ -35,6 +35,7 @@ sizes.forEach(({ name, viewport }) => {
           const token = faker.random.uuid();
           const oauthCode = faker.random.uuid();
           mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
+          mockSlackAuthTest({user, workspace: slackWorkspace, token })
           mockSlackUsersList({
             token,
             workspace: slackWorkspace,
