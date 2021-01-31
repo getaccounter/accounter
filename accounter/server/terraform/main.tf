@@ -220,6 +220,16 @@ resource "kubernetes_deployment" "server" {
             name  = "EMAIL_USE_TLS"
             value = "True"
           }
+
+          # Connector
+          env {
+            name  = "CONNECTOR_HOST"
+            value = var.connector.host
+          }
+          env {
+            name  = "CONNECTOR_PORT"
+            value = var.connector.port
+          }
         }
       }
     }
