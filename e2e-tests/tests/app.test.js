@@ -14,8 +14,8 @@ const FULLSCREEN = "macbook-13";
 
 const sizes = [
   { name: MOBILE, viewport: "iphone-5" },
-  { name: WINDOW, viewport: [1024, 800] },
-  { name: FULLSCREEN, viewport: "macbook-13" },
+  // { name: WINDOW, viewport: [1024, 800] },
+  // { name: FULLSCREEN, viewport: "macbook-13" },
 ];
 
 sizes.forEach(({ name, viewport }) => {
@@ -81,7 +81,7 @@ sizes.forEach(({ name, viewport }) => {
             }).should("exist");
           });
         });
-        it("pulls accounts for newly created users", () => {
+        it.only("pulls accounts for newly created users", () => {
           const user = generateUser();
           const userToCreate = generateUser({
             organization: user.organization,
@@ -89,6 +89,7 @@ sizes.forEach(({ name, viewport }) => {
           const token = faker.random.uuid();
           const slackWorkspace = generateWorkspaceData();
           const oauthCode = faker.random.uuid();
+          mockSlackAuthTest({user, workspace: slackWorkspace, token })
           mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
           mockSlackUsersLookupByEmail({
             token,
