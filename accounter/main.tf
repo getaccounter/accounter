@@ -60,7 +60,7 @@ data "digitalocean_container_registry" "accounter" {
 }
 
 resource "digitalocean_spaces_bucket" "assets" {
-  name   = "accounter-assets"
+  name   = "accounter-assets-bucket"
   region = "ams3"
 }
 
