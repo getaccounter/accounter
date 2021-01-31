@@ -24,10 +24,10 @@ resource "kubernetes_secret" "s3-credentials" {
   }
 }
 
-resource "kubernetes_secret" "slack-credentials" {
+resource "kubernetes_secret" "slack-credentials-old" {
   type = "Opaque"
   metadata {
-    name = "slack-credentials"
+    name = "slack-credentials-old"
   }
 
   data = {
@@ -145,7 +145,7 @@ resource "kubernetes_deployment" "server" {
             name = "SLACK_CLIENT_SECRET"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.slack-credentials.metadata[0].name
+                name = kubernetes_secret.slack-credentials-old.metadata[0].name
                 key  = "client_secret"
               }
             }

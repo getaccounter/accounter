@@ -13,7 +13,7 @@ resource "kubernetes_secret" "slack-credentials" {
 resource "kubernetes_secret" "token-encryption" {
   type = "Opaque"
   metadata {
-    name = "db-token-encryption"
+    name = "token-encryption"
   }
 
   data = {
