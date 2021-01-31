@@ -106,6 +106,11 @@ module "server" {
     client_secret = var.slack_client_secret
   }
 
+  connector = {
+    host = module.connector.host
+    port = module.connector.port
+  }
+
   db_token_encryption_key = var.db_token_encryption_key
 
   sendgrid_api_key = var.sendgrid_api_key

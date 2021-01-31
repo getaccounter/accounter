@@ -58,3 +58,11 @@ variable "sendgrid_api_key" {
   type        = string
   sensitive   = true
 }
+
+variable "connector" {
+  description = "Endpoint of the connector"
+  type = object({
+    host = string
+    port = number
+  })
+}
