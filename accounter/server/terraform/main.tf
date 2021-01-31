@@ -136,7 +136,7 @@ resource "kubernetes_deployment" "server" {
             name = "SLACK_CLIENT_ID"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.slack-credentials.metadata[0].name
+                name = kubernetes_secret.slack-credentials-old.metadata[0].name
                 key  = "client_id"
               }
             }
