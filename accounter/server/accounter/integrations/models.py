@@ -142,7 +142,22 @@ class SlackIntegration(AbstractIntegration):
     def client(self):
         return WebClient(token=self.token)
 
-    def create_account_from_response(
+    def create_account_from_response(self, profile: Profile, response):
+        email = response["email"]
+        username = response["username"]
+        slack_id = response["id"]
+        image = response["image"]["small"]
+        account = SlackAccount.objects.create(
+            id=slack_id,
+            profile=profile,
+            integration=self,
+            email=email,
+            username=username,
+            image=image,
+        )
+        return account
+
+    def old_create_account_from_response(
         self, profile: Profile, slack_user_info: SlackResponse
     ):
         email = slack_user_info["profile"]["email"]
@@ -160,16 +175,19 @@ class SlackIntegration(AbstractIntegration):
         return account
 
     def check_for_existing_account(self, profile):
-        response = self.client.users_lookupByEmail(email=profile.user.email)
-        user_info = response["user"]
+        response = requests.get(
+            settings.CONNECTOR_URL + "/slack/accounts/getByEmail",
+            params={"token": self.token, "email": profile.user.email},
+        )
+        payload = response.json()
         account = None
         try:
             account = SlackAccount.objects.get(
-                pk=user_info["id"], profile__organization=self.organization
+                pk=payload["id"], profile__organization=self.organization
             )
-            account.update_from_response(user_info)
+            account.update_from_response(payload)
         except SlackAccount.DoesNotExist:
-            account = self.create_account_from_response(profile, user_info)
+            account = self.create_account_from_response(profile, payload)
 
         return account
 
@@ -194,7 +212,7 @@ class SlackIntegration(AbstractIntegration):
                 account = SlackAccount.objects.get(
                     pk=user_info["id"], profile__organization=self.organization
                 )
-                account.update_from_response(user_info)
+                account.old_update_from_response(user_info)
             except SlackAccount.DoesNotExist:
                 pass
 
@@ -203,7 +221,7 @@ class SlackIntegration(AbstractIntegration):
                     profile = Profile.objects.get(
                         user__email=email, organization=self.organization
                     )
-                    account = self.create_account_from_response(profile, user_info)
+                    account = self.old_create_account_from_response(profile, user_info)
                 except Profile.DoesNotExist:
                     pass
 
@@ -221,7 +239,16 @@ class SlackAccount(AbstractAccount):
         SlackIntegration, related_name="accounts", on_delete=models.RESTRICT
     )
 
-    def update_from_response(self, slack_user_info: SlackResponse):
+    def update_from_response(self, response):
+        email = response["email"]
+        username = response["username"]
+        image = response["image"]["small"]
+        self.username = username
+        self.email = email
+        self.image = image
+        self.last_refresh = timezone.now()
+
+    def old_update_from_response(self, slack_user_info: SlackResponse):
         email = slack_user_info["profile"]["email"]
         display_name = slack_user_info["profile"]["display_name"]
         image = slack_user_info["profile"]["image_48"]
@@ -234,5 +261,5 @@ class SlackAccount(AbstractAccount):
         if not force and self.is_fresh:
             return
         response = self.integration.client.users_info(user=self.id)
-        self.update_from_response(response["user"])
+        self.old_update_from_response(response["user"])
         self.save()

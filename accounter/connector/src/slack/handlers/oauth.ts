@@ -1,7 +1,5 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import installer from "./installer";
-import * as z from "zod";
-import { oauthCallbackHandler, oauthHandler } from "../utils/handlers";
+import installer from "../installer";
+import { oauthCallbackHandler, oauthHandler } from "../../utils/handlers/oauth";
 
 export const oauth = oauthHandler(async ({ params }, callback) => {
   const { redirectUri } = params;
@@ -17,12 +15,7 @@ export const oauth = oauthHandler(async ({ params }, callback) => {
   });
 });
 
-const handleOAuthBodySchema = z.object({
-  code: z.string(),
-  state: z.string(),
-});
-
-export const handleOauthCallback = oauthCallbackHandler(
+export const oauthCallback = oauthCallbackHandler(
   async ({ params }, callback) => {
     installer.parseCodeState(params, {
       success: (installation) => {

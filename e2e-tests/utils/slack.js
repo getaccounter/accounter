@@ -311,10 +311,7 @@ export const mockSlackUsersLookupByEmail = ({
       httpRequest: {
         method: "POST",
         path: "/api/users.lookupByEmail",
-        headers: {
-          Authorization: [`Bearer ${token}`],
-        },
-        body: `email=${user.email.replace("@", "%40")}`,
+        body: `token=${token}&email=${user.email.replace("@", "%40")}`
       },
       httpResponse: {
         body: {
