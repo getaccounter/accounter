@@ -40,6 +40,19 @@ variable "db_token_encryption_key" {
   sensitive   = true
 }
 
+variable "token_encryption_key" {
+  description = "encryption key for service tokens"
+  type        = string
+  sensitive   = true
+
+  # validation {
+  #   condition     = length(var.token_encryption_key) != 32
+  #   error_message = "Token_encryption_key must be 32  characters long."
+  # }
+}
+
+
+
 variable "sendgrid_api_key" {
   description = "API key for sending emails"
   type        = string

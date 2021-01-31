@@ -197,13 +197,6 @@ GRAPHENE = {
     "SCHEMA": "accounter.schema.schema",
 }
 
-INTEGRATIONS = {
-    "SLACK": {
-        "CLIENT_ID": get_env_value("SLACK_CLIENT_ID"),
-        "CLIENT_SECRET": get_env_value("SLACK_CLIENT_SECRET"),
-    }
-}
-
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -223,4 +216,4 @@ EMAIL_HOST_PASSWORD = get_env_value("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = get_int_env_value("EMAIL_PORT")
 EMAIL_USE_TLS = get_bool_env_value("EMAIL_USE_TLS")
 
-LOGIN_URL = "/shiiiiit"
+CONNECTOR_URL = get_env_value("CONNECTOR_URL")

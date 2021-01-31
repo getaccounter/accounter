@@ -111,6 +111,20 @@ module "server" {
   sendgrid_api_key = var.sendgrid_api_key
 }
 
+module "connector" {
+  source = "./connector/terraform"
+
+  image_tag              = var.image_tag
+  image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
+
+  slack = {
+    client_id     = var.slack_client_id
+    client_secret = var.slack_client_secret
+  }
+
+  token_encryption_key = var.token_encryption_key
+}
+
 module "web" {
   source = "./web/terraform"
 

@@ -1,13 +1,9 @@
-import time
 from datetime import timedelta
-from typing import Optional
-from uuid import uuid4
 
+import requests
 from django.conf import settings
-from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from django.utils import timezone
-from slack_sdk.oauth import AuthorizeUrlGenerator
 from slack_sdk.web import SlackResponse, WebClient
 
 from ..organizations.models import Organization, Profile
@@ -31,59 +27,34 @@ class Service(models.Model):
 
     name = models.CharField("Type", max_length=50, choices=Types.choices, unique=True)
     logo = models.FileField(upload_to="services/logos")
-    state_store = HStoreField(default=dict)
 
     @property
     def oauth_url(self):
-        state = str(uuid4())
-        key = f"{self._client_id}/{state}"
-        value = str(time.time())
-        self.state_store[key] = value
-        self.save()
-        authorize_url_generator = AuthorizeUrlGenerator(
-            client_id=self._client_id,
-            redirect_uri=self._redirect_uri,
-            user_scopes=["users:read", "users:read.email"],
+        response = requests.get(
+            settings.CONNECTOR_URL + "/slack/oauth",
+            params={"redirectUri": self._redirect_uri},
         )
-        return authorize_url_generator.generate(state)
+        payload = response.json()
+        return payload["url"]
 
     def handle_callback(self, code: str, state: str):
-        is_still_valid = self._is_callback_still_valid(state)
-        if not is_still_valid:
-            raise ValueError("the state value is expired")
-
-        client = WebClient()
-        oauth_response = client.oauth_v2_access(
-            client_id=self._client_id,
-            client_secret=self._client_secret(),
-            redirect_uri=self._redirect_uri,
-            code=code,
+        response = requests.get(
+            settings.CONNECTOR_URL + "/slack/oauth/handleCallback",
+            params={
+                "code": code,
+                "state": state,
+            },
         )
-        authed_user = oauth_response.get("authed_user")
-        team = oauth_response.get("team")
-        token = authed_user.get("access_token")
+        payload = response.json()
+
+        if response.status_code == 400:
+            raise ValueError(response.text)
+
         return Service.CallbackResult(
-            integration_id=team.get("id"), name=team.get("name"), token=token
+            integration_id=payload["integrationId"],
+            name=payload["integrationName"],
+            token=payload["token"],
         )
-
-    def _is_callback_still_valid(self, state: str):
-        key = f"{self._client_id}/{state}"
-        value = None
-        try:
-            value: Optional[str] = self.state_store[key]
-        except Exception:
-            pass
-
-        if not value:
-            return False
-
-        created = float(value)
-        expiration = created + self._oauth_expiration_seconds
-        return time.time() < expiration
-
-    @property
-    def _client_id(self):
-        return settings.INTEGRATIONS["SLACK"]["CLIENT_ID"]
 
     def _client_secret(self):
         return settings.INTEGRATIONS["SLACK"]["CLIENT_SECRET"]

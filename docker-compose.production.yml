@@ -10,3 +10,10 @@ services:
     image: server.production
     build:
       target: production
+
+  connector:
+    image: connector.production
+    build:
+      target: production
+    environment:
+      - NODE_ENV=development

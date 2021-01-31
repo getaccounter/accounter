@@ -12,8 +12,6 @@ services:
     image: adobe/s3mock
     environment:
       - initialBuckets=developmentbucket
-    ports:
-      - 9090:9090
 
   loadbalancer:
     image: loadbalancer
@@ -52,6 +50,8 @@ services:
       - POSTGRES_URL=database
       - POSTGRES_PORT=5432
 
+      - CONNECTOR_URL=http://connector:3000
+
       - AWS_STORAGE_BUCKET_NAME=developmentbucket
       - AWS_S3_ENDPOINT_URL=http://s3:9090
       - AWS_DEFAULT_REGION=local
@@ -62,7 +62,6 @@ services:
 
         # mock proxy settings
       - USE_MOCK_PROXY=True
-      # - HTTP_PROXY=mockserver:1080
       - HTTPS_PROXY=mockserver:1080
 
       # Dev only
@@ -79,11 +78,32 @@ services:
     volumes:
       - ./accounter/server:/code
       - shared-graphql:/code/shared-graphql
-    ports:
-      - 8000:8000
     depends_on:
       - database
       - s3
+      - connector
+
+  connector:
+    image: connector.development
+    build:
+      context: ./accounter/connector
+      target: development
+    volumes:
+      - ./accounter/connector:/code
+      - /code/node_modules
+    env_file:
+      - ./accounter/connector/.env
+    environment:
+      - PORT=3000
+
+      - SLACK_STATE_SECRET=some-secret
+
+      # Dev only
+      - ENCRYPTION_KEY=my_32_chars_encryption_key_12345
+      
+      - GLOBAL_AGENT_HTTPS_PROXY=http://mockserver:1080
+    ports:
+      - 3000:3000
 
   web:
     image: web.development
