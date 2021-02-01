@@ -19,6 +19,7 @@ variable "slack" {
   type = object({
     client_id     = string
     client_secret = string
+    state_secret  = string
   })
   sensitive = true
 }

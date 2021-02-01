@@ -125,6 +125,7 @@ module "connector" {
   slack = {
     client_id     = var.slack_client_id
     client_secret = var.slack_client_secret
+    state_secret  = var.slack_state_secret
   }
 
   token_encryption_key = var.token_encryption_key
