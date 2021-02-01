@@ -196,23 +196,20 @@ class SlackIntegration(AbstractIntegration):
         if not force and self.is_fresh:
             return
 
-        slack_response = self.client.users_list()
-        members = slack_response["members"]
-        members_without_slackbot = list(
-            filter(lambda m: m["id"] != "USLACKBOT", members)
+        response = requests.get(
+            settings.CONNECTOR_URL + "/slack/accounts/list",
+            params={"token": self.token},
         )
-        members_without_any_bots = list(
-            filter(lambda m: not m["is_bot"], members_without_slackbot)
-        )
-        for user_info in members_without_any_bots:
-            email = user_info["profile"]["email"]
+        payload = response.json()
+        for user_info in payload:
+            email = user_info["email"]
 
             account = None
             try:
                 account = SlackAccount.objects.get(
                     pk=user_info["id"], profile__organization=self.organization
                 )
-                account.old_update_from_response(user_info)
+                account.update_from_response(user_info)
             except SlackAccount.DoesNotExist:
                 pass
 
@@ -221,7 +218,7 @@ class SlackIntegration(AbstractIntegration):
                     profile = Profile.objects.get(
                         user__email=email, organization=self.organization
                     )
-                    account = self.old_create_account_from_response(profile, user_info)
+                    account = self.create_account_from_response(profile, user_info)
                 except Profile.DoesNotExist:
                     pass
 

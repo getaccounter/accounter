@@ -232,9 +232,7 @@ export const mockSlackUsersList = ({ token, workspace, users = [] } = {}) => {
       httpRequest: {
         method: "POST",
         path: "/api/users.list",
-        headers: {
-          Authorization: [`Bearer ${token}`],
-        },
+        body: `token=${token}`,
       },
       httpResponse: {
         body: {
