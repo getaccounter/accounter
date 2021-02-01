@@ -38,14 +38,10 @@ jobs:
           cp accounter/server/.env.example accounter/server/.env
           cp accounter/connector/.env.example accounter/connector/.env
 
-      - name: pull dependency images
-        run: docker-compose pull
-
       - name: build
         run: |
           docker-compose run server ./manage.py graphql_schema --out schema.graphql
           mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
-          docker-compose build
 
       - name: lint
         run: |
@@ -97,9 +93,11 @@ jobs:
           terraform -chdir=accounter validate -no-color
 
       - id: plan-provider
+        if: github.ref != 'refs/heads/master'
         run: terraform -chdir=provider plan -no-color
 
       - id: plan-cluster
+        if: github.ref != 'refs/heads/master'
         run: terraform -chdir=accounter plan -no-color
 
       - uses: actions/github-script@v3
