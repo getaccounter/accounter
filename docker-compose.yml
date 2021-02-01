@@ -50,7 +50,7 @@ services:
       - POSTGRES_URL=database
       - POSTGRES_PORT=5432
 
-      - CONNECTOR_HOST=http://connector
+      - CONNECTOR_HOST=connector
       - CONNECTOR_PORT=3000
 
       - AWS_STORAGE_BUCKET_NAME=developmentbucket
