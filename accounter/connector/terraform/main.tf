@@ -7,7 +7,7 @@ resource "kubernetes_secret" "slack-credentials" {
   data = {
     client_id     = var.slack.client_id
     client_secret = var.slack.client_secret
-    state_secret  = var.slack.slack_state_secret
+    state_secret  = var.slack.state_secret
   }
 }
 
