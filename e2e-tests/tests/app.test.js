@@ -81,7 +81,7 @@ sizes.forEach(({ name, viewport }) => {
             }).should("exist");
           });
         });
-        it.only("pulls accounts for newly created users", () => {
+        it("pulls accounts for newly created users", () => {
           const user = generateUser();
           const userToCreate = generateUser({
             organization: user.organization,
@@ -95,6 +95,11 @@ sizes.forEach(({ name, viewport }) => {
             token,
             workspace: slackWorkspace,
             user: userToCreate,
+          });
+          mockSlackUsersList({
+            token,
+            workspace: slackWorkspace,
+            users: [user, userToCreate],
           });
 
           cy.visit("/");

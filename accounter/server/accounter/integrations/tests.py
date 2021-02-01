@@ -1,6 +1,7 @@
 import json
 from unittest.mock import patch
 
+import requests
 import requests_mock
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -10,10 +11,8 @@ from faker import Faker
 from freezegun import freeze_time
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
-from slack_sdk.web import WebClient
 
 from ..organizations.models import Profile
-from ..test_utils import create_slack_user_fixture
 from .models import Service, SlackAccount, SlackIntegration
 
 fake = Faker()
@@ -248,8 +247,8 @@ class IntegrationTestCase(GraphQLTestCase):
 
         return get_user_model().objects.get(username=email)
 
-    @patch.object(WebClient, "users_list")
-    def test_get_integrations(self, slack_users_list_mock):
+    @patch.object(requests, "get")
+    def test_get_integrations(self, _):
         slack_integration = SlackIntegration.objects.create(
             organization=self.admin.profile.organization, token="some_token"
         )
@@ -278,18 +277,25 @@ class IntegrationTestCase(GraphQLTestCase):
     @freeze_time(
         auto_tick_seconds=SlackIntegration.REFRESH_INTERVAL_SECONDS,
     )
-    @patch.object(WebClient, "users_list")
+    @requests_mock.Mocker()
     def test_get_integrations_slack_creates_accounts_if_email_matches(
-        self, slack_users_list_mock
+        self, mock_request
     ):
-        slack_users_list_mock.return_value = {
-            "ok": True,
-            "cache_ts": 1611515141,
-            "response_metadata": {"next_cursor": ""},
-            "members": [create_slack_user_fixture(self.admin.profile)],
-        }
+        token = "some_token"
+        image = fake.image_url()
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
+            json=[
+                {
+                    "id": "someid",
+                    "username": self.admin.first_name,
+                    "email": self.admin.email,
+                    "image": {"small": image},
+                }
+            ],
+        )
         slack_integration = SlackIntegration.objects.create(
-            organization=self.admin.profile.organization, token="some_token"
+            organization=self.admin.profile.organization, token=token
         )
         slack_integration.save()
         self.client.force_login(self.admin)
@@ -301,6 +307,7 @@ class IntegrationTestCase(GraphQLTestCase):
                         accounts {
                             username
                             email
+                            image
                         }
                     }
                 }
@@ -314,26 +321,34 @@ class IntegrationTestCase(GraphQLTestCase):
         assert len(accounts) == 1
         assert accounts[0]["username"] == self.admin.first_name
         assert accounts[0]["email"] == self.admin.email
+        assert accounts[0]["image"] == image
 
     @freeze_time(
         auto_tick_seconds=SlackIntegration.REFRESH_INTERVAL_SECONDS,
     )
-    @patch.object(WebClient, "users_list")
-    def test_get_integrations_slack_updates_existing_accounts(
-        self, slack_users_list_mock
-    ):
-        user_fixture = create_slack_user_fixture(self.admin.profile)
-        slack_users_list_mock.return_value = {
-            "ok": True,
-            "cache_ts": 1611515141,
-            "response_metadata": {"next_cursor": ""},
-            "members": [user_fixture],
-        }
+    @requests_mock.Mocker()
+    def test_get_integrations_slack_updates_existing_accounts(self, mock_request):
+        token = "some_token"
+        integration_id = fake.uuid4()
+        new_email = fake.company_email()
+        new_image = fake.image_url()
+        new_username = fake.user_name()
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
+            json=[
+                {
+                    "id": integration_id,
+                    "username": new_username,
+                    "email": new_email,
+                    "image": {"small": new_image},
+                }
+            ],
+        )
         slack_integration = SlackIntegration.objects.create(
-            organization=self.admin.profile.organization, token="some_token"
+            organization=self.admin.profile.organization, token=token
         )
         account = SlackAccount.objects.create(
-            id=user_fixture["id"],
+            id=integration_id,
             profile=self.admin.profile,
             integration=slack_integration,
             email="old@email.internet",
@@ -350,6 +365,7 @@ class IntegrationTestCase(GraphQLTestCase):
                         accounts {
                             username
                             email
+                            image
                         }
                     }
                 }
@@ -362,8 +378,9 @@ class IntegrationTestCase(GraphQLTestCase):
         account.refresh_from_db()
         accounts = content["data"]["integrations"][0]["accounts"]
         assert len(accounts) == 1
-        assert accounts[0]["username"] == self.admin.first_name == account.username
-        assert accounts[0]["email"] == self.admin.email == account.email
+        assert accounts[0]["username"] == account.username == new_username
+        assert accounts[0]["email"] == account.email == new_email
+        assert accounts[0]["image"] == account.image == new_image
 
     def test_get_integrations_requires_authenticated_users(self):
         response = self.query(
@@ -381,8 +398,8 @@ class IntegrationTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         assert content["data"] is None
 
-    @patch.object(WebClient, "users_list")
-    def test_get_integrations_only_of_own_organization(self, slack_users_list_mock):
+    @patch.object(requests, "get")
+    def test_get_integrations_only_of_own_organization(self, _):
         # integration of this org
         SlackIntegration.objects.create(
             id="1",

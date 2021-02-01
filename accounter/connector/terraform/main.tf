@@ -7,6 +7,7 @@ resource "kubernetes_secret" "slack-credentials" {
   data = {
     client_id     = var.slack.client_id
     client_secret = var.slack.client_secret
+    state_secret  = var.slack.state_secret
   }
 }
 
@@ -82,6 +83,15 @@ resource "kubernetes_deployment" "connector" {
               secret_key_ref {
                 name = kubernetes_secret.slack-credentials.metadata[0].name
                 key  = "client_secret"
+              }
+            }
+          }
+          env {
+            name = "SLACK_STATE_SECRET"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.slack-credentials.metadata[0].name
+                key  = "state_secret"
               }
             }
           }

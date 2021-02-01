@@ -205,10 +205,10 @@ export const mockSlackAuthTest = ({ user, workspace, token } = {}) => {
       httpResponse: {
         body: {
           ok: true,
-          url: `https://${workspace}.slack.com/`,
-          team: workspace,
+          url: `https://${workspace.name}.slack.com/`,
+          team: workspace.name,
           user: user.slack.username,
-          team_id: "T12345678",
+          team_id: workspace.teamId,
           user_id: user.slack.id,
         },
       },
@@ -232,9 +232,7 @@ export const mockSlackUsersList = ({ token, workspace, users = [] } = {}) => {
       httpRequest: {
         method: "POST",
         path: "/api/users.list",
-        headers: {
-          Authorization: [`Bearer ${token}`],
-        },
+        body: `token=${token}`,
       },
       httpResponse: {
         body: {
