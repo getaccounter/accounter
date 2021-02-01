@@ -48,7 +48,7 @@ resource "digitalocean_database_firewall" "database-fw" {
 resource "digitalocean_kubernetes_cluster" "accounter" {
   name    = "accounter"
   region  = "ams3"
-  version = "1.19.3-do.2"
+  version = "1.19.3-do.3"
 
   node_pool {
     name       = "worker-pool"

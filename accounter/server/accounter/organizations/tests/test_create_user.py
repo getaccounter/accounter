@@ -1,15 +1,15 @@
 import json
-from unittest.mock import patch
 
+import requests_mock
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.test import override_settings
 from graphene_django.utils.testing import GraphQLTestCase
 from graphql_relay.node.node import from_global_id, to_global_id
 from model_bakery import baker
-from slack_sdk.web import WebClient
 
 from accounter.integrations.models import SlackIntegration
 
-from ...test_utils import create_slack_user_fixture
 from ..models import Profile
 from ..schemas import DepartmentNode
 
@@ -116,25 +116,33 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
             == self.admin.profile.department.name
         )
 
-    @patch.object(WebClient, "users_lookupByEmail")
-    def test_create_user_pulls_accounts(self, users_lookupByEmail_mock):
-        user_fixture = create_slack_user_fixture(self.admin.profile)
-        users_lookupByEmail_mock.return_value = {
-            "ok": True,
-            "cache_ts": 1611515141,
-            "response_metadata": {"next_cursor": ""},
-            "user": user_fixture,
-        }
-
-        self.client.force_login(self.admin)
+    @override_settings(CONNECTOR_URL="http://some-connector.internet")
+    @requests_mock.Mocker()
+    def test_create_user_pulls_accounts(self, mock_request):
         email = "user@internet.cat"
         first_name = "somefirstname"
         last_name = "somelastname"
+        token = "sometoken"
+        username = "someusername"
+        image = "small.image.url"
+
+        mock_request.get(
+            settings.CONNECTOR_URL
+            + f"/slack/accounts/getByEmail?token={token}&email={email}",
+            json={
+                "id": "someid",
+                "username": username,
+                "email": email,
+                "image": {"small": image},
+            },
+        )
+
+        self.client.force_login(self.admin)
 
         slack_integration = baker.make(
             SlackIntegration,
             organization=self.admin.profile.organization,
-            token="some_token",
+            token=token,
         )
         slack_integration.save()
 
@@ -171,12 +179,14 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                 "lastName": last_name,
             },
         )
+        slack_integration.refresh_from_db()
+        slack_account = slack_integration.accounts.first()
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        account = content["data"]["createUser"]["profile"]["accounts"][0]
-        assert account["username"] == self.admin.first_name
-        assert account["email"] == self.admin.email
-        assert account["image"] == user_fixture["profile"]["image_48"]
+        account_response = content["data"]["createUser"]["profile"]["accounts"][0]
+        assert account_response["username"] == slack_account.username == username
+        assert account_response["email"] == slack_account.email == email
+        assert account_response["image"] == slack_account.image == image
 
     def test_create_user_without_optional_fields(self):
         self.client.force_login(self.admin)

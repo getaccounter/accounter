@@ -1,18 +1,7 @@
-import fastify from "fastify";
-import { NODE_ENV, PORT } from "./env";
-import slackEndpoints from "./slack";
+import { PORT } from "./env";
+import server from "./server";
 
-if (NODE_ENV === "development") {
-  // quite hacky, I dont like it, but nodejs doesnt seem to pick up the 
-  // normal HTTP_PROXY env vars
-  require("global-agent/bootstrap")
-}
-
-const server = fastify();
-
-server.register(slackEndpoints, { prefix: "/slack" });
-
-server.listen(PORT, "0.0.0.0", (err, address) => {
+server().listen(PORT, "0.0.0.0", (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);

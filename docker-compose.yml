@@ -95,6 +95,7 @@ services:
     env_file:
       - ./accounter/connector/.env
     environment:
+      - CI=${CI}
       - PORT=3000
 
       - SLACK_STATE_SECRET=some-secret
