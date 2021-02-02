@@ -3,7 +3,6 @@ import json
 import requests_mock
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test import override_settings
 from graphene_django.utils.testing import GraphQLTestCase
 from graphql_relay.node.node import from_global_id, to_global_id
 from model_bakery import baker
@@ -116,7 +115,6 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
             == self.admin.profile.department.name
         )
 
-    @override_settings(CONNECTOR_URL="http://some-connector.internet")
     @requests_mock.Mocker()
     def test_create_user_pulls_accounts(self, mock_request):
         email = "user@internet.cat"
@@ -130,10 +128,13 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
             settings.CONNECTOR_URL
             + f"/slack/accounts/getByEmail?token={token}&email={email}",
             json={
-                "id": "someid",
-                "username": username,
-                "email": email,
-                "image": {"small": image},
+                "found": True,
+                "account": {
+                    "id": "someid",
+                    "username": username,
+                    "email": email,
+                    "image": {"small": image},
+                },
             },
         )
 
@@ -187,6 +188,62 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         assert account_response["username"] == slack_account.username == username
         assert account_response["email"] == slack_account.email == email
         assert account_response["image"] == slack_account.image == image
+
+    @requests_mock.Mocker()
+    def test_create_user_pulls_accounts_not_found(self, mock_request):
+        email = "user@internet.cat"
+        token = "sometoken"
+
+        mock_request.get(
+            settings.CONNECTOR_URL
+            + f"/slack/accounts/getByEmail?token={token}&email={email}",
+            json={"found": False, "account": None},
+        )
+
+        self.client.force_login(self.admin)
+
+        slack_integration = baker.make(
+            SlackIntegration,
+            organization=self.admin.profile.organization,
+            token=token,
+        )
+        slack_integration.save()
+
+        response = self.query(
+            """
+          mutation CreateUser (
+            $email: String!
+            $firstName: String!
+            $lastName: String!
+          ) {
+            createUser(
+              input: {
+                email: $email
+                firstName: $firstName
+                lastName: $lastName
+              }
+            ) {
+              profile {
+                accounts {
+                  image
+                  ... on SlackAccountNode {
+                    username
+                    email
+                  }
+                }
+              }
+            }
+          }
+
+          """,
+            variables={
+                "email": "user@internet.cat",
+                "firstName": "somefirstname",
+                "lastName": "somelastname",
+            },
+        )
+        slack_integration.refresh_from_db()
+        self.assertResponseNoErrors(response)
 
     def test_create_user_without_optional_fields(self):
         self.client.force_login(self.admin)

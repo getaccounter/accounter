@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0017_slackaccount_image'),
+        ("integrations", "0017_slackaccount_image"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='service',
-            name='state_store',
+            model_name="service",
+            name="state_store",
         ),
     ]
