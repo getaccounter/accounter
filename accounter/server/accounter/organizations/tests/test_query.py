@@ -1,18 +1,19 @@
 import json
-from unittest.mock import patch
 
+import requests_mock
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from faker import Faker
 from freezegun import freeze_time
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
-from slack_sdk.web import WebClient
 
 from accounter.integrations.models import SlackAccount, SlackIntegration
 
-from ...test_utils import create_slack_user_fixture
 from ..models import Profile
 
 User = get_user_model()
+fake = Faker()
 
 
 class OrganizationQueryTestCase(GraphQLTestCase):
@@ -129,24 +130,34 @@ class OrganizationQueryTestCase(GraphQLTestCase):
     @freeze_time(
         auto_tick_seconds=SlackAccount.REFRESH_INTERVAL_SECONDS,
     )
-    @patch.object(WebClient, "users_info")
-    def test_get_profiles_accounts_slack(self, users_info_mock):
-        user_fixture = create_slack_user_fixture(self.admin.profile)
-        users_info_mock.return_value = {
-            "ok": True,
-            "cache_ts": 1611515141,
-            "response_metadata": {"next_cursor": ""},
-            "user": user_fixture,
-        }
+    @requests_mock.Mocker()
+    def test_get_profiles_accounts_slack(self, mock_request):
+        image = fake.image_url()
+        token = fake.uuid4()
+        account_id = fake.uuid4()
+        mock_request.get(
+            settings.CONNECTOR_URL
+            + f"/slack/accounts/getById?token={token}&id={account_id}",
+            json={
+                "found": True,
+                "account": {
+                    "id": account_id,
+                    "username": self.admin.first_name,
+                    "email": self.admin.email,
+                    "image": {"small": image},
+                },
+            },
+        )
         self.client.force_login(self.admin)
         integration = baker.make(
             SlackIntegration,
             organization=self.admin.profile.organization,
-            token="sometoken",
+            token=token,
             _fill_optional=True,
         )
         account = baker.make(
             SlackAccount,
+            id=account_id,
             profile=self.admin.profile,
             integration=integration,
             _fill_optional=True,
@@ -202,4 +213,4 @@ class OrganizationQueryTestCase(GraphQLTestCase):
             updated_admin_account["integration"]["service"]["name"]
             == integration.service.name
         )
-        assert updated_admin_account["image"] == user_fixture["profile"]["image_48"]
+        assert updated_admin_account["image"] == image

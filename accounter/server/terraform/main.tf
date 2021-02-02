@@ -24,18 +24,6 @@ resource "kubernetes_secret" "s3-credentials" {
   }
 }
 
-resource "kubernetes_secret" "slack-credentials-old" {
-  type = "Opaque"
-  metadata {
-    name = "slack-credentials-old"
-  }
-
-  data = {
-    client_id     = var.slack.client_id
-    client_secret = var.slack.client_secret
-  }
-}
-
 resource "kubernetes_secret" "db-token-encryption" {
   type = "Opaque"
   metadata {
@@ -131,24 +119,6 @@ resource "kubernetes_deployment" "server" {
           env {
             name  = "POSTGRES_PORT"
             value = var.database.port
-          }
-          env {
-            name = "SLACK_CLIENT_ID"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.slack-credentials-old.metadata[0].name
-                key  = "client_id"
-              }
-            }
-          }
-          env {
-            name = "SLACK_CLIENT_SECRET"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.slack-credentials-old.metadata[0].name
-                key  = "client_secret"
-              }
-            }
           }
           env {
             name  = "AWS_STORAGE_BUCKET_NAME"

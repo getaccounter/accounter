@@ -4,7 +4,6 @@ import requests
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from slack_sdk.web import SlackResponse, WebClient
 
 from ..organizations.models import Organization, Profile
 from .fields import TokenField
@@ -55,9 +54,6 @@ class Service(models.Model):
             name=payload["integrationName"],
             token=payload["token"],
         )
-
-    def _client_secret(self):
-        return settings.INTEGRATIONS["SLACK"]["CLIENT_SECRET"]
 
     @property
     def _redirect_uri(self):
@@ -138,10 +134,6 @@ class SlackIntegration(AbstractIntegration):
     def service(self):
         return Service.objects.get(name=Service.Types.SLACK)
 
-    @property
-    def client(self):
-        return WebClient(token=self.token)
-
     def create_account_from_response(self, profile: Profile, response):
         email = response["email"]
         username = response["username"]
@@ -153,23 +145,6 @@ class SlackIntegration(AbstractIntegration):
             integration=self,
             email=email,
             username=username,
-            image=image,
-        )
-        return account
-
-    def old_create_account_from_response(
-        self, profile: Profile, slack_user_info: SlackResponse
-    ):
-        email = slack_user_info["profile"]["email"]
-        display_name = slack_user_info["profile"]["display_name"]
-        slack_id = slack_user_info["id"]
-        image = slack_user_info["profile"]["image_48"]
-        account = SlackAccount.objects.create(
-            id=slack_id,
-            profile=profile,
-            integration=self,
-            email=email,
-            username=display_name,
             image=image,
         )
         return account
@@ -249,18 +224,18 @@ class SlackAccount(AbstractAccount):
         self.image = image
         self.last_refresh = timezone.now()
 
-    def old_update_from_response(self, slack_user_info: SlackResponse):
-        email = slack_user_info["profile"]["email"]
-        display_name = slack_user_info["profile"]["display_name"]
-        image = slack_user_info["profile"]["image_48"]
-        self.username = display_name
-        self.email = email
-        self.image = image
-        self.last_refresh = timezone.now()
-
     def refresh(self, force=False):
         if not force and self.is_fresh:
             return
-        response = self.integration.client.users_info(user=self.id)
-        self.old_update_from_response(response["user"])
+        response = requests.get(
+            settings.CONNECTOR_URL + "/slack/accounts/getById",
+            params={"token": self.integration.token, "id": self.id},
+        )
+        payload = response.json()
+
+        if not payload["found"]:
+            # TODO deactivate account
+            return
+
+        self.update_from_response(payload["account"])
         self.save()

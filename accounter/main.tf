@@ -101,11 +101,6 @@ module "server" {
     secret_key  = var.s3_secret_key
   }
 
-  slack = {
-    client_id     = var.slack_client_id
-    client_secret = var.slack_client_secret
-  }
-
   connector = {
     host = module.connector.host
     port = module.connector.port
