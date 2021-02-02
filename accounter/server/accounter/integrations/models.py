@@ -77,7 +77,7 @@ class AbstractIntegration(models.Model):
 
     id = models.TextField(primary_key=True)
     token = models.TextField()
-    organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     last_refresh = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=100)
 
@@ -107,7 +107,7 @@ class AbstractAccount(models.Model):
     REFRESH_INTERVAL_SECONDS = 60
 
     id = models.CharField(primary_key=True, max_length=100)
-    profile = models.ForeignKey(Profile, on_delete=models.RESTRICT)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     last_refresh = models.DateTimeField(auto_now_add=True)
     image = models.URLField(
         default="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
@@ -211,7 +211,7 @@ class SlackAccount(AbstractAccount):
     username = models.CharField(max_length=150)
     email = models.EmailField()
     integration = models.ForeignKey(
-        SlackIntegration, related_name="accounts", on_delete=models.RESTRICT
+        SlackIntegration, related_name="accounts", on_delete=models.CASCADE
     )
 
     def update_from_response(self, response):
