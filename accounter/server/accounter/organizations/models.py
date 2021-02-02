@@ -54,20 +54,20 @@ class Organization(models.Model):
 class Department(models.Model):
     name = models.CharField(max_length=100)
     organization = models.ForeignKey(
-        Organization, related_name="departments", on_delete=models.RESTRICT
+        Organization, related_name="departments", on_delete=models.CASCADE
     )
 
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT)
     organization = models.ForeignKey(
-        Organization, related_name="profiles", on_delete=models.RESTRICT
+        Organization, related_name="profiles", on_delete=models.CASCADE
     )
     title = models.CharField(max_length=100, blank=True, null=True)
     department = models.ForeignKey(
         Department,
         related_name="profiles",
-        on_delete=models.RESTRICT,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
     )
