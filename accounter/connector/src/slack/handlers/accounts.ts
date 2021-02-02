@@ -3,7 +3,7 @@ import {
   getByEmailHandler,
   listHandler,
 } from "../../utils/handlers/accounts";
-import { WebClient, WebAPICallResult } from "@slack/web-api";
+import { WebClient, WebAPICallResult, ErrorCode } from "@slack/web-api";
 import { SlackUser } from "../types";
 
 const client = new WebClient();
@@ -22,16 +22,32 @@ export const getByEmail = getByEmailHandler(async ({ params }, callback) => {
     user: SlackUser;
   }
   const { email, token } = params;
-
-  const { user } = (await client.users.lookupByEmail({
-    token,
-    email,
-  })) as Response;
-
-  callback({
-    code: 200,
-    body: convertSlackUserToReturnType(user),
-  });
+  try {
+    const { user } = (await client.users.lookupByEmail({
+      token,
+      email,
+    })) as Response;
+  
+    callback({
+      code: 200,
+      body: {
+        found: true,
+        account: convertSlackUserToReturnType(user)
+      },
+    });
+  } catch (error) {
+      if (error.data.error === "users_not_found") {
+        callback({
+          code: 200,
+          body: {
+            found: false,
+            account: null
+          }
+        });
+      } else {
+        throw error
+      }
+  }
 });
 
 export const list = listHandler(async ({ params }, callback) => {

@@ -181,13 +181,17 @@ class SlackIntegration(AbstractIntegration):
         )
         payload = response.json()
         account = None
+        if not payload["found"]:
+            return account
+
+        account_data = payload["account"]
         try:
             account = SlackAccount.objects.get(
-                pk=payload["id"], profile__organization=self.organization
+                pk=account_data["id"], profile__organization=self.organization
             )
-            account.update_from_response(payload)
+            account.update_from_response(account_data)
         except SlackAccount.DoesNotExist:
-            account = self.create_account_from_response(profile, payload)
+            account = self.create_account_from_response(profile, account_data)
 
         return account
 
