@@ -1,6 +1,7 @@
 import server from "../../server";
 import faker from "faker";
 import { Account, GetAccountResponse, GetByIdHandlerParams } from "../../utils/handlers/accounts";
+import { encrypt } from "../encryption";
 
 const generateAccount = (overwrite = {}): Account => ({
   id: faker.random.uuid(),
@@ -31,7 +32,7 @@ export const testAccountsGetByEmail = async (
     const response = await app.inject({
       method: "GET",
       url: `${prefix}/accounts/getByEmail`,
-      query: { token, email },
+      query: { token: encrypt(token), email },
     });
     expect(response.json()).toEqual(expected);
   });
@@ -47,7 +48,7 @@ export const testAccountsGetByEmail = async (
     const response = await app.inject({
       method: "GET",
       url: `${prefix}/accounts/getByEmail`,
-      query: { token, email },
+      query: { token: encrypt(token), email },
     });
     expect(response.json()).toEqual(expected);
   });
@@ -74,7 +75,7 @@ export const testAccountsGetById = async (
     const response = await app.inject({
       method: "GET",
       url: `${prefix}/accounts/getById`,
-      query: { token, id },
+      query: { token: encrypt(token), id },
     });
     expect(response.json()).toEqual(expected);
   });
@@ -90,7 +91,7 @@ export const testAccountsGetById = async (
     const response = await app.inject({
       method: "GET",
       url: `${prefix}/accounts/getById`,
-      query: { token, id },
+      query: { token: encrypt(token), id },
     });
     expect(response.json()).toEqual(expected);
   });
@@ -113,7 +114,7 @@ export const testList = async (
     const response = await app.inject({
       method: "GET",
       url: `${prefix}/accounts/list`,
-      query: { token },
+      query: { token: encrypt(token) },
     });
     expect(response.json()).toEqual(expected);
   });

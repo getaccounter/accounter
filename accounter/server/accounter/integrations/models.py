@@ -6,7 +6,6 @@ from django.db import models
 from django.utils import timezone
 
 from ..organizations.models import Organization, Profile
-from .fields import TokenField
 
 
 class Service(models.Model):
@@ -77,7 +76,7 @@ class AbstractIntegration(models.Model):
     REFRESH_INTERVAL_SECONDS = 60
 
     id = models.TextField(primary_key=True)
-    token = TokenField()
+    token = models.TextField()
     organization = models.ForeignKey(Organization, on_delete=models.RESTRICT)
     last_refresh = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=100)
