@@ -1,11 +1,10 @@
 import { ENCRYPTION_KEY } from "../env"; // must be 32 char long
-
 const crypto = require("crypto");
 
 const IV_LENGTH = 16; // For AES, this is always 16
 const algo = "aes-256-cbc";
 
-export function encrypt(text: string) {
+export function encrypt(text: string): string {
   let iv = crypto.randomBytes(IV_LENGTH);
   let cipher = crypto.createCipheriv(algo, Buffer.from(ENCRYPTION_KEY), iv);
   let encrypted = cipher.update(text);
@@ -15,7 +14,7 @@ export function encrypt(text: string) {
   return iv.toString("hex") + ":" + encrypted.toString("hex");
 }
 
-export function decrypt(text: string) {
+export function decrypt(text: string): string {
   let textParts = text.split(":");
   // @ts-expect-error
   let iv = Buffer.from(textParts.shift(), "hex");

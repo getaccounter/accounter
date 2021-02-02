@@ -4,9 +4,10 @@ import * as z from "zod";
 const oauthParamSchema = z.object({
   redirectUri: z.string(),
 });
+export type OAuthReturnType = { url: string }
 export const oauthHandler = makeHandler({
   params: oauthParamSchema,
-})<{ url: string }>();
+})<OAuthReturnType>();
 
 const handleOAuthParamSchema = z.object({
   code: z.string(),
