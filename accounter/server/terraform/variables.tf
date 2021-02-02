@@ -38,15 +38,6 @@ variable "s3" {
   sensitive = true
 }
 
-variable "slack" {
-  description = "Slack credentials"
-  type = object({
-    client_id     = string
-    client_secret = string
-  })
-  sensitive = true
-}
-
 variable "db_token_encryption_key" {
   description = "encryption key for service tokens"
   type        = string

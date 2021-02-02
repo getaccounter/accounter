@@ -10,7 +10,7 @@ export type Account = {
   };
 };
 
-export type GetByEmailResponse = {
+export type GetAccountResponse = {
   found: true,
   account: Account
 } | {
@@ -22,8 +22,15 @@ export const getByEmailHandler = makeHandler({
     email: z.string(),
     token: z.string(),
   }),
-})<GetByEmailResponse>();
+})<GetAccountResponse>();
+
+const getByIdParamsValidatpr = z.object({ token: z.string(), id: z.string() })
+export type GetByIdHandlerParams = z.infer<typeof getByIdParamsValidatpr>
+export const getByIdHandler = makeHandler({
+  params: getByIdParamsValidatpr,
+})<GetAccountResponse>();
 
 export const listHandler = makeHandler({
   params: z.object({ token: z.string() }),
 })<Array<Account>>();
+

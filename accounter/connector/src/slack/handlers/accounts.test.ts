@@ -2,6 +2,7 @@ import nock from "nock";
 import faker from "faker";
 import {
   testAccountsGetByEmail,
+  testAccountsGetById,
   testList,
 } from "../../utils/handlers/accounts.testutils";
 import { Account } from "../../utils/handlers/accounts";
@@ -166,6 +167,29 @@ describe("accounts", () => {
       .post(
         "/api/users.lookupByEmail",
         `token=${token}&email=${email.replace("@", "%40")}`
+      )
+      .once()
+      .reply(
+        200,
+        found
+          ? {
+              ok: true,
+              cache_ts: 1611515141,
+              response_metadata: { next_cursor: "" },
+              user: createSlackUser(account!),
+            }
+          : {
+              ok: false,
+              error: "users_not_found",
+            }
+      );
+  });
+  testAccountsGetById("/slack", async ({ params }, { found, account }) => {
+    const { token, id } = params;
+    nock("https://slack.com")
+      .post(
+        "/api/users.info",
+        `token=${token}&user=${id}`
       )
       .once()
       .reply(

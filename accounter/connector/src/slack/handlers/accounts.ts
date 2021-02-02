@@ -1,5 +1,6 @@
 import {
   Account,
+  getByIdHandler,
   getByEmailHandler,
   listHandler,
 } from "../../utils/handlers/accounts";
@@ -27,26 +28,26 @@ export const getByEmail = getByEmailHandler(async ({ params }, callback) => {
       token,
       email,
     })) as Response;
-  
+
     callback({
       code: 200,
       body: {
         found: true,
-        account: convertSlackUserToReturnType(user)
+        account: convertSlackUserToReturnType(user),
       },
     });
   } catch (error) {
-      if (error.data.error === "users_not_found") {
-        callback({
-          code: 200,
-          body: {
-            found: false,
-            account: null
-          }
-        });
-      } else {
-        throw error
-      }
+    if (error.data.error === "users_not_found") {
+      callback({
+        code: 200,
+        body: {
+          found: false,
+          account: null,
+        },
+      });
+    } else {
+      throw error;
+    }
   }
 });
 
@@ -64,4 +65,37 @@ export const list = listHandler(async ({ params }, callback) => {
     code: 200,
     body: membersWithoutBots.map((m) => convertSlackUserToReturnType(m)),
   });
+});
+
+export const getById = getByIdHandler(async ({ params }, callback) => {
+  interface Response extends WebAPICallResult {
+    user: SlackUser;
+  }
+  const { id, token } = params;
+  try {
+    const { user } = (await client.users.info({
+      token,
+      user: id,
+    })) as Response;
+
+    callback({
+      code: 200,
+      body: {
+        found: true,
+        account: convertSlackUserToReturnType(user),
+      },
+    });
+  } catch (error) {
+    if (error.data.error === "users_not_found") {
+      callback({
+        code: 200,
+        body: {
+          found: false,
+          account: null,
+        },
+      });
+    } else {
+      throw error;
+    }
+  }
 });
