@@ -494,7 +494,7 @@ return {
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "SlackAccountNode",
+                            "concreteType": "AccountNode",
                             "kind": "LinkedField",
                             "name": "accounts",
                             "plural": true,

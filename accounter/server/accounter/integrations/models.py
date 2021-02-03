@@ -76,6 +76,10 @@ class Integration(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     last_refresh = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=100)
+    service = models.ForeignKey(
+        Service,
+        on_delete=models.RESTRICT,
+    )
 
     @property
     def is_fresh(self):
@@ -84,10 +88,6 @@ class Integration(models.Model):
         return timezone.now() < self.last_refresh + timedelta(
             seconds=self.REFRESH_INTERVAL_SECONDS
         )
-
-    @property
-    def service(self):
-        return Service.objects.get(name=Service.Types.SLACK)
 
     def create_account_from_response(self, profile: Profile, response):
         email = response["email"]

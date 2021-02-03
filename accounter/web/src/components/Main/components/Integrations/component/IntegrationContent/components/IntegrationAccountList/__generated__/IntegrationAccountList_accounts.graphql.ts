@@ -38,8 +38,8 @@ const node: ReaderFragment = {
       "name": "IntegrationAccount_account"
     }
   ],
-  "type": "SlackAccountNode",
+  "type": "AccountNode",
   "abstractKey": null
 };
-(node as any).hash = '8ece3b43f3c63fc7a10928d055f27f82';
+(node as any).hash = 'b64e34ff7e4a637bf942862cacb70ac4';
 export default node;

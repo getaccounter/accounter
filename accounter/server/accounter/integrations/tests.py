@@ -250,7 +250,9 @@ class IntegrationTestCase(GraphQLTestCase):
     @patch.object(requests, "get")
     def test_get_integrations(self, _):
         slack_integration = Integration.objects.create(
-            organization=self.admin.profile.organization, token="some_token"
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            token="some_token",
         )
         slack_integration.save()
         self.client.force_login(self.admin)
@@ -296,7 +298,9 @@ class IntegrationTestCase(GraphQLTestCase):
             ],
         )
         slack_integration = Integration.objects.create(
-            organization=self.admin.profile.organization, token=token
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            token=token,
         )
         slack_integration.save()
         self.client.force_login(self.admin)
@@ -345,7 +349,9 @@ class IntegrationTestCase(GraphQLTestCase):
             ],
         )
         slack_integration = Integration.objects.create(
-            organization=self.admin.profile.organization, token=token
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            token=token,
         )
         account = Account.objects.create(
             id=integration_id,
@@ -400,6 +406,7 @@ class IntegrationTestCase(GraphQLTestCase):
     def test_get_integrations_only_of_own_organization(self, _):
         # integration of this org
         Integration.objects.create(
+            service=Service.objects.get(name=Service.Types.SLACK),
             id="1",
             organization=self.other_company_admin.profile.organization,
             token="some_other_token",
@@ -407,7 +414,10 @@ class IntegrationTestCase(GraphQLTestCase):
 
         # integration of other org
         Integration.objects.create(
-            id="2", organization=self.admin.profile.organization, token="some_token"
+            service=Service.objects.get(name=Service.Types.SLACK),
+            id="2",
+            organization=self.admin.profile.organization,
+            token="some_token",
         ).save()
         self.client.force_login(self.admin)
         response = self.query(

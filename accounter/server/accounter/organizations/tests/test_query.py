@@ -8,7 +8,7 @@ from freezegun import freeze_time
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 
-from accounter.integrations.models import Account, Integration
+from accounter.integrations.models import Account, Integration, Service
 
 from ..models import Profile
 
@@ -153,6 +153,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         self.client.force_login(self.admin)
         integration = baker.make(
             Integration,
+            service=Service.objects.get(name=Service.Types.SLACK),
             organization=self.admin.profile.organization,
             token=token,
             _fill_optional=True,

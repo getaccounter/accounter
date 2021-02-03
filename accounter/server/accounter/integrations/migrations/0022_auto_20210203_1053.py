@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organizations', '0007_auto_20210202_2220'),
-        ('integrations', '0021_slackaccount_role'),
+        ("organizations", "0007_auto_20210202_2220"),
+        ("integrations", "0021_slackaccount_role"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='SlackAccount',
-            new_name='Account',
+            old_name="SlackAccount",
+            new_name="Account",
         ),
     ]

@@ -22,7 +22,7 @@ const IntegrationAccountList = ({ accounts }: Props) => {
 
 export default createFragmentContainer(IntegrationAccountList, {
   accounts: graphql`
-    fragment IntegrationAccountList_accounts on SlackAccountNode
+    fragment IntegrationAccountList_accounts on AccountNode
     @relay(plural: true) {
       id
       ...IntegrationAccount_account
