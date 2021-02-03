@@ -97,7 +97,7 @@ const IntegrationContentHeader = ({integration}: Props) => {
 
 export default createFragmentContainer(IntegrationContentHeader, {
   integration: graphql`
-    fragment IntegrationContentHeader_integration on IntegrationInterface {
+    fragment IntegrationContentHeader_integration on SlackIntegrationNode {
       name
       service {
         logo

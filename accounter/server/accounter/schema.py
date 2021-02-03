@@ -2,7 +2,6 @@ import graphene
 
 from .integrations.models import Service, SlackIntegration
 from .integrations.schemas import (
-    IntegrationInterface,
     Oauth,
     ServiceNode,
     SlackAccountNode,
@@ -29,7 +28,7 @@ class Query(UserQuery, OrganizationQuery, graphene.ObjectType):
     def resolve_services(parent, info, **kwargs):
         return Service.objects.all()
 
-    integrations = graphene.List(graphene.NonNull(IntegrationInterface), required=True)
+    integrations = graphene.List(graphene.NonNull(SlackIntegrationNode), required=True)
 
     @staticmethod
     @admin_required
