@@ -304,12 +304,10 @@ class IntegrationTestCase(GraphQLTestCase):
             """
             query {
                 integrations {
-                    ... on SlackIntegrationNode {
-                        accounts {
-                            username
-                            email
-                            image
-                        }
+                    accounts {
+                        username
+                        email
+                        image
                     }
                 }
             }
@@ -363,13 +361,11 @@ class IntegrationTestCase(GraphQLTestCase):
             """
             query {
                 integrations {
-                    ... on SlackIntegrationNode {
                         accounts {
                             username
                             email
                             image
                         }
-                    }
                 }
             }
             """

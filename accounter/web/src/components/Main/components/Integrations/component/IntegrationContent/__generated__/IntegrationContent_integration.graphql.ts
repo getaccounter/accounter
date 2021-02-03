@@ -55,8 +55,8 @@ const node: ReaderFragment = {
       "name": "IntegrationContentHeader_integration"
     }
   ],
-  "type": "SlackIntegrationNode",
+  "type": "IntegrationNode",
   "abstractKey": null
 };
-(node as any).hash = '2835391206c8303d3b2b9ca8e6e8f4a6';
+(node as any).hash = '138866f4e7d478fc810a45476102a737';
 export default node;

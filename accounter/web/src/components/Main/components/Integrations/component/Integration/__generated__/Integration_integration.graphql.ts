@@ -64,9 +64,9 @@ return {
       "storageKey": null
     }
   ],
-  "type": "SlackIntegrationNode",
+  "type": "IntegrationNode",
   "abstractKey": null
 };
 })();
-(node as any).hash = 'b9bded549c5c59a64ab40f93f8a36d39';
+(node as any).hash = 'd13eac6cbc04ea12dc4696cc361eb6ea';
 export default node;

@@ -81,7 +81,7 @@ const IntegrationContent = ({ integration }: Props) => {
 
 export default createFragmentContainer(IntegrationContent, {
   integration: graphql`
-    fragment IntegrationContent_integration on SlackIntegrationNode {
+    fragment IntegrationContent_integration on IntegrationNode {
       name
       ...IntegrationContentHeader_integration
       accounts {

@@ -45,7 +45,7 @@ class SlackCallbackType(graphene.ObjectType):
     handleCallback = HandleCallback.Field()
 
 
-class SlackIntegrationNode(DjangoObjectType):
+class IntegrationNode(DjangoObjectType):
     service = graphene.Field(ServiceNode, required=True)
 
     class Meta:
@@ -56,7 +56,7 @@ class SlackIntegrationNode(DjangoObjectType):
 
 class SlackAccountNode(DjangoObjectType):
     id = graphene.ID(required=True)
-    integration = graphene.Field(SlackIntegrationNode, required=True)
+    integration = graphene.Field(IntegrationNode, required=True)
     profile = graphene.Field(
         "accounter.organizations.schemas.ProfileNode", required=True
     )
