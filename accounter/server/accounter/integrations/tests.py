@@ -13,7 +13,7 @@ from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 
 from ..organizations.models import Profile
-from .models import Service, SlackAccount, SlackIntegration
+from .models import Account, Service, SlackIntegration
 
 fake = Faker()
 
@@ -349,7 +349,7 @@ class IntegrationTestCase(GraphQLTestCase):
         slack_integration = SlackIntegration.objects.create(
             organization=self.admin.profile.organization, token=token
         )
-        account = SlackAccount.objects.create(
+        account = Account.objects.create(
             id=integration_id,
             profile=self.admin.profile,
             integration=slack_integration,

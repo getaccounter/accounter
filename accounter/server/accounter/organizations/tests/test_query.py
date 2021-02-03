@@ -8,7 +8,7 @@ from freezegun import freeze_time
 from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 
-from accounter.integrations.models import SlackAccount, SlackIntegration
+from accounter.integrations.models import Account, SlackIntegration
 
 from ..models import Profile
 
@@ -128,7 +128,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         assert content["data"]["currentUser"]["email"] == self.admin.email
 
     @freeze_time(
-        auto_tick_seconds=SlackAccount.REFRESH_INTERVAL_SECONDS,
+        auto_tick_seconds=Account.REFRESH_INTERVAL_SECONDS,
     )
     @requests_mock.Mocker()
     def test_get_profiles_accounts_slack(self, mock_request):
@@ -158,7 +158,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
             _fill_optional=True,
         )
         account = baker.make(
-            SlackAccount,
+            Account,
             id=account_id,
             role="USER",
             profile=self.admin.profile,
