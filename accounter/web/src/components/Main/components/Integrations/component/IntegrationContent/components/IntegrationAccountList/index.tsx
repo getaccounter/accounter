@@ -41,7 +41,7 @@ const IntegrationAccountList = ({ accounts }: Props) => {
                   <div className="flex-shrink-0 h-10 w-10">
                     <img
                       className="h-10 w-10 rounded-full"
-                      src={account.image}
+                      src={account.imageSmall}
                       alt={fullName}
                     />
                   </div>
@@ -85,7 +85,7 @@ export default createFragmentContainer(IntegrationAccountList, {
     fragment IntegrationAccountList_accounts on AccountNode
     @relay(plural: true) {
       id
-      image
+      imageSmall
       profile {
         firstName
         lastName

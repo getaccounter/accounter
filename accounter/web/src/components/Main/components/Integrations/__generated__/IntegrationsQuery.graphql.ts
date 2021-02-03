@@ -29,7 +29,7 @@ query IntegrationsQuery {
 
 fragment IntegrationAccountList_accounts on AccountNode {
   id
-  image
+  imageSmall
   profile {
     firstName
     lastName
@@ -162,7 +162,7 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "image",
+                "name": "imageSmall",
                 "storageKey": null
               },
               {
@@ -221,12 +221,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "522977817f97c77fea1ce8276596a117",
+    "cacheID": "343e71489e04e5b91d148ac01b641d43",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  id\n  image\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  id\n  imageSmall\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
 })();

@@ -8,7 +8,8 @@ export type Account = {
   email: string;
   username: string;
   image: {
-    small: string;
+    small?: string;
+    big?: string;
   };
   role: Role
 };

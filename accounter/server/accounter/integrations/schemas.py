@@ -61,10 +61,10 @@ class AccountNode(DjangoObjectType):
     profile = graphene.Field(
         "accounter.organizations.schemas.ProfileNode", required=True
     )
-    image = graphene.String(required=True)
     email = graphene.String(required=True)
     username = graphene.String(required=True)
     role = graphene.String(required=True)
+    image_small = graphene.String(required=True)
 
     class Meta:
         model = Account

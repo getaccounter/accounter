@@ -108,7 +108,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         assert profile.user.last_name == returned_profile["lastName"] == last_name
         assert profile.user.email == returned_profile["email"] == email
         assert profile.title == returned_profile["title"] == title
-        assert profile.image == returned_profile["image"] == DEFAULT_PROFILE_IMAGE
+        assert returned_profile["image"] == DEFAULT_PROFILE_IMAGE
         assert (
             profile.department.name
             == returned_profile["department"]["name"]
@@ -122,7 +122,8 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         last_name = "somelastname"
         token = "sometoken"
         username = "someusername"
-        image = "small.image.url"
+        image_small = "small.image.url"
+        image_big = "small.image.url"
 
         mock_request.get(
             settings.CONNECTOR_URL
@@ -133,7 +134,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                     "id": "someid",
                     "username": username,
                     "email": email,
-                    "image": {"small": image},
+                    "image": {"small": image_small, "big": image_big},
                     "role": "USER",
                 },
             },
@@ -164,8 +165,10 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
               }
             ) {
               profile {
+                image
                 accounts {
-                  image
+                  imageSmall
+                  imageBig
                   username
                   email
                   role
@@ -185,10 +188,15 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         slack_account = slack_integration.accounts.first()
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        account_response = content["data"]["createUser"]["profile"]["accounts"][0]
+        profile_response = content["data"]["createUser"]["profile"]
+        account_response = profile_response["accounts"][0]
+        assert profile_response["image"] == slack_account.image_big == image_big
         assert account_response["username"] == slack_account.username == username
         assert account_response["email"] == slack_account.email == email
-        assert account_response["image"] == slack_account.image == image
+        assert (
+            account_response["imageSmall"] == slack_account.image_small == image_small
+        )
+        assert account_response["imageBig"] == slack_account.image_big == image_big
         assert account_response["role"] == slack_account.role == "USER"
 
     @requests_mock.Mocker()
@@ -228,7 +236,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
             ) {
               profile {
                 accounts {
-                  image
+                  imageSmall
                   username
                   email
                 }
@@ -243,8 +251,11 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                 "lastName": "somelastname",
             },
         )
-        slack_integration.refresh_from_db()
         self.assertResponseNoErrors(response)
+        slack_integration.refresh_from_db()
+        content = json.loads(response.content)
+        response_accounts = content["data"]["createUser"]["profile"]["accounts"]
+        assert len(response_accounts) == slack_integration.accounts.count() == 0
 
     def test_create_user_without_optional_fields(self):
         self.client.force_login(self.admin)

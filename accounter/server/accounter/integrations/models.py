@@ -93,7 +93,8 @@ class Integration(models.Model):
         email = response["email"]
         username = response["username"]
         slack_id = response["id"]
-        image = response["image"]["small"]
+        image_small = response["image"]["small"]
+        image_big = response["image"]["big"]
         role = response["role"]
         account = Account.objects.create(
             id=slack_id,
@@ -101,7 +102,8 @@ class Integration(models.Model):
             integration=self,
             email=email,
             username=username,
-            image=image,
+            image_small=image_small,
+            image_big=image_big,
             role=role,
         )
         return account
@@ -166,6 +168,11 @@ class Integration(models.Model):
 
 
 class Account(models.Model):
+    class Roles(models.TextChoices):
+        USER = "USER", "User"
+        ADMIN = "ADMIN", "Admin"
+        OWNER = "OWNER", "Owner"
+
     username = models.CharField(max_length=150)
     email = models.EmailField()
 
@@ -174,17 +181,19 @@ class Account(models.Model):
     id = models.CharField(primary_key=True, max_length=100)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     last_refresh = models.DateTimeField(auto_now_add=True)
-    image = models.URLField(
+    image_small = models.URLField(
+        default="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+    )
+    image_big = models.URLField(
         default="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
     )
 
-    class Roles(models.TextChoices):
-        USER = "USER", "User"
-        ADMIN = "ADMIN", "Admin"
-        OWNER = "OWNER", "Owner"
-
     role = models.CharField(
         "Type", max_length=10, choices=Roles.choices, default=Roles.USER
+    )
+
+    integration = models.ForeignKey(
+        Integration, related_name="accounts", on_delete=models.CASCADE
     )
 
     @property
@@ -193,18 +202,16 @@ class Account(models.Model):
             seconds=self.REFRESH_INTERVAL_SECONDS
         )
 
-    integration = models.ForeignKey(
-        Integration, related_name="accounts", on_delete=models.CASCADE
-    )
-
     def update_from_response(self, response):
         email = response["email"]
         username = response["username"]
-        image = response["image"]["small"]
+        image_small = response["image"]["small"]
+        image_big = response["image"]["big"]
         role = response["role"]
         self.username = username
         self.email = email
-        self.image = image
+        self.image_small = image_small
+        self.image_big = image_big
         self.last_refresh = timezone.now()
         self.role = role
 
