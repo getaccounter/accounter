@@ -1,7 +1,7 @@
 import graphene
 
 from .integrations.models import Integration, Service
-from .integrations.schemas import IntegrationNode, Oauth, ServiceNode, SlackAccountNode
+from .integrations.schemas import IntegrationNode, Oauth, ServiceNode
 from .organizations.schemas import Mutation as OrganizationMutation
 from .organizations.schemas import Query as OrganizationQuery
 from .users.schemas import Mutation as UserMutation
@@ -37,6 +37,4 @@ class Query(UserQuery, OrganizationQuery, graphene.ObjectType):
         return integrations
 
 
-schema = graphene.Schema(
-    query=Query, mutation=Mutation, types=[IntegrationNode, SlackAccountNode]
-)
+schema = graphene.Schema(query=Query, mutation=Mutation)

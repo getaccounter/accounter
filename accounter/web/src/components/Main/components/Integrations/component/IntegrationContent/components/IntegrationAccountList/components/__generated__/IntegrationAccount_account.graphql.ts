@@ -67,8 +67,8 @@ const node: ReaderFragment = {
       "storageKey": null
     }
   ],
-  "type": "SlackAccountNode",
+  "type": "AccountNode",
   "abstractKey": null
 };
-(node as any).hash = '3fb7efbdfd87af2a57df950643aa4a48';
+(node as any).hash = 'aacf41510d7cdd8ab04cb60a721c41e9';
 export default node;

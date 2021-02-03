@@ -54,7 +54,7 @@ class IntegrationNode(DjangoObjectType):
         fields = ("id", "name", "accounts")
 
 
-class SlackAccountNode(DjangoObjectType):
+class AccountNode(DjangoObjectType):
     id = graphene.ID(required=True)
     integration = graphene.Field(IntegrationNode, required=True)
     profile = graphene.Field(
