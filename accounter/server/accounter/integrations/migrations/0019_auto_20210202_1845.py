@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0018_remove_service_state_store'),
+        ("integrations", "0018_remove_service_state_store"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='slackintegration',
-            name='token',
+            model_name="slackintegration",
+            name="token",
             field=models.TextField(),
         ),
     ]

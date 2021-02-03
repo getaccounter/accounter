@@ -134,6 +134,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                     "username": username,
                     "email": email,
                     "image": {"small": image},
+                    "role": "USER",
                 },
             },
         )
@@ -164,10 +165,9 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
               profile {
                 accounts {
                   image
-                  ... on SlackAccountNode {
-                    username
-                    email
-                  }
+                  username
+                  email
+                  role
                 }
               }
             }
@@ -188,6 +188,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         assert account_response["username"] == slack_account.username == username
         assert account_response["email"] == slack_account.email == email
         assert account_response["image"] == slack_account.image == image
+        assert account_response["role"] == slack_account.role == "USER"
 
     @requests_mock.Mocker()
     def test_create_user_pulls_accounts_not_found(self, mock_request):
@@ -226,10 +227,8 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
               profile {
                 accounts {
                   image
-                  ... on SlackAccountNode {
-                    username
-                    email
-                  }
+                  username
+                  email
                 }
               }
             }

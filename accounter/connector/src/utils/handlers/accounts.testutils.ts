@@ -1,6 +1,10 @@
 import server from "../../server";
 import faker from "faker";
-import { Account, GetAccountResponse, GetByIdHandlerParams } from "../../utils/handlers/accounts";
+import {
+  Account,
+  GetAccountResponse,
+  GetByIdHandlerParams,
+} from "../../utils/handlers/accounts";
 import { encrypt } from "../encryption";
 
 const generateAccount = (overwrite = {}): Account => ({
@@ -8,7 +12,8 @@ const generateAccount = (overwrite = {}): Account => ({
   email: faker.internet.email(),
   username: faker.internet.userName(),
   image: { small: faker.image.imageUrl(24, 24) },
-  ...overwrite
+  role: "USER",
+  ...overwrite,
 });
 
 export const testAccountsGetByEmail = async (
@@ -20,37 +25,57 @@ export const testAccountsGetByEmail = async (
     expected: GetAccountResponse
   ) => Promise<void>
 ) => {
-  it("getByEmail", async () => {
-    const app = server();
-    const expected: GetAccountResponse = {
-      found: true,
-      account: generateAccount(),
-    };
-    const token = faker.random.uuid();
-    const email = faker.internet.email();
-    await setup({ params: { token, email } }, expected);
-    const response = await app.inject({
-      method: "GET",
-      url: `${prefix}/accounts/getByEmail`,
-      query: { token: encrypt(token), email },
+  describe("getByEmail", () => {
+    it("found", async () => {
+      const app = server();
+      const expected: GetAccountResponse = {
+        found: true,
+        account: generateAccount(),
+      };
+      const token = faker.random.uuid();
+      const email = faker.internet.email();
+      await setup({ params: { token, email } }, expected);
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/getByEmail`,
+        query: { token: encrypt(token), email },
+      });
+      expect(response.json()).toEqual(expected);
     });
-    expect(response.json()).toEqual(expected);
-  });
-  it("getByEmail not found", async () => {
-    const app = server();
-    const expected: GetAccountResponse = {
-      found: false,
-      account: null,
-    };
-    const token = faker.random.uuid();
-    const email = faker.internet.email();
-    await setup({ params: { token, email } }, expected);
-    const response = await app.inject({
-      method: "GET",
-      url: `${prefix}/accounts/getByEmail`,
-      query: { token: encrypt(token), email },
+    it("not found", async () => {
+      const app = server();
+      const expected: GetAccountResponse = {
+        found: false,
+        account: null,
+      };
+      const token = faker.random.uuid();
+      const email = faker.internet.email();
+      await setup({ params: { token, email } }, expected);
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/getByEmail`,
+        query: { token: encrypt(token), email },
+      });
+      expect(response.json()).toEqual(expected);
     });
-    expect(response.json()).toEqual(expected);
+    describe("roles", () => {
+      it.each([["USER"], ["ADMIN"], ["OWNER"]])("%s", async (role) => {
+        const app = server();
+        const expected: GetAccountResponse = {
+          found: true,
+          account: generateAccount({ role }),
+        };
+        const token = faker.random.uuid();
+        const email = faker.internet.email();
+        await setup({ params: { token, email } }, expected);
+        const response = await app.inject({
+          method: "GET",
+          url: `${prefix}/accounts/getByEmail`,
+          query: { token: encrypt(token), email },
+        });
+        expect(response.json()).toEqual(expected);
+      });
+    });
   });
 };
 
@@ -63,37 +88,58 @@ export const testAccountsGetById = async (
     expected: GetAccountResponse
   ) => Promise<void>
 ) => {
-  it("getById", async () => {
-    const app = server();
-    const token = faker.random.uuid();
-    const id = faker.random.uuid();
-    const expected: GetAccountResponse = {
-      found: true,
-      account: generateAccount({ id }),
-    };
-    await setup({ params: { token, id } }, expected);
-    const response = await app.inject({
-      method: "GET",
-      url: `${prefix}/accounts/getById`,
-      query: { token: encrypt(token), id },
+  describe("getById", () => {
+    it("found", async () => {
+      const app = server();
+      const token = faker.random.uuid();
+      const id = faker.random.uuid();
+      const expected: GetAccountResponse = {
+        found: true,
+        account: generateAccount({ id }),
+      };
+      await setup({ params: { token, id } }, expected);
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/getById`,
+        query: { token: encrypt(token), id },
+      });
+      expect(response.json()).toEqual(expected);
     });
-    expect(response.json()).toEqual(expected);
-  });
-  it("getById not found", async () => {
-    const app = server();
-    const expected: GetAccountResponse = {
-      found: false,
-      account: null,
-    };
-    const token = faker.random.uuid();
-    const id = faker.random.uuid();
-    await setup({ params: { token, id } }, expected);
-    const response = await app.inject({
-      method: "GET",
-      url: `${prefix}/accounts/getById`,
-      query: { token: encrypt(token), id },
+    it("not found", async () => {
+      const app = server();
+      const expected: GetAccountResponse = {
+        found: false,
+        account: null,
+      };
+      const token = faker.random.uuid();
+      const id = faker.random.uuid();
+      await setup({ params: { token, id } }, expected);
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/getById`,
+        query: { token: encrypt(token), id },
+      });
+      expect(response.json()).toEqual(expected);
     });
-    expect(response.json()).toEqual(expected);
+
+    describe("roles", () => {
+      it.each([["USER"], ["ADMIN"], ["OWNER"]])("%s", async (role) => {
+        const app = server();
+        const expected: GetAccountResponse = {
+          found: true,
+          account: generateAccount({ role }),
+        };
+        const token = faker.random.uuid();
+        const id = faker.random.uuid();
+        await setup({ params: { token, id } }, expected);
+        const response = await app.inject({
+          method: "GET",
+          url: `${prefix}/accounts/getById`,
+          query: { token: encrypt(token), id },
+        });
+        expect(response.json()).toEqual(expected);
+      });
+    });
   });
 };
 

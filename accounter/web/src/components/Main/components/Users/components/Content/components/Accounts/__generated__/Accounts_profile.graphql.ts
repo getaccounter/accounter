@@ -4,9 +4,19 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
+export type ServiceName = "SLACK" | "%future added value";
 export type Accounts_profile = {
     readonly accounts: ReadonlyArray<{
-        readonly " $fragmentRefs": FragmentRefs<"AccountList_accounts">;
+        readonly id: string;
+        readonly integration: {
+            readonly name: string;
+            readonly service: {
+                readonly name: ServiceName;
+                readonly logo: string;
+            };
+        };
+        readonly username: string;
+        readonly role: string;
     }>;
     readonly " $refType": "Accounts_profile";
 };
@@ -18,7 +28,15 @@ export type Accounts_profile$key = {
 
 
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -33,9 +51,56 @@ const node: ReaderFragment = {
       "plural": true,
       "selections": [
         {
+          "alias": null,
           "args": null,
-          "kind": "FragmentSpread",
-          "name": "AccountList_accounts"
+          "kind": "ScalarField",
+          "name": "id",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": null,
+          "kind": "LinkedField",
+          "name": "integration",
+          "plural": false,
+          "selections": [
+            (v0/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ServiceNode",
+              "kind": "LinkedField",
+              "name": "service",
+              "plural": false,
+              "selections": [
+                (v0/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "logo",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "username",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "role",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -44,5 +109,6 @@ const node: ReaderFragment = {
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = '77fb490f41783c1a04db8f779d04493f';
+})();
+(node as any).hash = '157a149d65ced09a3eba30fdaa0279f3';
 export default node;

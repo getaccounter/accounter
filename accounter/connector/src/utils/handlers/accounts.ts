@@ -1,6 +1,8 @@
 import { makeHandler } from "./utils";
 import * as z from "zod";
 
+type Role = "USER" | "ADMIN" | "OWNER"
+
 export type Account = {
   id: string;
   email: string;
@@ -8,6 +10,7 @@ export type Account = {
   image: {
     small: string;
   };
+  role: Role
 };
 
 export type GetAccountResponse = {
