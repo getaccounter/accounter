@@ -52,7 +52,7 @@ terraform {
 }
 
 data "digitalocean_database_cluster" "database" {
-  name = "database"
+  name = "databaseDev"
 }
 
 data "digitalocean_container_registry" "accounter" {

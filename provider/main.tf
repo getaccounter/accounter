@@ -28,7 +28,7 @@ resource "digitalocean_container_registry" "accounter" {
 }
 
 resource "digitalocean_database_cluster" "database" {
-  name       = "database"
+  name       = "databaseDev"
   engine     = "pg"
   version    = "12"
   size       = "db-s-1vcpu-1gb"
