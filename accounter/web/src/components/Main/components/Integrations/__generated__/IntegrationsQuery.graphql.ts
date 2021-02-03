@@ -42,14 +42,14 @@ fragment IntegrationAccount_account on SlackAccountNode {
   username
 }
 
-fragment IntegrationContentHeader_integration on SlackIntegrationNode {
+fragment IntegrationContentHeader_integration on IntegrationNode {
   name
   service {
     logo
   }
 }
 
-fragment IntegrationContent_integration on SlackIntegrationNode {
+fragment IntegrationContent_integration on IntegrationNode {
   name
   ...IntegrationContentHeader_integration
   accounts {
@@ -58,7 +58,7 @@ fragment IntegrationContent_integration on SlackIntegrationNode {
   }
 }
 
-fragment Integration_integration on SlackIntegrationNode {
+fragment Integration_integration on IntegrationNode {
   id
   name
   service {
@@ -93,7 +93,7 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "SlackIntegrationNode",
+        "concreteType": "IntegrationNode",
         "kind": "LinkedField",
         "name": "integrations",
         "plural": true,
@@ -125,7 +125,7 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "SlackIntegrationNode",
+        "concreteType": "IntegrationNode",
         "kind": "LinkedField",
         "name": "integrations",
         "plural": true,
@@ -209,12 +209,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "382e34b9c5d19702dc793aeb9b81b2f0",
+    "cacheID": "75be66722f583deb7841cb84d53bab0e",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on SlackAccountNode {\n  id\n  ...IntegrationAccount_account\n}\n\nfragment IntegrationAccount_account on SlackAccountNode {\n  image\n  profile {\n    firstName\n    lastName\n    id\n  }\n  username\n}\n\nfragment IntegrationContentHeader_integration on SlackIntegrationNode {\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on SlackIntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on SlackIntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on SlackAccountNode {\n  id\n  ...IntegrationAccount_account\n}\n\nfragment IntegrationAccount_account on SlackAccountNode {\n  image\n  profile {\n    firstName\n    lastName\n    id\n  }\n  username\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
 })();
