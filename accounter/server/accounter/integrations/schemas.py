@@ -19,16 +19,6 @@ class ServiceNode(DjangoObjectType):
         return instance.logo and instance.logo.url
 
 
-class IntegrationInterface(graphene.Interface):
-    id = graphene.ID(required=True)
-    service = graphene.Field(ServiceNode, required=True)
-    name = graphene.String(required=True)
-
-    @classmethod
-    def resolve_type(cls, instance, info):
-        return SlackIntegrationNode
-
-
 class HandleCallback(graphene.Mutation):
     class Arguments:
         code = graphene.String(required=True)
@@ -55,9 +45,18 @@ class SlackCallbackType(graphene.ObjectType):
     handleCallback = HandleCallback.Field()
 
 
+class SlackIntegrationNode(DjangoObjectType):
+    service = graphene.Field(ServiceNode, required=True)
+
+    class Meta:
+        interfaces = (relay.Node,)
+        model = SlackIntegration
+        fields = ("id", "name", "accounts")
+
+
 class SlackAccountNode(DjangoObjectType):
     id = graphene.ID(required=True)
-    integration = graphene.Field(IntegrationInterface, required=True)
+    integration = graphene.Field(SlackIntegrationNode, required=True)
     profile = graphene.Field(
         "accounter.organizations.schemas.ProfileNode", required=True
     )
@@ -67,22 +66,8 @@ class SlackAccountNode(DjangoObjectType):
     role = graphene.String(required=True)
 
     class Meta:
-        interfaces = (relay.Node,)
         model = Account
         filter_fields = ["profile"]
-
-
-class SlackIntegrationNode(DjangoObjectType):
-    class Meta:
-        interfaces = (IntegrationInterface,)
-        model = SlackIntegration
-        fields = ("id", "service")
-
-    accounts = graphene.List(graphene.NonNull(SlackAccountNode), required=True)
-
-    @staticmethod
-    def resolve_accounts(slackIntegration, info, **kwargs):
-        return slackIntegration.accounts.all()
 
 
 class Oauth(graphene.ObjectType):

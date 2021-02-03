@@ -60,7 +60,7 @@ return {
         {
           "alias": null,
           "args": null,
-          "concreteType": null,
+          "concreteType": "SlackIntegrationNode",
           "kind": "LinkedField",
           "name": "integration",
           "plural": false,

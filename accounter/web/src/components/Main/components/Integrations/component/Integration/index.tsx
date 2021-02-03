@@ -25,7 +25,7 @@ const Integration = (props: {
 
 export default createFragmentContainer(Integration, {
   integration: graphql`
-    fragment Integration_integration on IntegrationInterface {
+    fragment Integration_integration on SlackIntegrationNode {
       id
       name
       service {

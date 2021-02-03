@@ -21,7 +21,6 @@ export type IntegrationsQuery = {
 /*
 query IntegrationsQuery {
   integrations {
-    __typename
     id
     ...Integration_integration
     ...IntegrationContent_integration
@@ -43,8 +42,7 @@ fragment IntegrationAccount_account on SlackAccountNode {
   username
 }
 
-fragment IntegrationContentHeader_integration on IntegrationInterface {
-  __isIntegrationInterface: __typename
+fragment IntegrationContentHeader_integration on SlackIntegrationNode {
   name
   service {
     logo
@@ -60,8 +58,7 @@ fragment IntegrationContent_integration on SlackIntegrationNode {
   }
 }
 
-fragment Integration_integration on IntegrationInterface {
-  __isIntegrationInterface: __typename
+fragment Integration_integration on SlackIntegrationNode {
   id
   name
   service {
@@ -96,7 +93,7 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": null,
+        "concreteType": "SlackIntegrationNode",
         "kind": "LinkedField",
         "name": "integrations",
         "plural": true,
@@ -128,23 +125,12 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": null,
+        "concreteType": "SlackIntegrationNode",
         "kind": "LinkedField",
         "name": "integrations",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "__typename",
-            "storageKey": null
-          },
           (v0/*: any*/),
-          {
-            "kind": "TypeDiscriminator",
-            "abstractKey": "__isIntegrationInterface"
-          },
           (v1/*: any*/),
           {
             "alias": null,
@@ -166,63 +152,56 @@ return {
             "storageKey": null
           },
           {
-            "kind": "InlineFragment",
+            "alias": null,
+            "args": null,
+            "concreteType": "SlackAccountNode",
+            "kind": "LinkedField",
+            "name": "accounts",
+            "plural": true,
             "selections": [
+              (v0/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "SlackAccountNode",
+                "kind": "ScalarField",
+                "name": "image",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProfileNode",
                 "kind": "LinkedField",
-                "name": "accounts",
-                "plural": true,
+                "name": "profile",
+                "plural": false,
                 "selections": [
-                  (v0/*: any*/),
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "image",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ProfileNode",
-                    "kind": "LinkedField",
-                    "name": "profile",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "firstName",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "lastName",
-                        "storageKey": null
-                      },
-                      (v0/*: any*/)
-                    ],
+                    "name": "firstName",
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "username",
+                    "name": "lastName",
                     "storageKey": null
-                  }
+                  },
+                  (v0/*: any*/)
                 ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "username",
                 "storageKey": null
               }
             ],
-            "type": "SlackIntegrationNode",
-            "abstractKey": null
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -230,12 +209,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a45e836be0fd6af10d0c9e671aa0cdc4",
+    "cacheID": "382e34b9c5d19702dc793aeb9b81b2f0",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    __typename\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on SlackAccountNode {\n  id\n  ...IntegrationAccount_account\n}\n\nfragment IntegrationAccount_account on SlackAccountNode {\n  image\n  profile {\n    firstName\n    lastName\n    id\n  }\n  username\n}\n\nfragment IntegrationContentHeader_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on SlackIntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationInterface {\n  __isIntegrationInterface: __typename\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on SlackAccountNode {\n  id\n  ...IntegrationAccount_account\n}\n\nfragment IntegrationAccount_account on SlackAccountNode {\n  image\n  profile {\n    firstName\n    lastName\n    id\n  }\n  username\n}\n\nfragment IntegrationContentHeader_integration on SlackIntegrationNode {\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on SlackIntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on SlackIntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
 })();
