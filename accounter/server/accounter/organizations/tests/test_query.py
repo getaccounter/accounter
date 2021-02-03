@@ -135,6 +135,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         image = fake.image_url()
         token = fake.uuid4()
         account_id = fake.uuid4()
+        role = "ADMIN"
         mock_request.get(
             settings.CONNECTOR_URL
             + f"/slack/accounts/getById?token={token}&id={account_id}",
@@ -145,6 +146,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                     "username": self.admin.first_name,
                     "email": self.admin.email,
                     "image": {"small": image},
+                    "role": role,
                 },
             },
         )
@@ -158,6 +160,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         account = baker.make(
             SlackAccount,
             id=account_id,
+            role="USER",
             profile=self.admin.profile,
             integration=integration,
             _fill_optional=True,
@@ -180,10 +183,9 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                               name
                             }
                           }
-                          ... on SlackAccountNode {
-                            username
-                            email
-                          }
+                          username
+                          email
+                          role
                         }
                       }
                     }
@@ -214,3 +216,4 @@ class OrganizationQueryTestCase(GraphQLTestCase):
             == integration.service.name
         )
         assert updated_admin_account["image"] == image
+        assert updated_admin_account["role"] == role

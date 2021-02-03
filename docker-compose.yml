@@ -12,6 +12,8 @@ services:
     image: adobe/s3mock
     environment:
       - initialBuckets=developmentbucket
+    ports:
+      - 9090:9090
 
   loadbalancer:
     image: loadbalancer

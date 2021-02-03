@@ -36,6 +36,9 @@ class AccountInterface(graphene.Interface):
         "accounter.organizations.schemas.ProfileNode", required=True
     )
     image = graphene.String(required=True)
+    email = graphene.String(required=True)
+    username = graphene.String(required=True)
+    role = graphene.String(required=True)
 
     @classmethod
     def resolve_type(cls, instance, info):

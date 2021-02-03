@@ -16,6 +16,7 @@ const convertSlackUserToReturnType = (user: SlackUser): Account => ({
   image: {
     small: user.profile.image_24,
   },
+  role: user.is_owner ? "OWNER" : user.is_admin ? "ADMIN" : "USER",
 });
 
 export const getByEmail = getByEmailHandler(async ({ params }, callback) => {

@@ -19,7 +19,6 @@ class Service(models.Model):
             self.token = token
             self.name = name
 
-    # Has a lot of slack specific logic, once we add a second service, lets fix this
     class Types(models.TextChoices):
         SLACK = "SLACK", "Slack"
 
@@ -104,6 +103,9 @@ class AbstractAccount(models.Model):
     class Meta:
         abstract = True
 
+    username = models.CharField(max_length=150)
+    email = models.EmailField()
+
     REFRESH_INTERVAL_SECONDS = 60
 
     id = models.CharField(primary_key=True, max_length=100)
@@ -111,6 +113,15 @@ class AbstractAccount(models.Model):
     last_refresh = models.DateTimeField(auto_now_add=True)
     image = models.URLField(
         default="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+    )
+
+    class Roles(models.TextChoices):
+        USER = "USER", "User"
+        ADMIN = "ADMIN", "Admin"
+        OWNER = "OWNER", "Owner"
+
+    role = models.CharField(
+        "Type", max_length=10, choices=Roles.choices, default=Roles.USER
     )
 
     @property
@@ -138,6 +149,7 @@ class SlackIntegration(AbstractIntegration):
         username = response["username"]
         slack_id = response["id"]
         image = response["image"]["small"]
+        role = response["role"]
         account = SlackAccount.objects.create(
             id=slack_id,
             profile=profile,
@@ -145,6 +157,7 @@ class SlackIntegration(AbstractIntegration):
             email=email,
             username=username,
             image=image,
+            role=role,
         )
         return account
 
@@ -208,8 +221,6 @@ class SlackIntegration(AbstractIntegration):
 
 
 class SlackAccount(AbstractAccount):
-    username = models.CharField(max_length=150)
-    email = models.EmailField()
     integration = models.ForeignKey(
         SlackIntegration, related_name="accounts", on_delete=models.CASCADE
     )
@@ -218,10 +229,12 @@ class SlackAccount(AbstractAccount):
         email = response["email"]
         username = response["username"]
         image = response["image"]["small"]
+        role = response["role"]
         self.username = username
         self.email = email
         self.image = image
         self.last_refresh = timezone.now()
+        self.role = role
 
     def refresh(self, force=False):
         if not force and self.is_fresh:

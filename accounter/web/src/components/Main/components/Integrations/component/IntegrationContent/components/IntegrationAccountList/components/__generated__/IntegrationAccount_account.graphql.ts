@@ -10,7 +10,7 @@ export type IntegrationAccount_account = {
         readonly firstName: string;
         readonly lastName: string;
     };
-    readonly username?: string;
+    readonly username: string;
     readonly " $refType": "IntegrationAccount_account";
 };
 export type IntegrationAccount_account$data = IntegrationAccount_account;
@@ -60,22 +60,15 @@ const node: ReaderFragment = {
       "storageKey": null
     },
     {
-      "kind": "InlineFragment",
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "username",
-          "storageKey": null
-        }
-      ],
-      "type": "SlackAccountNode",
-      "abstractKey": null
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "username",
+      "storageKey": null
     }
   ],
   "type": "AccountInterface",
   "abstractKey": "__isAccountInterface"
 };
-(node as any).hash = 'dc4710a2bd178e83a7665edc95585184';
+(node as any).hash = 'b3f3ea4303ae117de219610f1c0d8471';
 export default node;

@@ -35,7 +35,7 @@ sizes.forEach(({ name, viewport }) => {
           const token = faker.random.uuid();
           const oauthCode = faker.random.uuid();
           mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
-          mockSlackAuthTest({user, workspace: slackWorkspace, token })
+          mockSlackAuthTest({ user, workspace: slackWorkspace, token });
           mockSlackUsersList({
             token,
             workspace: slackWorkspace,
@@ -56,7 +56,7 @@ sizes.forEach(({ name, viewport }) => {
           cy.findByRole("navigation", { name: "Directory" }).within(() => {
             cy.findByRole("link", {
               name: `${slackWorkspace.name} SLACK`,
-            }).click()
+            }).click();
           });
 
           cy.findByRole("main").within(() => {
@@ -76,12 +76,14 @@ sizes.forEach(({ name, viewport }) => {
 
           cy.findByRole("main").within(() => {
             cy.findByRole("link", { name: "Accounts" }).click();
-            cy.findByRole("link", {
-              name: `@${user.slack.displayName} SLACK - ${slackWorkspace.name}`,
-            }).should("exist");
+            cy.findByRole("table", { name: "Accounts" }).within(() => {
+              cy.findByRole("row", {
+                name: `SLACK ${slackWorkspace.name} SLACK ${user.slack.displayName} USER Edit`,
+              });
+            });
           });
         });
-        it("pulls accounts for newly created users", () => {
+        it.only("pulls accounts for newly created users", () => {
           const user = generateUser();
           const userToCreate = generateUser({
             organization: user.organization,
@@ -89,7 +91,7 @@ sizes.forEach(({ name, viewport }) => {
           const token = faker.random.uuid();
           const slackWorkspace = generateWorkspaceData();
           const oauthCode = faker.random.uuid();
-          mockSlackAuthTest({user, workspace: slackWorkspace, token })
+          mockSlackAuthTest({ user, workspace: slackWorkspace, token });
           mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
           mockSlackUsersLookupByEmail({
             token,
@@ -118,9 +120,11 @@ sizes.forEach(({ name, viewport }) => {
 
           cy.findByRole("main").within(() => {
             cy.findByRole("link", { name: "Accounts" }).click();
-            cy.findByRole("link", {
-              name: `@${userToCreate.slack.displayName} SLACK - ${slackWorkspace.name}`,
-            }).should("exist");
+            cy.findByRole("table", { name: "Accounts" }).within(() => {
+              cy.findByRole("row", {
+                name: `SLACK ${slackWorkspace.name} SLACK ${userToCreate.slack.displayName} USER Edit`,
+              });
+            });
           });
         });
       });
@@ -309,16 +313,21 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByText(
               `${user.firstName} invited you to join ${user.organization} on accounter.io`
             ).click();
-            cy.getMailHogEmailContent().then(content => {
-              content.findByText(`Hi ${userToCreate.firstName},`).should("exist")
-              content.findByText(`${user.firstName} invited you to join ${user.organization} on accounter.io`).should("exist")
+            cy.getMailHogEmailContent().then((content) => {
+              content
+                .findByText(`Hi ${userToCreate.firstName},`)
+                .should("exist");
+              content
+                .findByText(
+                  `${user.firstName} invited you to join ${user.organization} on accounter.io`
+                )
+                .should("exist");
               content.findByRole("link", { name: "Join" }).then((link) => {
                 cy.saveResetUrl(
                   link.attr("href").replace("localhost", "loadbalancer")
                 );
               });
-            })
-              
+            });
           });
 
           it("part 3", function () {

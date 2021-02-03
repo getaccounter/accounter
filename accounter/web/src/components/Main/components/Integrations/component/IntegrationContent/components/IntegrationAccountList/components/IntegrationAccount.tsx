@@ -30,9 +30,7 @@ export default createFragmentContainer(IntegrationAccount, {
         firstName
         lastName
       }
-      ... on SlackAccountNode {
-        username
-      }
+      username
     }
   `,
 });

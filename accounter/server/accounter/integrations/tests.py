@@ -291,6 +291,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "username": self.admin.first_name,
                     "email": self.admin.email,
                     "image": {"small": image},
+                    "role": "USER",
                 }
             ],
         )
@@ -341,6 +342,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "username": new_username,
                     "email": new_email,
                     "image": {"small": new_image},
+                    "role": "USER",
                 }
             ],
         )
