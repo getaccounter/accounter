@@ -7,7 +7,7 @@ from graphene_django.utils.testing import GraphQLTestCase
 from graphql_relay.node.node import from_global_id, to_global_id
 from model_bakery import baker
 
-from accounter.integrations.models import SlackIntegration
+from accounter.integrations.models import Integration
 
 from ..models import Profile
 from ..schemas import DepartmentNode
@@ -142,7 +142,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         self.client.force_login(self.admin)
 
         slack_integration = baker.make(
-            SlackIntegration,
+            Integration,
             organization=self.admin.profile.organization,
             token=token,
         )
@@ -204,7 +204,7 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         self.client.force_login(self.admin)
 
         slack_integration = baker.make(
-            SlackIntegration,
+            Integration,
             organization=self.admin.profile.organization,
             token=token,
         )

@@ -68,7 +68,7 @@ class Service(models.Model):
 
 
 # Slack
-class SlackIntegration(models.Model):
+class Integration(models.Model):
     REFRESH_INTERVAL_SECONDS = 60
 
     id = models.TextField(primary_key=True)
@@ -194,7 +194,7 @@ class Account(models.Model):
         )
 
     integration = models.ForeignKey(
-        SlackIntegration, related_name="accounts", on_delete=models.CASCADE
+        Integration, related_name="accounts", on_delete=models.CASCADE
     )
 
     def update_from_response(self, response):

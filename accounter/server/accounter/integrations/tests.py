@@ -13,7 +13,7 @@ from graphene_django.utils.testing import GraphQLTestCase
 from model_bakery import baker
 
 from ..organizations.models import Profile
-from .models import Account, Service, SlackIntegration
+from .models import Account, Integration, Service
 
 fake = Faker()
 
@@ -108,7 +108,7 @@ class ServiceTestCase(GraphQLTestCase):
             variables={"code": code, "state": state},
         )
         self.assertResponseNoErrors(response)
-        slack_integration = SlackIntegration.objects.filter(
+        slack_integration = Integration.objects.filter(
             organization=self.admin.profile.organization
         )
         assert len(slack_integration) == 1
@@ -172,8 +172,8 @@ class ServiceTestCase(GraphQLTestCase):
             """,
             variables={"code": "someFirstCode", "state": first_state},
         )
-        assert SlackIntegration.objects.count() == 1
-        slack_integration = SlackIntegration.objects.first()
+        assert Integration.objects.count() == 1
+        slack_integration = Integration.objects.first()
         assert slack_integration.token == original_token
 
         updated_token = "updated token"
@@ -200,7 +200,7 @@ class ServiceTestCase(GraphQLTestCase):
             """,
             variables={"code": "someSecondCode", "state": second_state},
         )
-        assert SlackIntegration.objects.count() == 1
+        assert Integration.objects.count() == 1
         slack_integration.refresh_from_db()
         assert slack_integration.token == updated_token
 
@@ -249,7 +249,7 @@ class IntegrationTestCase(GraphQLTestCase):
 
     @patch.object(requests, "get")
     def test_get_integrations(self, _):
-        slack_integration = SlackIntegration.objects.create(
+        slack_integration = Integration.objects.create(
             organization=self.admin.profile.organization, token="some_token"
         )
         slack_integration.save()
@@ -275,7 +275,7 @@ class IntegrationTestCase(GraphQLTestCase):
         )
 
     @freeze_time(
-        auto_tick_seconds=SlackIntegration.REFRESH_INTERVAL_SECONDS,
+        auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
     )
     @requests_mock.Mocker()
     def test_get_integrations_slack_creates_accounts_if_email_matches(
@@ -295,7 +295,7 @@ class IntegrationTestCase(GraphQLTestCase):
                 }
             ],
         )
-        slack_integration = SlackIntegration.objects.create(
+        slack_integration = Integration.objects.create(
             organization=self.admin.profile.organization, token=token
         )
         slack_integration.save()
@@ -325,7 +325,7 @@ class IntegrationTestCase(GraphQLTestCase):
         assert accounts[0]["image"] == image
 
     @freeze_time(
-        auto_tick_seconds=SlackIntegration.REFRESH_INTERVAL_SECONDS,
+        auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
     )
     @requests_mock.Mocker()
     def test_get_integrations_slack_updates_existing_accounts(self, mock_request):
@@ -346,7 +346,7 @@ class IntegrationTestCase(GraphQLTestCase):
                 }
             ],
         )
-        slack_integration = SlackIntegration.objects.create(
+        slack_integration = Integration.objects.create(
             organization=self.admin.profile.organization, token=token
         )
         account = Account.objects.create(
@@ -403,14 +403,14 @@ class IntegrationTestCase(GraphQLTestCase):
     @patch.object(requests, "get")
     def test_get_integrations_only_of_own_organization(self, _):
         # integration of this org
-        SlackIntegration.objects.create(
+        Integration.objects.create(
             id="1",
             organization=self.other_company_admin.profile.organization,
             token="some_other_token",
         ).save()
 
         # integration of other org
-        SlackIntegration.objects.create(
+        Integration.objects.create(
             id="2", organization=self.admin.profile.organization, token="some_token"
         ).save()
         self.client.force_login(self.admin)
