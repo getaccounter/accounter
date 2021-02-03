@@ -24,7 +24,7 @@ const IntegrationAccount = ({ account }: Props) => {
 
 export default createFragmentContainer(IntegrationAccount, {
   account: graphql`
-    fragment IntegrationAccount_account on AccountInterface {
+    fragment IntegrationAccount_account on SlackAccountNode {
       image
       profile {
         firstName

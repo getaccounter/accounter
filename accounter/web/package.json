@@ -34,7 +34,7 @@
   "scripts": {
     "build:tailwind": "tailwindcss-cli build src/tailwind.css -o src/tailwind.output.css",
     "prestart": "npm run build:tailwind",
-    "prebuild": "npm run build:tailwind && sed -i 's/Node\\, AccountInterface/Node \\& AccountInterface/g' ./shared-graphql/schema.graphql && npm run relay",
+    "prebuild": "npm run build:tailwind && npm run relay",
     "start": "concurrently \"nodemon -x npm run relay -e 'ts,tsx,graphql' -i **/__generated__/**\" \"react-scripts start\"",
     "build": "react-scripts build",
     "lint": "eslint --ext .js --ext .tsx --max-warnings 0 src/",

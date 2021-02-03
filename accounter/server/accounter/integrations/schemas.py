@@ -29,22 +29,6 @@ class IntegrationInterface(graphene.Interface):
         return SlackIntegrationNode
 
 
-class AccountInterface(graphene.Interface):
-    id = graphene.ID(required=True)
-    integration = graphene.Field(IntegrationInterface, required=True)
-    profile = graphene.Field(
-        "accounter.organizations.schemas.ProfileNode", required=True
-    )
-    image = graphene.String(required=True)
-    email = graphene.String(required=True)
-    username = graphene.String(required=True)
-    role = graphene.String(required=True)
-
-    @classmethod
-    def resolve_type(cls, instance, info):
-        return SlackAccountNode
-
-
 class HandleCallback(graphene.Mutation):
     class Arguments:
         code = graphene.String(required=True)
@@ -72,8 +56,18 @@ class SlackCallbackType(graphene.ObjectType):
 
 
 class SlackAccountNode(DjangoObjectType):
+    id = graphene.ID(required=True)
+    integration = graphene.Field(IntegrationInterface, required=True)
+    profile = graphene.Field(
+        "accounter.organizations.schemas.ProfileNode", required=True
+    )
+    image = graphene.String(required=True)
+    email = graphene.String(required=True)
+    username = graphene.String(required=True)
+    role = graphene.String(required=True)
+
     class Meta:
-        interfaces = (relay.Node, AccountInterface)
+        interfaces = (relay.Node,)
         model = Account
         filter_fields = ["profile"]
 
