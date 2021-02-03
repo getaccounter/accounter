@@ -67,11 +67,8 @@ class Service(models.Model):
         return self.name
 
 
-# Abstract Classes
-class AbstractIntegration(models.Model):
-    class Meta:
-        abstract = True
-
+# Slack
+class SlackIntegration(models.Model):
     REFRESH_INTERVAL_SECONDS = 60
 
     id = models.TextField(primary_key=True)
@@ -90,19 +87,85 @@ class AbstractIntegration(models.Model):
 
     @property
     def service(self):
-        raise NotImplementedError()
+        return Service.objects.get(name=Service.Types.SLACK)
+
+    def create_account_from_response(self, profile: Profile, response):
+        email = response["email"]
+        username = response["username"]
+        slack_id = response["id"]
+        image = response["image"]["small"]
+        role = response["role"]
+        account = Account.objects.create(
+            id=slack_id,
+            profile=profile,
+            integration=self,
+            email=email,
+            username=username,
+            image=image,
+            role=role,
+        )
+        return account
 
     def check_for_existing_account(self, profile):
-        raise NotImplementedError()
+        response = requests.get(
+            settings.CONNECTOR_URL + "/slack/accounts/getByEmail",
+            params={"token": self.token, "email": profile.user.email},
+        )
+        payload = response.json()
+        account = None
+        if not payload["found"]:
+            return account
+
+        account_data = payload["account"]
+        try:
+            account = Account.objects.get(
+                pk=account_data["id"], profile__organization=self.organization
+            )
+            account.update_from_response(account_data)
+        except Account.DoesNotExist:
+            account = self.create_account_from_response(profile, account_data)
+
+        return account
 
     def refresh(self, force=False):
-        raise NotImplementedError()
+        # TODO disable a.io accounts that are disabled in slack
+        if not force and self.is_fresh:
+            return
+
+        response = requests.get(
+            settings.CONNECTOR_URL + "/slack/accounts/list",
+            params={"token": self.token},
+        )
+        payload = response.json()
+        for user_info in payload:
+            email = user_info["email"]
+
+            account = None
+            try:
+                account = Account.objects.get(
+                    pk=user_info["id"], profile__organization=self.organization
+                )
+                account.update_from_response(user_info)
+            except Account.DoesNotExist:
+                pass
+
+            if not account:
+                try:
+                    profile = Profile.objects.get(
+                        user__email=email, organization=self.organization
+                    )
+                    account = self.create_account_from_response(profile, user_info)
+                except Profile.DoesNotExist:
+                    pass
+
+            if account:
+                account.save()
+
+        self.last_refresh = timezone.now()
+        self.save()
 
 
-class AbstractAccount(models.Model):
-    class Meta:
-        abstract = True
-
+class Account(models.Model):
     username = models.CharField(max_length=150)
     email = models.EmailField()
 
@@ -130,97 +193,6 @@ class AbstractAccount(models.Model):
             seconds=self.REFRESH_INTERVAL_SECONDS
         )
 
-    def refresh(self, force=False):
-        raise NotImplementedError()
-
-    @property
-    def integration(self):
-        raise NotImplementedError()
-
-
-# Slack
-class SlackIntegration(AbstractIntegration):
-    @property
-    def service(self):
-        return Service.objects.get(name=Service.Types.SLACK)
-
-    def create_account_from_response(self, profile: Profile, response):
-        email = response["email"]
-        username = response["username"]
-        slack_id = response["id"]
-        image = response["image"]["small"]
-        role = response["role"]
-        account = SlackAccount.objects.create(
-            id=slack_id,
-            profile=profile,
-            integration=self,
-            email=email,
-            username=username,
-            image=image,
-            role=role,
-        )
-        return account
-
-    def check_for_existing_account(self, profile):
-        response = requests.get(
-            settings.CONNECTOR_URL + "/slack/accounts/getByEmail",
-            params={"token": self.token, "email": profile.user.email},
-        )
-        payload = response.json()
-        account = None
-        if not payload["found"]:
-            return account
-
-        account_data = payload["account"]
-        try:
-            account = SlackAccount.objects.get(
-                pk=account_data["id"], profile__organization=self.organization
-            )
-            account.update_from_response(account_data)
-        except SlackAccount.DoesNotExist:
-            account = self.create_account_from_response(profile, account_data)
-
-        return account
-
-    def refresh(self, force=False):
-        # TODO disable a.io accounts that are disabled in slack
-        if not force and self.is_fresh:
-            return
-
-        response = requests.get(
-            settings.CONNECTOR_URL + "/slack/accounts/list",
-            params={"token": self.token},
-        )
-        payload = response.json()
-        for user_info in payload:
-            email = user_info["email"]
-
-            account = None
-            try:
-                account = SlackAccount.objects.get(
-                    pk=user_info["id"], profile__organization=self.organization
-                )
-                account.update_from_response(user_info)
-            except SlackAccount.DoesNotExist:
-                pass
-
-            if not account:
-                try:
-                    profile = Profile.objects.get(
-                        user__email=email, organization=self.organization
-                    )
-                    account = self.create_account_from_response(profile, user_info)
-                except Profile.DoesNotExist:
-                    pass
-
-            if account:
-                account.save()
-
-        self.last_refresh = timezone.now()
-        self.save()
-
-
-class SlackAccount(AbstractAccount):
     integration = models.ForeignKey(
         SlackIntegration, related_name="accounts", on_delete=models.CASCADE
     )

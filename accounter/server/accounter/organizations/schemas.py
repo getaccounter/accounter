@@ -5,7 +5,7 @@ from django.db import transaction
 from graphene_django import DjangoObjectType
 from graphql_relay.node.node import from_global_id
 
-from accounter.integrations.models import SlackAccount
+from accounter.integrations.models import Account
 from accounter.integrations.schemas import AccountInterface
 
 from ..utils import ExtendedConnection, admin_required
@@ -120,7 +120,7 @@ class ProfileNode(DjangoObjectType):
 
     @staticmethod
     def resolve_accounts(profile, info, **kwargs):
-        accounts = SlackAccount.objects.filter(profile=profile)
+        accounts = Account.objects.filter(profile=profile)
         for account in accounts:
             account.refresh()
 

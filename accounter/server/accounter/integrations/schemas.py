@@ -3,7 +3,7 @@ from graphene import relay
 from graphene_django import DjangoObjectType
 
 from ..utils import admin_required
-from .models import Service, SlackAccount, SlackIntegration
+from .models import Account, Service, SlackIntegration
 
 
 class ServiceNode(DjangoObjectType):
@@ -74,7 +74,7 @@ class SlackCallbackType(graphene.ObjectType):
 class SlackAccountNode(DjangoObjectType):
     class Meta:
         interfaces = (relay.Node, AccountInterface)
-        model = SlackAccount
+        model = Account
         filter_fields = ["profile"]
 
 
