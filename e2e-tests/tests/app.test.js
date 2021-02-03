@@ -313,16 +313,16 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByText(
               `${user.firstName} invited you to join ${user.organization} on accounter.io`
             ).click();
-            cy.getMailHogEmailContent().then((content) => {
-              content
+            cy.getMailHogEmailContent().within(() => {
+              cy
                 .findByText(`Hi ${userToCreate.firstName},`)
                 .should("exist");
-              content
+                cy
                 .findByText(
                   `${user.firstName} invited you to join ${user.organization} on accounter.io`
                 )
                 .should("exist");
-              content.findByRole("link", { name: "Join" }).then((link) => {
+                cy.findByRole("link", { name: "Join" }).then((link) => {
                 cy.saveResetUrl(
                   link.attr("href").replace("localhost", "loadbalancer")
                 );
