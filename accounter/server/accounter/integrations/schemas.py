@@ -32,6 +32,7 @@ class HandleCallback(graphene.Mutation):
         slack_service = Service.objects.get(name=Service.Types.SLACK)
         callback_result = slack_service.handle_callback(code, state)
         slack_integration, _ = Integration.objects.get_or_create(
+            service=slack_service,
             id=callback_result.integration_id,
             organization=organization,
         )
