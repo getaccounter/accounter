@@ -6,7 +6,7 @@ from graphene_django import DjangoObjectType
 from graphql_relay.node.node import from_global_id
 
 from accounter.integrations.models import Account
-from accounter.integrations.schemas import AccountInterface
+from accounter.integrations.schemas import SlackAccountNode
 
 from ..utils import ExtendedConnection, admin_required
 from .models import Department, Organization, Profile
@@ -88,7 +88,7 @@ class ProfileNode(DjangoObjectType):
     last_name = graphene.String(required=True)
     is_current_user = graphene.Boolean(required=True)
     current_user_can_edit = graphene.Boolean(required=True)
-    accounts = graphene.List(graphene.NonNull(AccountInterface), required=True)
+    accounts = graphene.List(graphene.NonNull(SlackAccountNode), required=True)
 
     @staticmethod
     def resolve_email(profile, info, **kwargs):

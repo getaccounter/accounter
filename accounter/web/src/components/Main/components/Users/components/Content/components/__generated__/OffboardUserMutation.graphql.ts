@@ -36,7 +36,6 @@ mutation OffboardUserMutation(
 
 fragment Accounts_profile on ProfileNode {
   accounts {
-    __typename
     id
     integration {
       __typename
@@ -143,13 +142,6 @@ v3 = {
   "args": null,
   "kind": "ScalarField",
   "name": "name",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "__typename",
   "storageKey": null
 };
 return {
@@ -300,12 +292,11 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": null,
+                "concreteType": "SlackAccountNode",
                 "kind": "LinkedField",
                 "name": "accounts",
                 "plural": true,
                 "selections": [
-                  (v4/*: any*/),
                   (v2/*: any*/),
                   {
                     "alias": null,
@@ -315,7 +306,13 @@ return {
                     "name": "integration",
                     "plural": false,
                     "selections": [
-                      (v4/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "__typename",
+                        "storageKey": null
+                      },
                       (v3/*: any*/),
                       {
                         "alias": null,
@@ -366,12 +363,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "088b26bfa627117eb5c31ebaa47e9ac4",
+    "cacheID": "123e94313ee86e5a2f9149885ae426dd",
     "id": null,
     "metadata": {},
     "name": "OffboardUserMutation",
     "operationKind": "mutation",
-    "text": "mutation OffboardUserMutation(\n  $id: ID!\n) {\n  offboardUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    __typename\n    id\n    integration {\n      __typename\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
+    "text": "mutation OffboardUserMutation(\n  $id: ID!\n) {\n  offboardUser(input: {id: $id}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      __typename\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...OffboardUser_profile\n  ...ReactivateUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOffboarded\n  isOwner\n  isCurrentUser\n}\n\nfragment OffboardUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment ReactivateUser_profile on ProfileNode {\n  id\n  isOffboarded\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
   }
 };
 })();
