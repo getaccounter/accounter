@@ -63,9 +63,12 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByRole("heading", {
               name: slackWorkspace.name,
             }).should("exist");
-            cy.findByRole("link", {
-              name: `${user.firstName} ${user.lastName} @${user.slack.displayName}`,
-            }).should("exist");
+
+            cy.findByRole("table", { name: "Accounts" }).within(() => {
+              cy.findByRole("row", {
+                name: `${user.firstName} ${user.lastName} ${user.firstName} ${user.lastName} ${user.slack.displayName} USER Edit`,
+              });
+            });
           });
 
           cy.navigateTo("Users", name);
@@ -314,15 +317,11 @@ sizes.forEach(({ name, viewport }) => {
               `${user.firstName} invited you to join ${user.organization} on accounter.io`
             ).click();
             cy.getMailHogEmailContent().within(() => {
-              cy
-                .findByText(`Hi ${userToCreate.firstName},`)
-                .should("exist");
-                cy
-                .findByText(
-                  `${user.firstName} invited you to join ${user.organization} on accounter.io`
-                )
-                .should("exist");
-                cy.findByRole("link", { name: "Join" }).then((link) => {
+              cy.findByText(`Hi ${userToCreate.firstName},`).should("exist");
+              cy.findByText(
+                `${user.firstName} invited you to join ${user.organization} on accounter.io`
+              ).should("exist");
+              cy.findByRole("link", { name: "Join" }).then((link) => {
                 cy.saveResetUrl(
                   link.attr("href").replace("localhost", "loadbalancer")
                 );
