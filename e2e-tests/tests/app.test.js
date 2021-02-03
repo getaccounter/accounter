@@ -14,8 +14,8 @@ const FULLSCREEN = "macbook-13";
 
 const sizes = [
   { name: MOBILE, viewport: "iphone-5" },
-  // { name: WINDOW, viewport: [1024, 800] },
-  // { name: FULLSCREEN, viewport: "macbook-13" },
+  { name: WINDOW, viewport: [1024, 800] },
+  { name: FULLSCREEN, viewport: "macbook-13" },
 ];
 
 sizes.forEach(({ name, viewport }) => {
@@ -83,7 +83,7 @@ sizes.forEach(({ name, viewport }) => {
             });
           });
         });
-        it.only("pulls accounts for newly created users", () => {
+        it("pulls accounts for newly created users", () => {
           const user = generateUser();
           const userToCreate = generateUser({
             organization: user.organization,
@@ -313,16 +313,16 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByText(
               `${user.firstName} invited you to join ${user.organization} on accounter.io`
             ).click();
-            cy.getMailHogEmailContent().then((content) => {
-              content
+            cy.getMailHogEmailContent().within(() => {
+              cy
                 .findByText(`Hi ${userToCreate.firstName},`)
                 .should("exist");
-              content
+                cy
                 .findByText(
                   `${user.firstName} invited you to join ${user.organization} on accounter.io`
                 )
                 .should("exist");
-              content.findByRole("link", { name: "Join" }).then((link) => {
+                cy.findByRole("link", { name: "Join" }).then((link) => {
                 cy.saveResetUrl(
                   link.attr("href").replace("localhost", "loadbalancer")
                 );
