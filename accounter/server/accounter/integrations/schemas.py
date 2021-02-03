@@ -3,7 +3,7 @@ from graphene import relay
 from graphene_django import DjangoObjectType
 
 from ..utils import admin_required
-from .models import Account, Service, SlackIntegration
+from .models import Account, Integration, Service
 
 
 class ServiceNode(DjangoObjectType):
@@ -31,7 +31,7 @@ class HandleCallback(graphene.Mutation):
         organization = info.context.user.profile.organization
         slack_service = Service.objects.get(name=Service.Types.SLACK)
         callback_result = slack_service.handle_callback(code, state)
-        slack_integration, _ = SlackIntegration.objects.get_or_create(
+        slack_integration, _ = Integration.objects.get_or_create(
             id=callback_result.integration_id,
             organization=organization,
         )
@@ -50,7 +50,7 @@ class SlackIntegrationNode(DjangoObjectType):
 
     class Meta:
         interfaces = (relay.Node,)
-        model = SlackIntegration
+        model = Integration
         fields = ("id", "name", "accounts")
 
 

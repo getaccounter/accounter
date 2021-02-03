@@ -1,6 +1,6 @@
 import graphene
 
-from .integrations.models import Service, SlackIntegration
+from .integrations.models import Integration, Service
 from .integrations.schemas import (
     Oauth,
     ServiceNode,
@@ -34,7 +34,7 @@ class Query(UserQuery, OrganizationQuery, graphene.ObjectType):
     @admin_required
     def resolve_integrations(parent, info, **kwargs):
         organization = info.context.user.profile.organization
-        integrations = SlackIntegration.objects.filter(organization=organization)
+        integrations = Integration.objects.filter(organization=organization)
 
         for integration in integrations:
             integration.refresh()
