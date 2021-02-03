@@ -5,7 +5,7 @@ from django.db import transaction
 from graphene_django import DjangoObjectType
 from graphql_relay.node.node import from_global_id
 
-from accounter.integrations.models import Account
+from accounter.integrations.models import Account, Service
 from accounter.integrations.schemas import AccountNode
 
 from ..utils import ExtendedConnection, admin_required
@@ -79,7 +79,6 @@ class ProfileNode(DjangoObjectType):
             "organization",
             "is_admin",
             "is_owner",
-            "image",
         )
         interfaces = (graphene.relay.Node,)
 
@@ -89,6 +88,7 @@ class ProfileNode(DjangoObjectType):
     is_current_user = graphene.Boolean(required=True)
     current_user_can_edit = graphene.Boolean(required=True)
     accounts = graphene.List(graphene.NonNull(AccountNode), required=True)
+    image = graphene.String(required=True)
 
     @staticmethod
     def resolve_email(profile, info, **kwargs):
@@ -125,6 +125,17 @@ class ProfileNode(DjangoObjectType):
             account.refresh()
 
         return accounts
+
+    @staticmethod
+    def resolve_image(profile, info, **kwargs):
+        try:
+            account = Account.objects.get(
+                profile=profile,
+                integration__service=Service.objects.get(name=Service.Types.SLACK),
+            )
+            return account.image_big
+        except Account.DoesNotExist:
+            return "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
 
 
 class CreateUser(graphene.relay.ClientIDMutation):

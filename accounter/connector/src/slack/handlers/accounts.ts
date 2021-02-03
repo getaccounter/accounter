@@ -14,7 +14,8 @@ const convertSlackUserToReturnType = (user: SlackUser): Account => ({
   email: user.profile.email,
   username: user.profile.display_name,
   image: {
-    small: user.profile.image_24,
+    small: user.profile.image_48,
+    big: user.profile.image_192,
   },
   role: user.is_owner ? "OWNER" : user.is_admin ? "ADMIN" : "USER",
 });

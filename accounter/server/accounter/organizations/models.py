@@ -74,9 +74,6 @@ class Profile(models.Model):
     is_admin = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
     is_offboarded = models.BooleanField(default=False)
-    image = models.URLField(
-        default="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
-    )
 
     def can_be_edited_by(self, editor: Type["Profile"]):
         if self.pk == editor.pk:

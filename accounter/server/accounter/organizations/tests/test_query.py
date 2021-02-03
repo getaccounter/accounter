@@ -132,7 +132,8 @@ class OrganizationQueryTestCase(GraphQLTestCase):
     )
     @requests_mock.Mocker()
     def test_get_profiles_accounts_slack(self, mock_request):
-        image = fake.image_url()
+        image_small = fake.image_url()
+        image_big = fake.image_url()
         token = fake.uuid4()
         account_id = fake.uuid4()
         role = "ADMIN"
@@ -145,7 +146,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                     "id": account_id,
                     "username": self.admin.first_name,
                     "email": self.admin.email,
-                    "image": {"small": image},
+                    "image": {"small": image_small, "big": image_big},
                     "role": role,
                 },
             },
@@ -178,7 +179,8 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                       node {
                         accounts {
                           id
-                          image
+                          imageSmall
+                          imageBig
                           integration {
                             service {
                               name
@@ -216,5 +218,6 @@ class OrganizationQueryTestCase(GraphQLTestCase):
             updated_admin_account["integration"]["service"]["name"]
             == integration.service.name
         )
-        assert updated_admin_account["image"] == image
+        assert updated_admin_account["imageSmall"] == image_small
+        assert updated_admin_account["imageBig"] == image_big
         assert updated_admin_account["role"] == role

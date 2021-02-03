@@ -284,7 +284,8 @@ class IntegrationTestCase(GraphQLTestCase):
         self, mock_request
     ):
         token = "some_token"
-        image = fake.image_url()
+        image_small = fake.image_url()
+        image_big = fake.image_url()
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
             json=[
@@ -292,7 +293,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "id": "someid",
                     "username": self.admin.first_name,
                     "email": self.admin.email,
-                    "image": {"small": image},
+                    "image": {"small": image_small, "big": image_big},
                     "role": "USER",
                 }
             ],
@@ -311,7 +312,8 @@ class IntegrationTestCase(GraphQLTestCase):
                     accounts {
                         username
                         email
-                        image
+                        imageSmall
+                        imageBig
                     }
                 }
             }
@@ -324,7 +326,8 @@ class IntegrationTestCase(GraphQLTestCase):
         assert len(accounts) == 1
         assert accounts[0]["username"] == self.admin.first_name
         assert accounts[0]["email"] == self.admin.email
-        assert accounts[0]["image"] == image
+        assert accounts[0]["imageSmall"] == image_small
+        assert accounts[0]["imageBig"] == image_big
 
     @freeze_time(
         auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
@@ -334,7 +337,8 @@ class IntegrationTestCase(GraphQLTestCase):
         token = "some_token"
         integration_id = fake.uuid4()
         new_email = fake.company_email()
-        new_image = fake.image_url()
+        new_small_image = fake.image_url()
+        new_big_image = fake.image_url()
         new_username = fake.user_name()
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
@@ -343,7 +347,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "id": integration_id,
                     "username": new_username,
                     "email": new_email,
-                    "image": {"small": new_image},
+                    "image": {"small": new_small_image, "big": new_big_image},
                     "role": "USER",
                 }
             ],
@@ -370,7 +374,8 @@ class IntegrationTestCase(GraphQLTestCase):
                         accounts {
                             username
                             email
-                            image
+                            imageSmall
+                            imageBig
                         }
                 }
             }
@@ -384,7 +389,8 @@ class IntegrationTestCase(GraphQLTestCase):
         assert len(accounts) == 1
         assert accounts[0]["username"] == account.username == new_username
         assert accounts[0]["email"] == account.email == new_email
-        assert accounts[0]["image"] == account.image == new_image
+        assert accounts[0]["imageSmall"] == account.image_small == new_small_image
+        assert accounts[0]["imageBig"] == account.image_big == new_big_image
 
     def test_get_integrations_requires_authenticated_users(self):
         response = self.query(

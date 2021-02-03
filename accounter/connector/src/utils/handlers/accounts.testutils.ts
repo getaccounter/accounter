@@ -11,7 +11,10 @@ const generateAccount = (overwrite = {}): Account => ({
   id: faker.random.uuid(),
   email: faker.internet.email(),
   username: faker.internet.userName(),
-  image: { small: faker.image.imageUrl(24, 24) },
+  image: {
+    small: faker.image.imageUrl(24, 24),
+    big: faker.image.imageUrl(192, 192),
+  },
   role: "USER",
   ...overwrite,
 });
