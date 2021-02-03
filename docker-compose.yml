@@ -67,9 +67,6 @@ services:
       - USE_MOCK_PROXY=True
       - HTTPS_PROXY=mockserver:1080
 
-      # Dev only
-      - ENCRYPTION_KEY=FFduybnMteN1piSjWsxUdxQd2SAJ1Kx1FKPOmgUIhSQ=
-
       # Email
       - EMAIL_HOST=mailserver
       - EMAIL_HOST_USER=

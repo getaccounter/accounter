@@ -80,7 +80,6 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "-7k-e#5^w@00zsxi$0+i!n$&4w#m-i@x4+i@(lp$e1q3m#0p$-"
-ENCRYPTION_KEY = get_env_value("ENCRYPTION_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_bool_env_value("DEBUG")

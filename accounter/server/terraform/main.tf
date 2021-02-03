@@ -24,17 +24,6 @@ resource "kubernetes_secret" "s3-credentials" {
   }
 }
 
-resource "kubernetes_secret" "db-token-encryption" {
-  type = "Opaque"
-  metadata {
-    name = "db-token-encryption"
-  }
-
-  data = {
-    value = var.db_token_encryption_key
-  }
-}
-
 resource "kubernetes_secret" "sendgrid-api-key" {
   type = "Opaque"
   metadata {
@@ -147,15 +136,6 @@ resource "kubernetes_deployment" "server" {
               secret_key_ref {
                 name = kubernetes_secret.s3-credentials.metadata[0].name
                 key  = "secret_key"
-              }
-            }
-          }
-          env {
-            name = "ENCRYPTION_KEY"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.db-token-encryption.metadata[0].name
-                key  = "value"
               }
             }
           }
