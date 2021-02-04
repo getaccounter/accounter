@@ -32,6 +32,11 @@ jobs:
           access_token: ${{ github.token }}
           
       - uses: actions/checkout@v2
+      
+      - name: Set current version
+        run: |
+          git fetch --prune --unshallow --tags
+          echo version=$(git tag | sort -V | tail -1 | cut -c2-) >> $GITHUB_ENV
 
       - name: create .env
         run: |
@@ -99,6 +104,8 @@ jobs:
       - id: plan-cluster
         if: github.ref != 'refs/heads/master'
         run: terraform -chdir=accounter plan -no-color
+        env:
+          TF_VAR_image_tag: ${{ env.version }}
 
       - uses: actions/github-script@v3
         if: github.event_name == 'pull_request'
