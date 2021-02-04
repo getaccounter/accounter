@@ -67,7 +67,7 @@ const IntegrationAccountList = ({ accounts }: Props) => {
           ),
           edit: (
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <a href={account.externalProfile} className="text-indigo-600 hover:text-indigo-900">
+              <a href={account.externalProfile} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-900">
                 View
               </a>
             </td>
