@@ -14,6 +14,7 @@ export type IntegrationAccountList_accounts = ReadonlyArray<{
     };
     readonly username: string;
     readonly role: string;
+    readonly externalProfile: string;
     readonly " $refType": "IntegrationAccountList_accounts";
 }>;
 export type IntegrationAccountList_accounts$data = IntegrationAccountList_accounts;
@@ -91,10 +92,17 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "role",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "externalProfile",
+      "storageKey": null
     }
   ],
   "type": "AccountNode",
   "abstractKey": null
 };
-(node as any).hash = '73bb17755f45c5a7169be96b585dbc4e';
+(node as any).hash = '6cd46b61268a43825075f49a05341a17';
 export default node;

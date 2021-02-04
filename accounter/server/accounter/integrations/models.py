@@ -90,21 +90,15 @@ class Integration(models.Model):
         )
 
     def create_account_from_response(self, profile: Profile, response):
-        email = response["email"]
-        username = response["username"]
-        slack_id = response["id"]
-        image_small = response["image"]["small"]
-        image_big = response["image"]["big"]
-        role = response["role"]
         account = Account.objects.create(
-            id=slack_id,
+            id=response["id"],
             profile=profile,
             integration=self,
-            email=email,
-            username=username,
-            image_small=image_small,
-            image_big=image_big,
-            role=role,
+            email=response["email"],
+            username=response["username"],
+            image_small=response["image"]["small"],
+            image_big=response["image"]["big"],
+            role=response["role"],
         )
         return account
 
@@ -187,14 +181,13 @@ class Account(models.Model):
     image_big = models.URLField(
         default="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
     )
-
     role = models.CharField(
         "Type", max_length=10, choices=Roles.choices, default=Roles.USER
     )
-
     integration = models.ForeignKey(
         Integration, related_name="accounts", on_delete=models.CASCADE
     )
+    external_profile = models.URLField()
 
     @property
     def is_fresh(self):
@@ -203,17 +196,13 @@ class Account(models.Model):
         )
 
     def update_from_response(self, response):
-        email = response["email"]
-        username = response["username"]
-        image_small = response["image"]["small"]
-        image_big = response["image"]["big"]
-        role = response["role"]
-        self.username = username
-        self.email = email
-        self.image_small = image_small
-        self.image_big = image_big
+        self.username = response["username"]
+        self.email = response["email"]
+        self.image_small = response["image"]["small"]
+        self.image_big = response["image"]["big"]
         self.last_refresh = timezone.now()
-        self.role = role
+        self.role = response["role"]
+        self.external_profile = response["externalProfile"]
 
     def refresh(self, force=False):
         if not force and self.is_fresh:

@@ -1,5 +1,5 @@
 import nock from "nock";
-import faker from "faker";
+import faker, { fake } from "faker";
 import {
   testAccountsGetByEmail,
   testAccountsGetById,
@@ -182,15 +182,22 @@ describe("accounts", () => {
               ok: false,
               error: "users_not_found",
             }
-      );
+      )
+      .post("/api/auth.test", `token=${token}`)
+      .once()
+      .reply(200, {
+        url: faker.internet.url(),
+        ok: true,
+        team: faker.company.companyName(),
+        user: faker.internet.userName(),
+        team_id: faker.random.uuid(),
+        user_id: faker.random.uuid(),
+      });
   });
   testAccountsGetById("/slack", async ({ params }, { found, account }) => {
     const { token, id } = params;
     nock("https://slack.com")
-      .post(
-        "/api/users.info",
-        `token=${token}&user=${id}`
-      )
+      .post("/api/users.info", `token=${token}&user=${id}`)
       .once()
       .reply(
         200,
@@ -205,7 +212,17 @@ describe("accounts", () => {
               ok: false,
               error: "users_not_found",
             }
-      );
+      )
+      .post("/api/auth.test", `token=${token}`)
+      .once()
+      .reply(200, {
+        url: faker.internet.url(),
+        ok: true,
+        team: faker.company.companyName(),
+        user: faker.internet.userName(),
+        team_id: faker.random.uuid(),
+        user_id: faker.random.uuid(),
+      });
   });
 
   testList("/slack", async ({ params }, expectedReturnValue) => {
@@ -223,6 +240,16 @@ describe("accounts", () => {
         cache_ts: 1611515141,
         response_metadata: { next_cursor: "" },
         members,
+      })
+      .post("/api/auth.test", `token=${token}`)
+      .once()
+      .reply(200, {
+        url: faker.internet.url(),
+        ok: true,
+        team: faker.company.companyName(),
+        user: faker.internet.userName(),
+        team_id: faker.random.uuid(),
+        user_id: faker.random.uuid(),
       });
   });
 });

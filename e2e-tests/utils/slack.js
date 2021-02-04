@@ -212,9 +212,6 @@ export const mockSlackAuthTest = ({ user, workspace, token } = {}) => {
           user_id: user.slack.id,
         },
       },
-      times: {
-        remainingTimes: 1,
-      },
     })
     .then(
       function () {
