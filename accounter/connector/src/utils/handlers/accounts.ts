@@ -11,7 +11,8 @@ export type Account = {
     small?: string;
     big?: string;
   };
-  role: Role
+  role: Role;
+  externalProfile: string
 };
 
 export type GetAccountResponse = {

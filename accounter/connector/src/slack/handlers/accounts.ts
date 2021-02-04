@@ -9,33 +9,50 @@ import { SlackUser } from "../types";
 
 const client = new WebClient();
 
-const convertSlackUserToReturnType = (user: SlackUser): Account => ({
-  id: user.id,
-  email: user.profile.email,
-  username: user.profile.display_name,
-  image: {
-    small: user.profile.image_48,
-    big: user.profile.image_192,
-  },
-  role: user.is_owner ? "OWNER" : user.is_admin ? "ADMIN" : "USER",
-});
+const convertSlackUserToReturnType = (
+  user: SlackUser,
+  workspaceUrl: string
+): Account => {
+  return {
+    id: user.id,
+    email: user.profile.email,
+    username: user.profile.display_name,
+    image: {
+      small: user.profile.image_48,
+      big: user.profile.image_192,
+    },
+    role: user.is_owner ? "OWNER" : user.is_admin ? "ADMIN" : "USER",
+    externalProfile: `${workspaceUrl}team/${user.id}`,
+  };
+};
+
+interface AuthTest extends WebAPICallResult {
+  url: string;
+}
+
+const getWorkspaceUrl = async (token: string) => {
+  const { url } = (await client.auth.test({
+    token,
+  })) as AuthTest;
+  return url;
+};
 
 export const getByEmail = getByEmailHandler(async ({ params }, callback) => {
-  interface Response extends WebAPICallResult {
+  interface LookupResponse extends WebAPICallResult {
     user: SlackUser;
   }
   const { email, token } = params;
   try {
-    const { user } = (await client.users.lookupByEmail({
-      token,
-      email,
-    })) as Response;
+    const [{ user }, url] = await Promise.all([
+      client.users.lookupByEmail({ token, email }) as Promise<LookupResponse>,
+      getWorkspaceUrl(token),
+    ]);
 
     callback({
       code: 200,
       body: {
         found: true,
-        account: convertSlackUserToReturnType(user),
+        account: convertSlackUserToReturnType(user, url),
       },
     });
   } catch (error) {
@@ -58,14 +75,17 @@ export const list = listHandler(async ({ params }, callback) => {
     members: Array<SlackUser>;
   }
   const { token } = params;
-  const { members } = (await client.users.list({ token })) as Response;
+  const [{ members }, url] = await Promise.all([
+    client.users.list({ token }) as Promise<Response>,
+    getWorkspaceUrl(token),
+  ]);
   const membersWithoutBots = members
     .filter((m) => m.id !== "USLACKBOT")
     .filter((m) => !m.is_bot);
 
   callback({
     code: 200,
-    body: membersWithoutBots.map((m) => convertSlackUserToReturnType(m)),
+    body: membersWithoutBots.map((m) => convertSlackUserToReturnType(m, url)),
   });
 });
 
@@ -75,16 +95,16 @@ export const getById = getByIdHandler(async ({ params }, callback) => {
   }
   const { id, token } = params;
   try {
-    const { user } = (await client.users.info({
-      token,
-      user: id,
-    })) as Response;
+    const [{ user }, url] = await Promise.all([
+      client.users.info({ token, user: id }) as Promise<Response>,
+      getWorkspaceUrl(token),
+    ]);
 
     callback({
       code: 200,
       body: {
         found: true,
-        account: convertSlackUserToReturnType(user),
+        account: convertSlackUserToReturnType(user, url),
       },
     });
   } catch (error) {

@@ -136,6 +136,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         image_big = fake.image_url()
         token = fake.uuid4()
         account_id = fake.uuid4()
+        external_profile = fake.url()
         role = "ADMIN"
         mock_request.get(
             settings.CONNECTOR_URL
@@ -148,6 +149,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                     "email": self.admin.email,
                     "image": {"small": image_small, "big": image_big},
                     "role": role,
+                    "externalProfile": external_profile,
                 },
             },
         )
@@ -189,6 +191,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                           username
                           email
                           role
+                          externalProfile
                         }
                       }
                     }
@@ -221,3 +224,4 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         assert updated_admin_account["imageSmall"] == image_small
         assert updated_admin_account["imageBig"] == image_big
         assert updated_admin_account["role"] == role
+        assert updated_admin_account["externalProfile"] == external_profile

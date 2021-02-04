@@ -66,7 +66,7 @@ sizes.forEach(({ name, viewport }) => {
 
             cy.findByRole("table", { name: "Accounts" }).within(() => {
               cy.findByRole("row", {
-                name: `${user.firstName} ${user.lastName} ${user.firstName} ${user.lastName} ${user.slack.displayName} USER Edit`,
+                name: `${user.firstName} ${user.lastName} ${user.firstName} ${user.lastName} ${user.slack.displayName} USER View`,
               });
             });
           });

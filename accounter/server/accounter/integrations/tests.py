@@ -340,6 +340,7 @@ class IntegrationTestCase(GraphQLTestCase):
         new_small_image = fake.image_url()
         new_big_image = fake.image_url()
         new_username = fake.user_name()
+        external_profile = fake.url()
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
             json=[
@@ -349,6 +350,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "email": new_email,
                     "image": {"small": new_small_image, "big": new_big_image},
                     "role": "USER",
+                    "externalProfile": external_profile,
                 }
             ],
         )
@@ -376,6 +378,7 @@ class IntegrationTestCase(GraphQLTestCase):
                             email
                             imageSmall
                             imageBig
+                            externalProfile
                         }
                 }
             }
@@ -391,6 +394,11 @@ class IntegrationTestCase(GraphQLTestCase):
         assert accounts[0]["email"] == account.email == new_email
         assert accounts[0]["imageSmall"] == account.image_small == new_small_image
         assert accounts[0]["imageBig"] == account.image_big == new_big_image
+        assert (
+            accounts[0]["externalProfile"]
+            == account.external_profile
+            == external_profile
+        )
 
     def test_get_integrations_requires_authenticated_users(self):
         response = self.query(

@@ -16,6 +16,7 @@ const generateAccount = (overwrite = {}): Account => ({
     big: faker.image.imageUrl(192, 192),
   },
   role: "USER",
+  externalProfile: expect.any(String),
   ...overwrite,
 });
 
