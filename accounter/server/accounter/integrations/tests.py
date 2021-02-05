@@ -286,6 +286,7 @@ class IntegrationTestCase(GraphQLTestCase):
         token = "some_token"
         image_small = fake.image_url()
         image_big = fake.image_url()
+        external_profile = fake.url()
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
             json=[
@@ -295,6 +296,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "email": self.admin.email,
                     "image": {"small": image_small, "big": image_big},
                     "role": "USER",
+                    "externalProfile": external_profile,
                 }
             ],
         )
@@ -314,6 +316,7 @@ class IntegrationTestCase(GraphQLTestCase):
                         email
                         imageSmall
                         imageBig
+                        externalProfile
                     }
                 }
             }
@@ -328,6 +331,7 @@ class IntegrationTestCase(GraphQLTestCase):
         assert accounts[0]["email"] == self.admin.email
         assert accounts[0]["imageSmall"] == image_small
         assert accounts[0]["imageBig"] == image_big
+        assert accounts[0]["externalProfile"] == external_profile
 
     @freeze_time(
         auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
@@ -343,6 +347,7 @@ class IntegrationTestCase(GraphQLTestCase):
         last_name = fake.last_name()
         username = fake.user_name()
         email = fake.email()
+        external_profile = fake.url()
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
             json=[
@@ -354,6 +359,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "email": email,
                     "image": {"small": image_small, "big": image_big},
                     "role": "USER",
+                    "externalProfile": external_profile,
                 }
             ],
         )
@@ -373,6 +379,7 @@ class IntegrationTestCase(GraphQLTestCase):
                         email
                         imageSmall
                         imageBig
+                        externalProfile
                         profile {
                             firstName
                             lastName
@@ -392,6 +399,11 @@ class IntegrationTestCase(GraphQLTestCase):
         assert accounts[0]["email"] == new_account.email == email
         assert accounts[0]["imageSmall"] == new_account.image_small == image_small
         assert accounts[0]["imageBig"] == new_account.image_big == image_big
+        assert (
+            accounts[0]["externalProfile"]
+            == new_account.external_profile
+            == external_profile
+        )
         assert (
             new_account.profile.user.first_name
             == accounts[0]["profile"]["firstName"]
