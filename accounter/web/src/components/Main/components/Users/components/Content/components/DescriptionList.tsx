@@ -34,7 +34,6 @@ const DescriptionList = ({ profile }: Props) => {
       <Description term="Team">
         {!profile.department ? "-" : profile.department.name}
       </Description>
-      <Description term="Birthday">-</Description>
     </dl>
   );
 };
