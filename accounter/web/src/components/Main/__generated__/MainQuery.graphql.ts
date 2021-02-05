@@ -49,14 +49,6 @@ fragment Sidebar_profile on ProfileNode {
 fragment UserForm_currentUser on ProfileNode {
   organization {
     id
-    departments {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
   }
 }
 */
@@ -152,48 +144,7 @@ return {
             "name": "organization",
             "plural": false,
             "selections": [
-              (v0/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "DepartmentNodeConnection",
-                "kind": "LinkedField",
-                "name": "departments",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "DepartmentNodeEdge",
-                    "kind": "LinkedField",
-                    "name": "edges",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "DepartmentNode",
-                        "kind": "LinkedField",
-                        "name": "node",
-                        "plural": false,
-                        "selections": [
-                          (v0/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "name",
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
+              (v0/*: any*/)
             ],
             "storageKey": null
           }
@@ -203,12 +154,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b44fcbf6d66cdf92d6336dafbb9da714",
+    "cacheID": "0fdcf35b4e8281feb8d714898129bb19",
     "id": null,
     "metadata": {},
     "name": "MainQuery",
     "operationKind": "query",
-    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    ...AddUsers_currentUser\n    id\n  }\n}\n\nfragment AddUsers_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment Dropdown_profile on ProfileNode {\n  id\n}\n\nfragment Profile_profile on ProfileNode {\n  ...Dropdown_profile\n  firstName\n  lastName\n  title\n  image\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n    departments {\n      edges {\n        node {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    ...AddUsers_currentUser\n    id\n  }\n}\n\nfragment AddUsers_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment Dropdown_profile on ProfileNode {\n  id\n}\n\nfragment Profile_profile on ProfileNode {\n  ...Dropdown_profile\n  firstName\n  lastName\n  title\n  image\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n  }\n}\n"
   }
 };
 })();

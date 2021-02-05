@@ -6,8 +6,8 @@ from graphene_django.utils.testing import GraphQLTestCase
 from graphql_relay.node.node import from_global_id, to_global_id
 from model_bakery import baker
 
-from ..models import Department, Organization, Profile
-from ..schemas import DepartmentNode, ProfileNode
+from ..models import Organization, Profile
+from ..schemas import ProfileNode
 
 User = get_user_model()
 
@@ -56,7 +56,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         first_name = "somefirstname"
         last_name = "somelastname"
         title = "some title"
-        department = baker.make(Department)
 
         response = self.query(
             """
@@ -66,7 +65,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
             $firstName: String
             $lastName: String
             $title: String
-            $department: ID
           ) {
             updateUser(
               input: {
@@ -75,7 +73,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 firstName: $firstName
                 lastName: $lastName
                 title: $title
-                department: $department
               }
             ) {
               profile {
@@ -84,9 +81,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 firstName
                 lastName
                 title
-                department {
-                  name
-                }
               }
             }
           }
@@ -98,7 +92,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 "firstName": first_name,
                 "lastName": last_name,
                 "title": title,
-                "department": to_global_id(DepartmentNode._meta.name, department.pk),
             },
         )
         self.assertResponseNoErrors(response)
@@ -111,11 +104,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         assert profile.user.last_name == returned_profile["lastName"] == last_name
         assert profile.user.email == returned_profile["email"] == email
         assert profile.title == returned_profile["title"] == title
-        assert (
-            profile.department.name
-            == returned_profile["department"]["name"]
-            == department.name
-        )
 
     def test_update_user_cannot_update_user_from_other_org(self):
         self.client.force_login(self.admin)
@@ -186,9 +174,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 firstName
                 lastName
                 title
-                department {
-                  name
-                }
               }
             }
           }
@@ -222,11 +207,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         )
         assert (
             user_profile_to_update.title == profile.title == returned_profile["title"]
-        )
-        assert (
-            user_profile_to_update.department.name
-            == profile.department.name
-            == returned_profile["department"]["name"]
         )
 
     def test_update_user_has_to_be_admin(self):

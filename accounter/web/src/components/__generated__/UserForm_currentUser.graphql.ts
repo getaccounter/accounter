@@ -7,14 +7,6 @@ import { FragmentRefs } from "relay-runtime";
 export type UserForm_currentUser = {
     readonly organization: {
         readonly id: string;
-        readonly departments: {
-            readonly edges: ReadonlyArray<{
-                readonly node: {
-                    readonly id: string;
-                    readonly name: string;
-                } | null;
-            } | null>;
-        };
     };
     readonly " $refType": "UserForm_currentUser";
 };
@@ -26,15 +18,7 @@ export type UserForm_currentUser$key = {
 
 
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -48,46 +32,11 @@ return {
       "name": "organization",
       "plural": false,
       "selections": [
-        (v0/*: any*/),
         {
           "alias": null,
           "args": null,
-          "concreteType": "DepartmentNodeConnection",
-          "kind": "LinkedField",
-          "name": "departments",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "DepartmentNodeEdge",
-              "kind": "LinkedField",
-              "name": "edges",
-              "plural": true,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "DepartmentNode",
-                  "kind": "LinkedField",
-                  "name": "node",
-                  "plural": false,
-                  "selections": [
-                    (v0/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "name",
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
+          "kind": "ScalarField",
+          "name": "id",
           "storageKey": null
         }
       ],
@@ -97,6 +46,5 @@ return {
   "type": "ProfileNode",
   "abstractKey": null
 };
-})();
-(node as any).hash = '305ddec0e7a310b6618b0057cd685c80';
+(node as any).hash = 'f7fe5d9a010755fcf863a0c6903fbf82';
 export default node;

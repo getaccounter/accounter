@@ -9,9 +9,6 @@ export type DescriptionList_profile = {
     readonly lastName: string | null;
     readonly email: string;
     readonly title: string | null;
-    readonly department: {
-        readonly name: string;
-    } | null;
     readonly " $refType": "DescriptionList_profile";
 };
 export type DescriptionList_profile$data = DescriptionList_profile;
@@ -55,28 +52,10 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "title",
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "DepartmentNode",
-      "kind": "LinkedField",
-      "name": "department",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
     }
   ],
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = 'c33ff84b48acc97547ee62ab0a1d09c0';
+(node as any).hash = 'a0c1c15881d2406636d2900e24875cf1';
 export default node;

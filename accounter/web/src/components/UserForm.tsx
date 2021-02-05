@@ -33,7 +33,6 @@ const createUser = (
         $firstName: String!
         $lastName: String!
         $title: String
-        $department: ID
       ) {
         createUser(
           input: {
@@ -41,7 +40,6 @@ const createUser = (
             firstName: $firstName
             lastName: $lastName
             title: $title
-            department: $department
           }
         ) {
           profile {
@@ -74,7 +72,6 @@ const updateUser = (
         $firstName: String
         $lastName: String
         $title: String
-        $department: ID
       ) {
         updateUser(
           input: {
@@ -83,7 +80,6 @@ const updateUser = (
             firstName: $firstName
             lastName: $lastName
             title: $title
-            department: $department
           }
         ) {
           profile {
@@ -98,13 +94,6 @@ const updateUser = (
     onError,
   });
 };
-
-type DepartmentEdge = NonNullable<
-  UserForm_currentUser["organization"]["departments"]["edges"][0]
->;
-type DepartmentNode = NonNullable<DepartmentEdge["node"]>;
-
-const NO_DEPARTMENT = "NO_DEPARTMENT";
 
 type Props = {
   profile: UserForm_profile | null;
@@ -126,9 +115,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
   const [titleInput, setTitleInput] = useState(
     isUpdate && profile!.title ? profile!.title : ""
   );
-  const [departmentInput, setDepartmentInput] = useState<DepartmentNode["id"]>(
-    isUpdate && profile!.department ? profile!.department.id : NO_DEPARTMENT
-  );
   return (
     <form
       className="space-y-8 divide-y divide-gray-200"
@@ -142,8 +128,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
             firstName: firstNameInput,
             lastName: lastNameInput,
             title: titleInput.length > 0 ? titleInput : undefined,
-            department:
-              departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
           };
           updateUser(
             environment,
@@ -165,8 +149,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
             firstName: firstNameInput,
             lastName: lastNameInput,
             title: titleInput.length > 0 ? titleInput : undefined,
-            department:
-              departmentInput !== NO_DEPARTMENT ? departmentInput : undefined,
           };
 
           createUser(
@@ -276,33 +258,6 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
                 />
               </div>
             </div>
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-              <label
-                htmlFor="department"
-                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-              >
-                Department
-              </label>
-              <div className="mt-1 sm:mt-0 sm:col-span-2">
-                <select
-                  value={departmentInput}
-                  onChange={(inpput) => setDepartmentInput(inpput.target.value)}
-                  id="department"
-                  name="department"
-                  autoComplete="department"
-                  className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                >
-                  <option value={NO_DEPARTMENT}>No department</option>
-                  {currentUser.organization.departments.edges.map(
-                    (departmentEdge) => (
-                      <option value={departmentEdge!.node!.id}>
-                        {departmentEdge!.node!.name}
-                      </option>
-                    )
-                  )}
-                </select>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -334,14 +289,6 @@ export default createFragmentContainer(UserForm, {
     fragment UserForm_currentUser on ProfileNode {
       organization {
         id
-        departments {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
       }
     }
   `,
@@ -352,9 +299,6 @@ export default createFragmentContainer(UserForm, {
       lastName
       email
       title
-      department {
-        id
-      }
     }
   `,
 });

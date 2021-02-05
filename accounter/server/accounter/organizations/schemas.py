@@ -9,7 +9,7 @@ from accounter.integrations.models import Account, Service
 from accounter.integrations.schemas import AccountNode
 
 from ..utils import ExtendedConnection, admin_required
-from .models import Department, Organization, Profile
+from .models import Organization, Profile
 
 
 class Signup(graphene.Mutation):
@@ -54,14 +54,7 @@ class Signup(graphene.Mutation):
 class OrganizationNode(DjangoObjectType):
     class Meta:
         model = Organization
-        fields = ("name", "profiles", "departments")
-        interfaces = (graphene.relay.Node,)
-
-
-class DepartmentNode(DjangoObjectType):
-    class Meta:
-        model = Department
-        fields = ("name", "id")
+        fields = ("name", "profiles")
         interfaces = (graphene.relay.Node,)
 
 
@@ -74,7 +67,6 @@ class ProfileNode(DjangoObjectType):
             "first_name",
             "last_name",
             "title",
-            "department",
             "organization",
             "is_admin",
             "is_owner",
@@ -143,7 +135,6 @@ class CreateUser(graphene.relay.ClientIDMutation):
         last_name = graphene.String(required=True)
         email = graphene.String(required=True)
         title = graphene.String()
-        department = graphene.ID()
 
     profile = graphene.Field(ProfileNode, required=True)
 
@@ -157,18 +148,11 @@ class CreateUser(graphene.relay.ClientIDMutation):
         email = input.get("email")
         title = input.get("title")
 
-        department = None
-        if input.get("department") is not None:
-            department_relay_id = input.get("department")
-            _, db_pk = from_global_id(department_relay_id)
-            department = Department.objects.get(pk=int(db_pk))
-
         profile = organization.create_profile(
             email,
             first_name,
             last_name,
             title=title,
-            department=department,
         )
 
         return CreateUser(profile=profile)
@@ -181,7 +165,6 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         last_name = graphene.String()
         email = graphene.String()
         title = graphene.String()
-        department = graphene.ID()
         is_admin = graphene.Boolean()
 
     profile = graphene.Field(ProfileNode, required=True)
@@ -221,12 +204,6 @@ class UpdateUser(graphene.relay.ClientIDMutation):
 
         if input.get("title") is not None:
             profile.title = input.get("title")
-
-        if input.get("department") is not None:
-            department_relay_id = input.get("department")
-            _, db_pk = from_global_id(department_relay_id)
-            department = Department.objects.get(pk=int(db_pk))
-            profile.department = department
 
         profile.save()
         profile.user.save()
