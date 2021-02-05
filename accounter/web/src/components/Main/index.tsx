@@ -1,7 +1,6 @@
 import React from "react";
 import SideBar from "./components/Sidebar";
 import {
-  Cog,
   Menu,
   UserGroup,
   ViewGrid,
@@ -107,14 +106,6 @@ export default function Main() {
               Icon: ViewGridAdd,
             },
             content: <Services />,
-          },
-          {
-            tab: {
-              label: "Settings",
-              path: "/settings",
-              Icon: Cog,
-            },
-            content: "TODO",
           },
         ];
         return (
