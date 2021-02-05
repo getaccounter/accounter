@@ -110,9 +110,7 @@ const createSlackIntegrationBotUser = () => ({
 });
 
 const createSlackUser = (account: Account) => {
-  const firstName = faker.name.firstName();
-  const lastName = faker.name.lastName();
-  const fullName = `${firstName} ${lastName}`;
+  const fullName = `${account.firstName} ${account.lastName}`;
   return {
     id: account.id,
     team_id: "XYZD",
@@ -137,13 +135,13 @@ const createSlackUser = (account: Account) => {
       status_expiration: 0,
       avatar_hash: faker.random.image(),
       email: account.email,
-      first_name: firstName,
-      last_name: lastName,
+      first_name: account.firstName,
+      last_name: account.lastName,
       image_24: faker.image.imageUrl(24, 24),
       image_32: faker.image.imageUrl(32, 32),
-      image_48: account.image.small ?? faker.image.imageUrl(48, 48),
+      image_48: account.image.small,
       image_72: faker.image.imageUrl(72, 72),
-      image_192: account.image.big ?? faker.image.imageUrl(192, 192),
+      image_192: account.image.big,
       image_512: faker.image.imageUrl(512, 512),
       status_text_canonical: "",
       team: "The team",

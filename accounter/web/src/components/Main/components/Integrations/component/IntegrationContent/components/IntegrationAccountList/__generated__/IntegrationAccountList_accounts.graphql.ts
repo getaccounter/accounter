@@ -8,8 +8,8 @@ export type IntegrationAccountList_accounts = ReadonlyArray<{
     readonly id: string;
     readonly imageSmall: string;
     readonly profile: {
-        readonly firstName: string;
-        readonly lastName: string;
+        readonly firstName: string | null;
+        readonly lastName: string | null;
         readonly title: string | null;
     };
     readonly username: string;

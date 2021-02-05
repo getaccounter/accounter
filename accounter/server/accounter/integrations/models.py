@@ -2,10 +2,13 @@ from datetime import timedelta
 
 import requests
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 
 from ..organizations.models import Organization, Profile
+
+User = get_user_model()
 
 
 class Service(models.Model):
@@ -145,17 +148,33 @@ class Integration(models.Model):
             except Account.DoesNotExist:
                 pass
 
-            if not account:
-                try:
-                    profile = Profile.objects.get(
-                        user__email=email, organization=self.organization
-                    )
-                    account = self.create_account_from_response(profile, user_info)
-                except Profile.DoesNotExist:
-                    pass
+            profile = None
+            try:
+                profile = Profile.objects.get(
+                    user__email=email, organization=self.organization
+                )
+            except Profile.DoesNotExist:
+                pass
 
-            if account:
-                account.save()
+            if not profile:
+                user = User.objects.create(
+                    username=email,
+                    email=email,
+                    first_name=user_info["firstName"],
+                    last_name=user_info["lastName"],
+                    is_active=False,
+                )
+                user.save()
+                profile = Profile.objects.create(
+                    user=user,
+                    organization=self.organization,
+                )
+                profile.save()
+
+            if not account:
+                account = self.create_account_from_response(profile, user_info)
+
+            account.save()
 
         self.last_refresh = timezone.now()
         self.save()

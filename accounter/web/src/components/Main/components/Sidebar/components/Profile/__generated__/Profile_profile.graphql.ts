@@ -5,8 +5,8 @@
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type Profile_profile = {
-    readonly firstName: string;
-    readonly lastName: string;
+    readonly firstName: string | null;
+    readonly lastName: string | null;
     readonly title: string | null;
     readonly image: string;
     readonly " $fragmentRefs": FragmentRefs<"Dropdown_profile">;

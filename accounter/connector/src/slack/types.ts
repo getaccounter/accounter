@@ -22,8 +22,8 @@ export type SlackUser = {
     status_expiration: number;
     avatar_hash: string;
     email: string;
-    first_name: string;
-    last_name: string;
+    first_name?: string;
+    last_name?: string;
     image_24: string;
     image_32: string;
     image_48: string;

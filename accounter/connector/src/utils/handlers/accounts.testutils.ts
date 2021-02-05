@@ -9,6 +9,8 @@ import { encrypt } from "../encryption";
 
 const generateAccount = (overwrite = {}): Account => ({
   id: faker.random.uuid(),
+  firstName: faker.name.firstName(),
+  lastName: faker.name.lastName(),
   email: faker.internet.email(),
   username: faker.internet.userName(),
   image: {

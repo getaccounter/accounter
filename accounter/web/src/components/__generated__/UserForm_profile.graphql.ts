@@ -6,8 +6,8 @@ import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type UserForm_profile = {
     readonly id: string;
-    readonly firstName: string;
-    readonly lastName: string;
+    readonly firstName: string | null;
+    readonly lastName: string | null;
     readonly email: string;
     readonly title: string | null;
     readonly department: {

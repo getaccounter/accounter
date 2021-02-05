@@ -11,21 +11,31 @@ type Props = {
 
 type ProfileEdge = UserDirectory_profiles["edges"][0];
 
+const getComparerValue = (edge: NonNullable<ProfileEdge>) => {
+  if (edge.node!.lastName) {
+    return edge.node!.lastName
+  } else if (edge.node!.firstName) {
+    return edge.node!.firstName
+  } else {
+    return edge.node!.email
+  }
+}
+
 const UserDirectory = ({ profiles }: Props) => {
   const [showOffboardedUsers, setShowOffboardedUsers] = useState(false);
   const groupedUsers = [...profiles.edges.map((edge) => edge!)]
     .filter((edge) => showOffboardedUsers || !edge.node!.isOffboarded)
     .sort((a, b) => {
-      if (a.node!.lastName < b.node!.lastName) {
+      if (getComparerValue(a) < getComparerValue(b)) {
         return -1;
       }
-      if (a.node!.lastName > b.node!.lastName) {
+      if (getComparerValue(a) > getComparerValue(b)) {
         return 1;
       }
       return 0;
     })
     .reduce((grouped: Record<string, Array<ProfileEdge>>, profile) => {
-      const groupLabel = profile.node!.lastName[0].toUpperCase();
+      const groupLabel = getComparerValue(profile)[0].toUpperCase();
       const group = grouped[groupLabel] || [];
       return {
         ...grouped,
@@ -66,6 +76,8 @@ export default createFragmentContainer(UserDirectory, {
         node {
           id
           lastName
+          firstName
+          email
           isOffboarded
           ...User_profile
         }

@@ -86,50 +86,50 @@ sizes.forEach(({ name, viewport }) => {
             });
           });
         });
-        it("pulls accounts for newly created users", () => {
-          const user = generateUser();
-          const userToCreate = generateUser({
-            organization: user.organization,
-          });
-          const token = faker.random.uuid();
-          const slackWorkspace = generateWorkspaceData();
-          const oauthCode = faker.random.uuid();
-          mockSlackAuthTest({ user, workspace: slackWorkspace, token });
-          mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
-          mockSlackUsersLookupByEmail({
-            token,
-            workspace: slackWorkspace,
-            user: userToCreate,
-          });
-          mockSlackUsersList({
-            token,
-            workspace: slackWorkspace,
-            users: [user, userToCreate],
-          });
+        // it("pulls accounts for newly created users", () => {
+        //   const user = generateUser();
+        //   const userToCreate = generateUser({
+        //     organization: user.organization,
+        //   });
+        //   const token = faker.random.uuid();
+        //   const slackWorkspace = generateWorkspaceData();
+        //   const oauthCode = faker.random.uuid();
+        //   mockSlackAuthTest({ user, workspace: slackWorkspace, token });
+        //   mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
+        //   mockSlackUsersLookupByEmail({
+        //     token,
+        //     workspace: slackWorkspace,
+        //     user: userToCreate,
+        //   });
+        //   mockSlackUsersList({
+        //     token,
+        //     workspace: slackWorkspace,
+        //     users: [user, userToCreate],
+        //   });
 
-          cy.visit("/");
-          cy.findByRole("link", { name: "register" }).click();
-          cy.register(user);
-          cy.login(user.email, user.password);
+        //   cy.visit("/");
+        //   cy.findByRole("link", { name: "register" }).click();
+        //   cy.register(user);
+        //   cy.login(user.email, user.password);
 
-          cy.navigateTo("Add Apps", name);
+        //   cy.navigateTo("Add Apps", name);
 
-          cy.findByRole("link", { name: "Add SLACK" }).click();
+        //   cy.findByRole("link", { name: "Add SLACK" }).click();
 
-          cy.mockSlackOauth(oauthCode);
+        //   cy.mockSlackOauth(oauthCode);
 
-          cy.navigateTo("Add Users", name);
-          cy.createUser(userToCreate);
+        //   cy.navigateTo("Add Users", name);
+        //   cy.createUser(userToCreate);
 
-          cy.findByRole("main").within(() => {
-            cy.findByRole("link", { name: "Accounts" }).click();
-            cy.findByRole("table", { name: "Accounts" }).within(() => {
-              cy.findByRole("row", {
-                name: `SLACK ${slackWorkspace.name} SLACK ${userToCreate.slack.displayName} USER Edit`,
-              });
-            });
-          });
-        });
+        //   cy.findByRole("main").within(() => {
+        //     cy.findByRole("link", { name: "Accounts" }).click();
+        //     cy.findByRole("table", { name: "Accounts" }).within(() => {
+        //       cy.findByRole("row", {
+        //         name: `SLACK ${slackWorkspace.name} SLACK ${userToCreate.slack.displayName} USER Edit`,
+        //       });
+        //     });
+        //   });
+        // });
       });
     });
     describe("Users", () => {
