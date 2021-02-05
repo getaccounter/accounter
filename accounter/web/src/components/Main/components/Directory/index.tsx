@@ -1,17 +1,18 @@
 import React, { ReactNode } from "react";
 import { Search } from "../../../icons/solid";
 
-const DirectoryHeader = ({
-  title,
-  subtitle,
-}: {
+const DirectoryHeader = (props: {
   title: string;
   subtitle?: string;
+  searchString: string;
+  onChangeSearchString: (searchString: string) => void;
 }) => {
   return (
     <div className="px-6 pt-6 pb-4">
-      <h2 className="text-lg font-medium text-gray-900">{title}</h2>
-      {subtitle && <p className="mt-1 text-sm text-gray-600">{subtitle}</p>}
+      <h2 className="text-lg font-medium text-gray-900">{props.title}</h2>
+      {props.subtitle && (
+        <p className="mt-1 text-sm text-gray-600">{props.subtitle}</p>
+      )}
       <form className="mt-6 flex space-x-4" action="#">
         <div className="flex-1 min-w-0">
           <label htmlFor="search" className="sr-only">
@@ -22,11 +23,13 @@ const DirectoryHeader = ({
               <Search className="h-5 w-5 text-gray-400" />
             </div>
             <input
+              value={props.searchString}
               type="search"
               name="search"
               id="search"
               className="focus:ring-pink-500 focus:border-pink-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
               placeholder="Search"
+              onChange={(evt) => props.onChangeSearchString(evt.target.value)}
             />
           </div>
         </div>
@@ -76,11 +79,24 @@ type Props = {
   title: string;
   subtitle?: string;
   children: ReactNode;
+  searchString: string;
+  onChangeSearchString: (searchString: string) => void;
 };
 
-const Directory = ({ children, title, subtitle }: Props) => (
+const Directory = ({
+  children,
+  title,
+  subtitle,
+  searchString,
+  onChangeSearchString,
+}: Props) => (
   <>
-    <DirectoryHeader title={title} subtitle={subtitle} />
+    <DirectoryHeader
+      title={title}
+      subtitle={subtitle}
+      searchString={searchString}
+      onChangeSearchString={onChangeSearchString}
+    />
     <DirectoryList>{children}</DirectoryList>
   </>
 );

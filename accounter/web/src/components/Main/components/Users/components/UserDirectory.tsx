@@ -1,6 +1,6 @@
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import React from "react";
+import React, { useState } from "react";
 import Directory, { DirectoryEntryList, DirectoryEntry } from "../../Directory";
 import User from "./components/User";
 import { UserDirectory_profiles } from "./__generated__/UserDirectory_profiles.graphql";
@@ -13,16 +13,43 @@ type ProfileEdge = UserDirectory_profiles["edges"][0];
 
 const getComparerValue = (edge: NonNullable<ProfileEdge>) => {
   if (edge.node!.lastName) {
-    return edge.node!.lastName
+    return edge.node!.lastName;
   } else if (edge.node!.firstName) {
-    return edge.node!.firstName
+    return edge.node!.firstName;
   } else {
-    return edge.node!.email
+    return edge.node!.email;
   }
-}
+};
 
 const UserDirectory = ({ profiles }: Props) => {
-  const groupedUsers = [...profiles.edges.map((edge) => edge!)]
+  const [searchString, setSearchString] = useState("");
+  const filteredProfiles = profiles.edges.filter((edge) => {
+    const node = edge!.node!;
+    const lowerCasedSearchString = searchString.toLocaleLowerCase();
+    const lowerCasedFirstName = (node.firstName ?? "").toLowerCase();
+    const lowerCasedLastName = (node.lastName ?? "").toLowerCase();
+    const lowerCasedFullName = `${lowerCasedFirstName} ${lowerCasedLastName}`;
+    const lowerCasedEmail = node.email.toLowerCase();
+
+    const matchesFirstName = lowerCasedFirstName.includes(
+      lowerCasedSearchString
+    );
+    const matchesLastName = lowerCasedLastName.includes(lowerCasedSearchString);
+    const matchesFullName = lowerCasedFullName.includes(lowerCasedSearchString);
+    const matchesEmail = lowerCasedEmail.includes(lowerCasedSearchString);
+
+    if (
+      !searchString ||
+      matchesFirstName ||
+      matchesLastName ||
+      matchesFullName ||
+      matchesEmail
+    ) {
+      return true;
+    }
+    return false;
+  });
+  const groupedUsers = [...filteredProfiles.map((edge) => edge!)]
     .sort((a, b) => {
       if (getComparerValue(a) < getComparerValue(b)) {
         return -1;
@@ -44,6 +71,8 @@ const UserDirectory = ({ profiles }: Props) => {
     <Directory
       title="Users"
       subtitle={`${profiles.totalCount} users`}
+      searchString={searchString}
+      onChangeSearchString={setSearchString}
     >
       {Object.entries(groupedUsers).map(([groupLabel, profiles]) => (
         <DirectoryEntryList key={groupLabel} title={groupLabel}>

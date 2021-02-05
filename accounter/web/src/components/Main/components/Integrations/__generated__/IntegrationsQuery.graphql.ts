@@ -4,10 +4,15 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
+export type ServiceName = "SLACK" | "%future added value";
 export type IntegrationsQueryVariables = {};
 export type IntegrationsQueryResponse = {
     readonly integrations: ReadonlyArray<{
         readonly id: string;
+        readonly name: string;
+        readonly service: {
+            readonly name: ServiceName;
+        };
         readonly " $fragmentRefs": FragmentRefs<"Integration_integration" | "IntegrationContent_integration">;
     }>;
 };
@@ -22,6 +27,10 @@ export type IntegrationsQuery = {
 query IntegrationsQuery {
   integrations {
     id
+    name
+    service {
+      name
+    }
     ...Integration_integration
     ...IntegrationContent_integration
   }
@@ -98,6 +107,19 @@ return {
         "plural": true,
         "selections": [
           (v0/*: any*/),
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ServiceNode",
+            "kind": "LinkedField",
+            "name": "service",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/)
+            ],
+            "storageKey": null
+          },
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -229,14 +251,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "20213457890d4a6b57f76f1ba0b8ca4f",
+    "cacheID": "8235a397ce978f2ae3577ce34f6eea79",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  id\n  imageSmall\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    name\n    service {\n      name\n    }\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  id\n  imageSmall\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'b05e16da4b350632304bd75ed608b702';
+(node as any).hash = '5b9413e4f845b6359255193f17125983';
 export default node;
