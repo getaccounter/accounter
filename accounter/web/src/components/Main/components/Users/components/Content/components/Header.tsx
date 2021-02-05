@@ -1,11 +1,5 @@
 import React, { ReactNode } from "react";
-import {
-  Briefcase,
-  MinusCircle,
-  Pencil,
-  PlusCircle,
-  XCircle,
-} from "../../../../../../icons/solid";
+import { Briefcase, MinusCircle, Pencil } from "../../../../../../icons/solid";
 import { createFragmentContainer, Environment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Header_profile } from "./__generated__/Header_profile.graphql";
@@ -55,7 +49,6 @@ type Props = {
 const Name = (props: {
   children: ReactNode;
   isAdmin: boolean;
-  isOffboarded: boolean;
   isOwner: boolean;
 }) => (
   <div className="inline-flex items-center">
@@ -72,11 +65,6 @@ const Name = (props: {
           <Badge color="blue">Admin</Badge>
         </span>
       )
-    )}
-    {props.isOffboarded && (
-      <span className="pl-2">
-        <Badge color="gray">Offboarded</Badge>
-      </span>
     )}
   </div>
 );
@@ -163,7 +151,6 @@ const Header = (props: Props) => {
               <Name
                 isOwner={props.profile.isOwner}
                 isAdmin={props.profile.isAdmin}
-                isOffboarded={props.profile.isOffboarded}
               >
                 {props.profile.firstName} {props.profile.lastName}
               </Name>
@@ -196,33 +183,12 @@ const Header = (props: Props) => {
                     )}
                   </>
                 )}
-                {!props.profile.isCurrentUser &&
-                  !props.profile.isOwner &&
-                  !props.profile.isAdmin && (
-                    <>
-                      {!props.profile.isOffboarded ? (
-                        <MainButton danger to={`${url}/offboard`}>
-                          <XCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
-                          <span>Offboard</span>
-                        </MainButton>
-                      ) : (
-                        <MainButton danger to={`${url}/reactivate`}>
-                          <PlusCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
-                          <span>Reactivate</span>
-                        </MainButton>
-                      )}
-                    </>
-                  )}
               </div>
             )}
           </div>
         </div>
         <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
-          <Name
-            isOwner={props.profile.isOwner}
-            isAdmin={props.profile.isAdmin}
-            isOffboarded={props.profile.isOffboarded}
-          >
+          <Name isOwner={props.profile.isOwner} isAdmin={props.profile.isAdmin}>
             {props.profile.firstName} {props.profile.lastName}
           </Name>
         </div>
@@ -245,7 +211,6 @@ export default createFragmentContainer(Header, {
       lastName
       isAdmin
       currentUserCanEdit
-      isOffboarded
       isOwner
       isCurrentUser
     }

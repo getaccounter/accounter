@@ -74,7 +74,6 @@ class ProfileNode(DjangoObjectType):
             "first_name",
             "last_name",
             "title",
-            "is_offboarded",
             "department",
             "organization",
             "is_admin",
@@ -235,60 +234,6 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         return UpdateUser(profile=profile)
 
 
-class OffboardUser(graphene.relay.ClientIDMutation):
-    class Input:
-        id = graphene.ID(required=True)
-
-    profile = graphene.Field(ProfileNode, required=True)
-
-    @admin_required
-    def mutate_and_get_payload(root, info, *args, **input):
-        profile_pk = from_global_id(input.get("id"))[1]
-        organization = info.context.user.profile.organization
-        profile = Profile.objects.get(pk=profile_pk, organization=organization)
-
-        if profile.is_owner:
-            raise PermissionDenied("Owner cannot be offboarded")
-
-        if profile.user.pk == info.context.user.pk:
-            raise PermissionDenied("You cannot offboard yourself")
-
-        if not profile.can_be_edited_by(info.context.user.profile):
-            raise PermissionDenied("You do not have permission to perform this action")
-
-        profile.offboard(info.context.user.profile)
-
-        return OffboardUser(profile=profile)
-
-
-class ReactivateUser(graphene.relay.ClientIDMutation):
-    class Input:
-        id = graphene.ID(required=True)
-
-    profile = graphene.Field(ProfileNode, required=True)
-
-    @admin_required
-    def mutate_and_get_payload(root, info, *args, **input):
-        profile_pk = from_global_id(input.get("id"))[1]
-        organization = info.context.user.profile.organization
-        profile = Profile.objects.get(pk=profile_pk, organization=organization)
-
-        if profile.is_owner:
-            # Should be an edge case, but disallowing it for now
-            raise PermissionDenied("Owner cannot be reactivated")
-
-        if profile.user.pk == info.context.user.pk:
-            # Should be impossible to arrive here, but just in case ...
-            raise PermissionDenied("You cannot reactivate yourself")
-
-        if not profile.can_be_edited_by(info.context.user.profile):
-            raise PermissionDenied("You do not have permission to perform this action")
-
-        profile.reactivate()
-
-        return OffboardUser(profile=profile)
-
-
 class Query(graphene.ObjectType):
     current_user = graphene.Field(ProfileNode, required=True)
 
@@ -302,5 +247,3 @@ class Mutation(graphene.ObjectType):
     signup = Signup.Field()
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
-    offboard_user = OffboardUser.Field()
-    reactivate_user = ReactivateUser.Field()

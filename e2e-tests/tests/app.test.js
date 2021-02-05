@@ -88,7 +88,7 @@ sizes.forEach(({ name, viewport }) => {
       });
     });
     describe("Users", () => {
-      it("Add, edit, offboard and reactivate", () => {
+      it("Add, edit", () => {
         const user = generateUser();
         const userToCreate = generateUser({
           organization: user.organization,
@@ -169,49 +169,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByText(newUserData.email).should("exist");
             cy.findByText(newUserData.title).should("exist");
           });
-
-          cy.findByRole("link", { name: "Offboard" }).click();
         });
-
-        if (name !== FULLSCREEN) {
-          cy.findByRole("main").within(() => {
-            cy.findByRole("link", { name: "Users" }).click();
-          });
-        }
-
-        cy.old_getUserFromDirectory(
-          `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-          (user) => user.should("not.exist")
-        );
-
-        cy.findByRole("button", { name: "Filter" }).click();
-        cy.findByRole("checkbox", { name: "Offboarded" }).click();
-
-        cy.old_getUserFromDirectory(
-          `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-          (user) => {
-            user.should("exist");
-            user.click();
-          }
-        );
-
-        cy.findByRole("main").within(() => {
-          cy.findByRole("link", { name: "Reactivate" }).click();
-        });
-
-        if (name !== FULLSCREEN) {
-          cy.findByRole("main").within(() => {
-            cy.findByRole("link", { name: "Users" }).click();
-          });
-        }
-
-        cy.findByRole("button", { name: "Filter" }).click();
-        cy.findByRole("checkbox", { name: "Offboarded" }).click();
-
-        cy.old_getUserFromDirectory(
-          `${newUserData.firstName} ${newUserData.lastName} ${newUserData.title}`,
-          (user) => user.should("exist")
-        );
       });
 
       if (name === FULLSCREEN) {

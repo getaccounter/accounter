@@ -24,7 +24,6 @@ const User = ({ profile }: Props) => {
           ) : (
             profile.isAdmin && <Badge color="blue">Admin</Badge>
           )}
-          {profile.isOffboarded && <Badge color="gray">Offboarded</Badge>}
         </>
       }
     >
@@ -43,7 +42,6 @@ export default createFragmentContainer(User, {
       title
       isAdmin
       isOwner
-      isOffboarded
     }
   `,
 });

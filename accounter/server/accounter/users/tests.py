@@ -174,7 +174,7 @@ class UserTestCase(GraphQLTestCase):
             _fill_optional=True,
         )
 
-        user_profile.removeLogin()
+        user_profile.remove_login()
         token_generator = PasswordResetTokenGenerator()
         token = token_generator.make_token(user_profile.user)
         new_password = "mypassword"

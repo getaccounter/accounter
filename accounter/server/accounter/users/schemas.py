@@ -19,8 +19,6 @@ class Signin(graphene.Mutation):
             raise PermissionDenied("Please enter valid credentials.")
         elif user.is_staff or user.is_superuser:
             raise PermissionDenied("Access denied.")
-        if user.profile.is_offboarded:
-            raise PermissionDenied("User was offboarded.")
         else:
             login(info.context, user)
             return Signin(status="success", message="Successfully signed in.")

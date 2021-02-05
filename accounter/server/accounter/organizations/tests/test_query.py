@@ -61,7 +61,6 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                         firstName
                         lastName
                         title
-                        isOffboarded
                         isCurrentUser
                         isAdmin
                         isOwner
@@ -91,7 +90,6 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         assert response_user_profile["firstName"] == self.profiles[0].user.first_name
         assert response_user_profile["lastName"] == self.profiles[0].user.last_name
         assert response_user_profile["title"] == self.profiles[0].title
-        assert response_user_profile["isOffboarded"] == self.profiles[0].is_offboarded
         assert (
             response_user_profile["department"]["name"]
             == self.profiles[0].department.name
