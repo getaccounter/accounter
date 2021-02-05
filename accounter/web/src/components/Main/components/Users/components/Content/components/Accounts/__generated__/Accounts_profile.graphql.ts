@@ -17,6 +17,7 @@ export type Accounts_profile = {
         };
         readonly username: string;
         readonly role: string;
+        readonly externalProfile: string;
     }>;
     readonly " $refType": "Accounts_profile";
 };
@@ -101,6 +102,13 @@ return {
           "kind": "ScalarField",
           "name": "role",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "externalProfile",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -110,5 +118,5 @@ return {
   "abstractKey": null
 };
 })();
-(node as any).hash = '157a149d65ced09a3eba30fdaa0279f3';
+(node as any).hash = 'fa7e2a043ceb9d0e8db4c72ec63c5550';
 export default node;
