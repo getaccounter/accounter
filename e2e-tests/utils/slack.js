@@ -295,37 +295,3 @@ export const mockSlackUsersInfo = ({
       }
     );
 };
-
-export const mockSlackUsersLookupByEmail = ({
-  token,
-  user,
-  workspace = generateWorkspaceData(),
-} = {}) => {
-  mockServerClient("mockserver", 1080)
-    .mockAnyResponse({
-      httpRequest: {
-        method: "POST",
-        path: "/api/users.lookupByEmail",
-        body: `token=${token}&email=${user.email.replace("@", "%40")}`
-      },
-      httpResponse: {
-        body: {
-          ok: true,
-          cache_ts: 1611515141,
-          response_metadata: { next_cursor: "" },
-          user: createSlackProfile(workspace, user),
-        },
-      },
-      times: {
-        remainingTimes: 1,
-      },
-    })
-    .then(
-      function () {
-        console.log("expectation created");
-      },
-      function (error) {
-        console.log(error);
-      }
-    );
-};

@@ -1,7 +1,6 @@
 import {
   Account,
   getByIdHandler,
-  getByEmailHandler,
   listHandler,
 } from "../../utils/handlers/accounts";
 import { WebClient, WebAPICallResult, ErrorCode } from "@slack/web-api";
@@ -40,39 +39,6 @@ const getWorkspaceUrl = async (token: string) => {
   })) as AuthTest;
   return url;
 };
-
-export const getByEmail = getByEmailHandler(async ({ params }, callback) => {
-  interface LookupResponse extends WebAPICallResult {
-    user: SlackUser;
-  }
-  const { email, token } = params;
-  try {
-    const [{ user }, url] = await Promise.all([
-      client.users.lookupByEmail({ token, email }) as Promise<LookupResponse>,
-      getWorkspaceUrl(token),
-    ]);
-
-    callback({
-      code: 200,
-      body: {
-        found: true,
-        account: convertSlackUserToReturnType(user, url),
-      },
-    });
-  } catch (error) {
-    if (error.data.error === "users_not_found") {
-      callback({
-        code: 200,
-        body: {
-          found: false,
-          account: null,
-        },
-      });
-    } else {
-      throw error;
-    }
-  }
-});
 
 export const list = listHandler(async ({ params }, callback) => {
   interface Response extends WebAPICallResult {

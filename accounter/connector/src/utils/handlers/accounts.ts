@@ -24,12 +24,6 @@ export type GetAccountResponse = {
   found: false,
   account: null
 }
-export const getByEmailHandler = makeHandler({
-  params: z.object({
-    email: z.string(),
-    token: z.string(),
-  }),
-})<GetAccountResponse>();
 
 const getByIdParamsValidatpr = z.object({ token: z.string(), id: z.string() })
 export type GetByIdHandlerParams = z.infer<typeof getByIdParamsValidatpr>
