@@ -4,7 +4,6 @@ import {
   generateWorkspaceData,
   mockSlackOauthToken,
   mockSlackUsersList,
-  mockSlackUsersLookupByEmail,
   mockSlackAuthTest,
 } from "../utils/slack";
 
