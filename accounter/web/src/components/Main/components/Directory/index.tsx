@@ -1,15 +1,12 @@
 import React, { ReactNode } from "react";
 import { Search } from "../../../icons/solid";
-import Filters, { Filter } from "./components/Filters";
 
 const DirectoryHeader = ({
   title,
   subtitle,
-  filters,
 }: {
   title: string;
   subtitle?: string;
-  filters: Array<Filter> | void;
 }) => {
   return (
     <div className="px-6 pt-6 pb-4">
@@ -33,7 +30,6 @@ const DirectoryHeader = ({
             />
           </div>
         </div>
-        {filters && <Filters filters={filters} />}
       </form>
     </div>
   );
@@ -80,12 +76,11 @@ type Props = {
   title: string;
   subtitle?: string;
   children: ReactNode;
-  filters?: Array<Filter>;
 };
 
-const Directory = ({ children, title, subtitle, filters }: Props) => (
+const Directory = ({ children, title, subtitle }: Props) => (
   <>
-    <DirectoryHeader filters={filters} title={title} subtitle={subtitle} />
+    <DirectoryHeader title={title} subtitle={subtitle} />
     <DirectoryList>{children}</DirectoryList>
   </>
 );

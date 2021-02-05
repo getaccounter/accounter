@@ -1,6 +1,6 @@
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import React, { useState } from "react";
+import React from "react";
 import Directory, { DirectoryEntryList, DirectoryEntry } from "../../Directory";
 import User from "./components/User";
 import { UserDirectory_profiles } from "./__generated__/UserDirectory_profiles.graphql";
@@ -22,7 +22,6 @@ const getComparerValue = (edge: NonNullable<ProfileEdge>) => {
 }
 
 const UserDirectory = ({ profiles }: Props) => {
-  const [showOffboardedUsers, setShowOffboardedUsers] = useState(false);
   const groupedUsers = [...profiles.edges.map((edge) => edge!)]
     .sort((a, b) => {
       if (getComparerValue(a) < getComparerValue(b)) {
@@ -43,14 +42,6 @@ const UserDirectory = ({ profiles }: Props) => {
     }, {});
   return (
     <Directory
-      filters={[
-        {
-          id: "offboardedUsers",
-          label: "Offboarded",
-          value: showOffboardedUsers,
-          onChange: (val) => setShowOffboardedUsers(val),
-        },
-      ]}
       title="Users"
       subtitle={`${profiles.totalCount} users`}
     >
