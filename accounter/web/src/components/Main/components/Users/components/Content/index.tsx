@@ -14,8 +14,6 @@ import { Content_profile } from "./__generated__/Content_profile.graphql";
 import DescriptionList from "./components/DescriptionList";
 import EditUser from "./components/EditUser";
 import { Content_currentUser } from "./__generated__/Content_currentUser.graphql";
-import OffboardUser from "./components/OffboardUser";
-import ReactivateUser from "./components/ReactivateUser";
 import Accounts from "./components/Accounts";
 import Breadcrumb from "../../../Breadcrumb";
 const Tab = (props: { children: ReactNode; to: string }) => {
@@ -72,12 +70,6 @@ const Content = ({ profile, currentUser }: Props) => {
           cancelRoute={url}
         />
       </Route>
-      <Route path={`${path}/offboard`}>
-        <OffboardUser profile={profile} />
-      </Route>
-      <Route path={`${path}/reactivate`}>
-        <ReactivateUser profile={profile} />
-      </Route>
       <Route>
         <Breadcrumb title="Users" to="/users" />
         <article>
@@ -114,8 +106,6 @@ export default createFragmentContainer(Content, {
       ...Header_profile
       ...DescriptionList_profile
       ...EditUser_profile
-      ...OffboardUser_profile
-      ...ReactivateUser_profile
       ...Accounts_profile
     }
   `,

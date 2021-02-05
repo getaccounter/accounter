@@ -24,7 +24,6 @@ const getComparerValue = (edge: NonNullable<ProfileEdge>) => {
 const UserDirectory = ({ profiles }: Props) => {
   const [showOffboardedUsers, setShowOffboardedUsers] = useState(false);
   const groupedUsers = [...profiles.edges.map((edge) => edge!)]
-    .filter((edge) => showOffboardedUsers || !edge.node!.isOffboarded)
     .sort((a, b) => {
       if (getComparerValue(a) < getComparerValue(b)) {
         return -1;
@@ -78,7 +77,6 @@ export default createFragmentContainer(UserDirectory, {
           lastName
           firstName
           email
-          isOffboarded
           ...User_profile
         }
       }

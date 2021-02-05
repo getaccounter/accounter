@@ -68,7 +68,6 @@ class Profile(models.Model):
     )
     is_admin = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
-    is_offboarded = models.BooleanField(default=False)
 
     def can_be_edited_by(self, editor: Type["Profile"]):
         if self.pk == editor.pk:
@@ -117,25 +116,15 @@ class Profile(models.Model):
         self.user.save()
         self.save()
 
-    def setupLogin(self, granted_by):
+    def setup_login(self, granted_by):
         self.user.is_active = True
         self.user.save()
         self.send_invite_email(granted_by)
 
-    def removeLogin(self):
+    def remove_login(self):
         self.user.is_active = False
         self.user.set_unusable_password()
         self.user.save()
-
-    def offboard(self, offboarded_by: Type["Profile"]):
-        if self.is_admin:
-            self.demote_to_regular_user(offboarded_by)
-        self.is_offboarded = True
-        self.save()
-
-    def reactivate(self):
-        self.is_offboarded = False
-        self.save()
 
     def promote_to_admin(self, promoted_by: Type["Profile"]):
         if not promoted_by.is_owner:
@@ -145,7 +134,7 @@ class Profile(models.Model):
 
         self.is_admin = True
 
-        self.setupLogin(promoted_by)
+        self.setup_login(promoted_by)
 
         self.user.save()
         self.save()
@@ -158,7 +147,7 @@ class Profile(models.Model):
         if self.is_owner:
             raise ValueError("Cannot demote owner")
         self.is_admin = False
-        self.removeLogin()
+        self.remove_login()
         self.save()
 
     def save(self, *args, **kwargs):

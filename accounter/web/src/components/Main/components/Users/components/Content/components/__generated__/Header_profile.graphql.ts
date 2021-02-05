@@ -11,7 +11,6 @@ export type Header_profile = {
     readonly lastName: string | null;
     readonly isAdmin: boolean;
     readonly currentUserCanEdit: boolean;
-    readonly isOffboarded: boolean;
     readonly isOwner: boolean;
     readonly isCurrentUser: boolean;
     readonly " $refType": "Header_profile";
@@ -76,13 +75,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "isOffboarded",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "isOwner",
       "storageKey": null
     },
@@ -97,5 +89,5 @@ const node: ReaderFragment = {
   "type": "ProfileNode",
   "abstractKey": null
 };
-(node as any).hash = 'ac0daee1aa6e296423814aec9328efea';
+(node as any).hash = 'c8788d1b5f0d2b912a3e5ffb6ee70f44';
 export default node;
