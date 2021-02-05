@@ -65,9 +65,6 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                         isAdmin
                         isOwner
                         currentUserCanEdit
-                        department {
-                          name
-                        }
                       }
                     }
                   }
@@ -90,10 +87,6 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         assert response_user_profile["firstName"] == self.profiles[0].user.first_name
         assert response_user_profile["lastName"] == self.profiles[0].user.last_name
         assert response_user_profile["title"] == self.profiles[0].title
-        assert (
-            response_user_profile["department"]["name"]
-            == self.profiles[0].department.name
-        )
         assert response_owner_profile["isCurrentUser"] is False
         assert response_owner_profile["isAdmin"] is True
         assert response_owner_profile["isOwner"] is True

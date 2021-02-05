@@ -24,7 +24,6 @@ class Organization(models.Model):
         first_name: str,
         last_name: str,
         title: str = None,
-        department: Department = None,
     ):
 
         user = User.objects.create(
@@ -39,18 +38,10 @@ class Organization(models.Model):
             user=user,
             organization=self,
             title=title,
-            department=department,
         )
         profile.save()
 
         return profile
-
-
-class Department(models.Model):
-    name = models.CharField(max_length=100)
-    organization = models.ForeignKey(
-        Organization, related_name="departments", on_delete=models.CASCADE
-    )
 
 
 class Profile(models.Model):
@@ -59,13 +50,6 @@ class Profile(models.Model):
         Organization, related_name="profiles", on_delete=models.CASCADE
     )
     title = models.CharField(max_length=100, blank=True, null=True)
-    department = models.ForeignKey(
-        Department,
-        related_name="profiles",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
     is_admin = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
 

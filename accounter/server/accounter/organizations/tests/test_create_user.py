@@ -2,11 +2,10 @@ import json
 
 from django.contrib.auth import get_user_model
 from graphene_django.utils.testing import GraphQLTestCase
-from graphql_relay.node.node import from_global_id, to_global_id
+from graphql_relay.node.node import from_global_id
 from model_bakery import baker
 
 from ..models import Profile
-from ..schemas import DepartmentNode
 
 DEFAULT_PROFILE_IMAGE = (
     "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
@@ -58,7 +57,6 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
             $firstName: String!
             $lastName: String!
             $title: String!
-            $department: ID
           ) {
             createUser(
               input: {
@@ -66,7 +64,6 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                 firstName: $firstName
                 lastName: $lastName
                 title: $title
-                department: $department
               }
             ) {
               profile {
@@ -76,9 +73,6 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                 lastName
                 title
                 image
-                department {
-                  name
-                }
               }
             }
           }
@@ -89,9 +83,6 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                 "firstName": first_name,
                 "lastName": last_name,
                 "title": title,
-                "department": to_global_id(
-                    DepartmentNode._meta.name, self.admin.profile.department.pk
-                ),
             },
         )
         self.assertResponseNoErrors(response)
@@ -105,11 +96,6 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
         assert profile.user.email == returned_profile["email"] == email
         assert profile.title == returned_profile["title"] == title
         assert returned_profile["image"] == DEFAULT_PROFILE_IMAGE
-        assert (
-            profile.department.name
-            == returned_profile["department"]["name"]
-            == self.admin.profile.department.name
-        )
 
     def test_create_user_without_optional_fields(self):
         self.client.force_login(self.admin)
@@ -133,9 +119,6 @@ class OrganizationCreateProfileTestCase(GraphQLTestCase):
                 firstName
                 lastName
                 title
-                department {
-                  name
-                }
               }
             }
           }

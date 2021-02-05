@@ -10,7 +10,6 @@ export type UserFormUpdateMutationVariables = {
     firstName?: string | null;
     lastName?: string | null;
     title?: string | null;
-    department?: string | null;
 };
 export type UserFormUpdateMutationResponse = {
     readonly updateUser: {
@@ -34,9 +33,8 @@ mutation UserFormUpdateMutation(
   $firstName: String
   $lastName: String
   $title: String
-  $department: ID
 ) {
-  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {
+  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title}) {
     profile {
       id
       ...Content_profile
@@ -73,10 +71,6 @@ fragment DescriptionList_profile on ProfileNode {
   lastName
   email
   title
-  department {
-    name
-    id
-  }
 }
 
 fragment EditUser_profile on ProfileNode {
@@ -100,9 +94,6 @@ fragment UserForm_profile on ProfileNode {
   lastName
   email
   title
-  department {
-    id
-  }
 }
 */
 
@@ -110,41 +101,31 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "department"
+  "name": "email"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "email"
+  "name": "firstName"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "firstName"
+  "name": "id"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "id"
+  "name": "lastName"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "lastName"
-},
-v5 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "title"
 },
-v6 = [
+v5 = [
   {
     "fields": [
-      {
-        "kind": "Variable",
-        "name": "department",
-        "variableName": "department"
-      },
       {
         "kind": "Variable",
         "name": "email",
@@ -175,14 +156,14 @@ v6 = [
     "name": "input"
   }
 ],
-v7 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -196,8 +177,7 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/),
-      (v5/*: any*/)
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -205,7 +185,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v6/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
         "name": "updateUser",
@@ -219,7 +199,7 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
-              (v7/*: any*/),
+              (v6/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -238,19 +218,18 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v3/*: any*/),
-      (v1/*: any*/),
       (v2/*: any*/),
-      (v4/*: any*/),
-      (v5/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Operation",
     "name": "UserFormUpdateMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v6/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
         "name": "updateUser",
@@ -264,7 +243,7 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
-              (v7/*: any*/),
+              (v6/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -331,25 +310,12 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "DepartmentNode",
-                "kind": "LinkedField",
-                "name": "department",
-                "plural": false,
-                "selections": [
-                  (v8/*: any*/),
-                  (v7/*: any*/)
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
                 "concreteType": "AccountNode",
                 "kind": "LinkedField",
                 "name": "accounts",
                 "plural": true,
                 "selections": [
-                  (v7/*: any*/),
+                  (v6/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -358,7 +324,7 @@ return {
                     "name": "integration",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -367,7 +333,7 @@ return {
                         "name": "service",
                         "plural": false,
                         "selections": [
-                          (v8/*: any*/),
+                          (v7/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -378,7 +344,7 @@ return {
                         ],
                         "storageKey": null
                       },
-                      (v7/*: any*/)
+                      (v6/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -415,14 +381,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "22eb4d1da553faadc0c38f073b36c8c8",
+    "cacheID": "bfd52247804cf49310e0d97496a5bb96",
     "id": null,
     "metadata": {},
     "name": "UserFormUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n  $department: ID\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, department: $department}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n  department {\n    name\n    id\n  }\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n  department {\n    id\n  }\n}\n"
+    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
   }
 };
 })();
-(node as any).hash = '7e6fceb6168dc86586051a04466e3bec';
+(node as any).hash = '280539a40063f89cd8e54213cde9397b';
 export default node;

@@ -31,9 +31,6 @@ const DescriptionList = ({ profile }: Props) => {
       <Description term="Last name">{profile.lastName}</Description>
       <Description term="Email">{profile.email}</Description>
       <Description term="Title">{profile.title ?? "-"}</Description>
-      <Description term="Team">
-        {!profile.department ? "-" : profile.department.name}
-      </Description>
     </dl>
   );
 };
@@ -45,9 +42,6 @@ export default createFragmentContainer(DescriptionList, {
       lastName
       email
       title
-      department {
-        name
-      }
     }
   `,
 });

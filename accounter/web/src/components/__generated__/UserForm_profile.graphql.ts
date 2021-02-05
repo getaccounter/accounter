@@ -10,9 +10,6 @@ export type UserForm_profile = {
     readonly lastName: string | null;
     readonly email: string;
     readonly title: string | null;
-    readonly department: {
-        readonly id: string;
-    } | null;
     readonly " $refType": "UserForm_profile";
 };
 export type UserForm_profile$data = UserForm_profile;
@@ -23,21 +20,19 @@ export type UserForm_profile$key = {
 
 
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "UserForm_profile",
   "selections": [
-    (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -65,23 +60,10 @@ return {
       "kind": "ScalarField",
       "name": "title",
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "DepartmentNode",
-      "kind": "LinkedField",
-      "name": "department",
-      "plural": false,
-      "selections": [
-        (v0/*: any*/)
-      ],
-      "storageKey": null
     }
   ],
   "type": "ProfileNode",
   "abstractKey": null
 };
-})();
-(node as any).hash = '0b8146345ac02e14368406fb46f6bc75';
+(node as any).hash = '5287eeb63c32b0ea8655338779b1c8e5';
 export default node;
