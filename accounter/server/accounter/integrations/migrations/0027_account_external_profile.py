@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integrations', '0026_auto_20210203_2104'),
+        ("integrations", "0026_auto_20210203_2104"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='account',
-            name='external_profile',
-            field=models.URLField(default='https://app.accounter.io'),
+            model_name="account",
+            name="external_profile",
+            field=models.URLField(default="https://app.accounter.io"),
             preserve_default=False,
         ),
     ]

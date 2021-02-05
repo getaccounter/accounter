@@ -102,28 +102,8 @@ class Integration(models.Model):
             image_small=response["image"]["small"],
             image_big=response["image"]["big"],
             role=response["role"],
+            external_profile=response["externalProfile"],
         )
-        return account
-
-    def check_for_existing_account(self, profile):
-        response = requests.get(
-            settings.CONNECTOR_URL + "/slack/accounts/getByEmail",
-            params={"token": self.token, "email": profile.user.email},
-        )
-        payload = response.json()
-        account = None
-        if not payload["found"]:
-            return account
-
-        account_data = payload["account"]
-        try:
-            account = Account.objects.get(
-                pk=account_data["id"], profile__organization=self.organization
-            )
-            account.update_from_response(account_data)
-        except Account.DoesNotExist:
-            account = self.create_account_from_response(profile, account_data)
-
         return account
 
     def refresh(self, force=False):
