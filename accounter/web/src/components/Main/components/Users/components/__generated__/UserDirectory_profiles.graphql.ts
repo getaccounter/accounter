@@ -9,7 +9,9 @@ export type UserDirectory_profiles = {
     readonly edges: ReadonlyArray<{
         readonly node: {
             readonly id: string;
-            readonly lastName: string;
+            readonly lastName: string | null;
+            readonly firstName: string | null;
+            readonly email: string;
             readonly isOffboarded: boolean;
             readonly " $fragmentRefs": FragmentRefs<"User_profile">;
         } | null;
@@ -71,6 +73,20 @@ const node: ReaderFragment = {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
+              "name": "firstName",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "email",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "isOffboarded",
               "storageKey": null
             },
@@ -89,5 +105,5 @@ const node: ReaderFragment = {
   "type": "ProfileNodeConnection",
   "abstractKey": null
 };
-(node as any).hash = 'e9a10e96c2f3428b00a1b8e601858a5b';
+(node as any).hash = '1f2746dab82bb989d135dd28b7c272c4';
 export default node;

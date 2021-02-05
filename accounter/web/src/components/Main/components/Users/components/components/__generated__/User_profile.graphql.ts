@@ -7,8 +7,8 @@ import { FragmentRefs } from "relay-runtime";
 export type User_profile = {
     readonly id: string;
     readonly image: string;
-    readonly firstName: string;
-    readonly lastName: string;
+    readonly firstName: string | null;
+    readonly lastName: string | null;
     readonly title: string | null;
     readonly isAdmin: boolean;
     readonly isOwner: boolean;

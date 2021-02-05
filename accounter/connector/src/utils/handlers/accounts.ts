@@ -5,11 +5,13 @@ type Role = "USER" | "ADMIN" | "OWNER"
 
 export type Account = {
   id: string;
+  firstName: string,
+  lastName: string,
   email: string;
   username: string;
   image: {
-    small?: string;
-    big?: string;
+    small: string;
+    big: string;
   };
   role: Role;
   externalProfile: string

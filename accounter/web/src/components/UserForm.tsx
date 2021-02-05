@@ -118,10 +118,10 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
   const history = useHistory();
   const [emailInput, setEmailInput] = useState(isUpdate ? profile!.email : "");
   const [firstNameInput, setFirstNameInput] = useState(
-    isUpdate ? profile!.firstName : ""
+    isUpdate && profile!.firstName ? profile!.firstName : ""
   );
   const [lastNameInput, setLastNameInput] = useState(
-    isUpdate ? profile!.lastName : ""
+    isUpdate && profile!.lastName ? profile!.lastName : ""
   );
   const [titleInput, setTitleInput] = useState(
     isUpdate && profile!.title ? profile!.title : ""

@@ -333,6 +333,80 @@ class IntegrationTestCase(GraphQLTestCase):
         auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
     )
     @requests_mock.Mocker()
+    def test_get_integrations_slack_creates_profiles_if_email_does_not_match(
+        self, mock_request
+    ):
+        token = "some_token"
+        image_small = fake.image_url()
+        image_big = fake.image_url()
+        first_name = fake.first_name()
+        last_name = fake.last_name()
+        username = fake.user_name()
+        email = fake.email()
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
+            json=[
+                {
+                    "id": "someid",
+                    "firstName": first_name,
+                    "lastName": last_name,
+                    "username": username,
+                    "email": email,
+                    "image": {"small": image_small, "big": image_big},
+                    "role": "USER",
+                }
+            ],
+        )
+        slack_integration = Integration.objects.create(
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            token=token,
+        )
+        slack_integration.save()
+        self.client.force_login(self.admin)
+        response = self.query(
+            """
+            query {
+                integrations {
+                    accounts {
+                        username
+                        email
+                        imageSmall
+                        imageBig
+                        profile {
+                            firstName
+                            lastName
+                        }
+                    }
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        accounts = content["data"]["integrations"][0]["accounts"]
+        new_account = Account.objects.get(email=email)
+        assert len(accounts) == 1
+        assert accounts[0]["username"] == new_account.username == username
+        assert accounts[0]["email"] == new_account.email == email
+        assert accounts[0]["imageSmall"] == new_account.image_small == image_small
+        assert accounts[0]["imageBig"] == new_account.image_big == image_big
+        assert (
+            new_account.profile.user.first_name
+            == accounts[0]["profile"]["firstName"]
+            == first_name
+        )
+        assert (
+            new_account.profile.user.last_name
+            == accounts[0]["profile"]["lastName"]
+            == last_name
+        )
+
+    @freeze_time(
+        auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
+    )
+    @requests_mock.Mocker()
     def test_get_integrations_slack_updates_existing_accounts(self, mock_request):
         token = "some_token"
         integration_id = fake.uuid4()
@@ -341,11 +415,15 @@ class IntegrationTestCase(GraphQLTestCase):
         new_big_image = fake.image_url()
         new_username = fake.user_name()
         external_profile = fake.url()
+        first_name = fake.first_name()
+        last_name = fake.last_name()
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
             json=[
                 {
                     "id": integration_id,
+                    "firstName": first_name,
+                    "lastName": last_name,
                     "username": new_username,
                     "email": new_email,
                     "image": {"small": new_small_image, "big": new_big_image},

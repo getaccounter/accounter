@@ -83,8 +83,8 @@ class ProfileNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
 
     email = graphene.String(required=True)
-    first_name = graphene.String(required=True)
-    last_name = graphene.String(required=True)
+    first_name = graphene.String()
+    last_name = graphene.String()
     is_current_user = graphene.Boolean(required=True)
     current_user_can_edit = graphene.Boolean(required=True)
     accounts = graphene.List(graphene.NonNull(AccountNode), required=True)

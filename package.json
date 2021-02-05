@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "@types/humanparser": "1.1.1",
+    "humanparser": "2.6.0"
+  }
+}

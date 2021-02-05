@@ -6,6 +6,7 @@ import {
 } from "../../utils/handlers/accounts";
 import { WebClient, WebAPICallResult, ErrorCode } from "@slack/web-api";
 import { SlackUser } from "../types";
+import human from "humanparser"
 
 const client = new WebClient();
 
@@ -13,8 +14,11 @@ const convertSlackUserToReturnType = (
   user: SlackUser,
   workspaceUrl: string
 ): Account => {
+  const {firstName, lastName} = human.parseName(user.profile.real_name)
   return {
     id: user.id,
+    firstName: user.profile.first_name ?? firstName,
+    lastName: user.profile.last_name ?? lastName,
     email: user.profile.email,
     username: user.profile.display_name,
     image: {
