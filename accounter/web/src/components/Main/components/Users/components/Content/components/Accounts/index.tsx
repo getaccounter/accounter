@@ -27,8 +27,8 @@ const Accounts = ({ profile }: Props) => {
             label: "Role",
           },
           {
-            value: "edit",
-            label: "Edit",
+            value: "view",
+            label: "View",
             hidden: true,
           },
         ]}
@@ -64,10 +64,10 @@ const Accounts = ({ profile }: Props) => {
               {account.role}
             </td>
           ),
-          edit: (
+          view: (
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <a href="#asd" className="text-indigo-600 hover:text-indigo-900">
-                Edit
+              <a href={account.externalProfile} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-900">
+                View
               </a>
             </td>
           ),
@@ -90,6 +90,7 @@ export default createFragmentContainer(Accounts, {
         }
         username
         role
+        externalProfile
       }
     }
   `,

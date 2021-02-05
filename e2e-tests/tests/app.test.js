@@ -80,7 +80,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByRole("link", { name: "Accounts" }).click();
             cy.findByRole("table", { name: "Accounts" }).within(() => {
               cy.findByRole("row", {
-                name: `SLACK ${slackWorkspace.name} SLACK ${user.slack.displayName} USER Edit`,
+                name: `SLACK ${slackWorkspace.name} SLACK ${user.slack.displayName} USER View`,
               });
             });
           });
