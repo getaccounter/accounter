@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Redirect, useLocation } from "react-router-dom";
+import Loading from "../Loading";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -35,7 +36,6 @@ export const LOGIN_MUTATION = gql`
 
 export default function OAuthSlackCallback() {
   const query = useQuery();
-  const [errorMessage, setErrorMessage] = useState<string>();
   const [handleCallback, { data, error }] = useMutation<
     CallbackResponse,
     CallbackParameters
@@ -47,7 +47,7 @@ export default function OAuthSlackCallback() {
 
   useEffect(() => {
     if (!code || !state || error?.message) {
-      setErrorMessage(error?.message || "Something went wrong");
+
     } else {
       handleCallback({ variables: { code, state } });
     }
@@ -62,11 +62,6 @@ export default function OAuthSlackCallback() {
       }}
     />
   ) : (
-    <div>
-      TODO CHANGE THIS PAGE
-      <div>code: {query.get("code")}</div>
-      <div>state: {query.get("state")}</div>
-      <div>error: {errorMessage}</div>
-    </div>
+    <Loading />
   );
 }
