@@ -7,7 +7,7 @@ import { FragmentRefs } from "relay-runtime";
 export type MainQueryVariables = {};
 export type MainQueryResponse = {
     readonly currentUser: {
-        readonly " $fragmentRefs": FragmentRefs<"Sidebar_profile" | "AddUsers_currentUser">;
+        readonly " $fragmentRefs": FragmentRefs<"Sidebar_profile">;
     };
 };
 export type MainQuery = {
@@ -21,13 +21,8 @@ export type MainQuery = {
 query MainQuery {
   currentUser {
     ...Sidebar_profile
-    ...AddUsers_currentUser
     id
   }
-}
-
-fragment AddUsers_currentUser on ProfileNode {
-  ...UserForm_currentUser
 }
 
 fragment Dropdown_profile on ProfileNode {
@@ -45,23 +40,9 @@ fragment Profile_profile on ProfileNode {
 fragment Sidebar_profile on ProfileNode {
   ...Profile_profile
 }
-
-fragment UserForm_currentUser on ProfileNode {
-  organization {
-    id
-  }
-}
 */
 
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
-return {
+const node: ConcreteRequest = {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -80,11 +61,6 @@ return {
             "args": null,
             "kind": "FragmentSpread",
             "name": "Sidebar_profile"
-          },
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "AddUsers_currentUser"
           }
         ],
         "storageKey": null
@@ -107,7 +83,13 @@ return {
         "name": "currentUser",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -135,18 +117,6 @@ return {
             "kind": "ScalarField",
             "name": "image",
             "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "OrganizationNode",
-            "kind": "LinkedField",
-            "name": "organization",
-            "plural": false,
-            "selections": [
-              (v0/*: any*/)
-            ],
-            "storageKey": null
           }
         ],
         "storageKey": null
@@ -154,14 +124,13 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0fdcf35b4e8281feb8d714898129bb19",
+    "cacheID": "9ae992e0f5e452ba41a3b5f3c58f4fed",
     "id": null,
     "metadata": {},
     "name": "MainQuery",
     "operationKind": "query",
-    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    ...AddUsers_currentUser\n    id\n  }\n}\n\nfragment AddUsers_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment Dropdown_profile on ProfileNode {\n  id\n}\n\nfragment Profile_profile on ProfileNode {\n  ...Dropdown_profile\n  firstName\n  lastName\n  title\n  image\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n  }\n}\n"
+    "text": "query MainQuery {\n  currentUser {\n    ...Sidebar_profile\n    id\n  }\n}\n\nfragment Dropdown_profile on ProfileNode {\n  id\n}\n\nfragment Profile_profile on ProfileNode {\n  ...Dropdown_profile\n  firstName\n  lastName\n  title\n  image\n}\n\nfragment Sidebar_profile on ProfileNode {\n  ...Profile_profile\n}\n"
   }
 };
-})();
-(node as any).hash = '80d047e1a6583cdb315a3d4c5c842f70';
+(node as any).hash = 'dfb3b18599f4d6581922b466f3bdfb59';
 export default node;
