@@ -88,11 +88,8 @@ sizes.forEach(({ name, viewport }) => {
       });
     });
     describe("Users", () => {
-      it("Add, edit", () => {
+      it("edit", () => {
         const user = generateUser();
-        const userToCreate = generateUser({
-          organization: user.organization,
-        });
         const newUserData = generateUser({
           organization: user.organization,
         });
@@ -102,40 +99,30 @@ sizes.forEach(({ name, viewport }) => {
         cy.register(user);
         cy.login(user.email, user.password);
 
-        cy.navigateTo("Add Users", name);
-        cy.createUser(userToCreate);
 
-        if (name !== FULLSCREEN) {
-          cy.findByRole("main").within(() => {
-            cy.findByRole("link", { name: "Users" }).click();
-          });
-        }
 
-        cy.findByRole("navigation", { name: "Directory" }).within(() => {
-          cy.findByRole("link", {
-            name: `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
-          }).should("exist");
-        });
+        cy.navigateTo("Users", name);
 
-        cy.getUserFromDirectory({ user: userToCreate }, (userRow) =>
+
+        cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
           userRow.click()
         );
 
         cy.findByRole("main").within(() => {
           cy.findByRole("heading", {
-            name: `${userToCreate.firstName} ${userToCreate.lastName}`,
+            name: `${user.firstName} ${user.lastName}`,
           }).should("exist");
         });
 
         cy.findByRole("main").within(() => {
           cy.findByRole("heading", {
-            name: `${userToCreate.firstName} ${userToCreate.lastName}`,
+            name: `${user.firstName} ${user.lastName}`,
           }).should("exist");
 
           cy.findByRole("article").within(() => {
-            cy.findByText(userToCreate.firstName).should("exist");
-            cy.findByText(userToCreate.lastName).should("exist");
-            cy.findByText(userToCreate.email).should("exist");
+            cy.findByText(user.firstName).should("exist");
+            cy.findByText(user.lastName).should("exist");
+            cy.findByText(user.email).should("exist");
           });
 
           cy.findByRole("link", { name: "Edit" }).click();
@@ -193,22 +180,38 @@ sizes.forEach(({ name, viewport }) => {
           // only broken up in different tests to be able to access different domains
           // See this: https://github.com/cypress-io/cypress/issues/944
           it("Part 1", () => {
+            const slackWorkspace = generateWorkspaceData();
+            const token = faker.random.uuid();
+            const oauthCode = faker.random.uuid();
+            mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
+            mockSlackAuthTest({ user, workspace: slackWorkspace, token });
+            mockSlackUsersList({
+              token,
+              workspace: slackWorkspace,
+              users: [user, userToCreate],
+            });
+            
             cy.visit("/");
             cy.findByRole("link", { name: "register" }).click();
             cy.register(user);
             cy.login(user.email, user.password);
 
-            cy.navigateTo("Add Users");
-            cy.createUser(userToCreate);
-
+            cy.navigateTo("Add Apps", name);
+  
+            cy.findByRole("link", { name: "Add SLACK" }).click();
+  
+            cy.mockSlackOauth(oauthCode);
+  
             cy.findByRole("navigation", { name: "Directory" }).within(() => {
               cy.findByRole("link", {
-                name: `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
-              }).should("exist");
+                name: `${slackWorkspace.name} SLACK`,
+              }).click();
             });
 
+            cy.navigateTo("Users");
+
             cy.old_getUserFromDirectory(
-              `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
+              `${userToCreate.firstName} ${userToCreate.lastName}`,
               (user) => user.click()
             );
 
@@ -256,7 +259,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.login(userToCreate.email, userToCreate.password);
 
             cy.findByRole("button", {
-              name: `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
+              name: `${userToCreate.firstName} ${userToCreate.lastName}`,
             }).click();
             cy.findByRole("menuitem", { name: "Logout" }).click();
 
@@ -269,7 +272,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.navigateTo("Users");
 
             cy.old_getUserFromDirectory(
-              `${userToCreate.firstName} ${userToCreate.lastName} ${userToCreate.title}`,
+              `${userToCreate.firstName} ${userToCreate.lastName}`,
               (user) => user.click()
             );
 

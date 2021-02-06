@@ -5,13 +5,11 @@ import {
   UserGroup,
   ViewGrid,
   ViewGridAdd,
-  UserAdd,
 } from "../icons/outline";
 import { Link, Redirect, Route, Switch, useLocation } from "react-router-dom";
 import Integrations from "./components/Integrations";
 import Users from "./components/Users";
 import Services from "./components/Services";
-import AddUsers from "./components/AddUsers";
 import queryString from "query-string";
 import { QueryRenderer } from "react-relay";
 import Loading from "../Loading";
@@ -61,7 +59,6 @@ export default function Main() {
         query MainQuery {
           currentUser {
             ...Sidebar_profile
-            ...AddUsers_currentUser
           }
         }
       `}
@@ -91,14 +88,6 @@ export default function Main() {
         ];
 
         const extraPages = [
-          {
-            tab: {
-              label: "Add Users",
-              path: "/add-users",
-              Icon: UserAdd,
-            },
-            content: <AddUsers currentUser={props.currentUser} />,
-          },
           {
             tab: {
               label: "Add Apps",
