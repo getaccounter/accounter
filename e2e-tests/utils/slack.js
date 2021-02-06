@@ -171,13 +171,20 @@ export const mockSlackOauthToken = ({ oauthCode, workspace, token } = {}) => {
       httpResponse: {
         body: {
           ok: true,
+          app_id: "dont-use-me-mock",
           authed_user: {
-            access_token: token,
+            id: "dont-use-me-mock",
           },
+          scope: "users:read,users:read.email",
+          token_type: "bot",
+          access_token: token,
+          bot_user_id: "dont-use-me-mock",
           team: {
             id: workspace.teamId,
             name: workspace.name,
           },
+          enterprise: null,
+          is_enterprise_install: false,
         },
       },
       times: {

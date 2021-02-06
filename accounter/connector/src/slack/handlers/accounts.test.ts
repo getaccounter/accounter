@@ -158,62 +158,128 @@ const createSlackUser = (account: Account) => {
 };
 
 describe("accounts", () => {
-  testAccountsGetById("/slack", async ({ params }, { found, account }) => {
-    const { token, id } = params;
-    nock("https://slack.com")
-      .post("/api/users.info", `token=${token}&user=${id}`)
-      .once()
-      .reply(
-        200,
-        found
-          ? {
-              ok: true,
-              cache_ts: 1611515141,
-              response_metadata: { next_cursor: "" },
-              user: createSlackUser(account!),
-            }
-          : {
-              ok: false,
-              error: "users_not_found",
-            }
-      )
-      .post("/api/auth.test", `token=${token}`)
-      .once()
-      .reply(200, {
-        url: faker.internet.url(),
-        ok: true,
-        team: faker.company.companyName(),
-        user: faker.internet.userName(),
-        team_id: faker.random.uuid(),
-        user_id: faker.random.uuid(),
-      });
+  testAccountsGetById("/slack", {
+    found: async ({ params }, { account }) => {
+      const { token, id } = params;
+      nock("https://slack.com")
+        .post("/api/users.info", `token=${token}&user=${id}`)
+        .once()
+        .reply(
+          200,
+          {
+            ok: true,
+            cache_ts: 1611515141,
+            response_metadata: { next_cursor: "" },
+            user: createSlackUser(account!),
+          }
+        )
+        .post("/api/auth.test", `token=${token}`)
+        .once()
+        .reply(200, {
+          url: faker.internet.url(),
+          ok: true,
+          team: faker.company.companyName(),
+          user: faker.internet.userName(),
+          team_id: faker.random.uuid(),
+          user_id: faker.random.uuid(),
+        });
+    },
+    notFound: async ({ params }, { account }) => {
+      const { token, id } = params;
+      nock("https://slack.com")
+        .post("/api/users.info", `token=${token}&user=${id}`)
+        .once()
+        .reply(
+          200,
+          {
+            ok: false,
+            error: "users_not_found",
+          }
+        )
+        .post("/api/auth.test", `token=${token}`)
+        .once()
+        .reply(200, {
+          url: faker.internet.url(),
+          ok: true,
+          team: faker.company.companyName(),
+          user: faker.internet.userName(),
+          team_id: faker.random.uuid(),
+          user_id: faker.random.uuid(),
+        });
+    },
+    invalidToken: async ({ params }) => {
+      const { token, id } = params;
+      nock("https://slack.com")
+        .post("/api/users.info", `token=${token}&user=${id}`)
+        .once()
+        .reply(
+          200,
+          {
+            ok: false,
+            error: "token_revoked",
+          }
+        )
+        .post("/api/auth.test", `token=${token}`)
+        .once()
+        .reply(200, {
+          url: faker.internet.url(),
+          ok: true,
+          team: faker.company.companyName(),
+          user: faker.internet.userName(),
+          team_id: faker.random.uuid(),
+          user_id: faker.random.uuid(),
+        });
+    },
   });
 
-  testList("/slack", async ({ params }, expectedReturnValue) => {
-    const { token } = params;
-    const members = [
-      ...expectedReturnValue.map(createSlackUser),
-      createSlackbotUser(),
-      createSlackIntegrationBotUser(),
-    ];
-    nock("https://slack.com")
-      .post("/api/users.list", `token=${token}`)
-      .once()
-      .reply(200, {
-        ok: true,
-        cache_ts: 1611515141,
-        response_metadata: { next_cursor: "" },
-        members,
-      })
-      .post("/api/auth.test", `token=${token}`)
-      .once()
-      .reply(200, {
-        url: faker.internet.url(),
-        ok: true,
-        team: faker.company.companyName(),
-        user: faker.internet.userName(),
-        team_id: faker.random.uuid(),
-        user_id: faker.random.uuid(),
-      });
+  testList("/slack", {
+    success: async ({ params }, expectedReturnValue) => {
+      const { token } = params;
+      const members = [
+        ...expectedReturnValue.map(createSlackUser),
+        createSlackbotUser(),
+        createSlackIntegrationBotUser(),
+      ];
+      nock("https://slack.com")
+        .post("/api/users.list", `token=${token}`)
+        .once()
+        .reply(200, {
+          ok: true,
+          cache_ts: 1611515141,
+          response_metadata: { next_cursor: "" },
+          members,
+        })
+        .post("/api/auth.test", `token=${token}`)
+        .once()
+        .reply(200, {
+          url: faker.internet.url(),
+          ok: true,
+          team: faker.company.companyName(),
+          user: faker.internet.userName(),
+          team_id: faker.random.uuid(),
+          user_id: faker.random.uuid(),
+        });
+    },
+    invalidToken: async ({ params }) => {
+      const { token } = params;
+      nock("https://slack.com")
+        .post("/api/users.list", `token=${token}`)
+        .once()
+        .reply(200,
+          {
+            ok: false,
+            error: "token_revoked",
+          })
+        .post("/api/auth.test", `token=${token}`)
+        .once()
+        .reply(200, {
+          url: faker.internet.url(),
+          ok: true,
+          team: faker.company.companyName(),
+          user: faker.internet.userName(),
+          team_id: faker.random.uuid(),
+          user_id: faker.random.uuid(),
+        });
+    },
   });
 });

@@ -24,12 +24,25 @@ const generateAccount = (overwrite = {}): Account => ({
 
 export const testAccountsGetById = async (
   prefix: string,
-  setup: (
-    data: {
-      params: GetByIdHandlerParams;
-    },
-    expected: GetAccountResponse
-  ) => Promise<void>
+  setup: {
+    found: (
+      data: {
+        params: GetByIdHandlerParams;
+      },
+      expected: GetAccountResponse
+    ) => Promise<void>,
+    notFound: (
+      data: {
+        params: GetByIdHandlerParams;
+      },
+      expected: GetAccountResponse
+    ) => Promise<void>,
+    invalidToken: (
+      data: {
+        params: GetByIdHandlerParams;
+      }
+    ) => Promise<void>
+  }
 ) => {
   describe("getById", () => {
     it("found", async () => {
@@ -40,7 +53,7 @@ export const testAccountsGetById = async (
         found: true,
         account: generateAccount({ id }),
       };
-      await setup({ params: { token, id } }, expected);
+      await setup.found({ params: { token, id } }, expected);
       const response = await app.inject({
         method: "GET",
         url: `${prefix}/accounts/getById`,
@@ -48,23 +61,6 @@ export const testAccountsGetById = async (
       });
       expect(response.json()).toEqual(expected);
     });
-    it("not found", async () => {
-      const app = server();
-      const expected: GetAccountResponse = {
-        found: false,
-        account: null,
-      };
-      const token = faker.random.uuid();
-      const id = faker.random.uuid();
-      await setup({ params: { token, id } }, expected);
-      const response = await app.inject({
-        method: "GET",
-        url: `${prefix}/accounts/getById`,
-        query: { token: encrypt(token), id },
-      });
-      expect(response.json()).toEqual(expected);
-    });
-
     describe("roles", () => {
       it.each([["USER"], ["ADMIN"], ["OWNER"]])("%s", async (role) => {
         const app = server();
@@ -74,7 +70,7 @@ export const testAccountsGetById = async (
         };
         const token = faker.random.uuid();
         const id = faker.random.uuid();
-        await setup({ params: { token, id } }, expected);
+        await setup.found({ params: { token, id } }, expected);
         const response = await app.inject({
           method: "GET",
           url: `${prefix}/accounts/getById`,
@@ -83,28 +79,76 @@ export const testAccountsGetById = async (
         expect(response.json()).toEqual(expected);
       });
     });
+    it("not found", async () => {
+      const app = server();
+      const expected: GetAccountResponse = {
+        found: false,
+        account: null,
+      };
+      const token = faker.random.uuid();
+      const id = faker.random.uuid();
+      await setup.notFound({ params: { token, id } }, expected);
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/getById`,
+        query: { token: encrypt(token), id },
+      });
+      expect(response.json()).toEqual(expected);
+    });
+    it("invalid token", async () => {
+      const app = server();
+      const token = faker.random.uuid();
+      const id = faker.random.uuid();
+      await setup.invalidToken({ params: { token, id } });
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/getById`,
+        query: { token: encrypt(token), id },
+      });
+      expect(response.statusCode).toEqual(401);
+    });
   });
 };
 
 export const testList = async (
   prefix: string,
-  setup: (
-    data: {
-      params: { token: string };
-    },
-    expected: Array<Account>
-  ) => Promise<void>
+  setup: {
+    success: (
+      data: {
+        params: { token: string };
+      },
+      expected: Array<Account>
+    ) => Promise<void>,
+    invalidToken: (
+      data: {
+        params: { token: string };
+      }
+    ) => Promise<void>
+  }
 ) => {
-  it("list", async () => {
-    const app = server();
-    const expected = [generateAccount(), generateAccount(), generateAccount()];
-    const token = faker.random.uuid();
-    await setup({ params: { token } }, expected);
-    const response = await app.inject({
-      method: "GET",
-      url: `${prefix}/accounts/list`,
-      query: { token: encrypt(token) },
+  describe("list", () => {
+    it("success", async () => {
+      const app = server();
+      const expected = [generateAccount(), generateAccount(), generateAccount()];
+      const token = faker.random.uuid();
+      await setup.success({ params: { token } }, expected);
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/list`,
+        query: { token: encrypt(token) },
+      });
+      expect(response.json()).toEqual(expected);
     });
-    expect(response.json()).toEqual(expected);
-  });
+    it("invalid token", async () => {
+      const app = server();
+      const token = faker.random.uuid();
+      await setup.invalidToken({ params: { token } });
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/list`,
+        query: { token: encrypt(token) },
+      });
+      expect(response.statusCode).toEqual(401);
+    });
+  })
 };
