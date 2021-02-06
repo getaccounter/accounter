@@ -5,8 +5,7 @@ export const oauth = oauthHandler(async ({ params }, callback) => {
   const { redirectUri } = params;
   const url = await installer.generateInstallUrl({
     redirectUri,
-    scopes: [],
-    userScopes: ["users:read", "users:read.email"],
+    scopes: ["users:read", "users:read.email"],
   });
 
   callback({
@@ -22,7 +21,7 @@ export const oauthCallback = oauthCallbackHandler(
         callback({
           code: 200,
           body: {
-            token: installation.user.token!,
+            token: installation.bot!.token!,
             integrationId: installation.team!.id,
             integrationName: installation.team!.name!,
           },

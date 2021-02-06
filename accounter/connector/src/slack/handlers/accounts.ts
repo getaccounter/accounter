@@ -3,7 +3,7 @@ import {
   getByIdHandler,
   listHandler,
 } from "../../utils/handlers/accounts";
-import { WebClient, WebAPICallResult, ErrorCode } from "@slack/web-api";
+import { WebClient, WebAPICallResult } from "@slack/web-api";
 import { SlackUser } from "../types";
 import human from "humanparser"
 
@@ -13,7 +13,7 @@ const convertSlackUserToReturnType = (
   user: SlackUser,
   workspaceUrl: string
 ): Account => {
-  const {firstName, lastName} = human.parseName(user.profile.real_name)
+  const { firstName, lastName } = human.parseName(user.profile.real_name)
   return {
     id: user.id,
     firstName: user.profile.first_name ?? firstName,
@@ -45,19 +45,31 @@ export const list = listHandler(async ({ params }, callback) => {
     members: Array<SlackUser>;
   }
   const { token } = params;
-  const [{ members }, url] = await Promise.all([
-    client.users.list({ token }) as Promise<Response>,
-    getWorkspaceUrl(token),
-  ]);
-  const membersWithoutBots = members
-    .filter((m) => m.id !== "USLACKBOT")
-    .filter((m) => !m.is_bot);
 
-  callback({
-    code: 200,
-    body: membersWithoutBots.map((m) => convertSlackUserToReturnType(m, url)),
-  });
-});
+
+  try {
+    const [{ members }, url] = await Promise.all([
+      client.users.list({ token }) as Promise<Response>,
+      getWorkspaceUrl(token),
+    ]);
+    const membersWithoutBots = members
+      .filter((m) => m.id !== "USLACKBOT")
+      .filter((m) => !m.is_bot);
+
+    callback({
+      code: 200,
+      body: membersWithoutBots.map((m) => convertSlackUserToReturnType(m, url)),
+    });
+  } catch (error) {
+    if (error.data.error === "token_revoked") {
+      callback({
+        code: 401,
+      });
+    } else {
+      throw error;
+    }
+  }
+})
 
 export const getById = getByIdHandler(async ({ params }, callback) => {
   interface Response extends WebAPICallResult {
@@ -85,6 +97,10 @@ export const getById = getByIdHandler(async ({ params }, callback) => {
           found: false,
           account: null,
         },
+      });
+    } else if (error.data.error === "token_revoked") {
+      callback({
+        code: 401,
       });
     } else {
       throw error;
