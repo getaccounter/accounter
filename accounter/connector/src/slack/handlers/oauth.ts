@@ -24,6 +24,7 @@ export const oauthCallback = oauthCallbackHandler(
             token: installation.bot!.token!,
             integrationId: installation.team!.id,
             integrationName: installation.team!.name!,
+            managementUrl: `https://${installation.team!.name!}.slack.com/admin`
           },
         });
       },

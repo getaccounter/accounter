@@ -12,6 +12,7 @@
 
 ```bash
 pre-commit install
+pre-commit install --hook-type commit-msg
 ```
 
 ### Development
@@ -24,6 +25,7 @@ docker-compose up
 
 ```bash
 docker-compose exec web npm t
+docker-compose exec server ./manage.py test
 ```
 
 ### E2E tests
@@ -37,10 +39,4 @@ docker-compose run e2e
 ```bash
 docker-compose exec server flake8 accounter
 docker-compose exec web npm run lint
-```
-
-### typechecking
-
-```
-docker-compose exec web npm run typecheck
 ```

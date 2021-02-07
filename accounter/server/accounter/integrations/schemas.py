@@ -38,6 +38,7 @@ class HandleCallback(graphene.Mutation):
         )
         slack_integration.name = callback_result.name
         slack_integration.token = callback_result.token
+        slack_integration.management_url = callback_result.management_url
         slack_integration.save()
         return HandleCallback(status="success")
 
@@ -52,7 +53,7 @@ class IntegrationNode(DjangoObjectType):
     class Meta:
         interfaces = (relay.Node,)
         model = Integration
-        fields = ("id", "name", "accounts")
+        fields = ("id", "name", "accounts", "management_url")
 
 
 class AccountNode(DjangoObjectType):

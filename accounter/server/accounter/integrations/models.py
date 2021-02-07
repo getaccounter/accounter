@@ -16,11 +16,15 @@ class Service(models.Model):
         integration_id: str
         token: str
         name: str
+        management_url: str
 
-        def __init__(self, integration_id: str, token: str, name: str):
+        def __init__(
+            self, integration_id: str, token: str, name: str, management_url: str
+        ):
             self.integration_id = integration_id
             self.token = token
             self.name = name
+            self.management_url = management_url
 
     class Types(models.TextChoices):
         SLACK = "SLACK", "Slack"
@@ -54,6 +58,7 @@ class Service(models.Model):
             integration_id=payload["integrationId"],
             name=payload["integrationName"],
             token=payload["token"],
+            management_url=payload["managementUrl"],
         )
 
     @property
@@ -83,6 +88,7 @@ class Integration(models.Model):
         Service,
         on_delete=models.RESTRICT,
     )
+    management_url = models.URLField()
 
     @property
     def is_fresh(self):
