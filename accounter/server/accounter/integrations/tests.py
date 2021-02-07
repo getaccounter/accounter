@@ -84,6 +84,7 @@ class ServiceTestCase(GraphQLTestCase):
         token = "some token"
         integration_name = "myworkspace"
         integration_id = "abc"
+        management_url = fake.url()
         mock_request.get(
             settings.CONNECTOR_URL
             + f"/slack/oauth/handleCallback?code={code}&state={state}",
@@ -91,6 +92,7 @@ class ServiceTestCase(GraphQLTestCase):
                 "token": token,
                 "integrationName": integration_name,
                 "integrationId": integration_id,
+                "managementUrl": management_url,
             },
         )
         response = self.query(
@@ -115,6 +117,7 @@ class ServiceTestCase(GraphQLTestCase):
         assert slack_integration.first().token == token
         assert slack_integration.first().id == integration_id
         assert slack_integration.first().name == integration_name
+        assert slack_integration.first().management_url == management_url
 
     def test_handle_callback_requires_admin(self):
         self.client.force_login(self.non_admin_user)
@@ -155,6 +158,7 @@ class ServiceTestCase(GraphQLTestCase):
                 "token": original_token,
                 "integrationName": "someteam",
                 "integrationId": integration_id,
+                "managementUrl": fake.url(),
             },
         )
         # Calling endpoint twice
@@ -177,6 +181,7 @@ class ServiceTestCase(GraphQLTestCase):
         assert slack_integration.token == original_token
 
         updated_token = "updated token"
+        updated_management_url = fake.url()
         second_state = "some other state"
         mock_request.get(
             settings.CONNECTOR_URL + "/slack/oauth/handleCallback",
@@ -184,6 +189,7 @@ class ServiceTestCase(GraphQLTestCase):
                 "token": updated_token,
                 "integrationName": "someteam",
                 "integrationId": integration_id,
+                "managementUrl": updated_management_url,
             },
         )
         self.query(
@@ -203,6 +209,7 @@ class ServiceTestCase(GraphQLTestCase):
         assert Integration.objects.count() == 1
         slack_integration.refresh_from_db()
         assert slack_integration.token == updated_token
+        assert slack_integration.management_url == updated_management_url
 
 
 class IntegrationTestCase(GraphQLTestCase):

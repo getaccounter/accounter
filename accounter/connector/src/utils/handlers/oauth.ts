@@ -19,4 +19,5 @@ export const oauthCallbackHandler = makeHandler({
   token: string;
   integrationId: string;
   integrationName: string;
+  managementUrl: string;
 }>();
