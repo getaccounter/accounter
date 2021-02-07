@@ -15,6 +15,7 @@ export type Account = {
   };
   role: Role;
   externalProfile: string
+  isDisabled: boolean
 };
 
 export type GetAccountResponse = {

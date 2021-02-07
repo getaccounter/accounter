@@ -122,13 +122,14 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         auto_tick_seconds=Account.REFRESH_INTERVAL_SECONDS,
     )
     @requests_mock.Mocker()
-    def test_get_profiles_accounts_slack(self, mock_request):
+    def test_get_profiles_accounts(self, mock_request):
         image_small = fake.image_url()
         image_big = fake.image_url()
         token = fake.uuid4()
         account_id = fake.uuid4()
         external_profile = fake.url()
         role = "ADMIN"
+        is_disabled = False
         mock_request.get(
             settings.CONNECTOR_URL
             + f"/slack/accounts/getById?token={token}&id={account_id}",
@@ -141,6 +142,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                     "image": {"small": image_small, "big": image_big},
                     "role": role,
                     "externalProfile": external_profile,
+                    "isDisabled": is_disabled,
                 },
             },
         )
@@ -183,6 +185,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
                           email
                           role
                           externalProfile
+                          isDisabled
                         }
                       }
                     }
@@ -216,3 +219,4 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         assert updated_admin_account["imageBig"] == image_big
         assert updated_admin_account["role"] == role
         assert updated_admin_account["externalProfile"] == external_profile
+        assert updated_admin_account["isDisabled"] == is_disabled

@@ -3,6 +3,7 @@ import graphql from "babel-plugin-relay/macro";
 import { IntegrationAccountList_accounts } from "./__generated__/IntegrationAccountList_accounts.graphql";
 import React from "react";
 import Table from "../../../../../../../Table";
+import Badge from "../../../../../../../Badge";
 
 type Props = {
   accounts: IntegrationAccountList_accounts;
@@ -24,6 +25,10 @@ const IntegrationAccountList = ({ accounts }: Props) => {
         {
           value: "role",
           label: "Role",
+        },
+        {
+          value: "status",
+          label: "Status",
         },
         {
           value: "view",
@@ -65,6 +70,19 @@ const IntegrationAccountList = ({ accounts }: Props) => {
               {account.role}
             </td>
           ),
+          status: (
+            <td className="px-6 py-4 whitespace-nowrap">
+              {account.isDisabled ? (
+                <Badge color="gray">
+                  Disabled
+                </Badge>
+              ) : (
+                <Badge color="green">
+                  Active
+                </Badge>
+              )}
+            </td>
+          ),
           view: (
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <a href={account.externalProfile} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-900">
@@ -84,6 +102,7 @@ export default createFragmentContainer(IntegrationAccountList, {
     @relay(plural: true) {
       id
       imageSmall
+      isDisabled
       profile {
         firstName
         lastName

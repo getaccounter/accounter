@@ -23,7 +23,11 @@ const getComparerValue = (edge: NonNullable<ProfileEdge>) => {
 
 const UserDirectory = ({ profiles }: Props) => {
   const [searchString, setSearchString] = useState("");
-  const filteredProfiles = profiles.edges.filter((edge) => {
+  const [showDisabledUsers, setShowDisabledUsers] = useState(false);
+  
+  const filteredProfiles = profiles.edges
+  .filter((edge) => showDisabledUsers || edge!.node!.accounts.some(acc => !acc.isDisabled))
+  .filter((edge) => {
     const node = edge!.node!;
     const lowerCasedSearchString = searchString.toLocaleLowerCase();
     const lowerCasedFirstName = (node.firstName ?? "").toLowerCase();
@@ -69,6 +73,14 @@ const UserDirectory = ({ profiles }: Props) => {
     }, {});
   return (
     <Directory
+      filters={[
+        {
+          id: "disabled",
+          label: "Disabled",
+          value: showDisabledUsers,
+          onChange: (val) => setShowDisabledUsers(val),
+        },
+      ]}
       title="Users"
       subtitle={`${profiles.totalCount} users`}
       searchString={searchString}
@@ -97,6 +109,9 @@ export default createFragmentContainer(UserDirectory, {
           lastName
           firstName
           email
+          accounts {
+            isDisabled
+          }
           ...User_profile
         }
       }

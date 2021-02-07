@@ -19,6 +19,7 @@ const generateAccount = (overwrite = {}): Account => ({
   },
   role: "USER",
   externalProfile: expect.any(String),
+  isDisabled: false,
   ...overwrite,
 });
 
@@ -32,6 +33,12 @@ export const testAccountsGetById = async (
       expected: GetAccountResponse
     ) => Promise<void>,
     notFound: (
+      data: {
+        params: GetByIdHandlerParams;
+      },
+      expected: GetAccountResponse
+    ) => Promise<void>,
+    disabled: (
       data: {
         params: GetByIdHandlerParams;
       },
@@ -88,6 +95,22 @@ export const testAccountsGetById = async (
       const token = faker.random.uuid();
       const id = faker.random.uuid();
       await setup.notFound({ params: { token, id } }, expected);
+      const response = await app.inject({
+        method: "GET",
+        url: `${prefix}/accounts/getById`,
+        query: { token: encrypt(token), id },
+      });
+      expect(response.json()).toEqual(expected);
+    });
+    it("disabled", async () => {
+      const app = server();
+      const expected: GetAccountResponse = {
+        found: true,
+        account: generateAccount({ isDisabled: true }),
+      };
+      const token = faker.random.uuid();
+      const id = faker.random.uuid();
+      await setup.disabled({ params: { token, id } }, expected);
       const response = await app.inject({
         method: "GET",
         url: `${prefix}/accounts/getById`,

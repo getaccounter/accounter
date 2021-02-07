@@ -114,7 +114,7 @@ const createSlackUser = (account: Account) => {
     id: account.id,
     team_id: "XYZD",
     name: "slack1",
-    deleted: false,
+    deleted: account.isDisabled,
     color: "9f69e7",
     real_name: `Peter Jackson`,
     tz: "Europe/Amsterdam",
@@ -194,6 +194,31 @@ describe("accounts", () => {
           {
             ok: false,
             error: "users_not_found",
+          }
+        )
+        .post("/api/auth.test", `token=${token}`)
+        .once()
+        .reply(200, {
+          url: faker.internet.url(),
+          ok: true,
+          team: faker.company.companyName(),
+          user: faker.internet.userName(),
+          team_id: faker.random.uuid(),
+          user_id: faker.random.uuid(),
+        });
+    },
+    disabled: async ({ params }, { account }) => {
+      const { token, id } = params;
+      nock("https://slack.com")
+        .post("/api/users.info", `token=${token}&user=${id}`)
+        .once()
+        .reply(
+          200,
+          {
+            ok: true,
+            cache_ts: 1611515141,
+            response_metadata: { next_cursor: "" },
+            user: createSlackUser(account!),
           }
         )
         .post("/api/auth.test", `token=${token}`)

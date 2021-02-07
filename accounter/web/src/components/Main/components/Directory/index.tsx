@@ -1,9 +1,11 @@
 import React, { ReactNode } from "react";
 import { Search } from "../../../icons/solid";
+import Filters, { Filter } from "./components/Filters";
 
 const DirectoryHeader = (props: {
   title: string;
   subtitle?: string;
+  filters: Array<Filter> | void;
   searchString: string;
   onChangeSearchString: (searchString: string) => void;
 }) => {
@@ -33,6 +35,7 @@ const DirectoryHeader = (props: {
             />
           </div>
         </div>
+        {props.filters && <Filters filters={props.filters} />}
       </form>
     </div>
   );
@@ -79,6 +82,7 @@ type Props = {
   title: string;
   subtitle?: string;
   children: ReactNode;
+  filters?: Array<Filter>;
   searchString: string;
   onChangeSearchString: (searchString: string) => void;
 };
@@ -87,11 +91,13 @@ const Directory = ({
   children,
   title,
   subtitle,
+  filters,
   searchString,
   onChangeSearchString,
 }: Props) => (
   <>
     <DirectoryHeader
+      filters={filters}
       title={title}
       subtitle={subtitle}
       searchString={searchString}
