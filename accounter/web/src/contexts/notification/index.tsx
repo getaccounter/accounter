@@ -14,8 +14,8 @@ type NotificationPayload = {
   content: ReactNode;
 };
 
-const generateDeterministicIdForNotification = (not: NotificationPayload) =>
-  uuidv5(JSON.stringify(not), "3e1fe495-f36f-4c39-94ac-1eea15fbc5b8");
+const generateDeterministicIdForNotification = (notification: NotificationPayload) =>
+  uuidv5(JSON.stringify(notification), "3e1fe495-f36f-4c39-94ac-1eea15fbc5b8");
 
 const notificationContext = createContext<{
   addNotification: (notification: NotificationPayload) => void;
@@ -27,8 +27,17 @@ type Props = {
 
 export default function NotificationProvider({ children }: Props) {
   const [notifications, setNotifications] = useState<{
-    [key: string]: NotificationPayload;
+    [id: string]: NotificationPayload;
   }>({});
+
+  const closeNotifications = useCallback((id: string) => {
+    setNotifications((notifications) => {
+      const { [id]: omit, ...updatedNotifications } = notifications;
+      return ({
+        ...updatedNotifications,
+      })
+    });
+  }, []);
 
   const addNotification = useCallback((notification: NotificationPayload) => {
     const id = generateDeterministicIdForNotification(notification);
@@ -36,17 +45,16 @@ export default function NotificationProvider({ children }: Props) {
       ...notifications,
       [id]: notification,
     }));
-  }, []);
+
+    setTimeout(() => closeNotifications(id), 5000)
+  }, [closeNotifications]);
 
   return (
     <>
-      {Object.entries(notifications).map(([key, notification]) => (
+      {Object.entries(notifications).map(([id, notification]) => (
         <Notifications
-          key={key}
-          onClose={() => {
-            const { [key]: omit, ...updatedNotifications } = notifications;
-            setNotifications(updatedNotifications);
-          }}
+          key={id}
+          onClose={() => closeNotifications(id)}
           type={notification.type}
           headline={notification.title}
         >
