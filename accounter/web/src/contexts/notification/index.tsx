@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import Notifications, { Type } from "./components/Notifications";
+import Notification, { Type } from "./components/Notification";
 import { v5 as uuidv5 } from "uuid";
 
 type NotificationPayload = {
@@ -27,7 +27,10 @@ type Props = {
 
 export default function NotificationProvider({ children }: Props) {
   const [notifications, setNotifications] = useState<{
-    [id: string]: NotificationPayload;
+    [id: string]: {
+      notification: NotificationPayload,
+      timeoutId: number
+    };
   }>({});
 
   const closeNotifications = useCallback((id: string) => {
@@ -41,26 +44,35 @@ export default function NotificationProvider({ children }: Props) {
 
   const addNotification = useCallback((notification: NotificationPayload) => {
     const id = generateDeterministicIdForNotification(notification);
-    setNotifications((notifications) => ({
-      ...notifications,
-      [id]: notification,
-    }));
-
-    setTimeout(() => closeNotifications(id), 5000)
+    setNotifications((notifications) => {
+      const { [id]: oldNotification } = notifications;
+      if (oldNotification) {
+        window.clearTimeout(oldNotification.timeoutId)
+      }
+      const timeoutId = window.setTimeout(() => closeNotifications(id), 5000)
+      return ({
+        ...notifications,
+        [id]: {
+          notification,
+          timeoutId,
+        },
+      })
+    });
   }, [closeNotifications]);
 
-  return (
-    <>
-      {Object.entries(notifications).map(([id, notification]) => (
-        <Notifications
-          key={id}
-          onClose={() => closeNotifications(id)}
-          type={notification.type}
-          headline={notification.title}
-        >
-          {notification.content}
-        </Notifications>
-      ))}
+  return <>
+      <div className="fixed inset-0 pointer-events-none">
+        {Object.entries(notifications).map(([id, { notification }]) => (
+          <Notification
+            key={id}
+            onClose={() => closeNotifications(id)}
+            type={notification.type}
+            headline={notification.title}
+          >
+            {notification.content}
+          </Notification>
+        ))}
+      </div>
       <notificationContext.Provider
         children={children}
         value={{
@@ -68,7 +80,6 @@ export default function NotificationProvider({ children }: Props) {
         }}
       />
     </>
-  );
 }
 
 export const useNotifications = () => {
