@@ -4,6 +4,7 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
+export type AccountRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type ServiceName = "SLACK" | "%future added value";
 export type Accounts_profile = {
     readonly accounts: ReadonlyArray<{
@@ -16,8 +17,9 @@ export type Accounts_profile = {
             };
         };
         readonly username: string;
-        readonly role: string;
+        readonly role: AccountRole;
         readonly externalProfile: string;
+        readonly isDisabled: boolean;
     }>;
     readonly " $refType": "Accounts_profile";
 };
@@ -109,6 +111,13 @@ return {
           "kind": "ScalarField",
           "name": "externalProfile",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "isDisabled",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -118,5 +127,5 @@ return {
   "abstractKey": null
 };
 })();
-(node as any).hash = 'fa7e2a043ceb9d0e8db4c72ec63c5550';
+(node as any).hash = '2c915fd69c1d5e0cbf78013d6b67bd5f';
 export default node;

@@ -57,19 +57,23 @@ class IntegrationNode(DjangoObjectType):
 
 
 class AccountNode(DjangoObjectType):
-    id = graphene.ID(required=True)
     integration = graphene.Field(IntegrationNode, required=True)
     profile = graphene.Field(
         "accounter.organizations.schemas.ProfileNode", required=True
     )
-    email = graphene.String(required=True)
-    username = graphene.String(required=True)
-    role = graphene.String(required=True)
-    image_small = graphene.String(required=True)
 
     class Meta:
         model = Account
-        filter_fields = ["profile"]
+        fields = (
+            "email",
+            "username",
+            "role",
+            "image_small",
+            "image_big",
+            "is_disabled",
+            "id",
+            "external_profile",
+        )
 
 
 class Oauth(graphene.ObjectType):

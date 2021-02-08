@@ -26,6 +26,7 @@ const convertSlackUserToReturnType = (
     },
     role: user.is_owner ? "OWNER" : user.is_admin ? "ADMIN" : "USER",
     externalProfile: `${workspaceUrl}team/${user.id}`,
+    isDisabled: user.deleted
   };
 };
 
@@ -81,7 +82,6 @@ export const getById = getByIdHandler(async ({ params }, callback) => {
       client.users.info({ token, user: id }) as Promise<Response>,
       getWorkspaceUrl(token),
     ]);
-
     callback({
       code: 200,
       body: {

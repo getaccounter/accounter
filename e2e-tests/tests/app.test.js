@@ -65,7 +65,7 @@ sizes.forEach(({ name, viewport }) => {
 
             cy.findByRole("table", { name: "Accounts" }).within(() => {
               cy.findByRole("row", {
-                name: `${user.firstName} ${user.lastName} ${user.firstName} ${user.lastName} ${user.slack.displayName} USER View`,
+                name: `${user.firstName} ${user.lastName} ${user.firstName} ${user.lastName} ${user.slack.displayName} USER Active View`,
               });
             });
           });
@@ -80,7 +80,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByRole("link", { name: "Accounts" }).click();
             cy.findByRole("table", { name: "Accounts" }).within(() => {
               cy.findByRole("row", {
-                name: `SLACK ${slackWorkspace.name} SLACK ${user.slack.displayName} USER View`,
+                name: `SLACK ${slackWorkspace.name} SLACK ${user.slack.displayName} USER Active View`,
               });
             });
           });
@@ -103,6 +103,9 @@ sizes.forEach(({ name, viewport }) => {
 
         cy.navigateTo("Users", name);
 
+
+        cy.findByRole("button", { name: "Filter" }).click();
+        cy.findByRole("checkbox", { name: "Disabled" }).click();
 
         cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
           userRow.click()
@@ -138,6 +141,8 @@ sizes.forEach(({ name, viewport }) => {
           cy.findByRole("main").within(() => {
             cy.findByRole("link", { name: "Users" }).click();
           });
+          cy.findByRole("button", { name: "Filter" }).click();
+          cy.findByRole("checkbox", { name: "Disabled" }).click();
         }
 
         cy.getUserFromDirectory({ user: newUserData }, (userRow) => {

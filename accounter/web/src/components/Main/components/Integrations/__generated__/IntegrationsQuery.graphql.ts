@@ -39,6 +39,7 @@ query IntegrationsQuery {
 fragment IntegrationAccountList_accounts on AccountNode {
   id
   imageSmall
+  isDisabled
   profile {
     firstName
     lastName
@@ -63,7 +64,6 @@ fragment IntegrationContent_integration on IntegrationNode {
   ...IntegrationContentHeader_integration
   accounts {
     ...IntegrationAccountList_accounts
-    id
   }
 }
 
@@ -199,6 +199,13 @@ return {
               {
                 "alias": null,
                 "args": null,
+                "kind": "ScalarField",
+                "name": "isDisabled",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
                 "concreteType": "ProfileNode",
                 "kind": "LinkedField",
                 "name": "profile",
@@ -259,12 +266,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e31673d7798286dfa366bcca65eebaa8",
+    "cacheID": "b281332cb476f8f959ed0d3aa63be6bb",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    name\n    service {\n      name\n    }\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  id\n  imageSmall\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  managementUrl\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    name\n    service {\n      name\n    }\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  id\n  imageSmall\n  isDisabled\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  managementUrl\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
 })();

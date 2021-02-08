@@ -109,6 +109,7 @@ class Integration(models.Model):
             image_big=response["image"]["big"],
             role=response["role"],
             external_profile=response["externalProfile"],
+            is_disabled=response["isDisabled"],
         )
         return account
 
@@ -193,6 +194,7 @@ class Account(models.Model):
         Integration, related_name="accounts", on_delete=models.CASCADE
     )
     external_profile = models.URLField()
+    is_disabled = models.BooleanField(default=False)
 
     @property
     def is_fresh(self):
@@ -208,6 +210,7 @@ class Account(models.Model):
         self.last_refresh = timezone.now()
         self.role = response["role"]
         self.external_profile = response["externalProfile"]
+        self.is_disabled = response["isDisabled"]
 
     def refresh(self, force=False):
         if not force and self.is_fresh:

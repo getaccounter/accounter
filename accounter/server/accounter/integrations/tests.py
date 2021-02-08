@@ -304,6 +304,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "image": {"small": image_small, "big": image_big},
                     "role": "USER",
                     "externalProfile": external_profile,
+                    "isDisabled": False,
                 }
             ],
         )
@@ -324,6 +325,7 @@ class IntegrationTestCase(GraphQLTestCase):
                         imageSmall
                         imageBig
                         externalProfile
+                        isDisabled
                     }
                 }
             }
@@ -339,12 +341,13 @@ class IntegrationTestCase(GraphQLTestCase):
         assert accounts[0]["imageSmall"] == image_small
         assert accounts[0]["imageBig"] == image_big
         assert accounts[0]["externalProfile"] == external_profile
+        assert accounts[0]["isDisabled"] is False
 
     @freeze_time(
         auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
     )
     @requests_mock.Mocker()
-    def test_get_integrations_slack_creates_profiles_if_email_does_not_match(
+    def test_get_integrations_creates_profiles_if_email_does_not_match(
         self, mock_request
     ):
         token = "some_token"
@@ -355,6 +358,7 @@ class IntegrationTestCase(GraphQLTestCase):
         username = fake.user_name()
         email = fake.email()
         external_profile = fake.url()
+        is_disabled = False
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
             json=[
@@ -367,6 +371,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "image": {"small": image_small, "big": image_big},
                     "role": "USER",
                     "externalProfile": external_profile,
+                    "isDisabled": is_disabled,
                 }
             ],
         )
@@ -387,6 +392,7 @@ class IntegrationTestCase(GraphQLTestCase):
                         imageSmall
                         imageBig
                         externalProfile
+                        isDisabled
                         profile {
                             firstName
                             lastName
@@ -406,6 +412,7 @@ class IntegrationTestCase(GraphQLTestCase):
         assert accounts[0]["email"] == new_account.email == email
         assert accounts[0]["imageSmall"] == new_account.image_small == image_small
         assert accounts[0]["imageBig"] == new_account.image_big == image_big
+        assert accounts[0]["isDisabled"] == new_account.is_disabled == is_disabled
         assert (
             accounts[0]["externalProfile"]
             == new_account.external_profile
@@ -426,6 +433,52 @@ class IntegrationTestCase(GraphQLTestCase):
         auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
     )
     @requests_mock.Mocker()
+    def test_get_integrations_creates_profiles_disabled(self, mock_request):
+        token = "some_token"
+        id = fake.uuid4()
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
+            json=[
+                {
+                    "id": id,
+                    "firstName": fake.first_name(),
+                    "lastName": fake.last_name(),
+                    "username": fake.user_name(),
+                    "email": fake.email(),
+                    "image": {"small": fake.image_url(), "big": fake.image_url()},
+                    "role": "USER",
+                    "externalProfile": fake.url(),
+                    "isDisabled": True,
+                }
+            ],
+        )
+        slack_integration = Integration.objects.create(
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            token=token,
+        )
+        slack_integration.save()
+        self.client.force_login(self.admin)
+        response = self.query(
+            """
+            query {
+                integrations {
+                    accounts {
+                        isDisabled
+                    }
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        accounts = content["data"]["integrations"][0]["accounts"]
+        assert accounts[0]["isDisabled"] is True
+
+    @freeze_time(
+        auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
+    )
+    @requests_mock.Mocker()
     def test_get_integrations_slack_updates_existing_accounts(self, mock_request):
         token = "some_token"
         integration_id = fake.uuid4()
@@ -436,6 +489,7 @@ class IntegrationTestCase(GraphQLTestCase):
         external_profile = fake.url()
         first_name = fake.first_name()
         last_name = fake.last_name()
+        is_disabled = False
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
             json=[
@@ -448,6 +502,7 @@ class IntegrationTestCase(GraphQLTestCase):
                     "image": {"small": new_small_image, "big": new_big_image},
                     "role": "USER",
                     "externalProfile": external_profile,
+                    "isDisabled": is_disabled,
                 }
             ],
         )
@@ -476,6 +531,7 @@ class IntegrationTestCase(GraphQLTestCase):
                             imageSmall
                             imageBig
                             externalProfile
+                            isDisabled
                         }
                 }
             }
@@ -491,11 +547,74 @@ class IntegrationTestCase(GraphQLTestCase):
         assert accounts[0]["email"] == account.email == new_email
         assert accounts[0]["imageSmall"] == account.image_small == new_small_image
         assert accounts[0]["imageBig"] == account.image_big == new_big_image
+        assert accounts[0]["isDisabled"] == account.is_disabled == is_disabled
         assert (
             accounts[0]["externalProfile"]
             == account.external_profile
             == external_profile
         )
+
+    @freeze_time(
+        auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
+    )
+    @requests_mock.Mocker()
+    def test_get_integrations_slack_updates_existing_accounts_disabled(
+        self, mock_request
+    ):
+        token = "some_token"
+        integration_id = fake.uuid4()
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
+            json=[
+                {
+                    "id": integration_id,
+                    "firstName": fake.first_name(),
+                    "lastName": fake.last_name(),
+                    "username": fake.user_name(),
+                    "email": fake.email(),
+                    "image": {"small": fake.image_url(), "big": fake.image_url()},
+                    "role": "USER",
+                    "externalProfile": fake.url(),
+                    "isDisabled": True,
+                }
+            ],
+        )
+        slack_integration = Integration.objects.create(
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            token=token,
+        )
+        account = Account.objects.create(
+            id=integration_id,
+            profile=self.admin.profile,
+            integration=slack_integration,
+            email="old@email.internet",
+            username="old displayname",
+            is_disabled=False,
+        )
+        account.save()
+        slack_integration.save()
+        self.client.force_login(self.admin)
+        response = self.query(
+            """
+            query {
+                integrations {
+                        accounts {
+                            username
+                            email
+                            imageSmall
+                            imageBig
+                            externalProfile
+                            isDisabled
+                        }
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        accounts = content["data"]["integrations"][0]["accounts"]
+        assert accounts[0]["isDisabled"] is True
 
     def test_get_integrations_requires_authenticated_users(self):
         response = self.query(

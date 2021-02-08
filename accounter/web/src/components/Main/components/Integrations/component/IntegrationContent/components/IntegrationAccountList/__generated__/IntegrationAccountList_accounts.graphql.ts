@@ -4,16 +4,18 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
+export type AccountRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type IntegrationAccountList_accounts = ReadonlyArray<{
     readonly id: string;
     readonly imageSmall: string;
+    readonly isDisabled: boolean;
     readonly profile: {
         readonly firstName: string | null;
         readonly lastName: string | null;
         readonly title: string | null;
     };
     readonly username: string;
-    readonly role: string;
+    readonly role: AccountRole;
     readonly externalProfile: string;
     readonly " $refType": "IntegrationAccountList_accounts";
 }>;
@@ -45,6 +47,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "imageSmall",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "isDisabled",
       "storageKey": null
     },
     {
@@ -104,5 +113,5 @@ const node: ReaderFragment = {
   "type": "AccountNode",
   "abstractKey": null
 };
-(node as any).hash = '6cd46b61268a43825075f49a05341a17';
+(node as any).hash = 'c52f34eac9081cf1aac9dae9acb590b5';
 export default node;
