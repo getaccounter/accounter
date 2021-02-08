@@ -37,7 +37,7 @@ const IntegrationAccountList = ({ accounts }: Props) => {
         },
       ]}
       entries={accounts.map((account) => {
-        const fullName = `${account.profile.firstName} ${account.profile.lastName}`;
+        const fullName = `${account.profile.firstName}${account.profile.lastName ? " " + account.profile.lastName : ""}`;
         return {
           name: (
             <td className="px-6 py-4 whitespace-nowrap">
