@@ -43,16 +43,17 @@ const Table = <HeadValue extends string>(props: Props<HeadValue>) => {
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table title={props.title} className="min-w-full divide-y divide-gray-200">
+            <table
+              title={props.title}
+              className="min-w-full divide-y divide-gray-200"
+            >
               <Head values={props.head} />
               <tbody className="bg-white divide-y divide-gray-200">
                 {props.entries.map((entry, idx) => {
-                  const sortedEntryCol = props.head.map(({value}) => entry[value])
-                  return (
-                    <tr key={idx}>
-                      {sortedEntryCol}
-                    </tr>
+                  const sortedEntryCol = props.head.map(
+                    ({ value }) => entry[value]
                   );
+                  return <tr key={idx}>{sortedEntryCol}</tr>;
                 })}
               </tbody>
             </table>

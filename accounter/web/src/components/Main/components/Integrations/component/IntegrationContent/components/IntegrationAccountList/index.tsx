@@ -37,7 +37,9 @@ const IntegrationAccountList = ({ accounts }: Props) => {
         },
       ]}
       entries={accounts.map((account) => {
-        const fullName = `${account.profile.firstName}${account.profile.lastName ? " " + account.profile.lastName : ""}`;
+        const fullName = `${account.profile.firstName}${
+          account.profile.lastName ? " " + account.profile.lastName : ""
+        }`;
         return {
           name: (
             <td className="px-6 py-4 whitespace-nowrap">
@@ -73,19 +75,20 @@ const IntegrationAccountList = ({ accounts }: Props) => {
           status: (
             <td className="px-6 py-4 whitespace-nowrap">
               {account.isDisabled ? (
-                <Badge color="gray">
-                  Disabled
-                </Badge>
+                <Badge color="gray">Disabled</Badge>
               ) : (
-                <Badge color="green">
-                  Active
-                </Badge>
+                <Badge color="green">Active</Badge>
               )}
             </td>
           ),
           view: (
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <a href={account.externalProfile} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-900">
+              <a
+                href={account.externalProfile}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-600 hover:text-indigo-900"
+              >
                 View
               </a>
             </td>

@@ -31,7 +31,12 @@ const Integrations = () => {
         }
       `}
       variables={{}}
-      render={({ props }) => {
+      render={({ props, error }) => {
+        if (error) {
+          // catch in ErrorBoundary
+          throw error;
+        }
+
         return !props ? (
           <Loading />
         ) : (

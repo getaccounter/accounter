@@ -1,11 +1,6 @@
 import React from "react";
 import SideBar from "./components/Sidebar";
-import {
-  Menu,
-  UserGroup,
-  ViewGrid,
-  ViewGridAdd,
-} from "../icons/outline";
+import { Menu, UserGroup, ViewGrid, ViewGridAdd } from "../icons/outline";
 import { Link, Redirect, Route, Switch, useLocation } from "react-router-dom";
 import Integrations from "./components/Integrations";
 import Users from "./components/Users";
@@ -16,6 +11,7 @@ import Loading from "../Loading";
 import graphql from "babel-plugin-relay/macro";
 import { useEnvironment } from "../../contexts/relay";
 import { MainQuery } from "./__generated__/MainQuery.graphql";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const Header = () => {
   const location = useLocation();
@@ -63,7 +59,12 @@ export default function Main() {
         }
       `}
       variables={{}}
-      render={({ props }) => {
+      render={({ props, error }) => {
+        if (error) {
+          // catch in ErrorBoundary
+          throw error;
+        }
+
         if (!props) {
           return <Loading />;
         }
@@ -109,7 +110,7 @@ export default function Main() {
               <Switch>
                 {[...mainPages, ...extraPages].map(({ tab, content }) => (
                   <Route key={tab.path} path={tab.path}>
-                    {content}
+                    <ErrorBoundary>{content}</ErrorBoundary>
                   </Route>
                 ))}
                 <Route exact path="/">

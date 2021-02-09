@@ -24,35 +24,42 @@ const getComparerValue = (edge: NonNullable<ProfileEdge>) => {
 const UserDirectory = ({ profiles }: Props) => {
   const [searchString, setSearchString] = useState("");
   const [showDisabledUsers, setShowDisabledUsers] = useState(false);
-  
+
   const filteredProfiles = profiles.edges
-  .filter((edge) => showDisabledUsers || edge!.node!.accounts.some(acc => !acc.isDisabled))
-  .filter((edge) => {
-    const node = edge!.node!;
-    const lowerCasedSearchString = searchString.toLocaleLowerCase();
-    const lowerCasedFirstName = (node.firstName ?? "").toLowerCase();
-    const lowerCasedLastName = (node.lastName ?? "").toLowerCase();
-    const lowerCasedFullName = `${lowerCasedFirstName} ${lowerCasedLastName}`;
-    const lowerCasedEmail = node.email.toLowerCase();
+    .filter(
+      (edge) =>
+        showDisabledUsers || edge!.node!.accounts.some((acc) => !acc.isDisabled)
+    )
+    .filter((edge) => {
+      const node = edge!.node!;
+      const lowerCasedSearchString = searchString.toLocaleLowerCase();
+      const lowerCasedFirstName = (node.firstName ?? "").toLowerCase();
+      const lowerCasedLastName = (node.lastName ?? "").toLowerCase();
+      const lowerCasedFullName = `${lowerCasedFirstName} ${lowerCasedLastName}`;
+      const lowerCasedEmail = node.email.toLowerCase();
 
-    const matchesFirstName = lowerCasedFirstName.includes(
-      lowerCasedSearchString
-    );
-    const matchesLastName = lowerCasedLastName.includes(lowerCasedSearchString);
-    const matchesFullName = lowerCasedFullName.includes(lowerCasedSearchString);
-    const matchesEmail = lowerCasedEmail.includes(lowerCasedSearchString);
+      const matchesFirstName = lowerCasedFirstName.includes(
+        lowerCasedSearchString
+      );
+      const matchesLastName = lowerCasedLastName.includes(
+        lowerCasedSearchString
+      );
+      const matchesFullName = lowerCasedFullName.includes(
+        lowerCasedSearchString
+      );
+      const matchesEmail = lowerCasedEmail.includes(lowerCasedSearchString);
 
-    if (
-      !searchString ||
-      matchesFirstName ||
-      matchesLastName ||
-      matchesFullName ||
-      matchesEmail
-    ) {
-      return true;
-    }
-    return false;
-  });
+      if (
+        !searchString ||
+        matchesFirstName ||
+        matchesLastName ||
+        matchesFullName ||
+        matchesEmail
+      ) {
+        return true;
+      }
+      return false;
+    });
   const groupedUsers = [...filteredProfiles.map((edge) => edge!)]
     .sort((a, b) => {
       if (getComparerValue(a) < getComparerValue(b)) {

@@ -47,7 +47,6 @@ export default function OAuthSlackCallback() {
 
   useEffect(() => {
     if (!code || !state || error?.message) {
-
     } else {
       handleCallback({ variables: { code, state } });
     }

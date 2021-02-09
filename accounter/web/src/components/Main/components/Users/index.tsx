@@ -32,7 +32,11 @@ const Users = () => {
         }
       `}
       variables={{}}
-      render={({ props }) => {
+      render={({ props, error }) => {
+        if (error) {
+          // catch in ErrorBoundary
+          throw error;
+        }
         if (!props) {
           return <Loading />;
         }
