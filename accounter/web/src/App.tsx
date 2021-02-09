@@ -14,6 +14,7 @@ import { getCSRFCookie, useCSRFCookie } from "./utils/csrf";
 import NotificationProvider from "./contexts/notification";
 import RelayProvider from "./contexts/relay";
 import environment from "./relay-env";
+import { RelayEnvironmentProvider } from 'relay-hooks';
 const httpLink = createHttpLink({
   uri: GRAPHQL_ENDPOINT,
 });
@@ -38,11 +39,13 @@ export default function App() {
     <ApolloProvider client={client}>
       <AuthProvider>
         <RelayProvider environment={environment}>
-          <Router>
-            <NotificationProvider>
-              <Root />
-            </NotificationProvider>
-          </Router>
+          <RelayEnvironmentProvider environment={environment}>
+            <Router>
+              <NotificationProvider>
+                <Root />
+              </NotificationProvider>
+            </Router>
+          </RelayEnvironmentProvider>
         </RelayProvider>
       </AuthProvider>
     </ApolloProvider>

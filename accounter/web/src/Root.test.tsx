@@ -11,6 +11,7 @@ import NotificationProvider from "./contexts/notification";
 import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
 import { Environment } from "react-relay";
 import RelayProvider from "./contexts/relay";
+import { RelayEnvironmentProvider } from "relay-hooks";
 
 jest.mock("use-http", () => () => ({ loading: false }));
 
@@ -23,9 +24,11 @@ const Providers = ({
 }) => (
   <AuthProvider>
     <RelayProvider environment={environment}>
+      <RelayEnvironmentProvider environment={environment}>
       <NotificationProvider>
         <MemoryRouter>{children}</MemoryRouter>
       </NotificationProvider>
+      </RelayEnvironmentProvider>
     </RelayProvider>
   </AuthProvider>
 );

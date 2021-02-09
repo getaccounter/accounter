@@ -11,11 +11,10 @@ import Integrations from "./components/Integrations";
 import Users from "./components/Users";
 import Services from "./components/Services";
 import queryString from "query-string";
-import { QueryRenderer } from "react-relay";
 import Loading from "../Loading";
 import graphql from "babel-plugin-relay/macro";
-import { useEnvironment } from "../../contexts/relay";
 import { MainQuery } from "./__generated__/MainQuery.graphql";
+import { useQuery } from "relay-hooks";
 
 const Header = () => {
   const location = useLocation();
@@ -51,75 +50,66 @@ const Header = () => {
 };
 
 export default function Main() {
-  const environment = useEnvironment();
+  const { data, isLoading } = useQuery<MainQuery>(graphql`
+    query MainQuery {
+      currentUser {
+        ...Sidebar_profile
+      }
+    }
+  `)
+  if (!data || isLoading) {
+    return <Loading />;
+  }
+
+  const mainPages = [
+    {
+      tab: {
+        label: "Apps",
+        path: "/integrations",
+        Icon: ViewGrid,
+      },
+      content: <Integrations />,
+    },
+    {
+      tab: {
+        label: "Users",
+        path: "/users",
+        Icon: UserGroup,
+      },
+      content: <Users />,
+    },
+  ];
+
+  const extraPages = [
+    {
+      tab: {
+        label: "Add Apps",
+        path: "/services",
+        Icon: ViewGridAdd,
+      },
+      content: <Services />,
+    },
+  ];
   return (
-    <QueryRenderer<MainQuery>
-      environment={environment}
-      query={graphql`
-        query MainQuery {
-          currentUser {
-            ...Sidebar_profile
-          }
-        }
-      `}
-      variables={{}}
-      render={({ props }) => {
-        if (!props) {
-          return <Loading />;
-        }
-
-        const mainPages = [
-          {
-            tab: {
-              label: "Apps",
-              path: "/integrations",
-              Icon: ViewGrid,
-            },
-            content: <Integrations />,
-          },
-          {
-            tab: {
-              label: "Users",
-              path: "/users",
-              Icon: UserGroup,
-            },
-            content: <Users />,
-          },
-        ];
-
-        const extraPages = [
-          {
-            tab: {
-              label: "Add Apps",
-              path: "/services",
-              Icon: ViewGridAdd,
-            },
-            content: <Services />,
-          },
-        ];
-        return (
-          <div className="h-screen flex overflow-hidden bg-white">
-            <SideBar
-              profile={props.currentUser}
-              mainTabs={mainPages.map((p) => p.tab)}
-              extraTabs={extraPages.map((p) => p.tab)}
-            />
-            <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
-              <Header />
-              <Switch>
-                {[...mainPages, ...extraPages].map(({ tab, content }) => (
-                  <Route key={tab.path} path={tab.path}>
-                    {content}
-                  </Route>
-                ))}
-                <Route exact path="/">
-                  <Redirect to="/integrations" />
-                </Route>
-              </Switch>
-            </div>
-          </div>
-        );
-      }}
-    />
+    <div className="h-screen flex overflow-hidden bg-white">
+      <SideBar
+        profile={data.currentUser}
+        mainTabs={mainPages.map((p) => p.tab)}
+        extraTabs={extraPages.map((p) => p.tab)}
+      />
+      <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
+        <Header />
+        <Switch>
+          {[...mainPages, ...extraPages].map(({ tab, content }) => (
+            <Route key={tab.path} path={tab.path}>
+              {content}
+            </Route>
+          ))}
+          <Route exact path="/">
+            <Redirect to="/integrations" />
+          </Route>
+        </Switch>
+      </div>
+    </div>
   );
 }

@@ -7,6 +7,7 @@ import RelayProvider from "../../contexts/relay";
 import { Environment } from "react-relay";
 import userEvent from "@testing-library/user-event";
 import NotificationProvider from "../../contexts/notification";
+import { RelayEnvironmentProvider } from "relay-hooks";
 
 const Providers = ({
   children,
@@ -16,9 +17,11 @@ const Providers = ({
   environment: Environment;
 }) => (
   <NotificationProvider>
-    <RelayProvider environment={environment}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </RelayProvider>
+    <RelayEnvironmentProvider environment={environment}>
+      <RelayProvider environment={environment}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </RelayProvider>
+    </RelayEnvironmentProvider >
   </NotificationProvider>
 );
 
