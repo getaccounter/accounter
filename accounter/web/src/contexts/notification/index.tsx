@@ -12,6 +12,7 @@ type NotificationPayload = {
   type: Type;
   title: ReactNode;
   content: ReactNode;
+  timeToShow?: number;
 };
 
 const generateDeterministicIdForNotification = (
@@ -52,7 +53,7 @@ export default function NotificationProvider({ children }: Props) {
         if (oldNotification) {
           window.clearTimeout(oldNotification.timeoutId);
         }
-        const timeoutId = window.setTimeout(() => closeNotifications(id), 5000);
+        const timeoutId = window.setTimeout(() => closeNotifications(id), notification.timeToShow ?? 5000);
         return {
           ...notifications,
           [id]: {

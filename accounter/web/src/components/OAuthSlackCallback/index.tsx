@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { Redirect, useLocation } from "react-router-dom";
+import { Link, Redirect, useLocation } from "react-router-dom";
 import Loading from "../Loading";
 
 function useQuery() {
@@ -60,6 +60,23 @@ export default function OAuthSlackCallback() {
         state: { from: location },
       }}
     />
+  ) : error ? (
+    <div className="flex flex-col items-center ">
+      <div className="flex justify-center height h-full">
+        <h1>
+          Something went wrong. Please try again. If the issue still persists,
+          please contact us.
+        </h1>
+      </div>
+      <Link to="/">
+        <button
+          type="button"
+          className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Go back
+        </button>
+      </Link>
+    </div>
   ) : (
     <Loading />
   );

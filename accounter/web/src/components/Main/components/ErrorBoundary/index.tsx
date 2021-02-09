@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<Props, State> {
         <div className="flex justify-center items-center height h-full">
           <h1>
             Something went wrong. Please try again. If the issue still persists,
-            please contact us.{" "}
+            please contact us.
           </h1>
         </div>
       );
