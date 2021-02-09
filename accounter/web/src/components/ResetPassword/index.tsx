@@ -79,8 +79,8 @@ const ResetPassword = () => {
                 if (errors) {
                   addNotification({
                     type: "error",
-                    title: "Setting password failed",
-                    content: errors[0].message,
+                    title: "Something went wrong",
+                    content: "Setting password failed",
                   });
                 } else {
                   history.push("/login");
@@ -89,8 +89,8 @@ const ResetPassword = () => {
               (err) =>
                 addNotification({
                   type: "error",
-                  title: "Setting password failed",
-                  content: err.message,
+                  title: "Something went wrong",
+                  content: "Setting password failed",
                 })
             );
           }}

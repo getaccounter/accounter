@@ -14,6 +14,7 @@ import { getCSRFCookie, useCSRFCookie } from "./utils/csrf";
 import NotificationProvider from "./contexts/notification";
 import RelayProvider from "./contexts/relay";
 import environment from "./relay-env";
+import ErrorBoundary from "./components/Main/components/ErrorBoundary";
 const httpLink = createHttpLink({
   uri: GRAPHQL_ENDPOINT,
 });
@@ -35,16 +36,18 @@ const client = new ApolloClient({
 export default function App() {
   const { token: csrfToken } = useCSRFCookie();
   return csrfToken ? (
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <RelayProvider environment={environment}>
-          <Router>
-            <NotificationProvider>
-              <Root />
-            </NotificationProvider>
-          </Router>
-        </RelayProvider>
-      </AuthProvider>
-    </ApolloProvider>
+    <ErrorBoundary>
+      <ApolloProvider client={client}>
+        <AuthProvider>
+          <RelayProvider environment={environment}>
+            <Router>
+              <NotificationProvider>
+                <Root />
+              </NotificationProvider>
+            </Router>
+          </RelayProvider>
+        </AuthProvider>
+      </ApolloProvider>
+    </ErrorBoundary>
   ) : null;
 }

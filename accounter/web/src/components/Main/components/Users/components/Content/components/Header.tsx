@@ -113,8 +113,8 @@ const Header = (props: Props) => {
         if (errors) {
           addNotification({
             type: "error",
-            title: "Setting password failed",
-            content: errors[0].message,
+            title: "Something went wrong.",
+            content: "Could not change admin",
           });
         } else {
         }
@@ -122,8 +122,8 @@ const Header = (props: Props) => {
       (err) =>
         addNotification({
           type: "error",
-          title: "Setting password failed",
-          content: err.message,
+          title: "Something went wrong.",
+          content: "Could not change admin",
         })
     );
   };

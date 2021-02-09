@@ -1,7 +1,5 @@
 import React, { ReactNode } from "react";
-import {
-  Pencil,
-} from "../../../../../../icons/solid";
+import { Pencil } from "../../../../../../icons/solid";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Link } from "react-router-dom";
@@ -11,9 +9,7 @@ type Props = {
   integration: IntegrationContentHeader_integration;
 };
 
-const Name = (props: {
-  children: ReactNode;
-}) => (
+const Name = (props: { children: ReactNode }) => (
   <div className="inline-flex items-center">
     <h1 className="text-2xl font-bold text-gray-900 truncate">
       {props.children}
@@ -28,16 +24,23 @@ const MainButton = (props: {
   onClick?: () => void;
   danger?: boolean;
 }) => {
-  const className = `hover:bg-gray-50 inline-flex px-4 py-2 border border-${props.danger ? "red" : "gray"
-    }-300 shadow-sm rounded-md text-${props.danger ? "red" : "gray"
-    }-700 bg-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`;
+  const className = `hover:bg-gray-50 inline-flex px-4 py-2 border border-${
+    props.danger ? "red" : "gray"
+  }-300 shadow-sm rounded-md text-${
+    props.danger ? "red" : "gray"
+  }-700 bg-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`;
   const content = (
     <span className="flex-1 inline-flex justify-center text-sm font-medium">
       {props.children}
     </span>
   );
   return props.to && props.external ? (
-    <a className={className} href={props.to} target="_blank" rel="noopener noreferrer">
+    <a
+      className={className}
+      href={props.to}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {content}
     </a>
   ) : props.to ? (
@@ -45,10 +48,10 @@ const MainButton = (props: {
       {content}
     </Link>
   ) : (
-        <button type="button" className={className} onClick={props.onClick}>
-          {content}
-        </button>
-      );
+    <button type="button" className={className} onClick={props.onClick}>
+      {content}
+    </button>
+  );
 };
 
 const IntegrationContentHeader = ({ integration }: Props) => {
@@ -72,24 +75,18 @@ const IntegrationContentHeader = ({ integration }: Props) => {
           </div>
           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
-              <Name
-              >
-                {integration.name}
-              </Name>
+              <Name>{integration.name}</Name>
             </div>
             <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                <MainButton external to={integration.managementUrl}>
-                  <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                  <span>Manage</span>
-                </MainButton>
+              <MainButton external to={integration.managementUrl}>
+                <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                <span>Manage</span>
+              </MainButton>
             </div>
           </div>
         </div>
         <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
-          <Name
-          >
-            {integration.name}
-          </Name>
+          <Name>{integration.name}</Name>
         </div>
       </div>
     </div>

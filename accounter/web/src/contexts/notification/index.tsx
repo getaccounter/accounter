@@ -14,7 +14,9 @@ type NotificationPayload = {
   content: ReactNode;
 };
 
-const generateDeterministicIdForNotification = (notification: NotificationPayload) =>
+const generateDeterministicIdForNotification = (
+  notification: NotificationPayload
+) =>
   uuidv5(JSON.stringify(notification), "3e1fe495-f36f-4c39-94ac-1eea15fbc5b8");
 
 const notificationContext = createContext<{
@@ -28,39 +30,43 @@ type Props = {
 export default function NotificationProvider({ children }: Props) {
   const [notifications, setNotifications] = useState<{
     [id: string]: {
-      notification: NotificationPayload,
-      timeoutId: number
+      notification: NotificationPayload;
+      timeoutId: number;
     };
   }>({});
 
   const closeNotifications = useCallback((id: string) => {
     setNotifications((notifications) => {
       const { [id]: omit, ...updatedNotifications } = notifications;
-      return ({
+      return {
         ...updatedNotifications,
-      })
+      };
     });
   }, []);
 
-  const addNotification = useCallback((notification: NotificationPayload) => {
-    const id = generateDeterministicIdForNotification(notification);
-    setNotifications((notifications) => {
-      const { [id]: oldNotification } = notifications;
-      if (oldNotification) {
-        window.clearTimeout(oldNotification.timeoutId)
-      }
-      const timeoutId = window.setTimeout(() => closeNotifications(id), 5000)
-      return ({
-        ...notifications,
-        [id]: {
-          notification,
-          timeoutId,
-        },
-      })
-    });
-  }, [closeNotifications]);
+  const addNotification = useCallback(
+    (notification: NotificationPayload) => {
+      const id = generateDeterministicIdForNotification(notification);
+      setNotifications((notifications) => {
+        const { [id]: oldNotification } = notifications;
+        if (oldNotification) {
+          window.clearTimeout(oldNotification.timeoutId);
+        }
+        const timeoutId = window.setTimeout(() => closeNotifications(id), 5000);
+        return {
+          ...notifications,
+          [id]: {
+            notification,
+            timeoutId,
+          },
+        };
+      });
+    },
+    [closeNotifications]
+  );
 
-  return <>
+  return (
+    <>
       <div className="fixed inset-0 pointer-events-none">
         {Object.entries(notifications).map(([id, { notification }]) => (
           <Notification
@@ -80,6 +86,7 @@ export default function NotificationProvider({ children }: Props) {
         }}
       />
     </>
+  );
 }
 
 export const useNotifications = () => {

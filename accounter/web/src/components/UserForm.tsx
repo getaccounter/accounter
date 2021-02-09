@@ -16,6 +16,7 @@ import {
   UserFormUpdateMutation,
 } from "./__generated__/UserFormUpdateMutation.graphql";
 import { UserForm_currentUser } from "./__generated__/UserForm_currentUser.graphql";
+import { useNotifications } from "../contexts/notification";
 
 const createUser = (
   environment: Environment,
@@ -102,6 +103,7 @@ type Props = {
 };
 
 const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
+  const { addNotification } = useNotifications();
   const isUpdate = !!profile;
   const environment = useEnvironment();
   const history = useHistory();
@@ -134,14 +136,23 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
             variables,
             (response, errors) => {
               if (errors) {
-                console.error(errors);
+                addNotification({
+                  type: "error",
+                  title: "Something went wrong.",
+                  content: "Could not update user",
+                });
               } else {
                 history.push(
                   `/users/details/${response.updateUser!.profile.id}`
                 );
               }
             },
-            (err) => console.error(err)
+            (err) =>
+              addNotification({
+                type: "error",
+                title: "Something went wrong.",
+                content: "Could not update user",
+              })
           );
         } else {
           const variables = {
@@ -156,14 +167,23 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
             variables,
             (response, errors) => {
               if (errors) {
-                console.error(errors);
+                addNotification({
+                  type: "error",
+                  title: "Something went wrong.",
+                  content: "Could not create user",
+                });
               } else {
                 history.push(
                   `/users/details/${response.createUser!.profile.id}`
                 );
               }
             },
-            (err) => console.error(err)
+            (err) =>
+              addNotification({
+                type: "error",
+                title: "Something went wrong.",
+                content: "Could not create user",
+              })
           );
         }
       }}

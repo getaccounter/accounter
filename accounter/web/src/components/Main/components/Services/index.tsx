@@ -21,8 +21,13 @@ const Services = () => {
         }
       `}
       variables={{}}
-      render={({ props }) =>
-        !props ? (
+      render={({ props, error }) => {
+        if (error) {
+          // catch in ErrorBoundary
+          throw error;
+        }
+
+        return !props ? (
           <Loading />
         ) : (
           <>
@@ -55,8 +60,8 @@ const Services = () => {
               ))}
             </div>
           </>
-        )
-      }
+        );
+      }}
     />
   );
 };
