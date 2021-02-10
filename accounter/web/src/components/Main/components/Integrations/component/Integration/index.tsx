@@ -4,6 +4,7 @@ import { Integration_integration } from "./__generated__/Integration_integration
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import EntryCard from "../../../EntryCard";
+import Badge from "../../../../../Badge";
 
 const Integration = (props: {
   className?: string;
@@ -16,6 +17,13 @@ const Integration = (props: {
         to={`${url}/details/${props.integration.id}`}
         imgSrc={props.integration.service.logo}
         secondary={props.integration.service.name}
+        rightSide={
+          <>
+            {!props.integration.hasValidToken && (
+              <Badge color="red">Expired</Badge>
+            )}
+          </>
+        }
       >
         {props.integration.name}
       </EntryCard>
@@ -28,6 +36,7 @@ export default createFragmentContainer(Integration, {
     fragment Integration_integration on IntegrationNode {
       id
       name
+      hasValidToken
       service {
         name
         logo

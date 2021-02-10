@@ -54,8 +54,10 @@ fragment IntegrationAccountList_accounts on AccountNode {
 fragment IntegrationContentHeader_integration on IntegrationNode {
   name
   managementUrl
+  hasValidToken
   service {
     logo
+    oauthUrl
   }
 }
 
@@ -70,6 +72,7 @@ fragment IntegrationContent_integration on IntegrationNode {
 fragment Integration_integration on IntegrationNode {
   id
   name
+  hasValidToken
   service {
     name
     logo
@@ -169,8 +172,22 @@ return {
                 "kind": "ScalarField",
                 "name": "logo",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "oauthUrl",
+                "storageKey": null
               }
             ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "hasValidToken",
             "storageKey": null
           },
           {
@@ -266,12 +283,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b281332cb476f8f959ed0d3aa63be6bb",
+    "cacheID": "39133cc47786679fff80c93b09e28e5a",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    name\n    service {\n      name\n    }\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  id\n  imageSmall\n  isDisabled\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  managementUrl\n  service {\n    logo\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    name\n    service {\n      name\n    }\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  id\n  imageSmall\n  isDisabled\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  managementUrl\n  hasValidToken\n  service {\n    logo\n    oauthUrl\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  hasValidToken\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
 })();

@@ -7,8 +7,10 @@ import { FragmentRefs } from "relay-runtime";
 export type IntegrationContentHeader_integration = {
     readonly name: string;
     readonly managementUrl: string;
+    readonly hasValidToken: boolean;
     readonly service: {
         readonly logo: string;
+        readonly oauthUrl: string;
     };
     readonly " $refType": "IntegrationContentHeader_integration";
 };
@@ -43,6 +45,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "hasValidToken",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "ServiceNode",
       "kind": "LinkedField",
       "name": "service",
@@ -54,6 +63,13 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "logo",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "oauthUrl",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -62,5 +78,5 @@ const node: ReaderFragment = {
   "type": "IntegrationNode",
   "abstractKey": null
 };
-(node as any).hash = '4e0be028acd8de36a796e4e3cf8f8f54';
+(node as any).hash = 'ac62f6a835fed43a991a6e4618a5f3e0';
 export default node;

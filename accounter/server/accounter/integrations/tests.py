@@ -275,13 +275,42 @@ class IntegrationTestCase(GraphQLTestCase):
             """
         )
         content = json.loads(response.content)
-        content = json.loads(response.content)
         self.assertResponseNoErrors(response)
         assert len(content["data"]["integrations"]) == 1
         assert (
             content["data"]["integrations"][0]["service"]["name"]
             == slack_integration.service.name
         )
+
+    @freeze_time(
+        auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
+    )
+    @requests_mock.Mocker()
+    def test_get_integrations_expired_token(self, mock_request):
+        token = "some_token"
+        Integration.objects.create(
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            has_valid_token=True,
+            token=token,
+        ).save()
+        self.client.force_login(self.admin)
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
+            status_code=401,
+        )
+        response = self.query(
+            """
+            query {
+                integrations {
+                    hasValidToken
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        assert content["data"]["integrations"][0]["hasValidToken"] is False
 
     @freeze_time(
         auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
@@ -331,7 +360,6 @@ class IntegrationTestCase(GraphQLTestCase):
             }
             """
         )
-        content = json.loads(response.content)
         content = json.loads(response.content)
         self.assertResponseNoErrors(response)
         accounts = content["data"]["integrations"][0]["accounts"]
@@ -402,7 +430,6 @@ class IntegrationTestCase(GraphQLTestCase):
             }
             """
         )
-        content = json.loads(response.content)
         content = json.loads(response.content)
         self.assertResponseNoErrors(response)
         accounts = content["data"]["integrations"][0]["accounts"]
@@ -538,7 +565,6 @@ class IntegrationTestCase(GraphQLTestCase):
             """
         )
         content = json.loads(response.content)
-        content = json.loads(response.content)
         self.assertResponseNoErrors(response)
         account.refresh_from_db()
         accounts = content["data"]["integrations"][0]["accounts"]
@@ -661,7 +687,6 @@ class IntegrationTestCase(GraphQLTestCase):
             }
             """
         )
-        content = json.loads(response.content)
         content = json.loads(response.content)
         self.assertResponseNoErrors(response)
         assert len(content["data"]["integrations"]) == 1

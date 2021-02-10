@@ -89,6 +89,7 @@ class Integration(models.Model):
         on_delete=models.RESTRICT,
     )
     management_url = models.URLField()
+    has_valid_token = models.BooleanField(default=True)
 
     @property
     def is_fresh(self):
@@ -114,14 +115,19 @@ class Integration(models.Model):
         return account
 
     def refresh(self, force=False):
-        # TODO disable a.io accounts that are disabled in slack
         if not force and self.is_fresh:
             return
-
+        if not self.has_valid_token:
+            return
         response = requests.get(
             settings.CONNECTOR_URL + "/slack/accounts/list",
             params={"token": self.token},
         )
+        if response.status_code == 401:
+            self.has_valid_token = False
+            self.save()
+            return
+
         payload = response.json()
         for user_info in payload:
             email = user_info["email"]
@@ -215,10 +221,19 @@ class Account(models.Model):
     def refresh(self, force=False):
         if not force and self.is_fresh:
             return
+        if not self.integration.has_valid_token:
+            return
+
         response = requests.get(
             settings.CONNECTOR_URL + "/slack/accounts/getById",
             params={"token": self.integration.token, "id": self.id},
         )
+
+        if response.status_code == 401:
+            self.integration.has_valid_token = False
+            self.integration.save()
+            return
+
         payload = response.json()
 
         if not payload["found"]:

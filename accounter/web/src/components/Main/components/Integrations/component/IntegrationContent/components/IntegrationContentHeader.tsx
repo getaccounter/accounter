@@ -1,19 +1,25 @@
 import React, { ReactNode } from "react";
-import { Pencil } from "../../../../../../icons/solid";
+import { Pencil, Link as LinkIcon } from "../../../../../../icons/solid";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Link } from "react-router-dom";
 import { IntegrationContentHeader_integration } from "./__generated__/IntegrationContentHeader_integration.graphql";
+import Badge from "../../../../../../Badge";
 
 type Props = {
   integration: IntegrationContentHeader_integration;
 };
 
-const Name = (props: { children: ReactNode }) => (
+const Name = (props: { children: ReactNode; hasValidToken: boolean }) => (
   <div className="inline-flex items-center">
     <h1 className="text-2xl font-bold text-gray-900 truncate">
       {props.children}
     </h1>
+    {!props.hasValidToken && (
+      <span className="pl-2">
+        <Badge color="red">Expired</Badge>
+      </span>
+    )}
   </div>
 );
 
@@ -75,18 +81,29 @@ const IntegrationContentHeader = ({ integration }: Props) => {
           </div>
           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
-              <Name>{integration.name}</Name>
+              <Name hasValidToken={integration.hasValidToken}>
+                {integration.name}
+              </Name>
             </div>
             <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <MainButton external to={integration.managementUrl}>
-                <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                <span>Manage</span>
-              </MainButton>
+              {!integration.hasValidToken ? (
+                <MainButton danger external to={integration.service.oauthUrl}>
+                  <LinkIcon className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                  <span>Reconnect</span>
+                </MainButton>
+              ) : (
+                <MainButton external to={integration.managementUrl}>
+                  <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                  <span>Manage</span>
+                </MainButton>
+              )}
             </div>
           </div>
         </div>
         <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
-          <Name>{integration.name}</Name>
+          <Name hasValidToken={integration.hasValidToken}>
+            {integration.name}
+          </Name>
         </div>
       </div>
     </div>
@@ -98,8 +115,10 @@ export default createFragmentContainer(IntegrationContentHeader, {
     fragment IntegrationContentHeader_integration on IntegrationNode {
       name
       managementUrl
+      hasValidToken
       service {
         logo
+        oauthUrl
       }
     }
   `,
