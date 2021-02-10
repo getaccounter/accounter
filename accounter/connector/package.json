@@ -29,6 +29,7 @@
     "@slack/web-api": "6.0.0",
     "fastify": "3.11.0",
     "global-agent": "2.1.12",
+    "googleapis": "67.0.0",
     "humanparser": "2.6.0",
     "zod": "1.11.11"
   }

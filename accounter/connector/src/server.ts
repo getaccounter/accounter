@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import { NODE_ENV, PORT } from "./env";
+import googleEndpoints from "./google";
 import slackEndpoints from "./slack";
 
 if (NODE_ENV === "development") {
@@ -12,6 +13,7 @@ export default () => {
   const server = fastify();
 
   server.register(slackEndpoints, { prefix: "/slack" });
+  server.register(googleEndpoints, { prefix: "/google" });
 
   return server
 };

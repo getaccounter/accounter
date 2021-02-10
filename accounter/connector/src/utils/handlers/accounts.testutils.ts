@@ -7,48 +7,57 @@ import {
 } from "../../utils/handlers/accounts";
 import { encrypt } from "../encryption";
 
-const generateAccount = (overwrite = {}): Account => ({
-  id: faker.random.uuid(),
-  firstName: faker.name.firstName(),
-  lastName: faker.name.lastName(),
-  email: faker.internet.email(),
-  username: faker.internet.userName(),
-  image: {
-    small: faker.image.imageUrl(24, 24),
-    big: faker.image.imageUrl(192, 192),
-  },
-  role: "USER",
-  externalProfile: expect.any(String),
-  isDisabled: false,
-  ...overwrite,
-});
+type AccountGenerationDerivation = (account: Account) => Partial<Account>;
+const noop = () => ({});
+
+const generateAccount = (
+  derivation: AccountGenerationDerivation = noop,
+  overwrite: Partial<Account> = {}
+): Account => {
+  const account = {
+    id: faker.random.uuid(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    username: faker.internet.userName(),
+    image: {
+      small: faker.image.imageUrl(24, 24),
+      big: faker.image.imageUrl(192, 192),
+    },
+    role: "USER" as Account["role"],
+    externalProfile: expect.any(String),
+    isDisabled: false,
+  };
+  return {
+    ...account,
+    ...overwrite,
+    ...derivation(account),
+  };
+};
 
 export const testAccountsGetById = async (
   prefix: string,
+  derivation: AccountGenerationDerivation,
   setup: {
     found: (
       data: {
         params: GetByIdHandlerParams;
       },
       expected: GetAccountResponse
-    ) => Promise<void>,
+    ) => Promise<void>;
     notFound: (
       data: {
         params: GetByIdHandlerParams;
       },
       expected: GetAccountResponse
-    ) => Promise<void>,
+    ) => Promise<void>;
     disabled: (
       data: {
         params: GetByIdHandlerParams;
       },
       expected: GetAccountResponse
-    ) => Promise<void>,
-    invalidToken: (
-      data: {
-        params: GetByIdHandlerParams;
-      }
-    ) => Promise<void>
+    ) => Promise<void>;
+    invalidToken: (data: { params: GetByIdHandlerParams }) => Promise<void>;
   }
 ) => {
   describe("getById", () => {
@@ -58,7 +67,7 @@ export const testAccountsGetById = async (
       const id = faker.random.uuid();
       const expected: GetAccountResponse = {
         found: true,
-        account: generateAccount({ id }),
+        account: generateAccount(derivation, { id }),
       };
       await setup.found({ params: { token, id } }, expected);
       const response = await app.inject({
@@ -73,7 +82,9 @@ export const testAccountsGetById = async (
         const app = server();
         const expected: GetAccountResponse = {
           found: true,
-          account: generateAccount({ role }),
+          account: generateAccount(derivation, {
+            role: role as Account["role"],
+          }),
         };
         const token = faker.random.uuid();
         const id = faker.random.uuid();
@@ -106,7 +117,7 @@ export const testAccountsGetById = async (
       const app = server();
       const expected: GetAccountResponse = {
         found: true,
-        account: generateAccount({ isDisabled: true }),
+        account: generateAccount(derivation, { isDisabled: true }),
       };
       const token = faker.random.uuid();
       const id = faker.random.uuid();
@@ -135,24 +146,25 @@ export const testAccountsGetById = async (
 
 export const testList = async (
   prefix: string,
+  derivation: AccountGenerationDerivation,
   setup: {
     success: (
       data: {
         params: { token: string };
       },
       expected: Array<Account>
-    ) => Promise<void>,
-    invalidToken: (
-      data: {
-        params: { token: string };
-      }
-    ) => Promise<void>
+    ) => Promise<void>;
+    invalidToken: (data: { params: { token: string } }) => Promise<void>;
   }
 ) => {
   describe("list", () => {
     it("success", async () => {
       const app = server();
-      const expected = [generateAccount(), generateAccount(), generateAccount()];
+      const expected = [
+        generateAccount(derivation),
+        generateAccount(derivation),
+        generateAccount(derivation),
+      ];
       const token = faker.random.uuid();
       await setup.success({ params: { token } }, expected);
       const response = await app.inject({
@@ -173,5 +185,5 @@ export const testList = async (
       });
       expect(response.statusCode).toEqual(401);
     });
-  })
+  });
 };

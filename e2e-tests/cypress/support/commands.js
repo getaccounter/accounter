@@ -112,6 +112,13 @@ Cypress.Commands.add("mockSlackOauth", (oauthCode) => {
   });
 });
 
+Cypress.Commands.add("mockGoogleOauth", (oauthCode) => {
+  // can we somehow prevent from going to the slack page by intercepting the new route
+  // and routing back to the handler page immedietly?
+  cy.url().should("include", "accounts.google.com");
+  cy.visit(`/google/oauth/callback?code=${oauthCode}&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadmin.directory.user.readonly+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadmin.directory.customer.readonly`);
+});
+
 Cypress.Commands.add("getMailHogEmailContent", () => {
   const getIframeDocument = () => {
     return (

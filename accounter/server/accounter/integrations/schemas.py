@@ -21,26 +21,27 @@ class ServiceNode(DjangoObjectType):
 
 class HandleCallback(graphene.Mutation):
     class Arguments:
+        service = graphene.Enum.from_enum(Service.Types)(required=True)
         code = graphene.String(required=True)
         state = graphene.String(required=True)
 
     status = graphene.String(required=True)
 
     @admin_required
-    def mutate(self, info, code: str, state: str):
+    def mutate(self, info, service: Service.Types, code: str, state: str):
         organization = info.context.user.profile.organization
-        slack_service = Service.objects.get(name=Service.Types.SLACK)
-        callback_result = slack_service.handle_callback(code, state)
-        slack_integration, _ = Integration.objects.get_or_create(
-            service=slack_service,
+        service = Service.objects.get(name=service)
+        callback_result = service.handle_callback(code, state)
+        integration, _ = Integration.objects.get_or_create(
+            service=service,
             id=callback_result.integration_id,
             organization=organization,
         )
-        slack_integration.name = callback_result.name
-        slack_integration.token = callback_result.token
-        slack_integration.has_valid_token = True
-        slack_integration.management_url = callback_result.management_url
-        slack_integration.save()
+        integration.name = callback_result.name
+        integration.token = callback_result.token
+        integration.has_valid_token = True
+        integration.management_url = callback_result.management_url
+        integration.save()
         return HandleCallback(status="success")
 
 

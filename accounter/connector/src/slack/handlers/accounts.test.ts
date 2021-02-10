@@ -1,5 +1,5 @@
 import nock from "nock";
-import faker, { fake } from "faker";
+import faker from "faker";
 import {
   testAccountsGetById,
   testList,
@@ -157,8 +157,10 @@ const createSlackUser = (account: Account) => {
   };
 };
 
+const derivation = (account: Account) => (account);
+
 describe("accounts", () => {
-  testAccountsGetById("/slack", {
+  testAccountsGetById("/slack", derivation, {
     found: async ({ params }, { account }) => {
       const { token, id } = params;
       nock("https://slack.com")
@@ -257,7 +259,7 @@ describe("accounts", () => {
     },
   });
 
-  testList("/slack", {
+  testList("/slack", derivation, {
     success: async ({ params }, expectedReturnValue) => {
       const { token } = params;
       const members = [

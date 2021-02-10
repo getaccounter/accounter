@@ -266,7 +266,7 @@ export const mockSlackUsersList = ({ token, workspace, users = [] } = {}) => {
     );
 };
 
-export const mockSlackUsersInfo = ({
+const mockSlackUsersInfo = ({
   token,
   user,
   workspace = generateWorkspaceData(),
@@ -302,3 +302,32 @@ export const mockSlackUsersInfo = ({
       }
     );
 };
+
+const mockSlackIntegration = (users) => {
+  const workspace = generateWorkspaceData();
+  const token = faker.random.uuid();
+
+  const oauthCodes = users.reduce((tokens, user) => {
+    const oauthCode = user.slack.id
+    mockSlackOauthToken({
+      workspace,
+      token,
+      oauthCode,
+    });
+    mockSlackAuthTest({ user, workspace, token });
+
+    return {
+      ...tokens,
+      [user.email]: oauthCode
+    }
+  }, {})
+  mockSlackUsersList({
+    token,
+    workspace,
+    users,
+  });
+
+  return {oauthCodes, name: workspace.name}
+}
+
+export default mockSlackIntegration

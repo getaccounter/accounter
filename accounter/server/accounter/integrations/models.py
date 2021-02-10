@@ -28,6 +28,7 @@ class Service(models.Model):
 
     class Types(models.TextChoices):
         SLACK = "SLACK", "Slack"
+        GOOGLE = "Google", "Google"
 
     name = models.CharField("Type", max_length=50, choices=Types.choices, unique=True)
     logo = models.FileField(upload_to="services/logos")
@@ -35,7 +36,7 @@ class Service(models.Model):
     @property
     def oauth_url(self):
         response = requests.get(
-            settings.CONNECTOR_URL + "/slack/oauth",
+            self.connector_url + "/oauth",
             params={"redirectUri": self._redirect_uri},
         )
         payload = response.json()
@@ -43,7 +44,7 @@ class Service(models.Model):
 
     def handle_callback(self, code: str, state: str):
         response = requests.get(
-            settings.CONNECTOR_URL + "/slack/oauth/handleCallback",
+            self.connector_url + "/oauth/handleCallback",
             params={
                 "code": code,
                 "state": state,
@@ -63,8 +64,12 @@ class Service(models.Model):
 
     @property
     def _redirect_uri(self):
-        # base url should be env var
-        return settings.BASE_URL + "/slack/oauth/callback"
+        # should be passed by the frontend
+        return settings.BASE_URL + f"/{self.name.lower()}/oauth/callback"
+
+    @property
+    def connector_url(self):
+        return settings.CONNECTOR_URL + f"/{self.name.lower()}"
 
     @property
     def _oauth_expiration_seconds(self):
@@ -120,7 +125,7 @@ class Integration(models.Model):
         if not self.has_valid_token:
             return
         response = requests.get(
-            settings.CONNECTOR_URL + "/slack/accounts/list",
+            self.service.connector_url + "/accounts/list",
             params={"token": self.token},
         )
         if response.status_code == 401:
@@ -225,7 +230,7 @@ class Account(models.Model):
             return
 
         response = requests.get(
-            settings.CONNECTOR_URL + "/slack/accounts/getById",
+            self.integration.service.connector_url + "/accounts/getById",
             params={"token": self.integration.token, "id": self.id},
         )
 
