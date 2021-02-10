@@ -8,6 +8,7 @@ export type ServiceName = "SLACK" | "%future added value";
 export type Integration_integration = {
     readonly id: string;
     readonly name: string;
+    readonly hasValidToken: boolean;
     readonly service: {
         readonly name: ServiceName;
         readonly logo: string;
@@ -47,6 +48,13 @@ return {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "hasValidToken",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "ServiceNode",
       "kind": "LinkedField",
       "name": "service",
@@ -68,5 +76,5 @@ return {
   "abstractKey": null
 };
 })();
-(node as any).hash = 'd13eac6cbc04ea12dc4696cc361eb6ea';
+(node as any).hash = '780f28a299ee1fad707a534bab960abe';
 export default node;

@@ -152,6 +152,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
             service=Service.objects.get(name=Service.Types.SLACK),
             organization=self.admin.profile.organization,
             token=token,
+            has_valid_token=True,
             _fill_optional=True,
         )
         account = baker.make(
