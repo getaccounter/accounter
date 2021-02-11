@@ -49,4 +49,4 @@ repos:
         entry: docker-compose run --no-deps --entrypoint /usr/bin/env web npm run lint
         language: system
         pass_filenames: false
-        files: accounter/web
+        files: accounter/accounter/web
