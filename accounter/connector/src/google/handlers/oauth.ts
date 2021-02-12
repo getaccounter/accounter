@@ -29,11 +29,10 @@ export const oauthCallback = oauthCallbackHandler(
       GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET
     );
-    console.log("BINGO")
     oauth2Client.getToken(
       {
         code: params.code,
-        redirect_uri: "http://localhost:8080/google/oauth/callback",
+        redirect_uri: params.redirectUri,
       },
       async (error, credentials) => {
         if (error) {

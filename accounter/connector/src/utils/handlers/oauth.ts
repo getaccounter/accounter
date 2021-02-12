@@ -12,6 +12,7 @@ export const oauthHandler = makeHandler({
 const handleOAuthParamSchema = z.object({
   code: z.string(),
   state: z.string(),
+  redirectUri: z.string()
 });
 export const oauthCallbackHandler = makeHandler({
   params: handleOAuthParamSchema,

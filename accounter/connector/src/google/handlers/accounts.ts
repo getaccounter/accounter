@@ -40,13 +40,9 @@ export const list = listHandler(async ({ params }, callback) => {
   });
 
   try {
-    console.log("BINGOMONGO")
     const {data} = await adminSDK.users.list({
       customer: 'my_customer',
     })
-    console.log("YUUUUP")
-    console.log(data.users!.map(convertGoogleUserToReturnType))
-    console.log("DONE")
 
     callback({
       code: 200,
