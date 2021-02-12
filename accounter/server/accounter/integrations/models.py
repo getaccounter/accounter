@@ -37,7 +37,7 @@ class Service(models.Model):
     def oauth_url(self):
         response = requests.get(
             self.connector_url + "/oauth",
-            params={"redirectUri": self._redirect_uri},
+            params={"redirectUri": self.redirect_uri},
         )
         payload = response.json()
         return payload["url"]
@@ -45,10 +45,7 @@ class Service(models.Model):
     def handle_callback(self, code: str, state: str):
         response = requests.get(
             self.connector_url + "/oauth/handleCallback",
-            params={
-                "code": code,
-                "state": state,
-            },
+            params={"code": code, "state": state, "redirectUri": self.redirect_uri},
         )
         payload = response.json()
 
@@ -63,7 +60,7 @@ class Service(models.Model):
         )
 
     @property
-    def _redirect_uri(self):
+    def redirect_uri(self):
         # should be passed by the frontend
         return settings.BASE_URL + f"/{self.name.lower()}/oauth/callback"
 

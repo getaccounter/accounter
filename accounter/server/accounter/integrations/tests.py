@@ -92,9 +92,10 @@ class ServiceTestCase(GraphQLTestCase):
         integration_name = "myworkspace"
         integration_id = "abc"
         management_url = fake.url()
+        service = Service.objects.first()
         mock_request.get(
             settings.CONNECTOR_URL
-            + f"/slack/oauth/handleCallback?code={code}&state={state}",
+            + f"/slack/oauth/handleCallback?code={code}&state={state}&redirectUri={service.redirect_uri}",
             json={
                 "token": token,
                 "integrationName": integration_name,
@@ -118,7 +119,7 @@ class ServiceTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         slack_integration = Integration.objects.filter(
-            organization=self.admin.profile.organization
+            organization=self.admin.profile.organization, service=service
         )
         assert len(slack_integration) == 1
         assert slack_integration.first().token == token
