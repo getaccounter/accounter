@@ -39,6 +39,13 @@ class ServiceTestCase(GraphQLTestCase):
                 "url": oauthUrl,
             },
         )
+        mock_request.get(
+            settings.CONNECTOR_URL
+            + "/google/oauth?redirectUri=http%3A%2F%2Flocalhost%3A8080%2Fgoogle%2Foauth%2Fcallback",
+            json={
+                "url": oauthUrl,
+            },
+        )
         service = Service.objects.get(name=Service.Types.SLACK)
         response = self.query(
             """
@@ -55,7 +62,7 @@ class ServiceTestCase(GraphQLTestCase):
         content = json.loads(response.content)
         services = content["data"]["services"]
         service.refresh_from_db()
-        assert len(services) == 1
+        assert len(services) == 2
         assert services[0]["name"] == service.name
         assert services[0]["logo"] == service.logo.url
         assert services[0]["oauthUrl"] == oauthUrl
@@ -97,17 +104,17 @@ class ServiceTestCase(GraphQLTestCase):
         )
         response = self.query(
             """
-            mutation SlackMutation($code: String!, $state: String!) {
+            mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
                 oauth {
                     slack {
-                        handleCallback(code: $code, state: $state) {
+                        handleCallback(service: $service, code: $code, state: $state) {
                             status
                         }
                     }
                 }
             }
             """,
-            variables={"code": code, "state": state},
+            variables={"service": "SLACK", "code": code, "state": state},
         )
         self.assertResponseNoErrors(response)
         slack_integration = Integration.objects.filter(
@@ -126,17 +133,17 @@ class ServiceTestCase(GraphQLTestCase):
 
         response = self.query(
             """
-            mutation SlackMutation($code: String!, $state: String!) {
+            mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
                 oauth {
                     slack {
-                        handleCallback(code: $code, state: $state) {
+                        handleCallback(service: $service, code: $code, state: $state) {
                             status
                         }
                     }
                 }
             }
             """,
-            variables={"code": "somecode", "state": state},
+            variables={"service": "SLACK", "code": "somecode", "state": state},
         )
         self.assertResponseHasErrors(response)
         content = json.loads(response.content)
@@ -164,17 +171,21 @@ class ServiceTestCase(GraphQLTestCase):
         # Calling endpoint twice
         self.query(
             """
-            mutation SlackMutation($code: String!, $state: String!) {
+            mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
                 oauth {
                     slack {
-                        handleCallback(code: $code, state: $state) {
+                        handleCallback(service: $service, code: $code, state: $state) {
                             status
                         }
                     }
                 }
             }
             """,
-            variables={"code": "someFirstCode", "state": first_state},
+            variables={
+                "service": "SLACK",
+                "code": "someFirstCode",
+                "state": first_state,
+            },
         )
         assert Integration.objects.count() == 1
         slack_integration = Integration.objects.first()
@@ -194,17 +205,21 @@ class ServiceTestCase(GraphQLTestCase):
         )
         self.query(
             """
-            mutation SlackMutation($code: String!, $state: String!) {
+            mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
                 oauth {
                     slack {
-                        handleCallback(code: $code, state: $state) {
+                        handleCallback(service: $service, code: $code, state: $state) {
                             status
                         }
                     }
                 }
             }
             """,
-            variables={"code": "someSecondCode", "state": second_state},
+            variables={
+                "service": "SLACK",
+                "code": "someSecondCode",
+                "state": second_state,
+            },
         )
         assert Integration.objects.count() == 1
         slack_integration.refresh_from_db()

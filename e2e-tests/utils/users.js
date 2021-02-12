@@ -14,5 +14,9 @@ export const generateUser = (options = {}) => {
       id: faker.random.uuid(),
       displayName: faker.internet.userName(firstName),
     },
+    google: {
+      id: faker.random.uuid(),
+      displayName: faker.internet.email(firstName, lastName, "google.com"),
+    },
   };
 };

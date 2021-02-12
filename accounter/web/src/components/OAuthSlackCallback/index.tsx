@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { Link, Redirect, useLocation } from "react-router-dom";
+import { Link, Redirect, useLocation, useParams } from "react-router-dom";
 import Loading from "../Loading";
 
 function useQuery() {
@@ -17,16 +17,19 @@ type CallbackResponse = {
   };
 };
 
+type Service = "SLACK" | "GOOGLE"
+
 type CallbackParameters = {
+  service: Service;
   code: string;
   state: string;
 };
 
 export const LOGIN_MUTATION = gql`
-  mutation SlackMutation($code: String!, $state: String!) {
+  mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
     oauth {
       slack {
-        handleCallback(code: $code, state: $state) {
+        handleCallback(service: $service, code: $code, state: $state) {
           status
         }
       }
@@ -35,6 +38,8 @@ export const LOGIN_MUTATION = gql`
 `;
 
 export default function OAuthSlackCallback() {
+  const params = useParams<{service: string}>();
+  const service = params.service.toUpperCase() as Service
   const query = useQuery();
   const [handleCallback, { data, error }] = useMutation<
     CallbackResponse,
@@ -46,11 +51,11 @@ export default function OAuthSlackCallback() {
   const state = query.get("state");
 
   useEffect(() => {
-    if (!code || !state || error?.message) {
+    if (!code || error?.message) {
     } else {
-      handleCallback({ variables: { code, state } });
+      handleCallback({ variables: { service, code, state: state ?? "" } });
     }
-  }, [handleCallback, code, state, error]);
+  }, [handleCallback, code, state, error, service]);
   const location = useLocation();
 
   return data?.oauth.slack.handleCallback?.status === "success" ? (

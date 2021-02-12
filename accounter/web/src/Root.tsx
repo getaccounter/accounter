@@ -25,7 +25,7 @@ export default function Root() {
         <Route path="/reset-password">
           <ResetPassword />
         </Route>
-        <Route exact path="/slack/oauth/callback">
+        <Route exact path="/:service/oauth/callback">
           <OAuthSlackCallback />
         </Route>
         <PrivateRoute path="/">

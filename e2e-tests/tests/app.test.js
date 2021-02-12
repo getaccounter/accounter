@@ -1,11 +1,12 @@
 import faker from "faker";
 import { generateUser } from "../utils/users";
-import {
+import mockSlackIntegration, {
   generateWorkspaceData,
   mockSlackOauthToken,
   mockSlackUsersList,
   mockSlackAuthTest,
 } from "../utils/slack";
+import mockGoogleIntegration from "../utils/google"
 
 const MOBILE = "mobile";
 const WINDOW = "window";
@@ -27,60 +28,67 @@ sizes.forEach(({ name, viewport }) => {
       }
     });
     describe("Services", () => {
-      describe("slack", () => {
-        it("add integration and pull users accounts", () => {
-          const user = generateUser();
-          const slackWorkspace = generateWorkspaceData();
-          const token = faker.random.uuid();
-          const oauthCode = faker.random.uuid();
-          mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
-          mockSlackAuthTest({ user, workspace: slackWorkspace, token });
-          mockSlackUsersList({
-            token,
-            workspace: slackWorkspace,
-            users: [user],
-          });
+      [
+        {
+          serviceName: "SLACK",
+          getMockIntegration: (users) => mockSlackIntegration(users),
+          executeOauthFlow: "mockSlackOauth",
+          getDisplayName: (user) => user.slack.displayName
+        },
+        {
+          serviceName: "GOOGLE",
+          getMockIntegration: (users) => mockGoogleIntegration(users),
+          executeOauthFlow: "mockGoogleOauth",
+          getDisplayName: (user) => user.google.displayName
+        },
+      ].forEach(({ serviceName, getMockIntegration, executeOauthFlow, getDisplayName }) => {
+        describe(serviceName, () => {
+          it("add integration and pull users accounts", () => {
+            const user = generateUser();
+            const displayName = getDisplayName(user)
+            const integration = getMockIntegration([user]);
 
-          cy.visit("/");
-          cy.findByRole("link", { name: "register" }).click();
-          cy.register(user);
-          cy.login(user.email, user.password);
+            cy.visit("/");
+            cy.findByRole("link", { name: "register" }).click();
+            cy.register(user);
+            cy.login(user.email, user.password);
 
-          cy.navigateTo("Add Apps", name);
+            cy.navigateTo("Add Apps", name);
 
-          cy.findByRole("link", { name: "Add SLACK" }).click();
+            cy.findByRole("link", { name: `Add ${serviceName}` }).click();
 
-          cy.mockSlackOauth(oauthCode);
+            cy[executeOauthFlow](integration.oauthCodes[user.email]);
 
-          cy.findByRole("navigation", { name: "Directory" }).within(() => {
-            cy.findByRole("link", {
-              name: `${slackWorkspace.name} SLACK`,
-            }).click();
-          });
+            cy.findByRole("navigation", { name: "Directory" }).within(() => {
+              cy.findByRole("link", {
+                name: `${integration.name} ${serviceName}`,
+              }).click();
+            });
 
-          cy.findByRole("main").within(() => {
-            cy.findByRole("heading", {
-              name: slackWorkspace.name,
-            }).should("exist");
+            cy.findByRole("main").within(() => {
+              cy.findByRole("heading", {
+                name: integration.name,
+              }).should("exist");
 
-            cy.findByRole("table", { name: "Accounts" }).within(() => {
-              cy.findByRole("row", {
-                name: `${user.firstName} ${user.lastName} ${user.firstName} ${user.lastName} ${user.slack.displayName} USER Active View`,
+              cy.findByRole("table", { name: "Accounts" }).within(() => {
+                cy.findByRole("row", {
+                  name: `${user.firstName} ${user.lastName} ${user.firstName} ${user.lastName} ${displayName} USER Active View`,
+                });
               });
             });
-          });
 
-          cy.navigateTo("Users", name);
+            cy.navigateTo("Users", name);
 
-          cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
-            userRow.click()
-          );
+            cy.getUserFromDirectory({ user, ignoreTitle: true }, (userRow) =>
+              userRow.click()
+            );
 
-          cy.findByRole("main").within(() => {
-            cy.findByRole("link", { name: "Accounts" }).click();
-            cy.findByRole("table", { name: "Accounts" }).within(() => {
-              cy.findByRole("row", {
-                name: `SLACK ${slackWorkspace.name} SLACK ${user.slack.displayName} USER Active View`,
+            cy.findByRole("main").within(() => {
+              cy.findByRole("link", { name: "Accounts" }).click();
+              cy.findByRole("table", { name: "Accounts" }).within(() => {
+                cy.findByRole("row", {
+                  name: `${serviceName} ${integration.name} ${serviceName} ${displayName} USER Active View`,
+                });
               });
             });
           });
@@ -99,10 +107,7 @@ sizes.forEach(({ name, viewport }) => {
         cy.register(user);
         cy.login(user.email, user.password);
 
-
-
         cy.navigateTo("Users", name);
-
 
         cy.findByRole("button", { name: "Filter" }).click();
         cy.findByRole("checkbox", { name: "Disabled" }).click();
@@ -188,25 +193,29 @@ sizes.forEach(({ name, viewport }) => {
             const slackWorkspace = generateWorkspaceData();
             const token = faker.random.uuid();
             const oauthCode = faker.random.uuid();
-            mockSlackOauthToken({ workspace: slackWorkspace, token, oauthCode });
+            mockSlackOauthToken({
+              workspace: slackWorkspace,
+              token,
+              oauthCode,
+            });
             mockSlackAuthTest({ user, workspace: slackWorkspace, token });
             mockSlackUsersList({
               token,
               workspace: slackWorkspace,
               users: [user, userToCreate],
             });
-            
+
             cy.visit("/");
             cy.findByRole("link", { name: "register" }).click();
             cy.register(user);
             cy.login(user.email, user.password);
 
             cy.navigateTo("Add Apps", name);
-  
+
             cy.findByRole("link", { name: "Add SLACK" }).click();
-  
+
             cy.mockSlackOauth(oauthCode);
-  
+
             cy.findByRole("navigation", { name: "Directory" }).within(() => {
               cy.findByRole("link", {
                 name: `${slackWorkspace.name} SLACK`,
