@@ -10,7 +10,7 @@ if (NODE_ENV === "development") {
 }
 
 export default () => {
-  const server = fastify();
+  const server = fastify({ logger: true });
 
   server.register(slackEndpoints, { prefix: "/slack" });
   server.register(googleEndpoints, { prefix: "/google" });
