@@ -11,6 +11,18 @@ resource "kubernetes_secret" "slack-credentials" {
   }
 }
 
+resource "kubernetes_secret" "google-credentials" {
+  type = "Opaque"
+  metadata {
+    name = "slack-credentials"
+  }
+
+  data = {
+    client_id     = var.google.client_id
+    client_secret = var.google.client_secret
+  }
+}
+
 resource "kubernetes_secret" "token-encryption" {
   type = "Opaque"
   metadata {
@@ -92,6 +104,25 @@ resource "kubernetes_deployment" "connector" {
               secret_key_ref {
                 name = kubernetes_secret.slack-credentials.metadata[0].name
                 key  = "state_secret"
+              }
+            }
+          }
+          # Google
+          env {
+            name = "GOOGLE_CLIENT_ID"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.slack-credentials.metadata[0].name
+                key  = "client_id"
+              }
+            }
+          }
+          env {
+            name = "GOOGLE_CLIENT_SECRET"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.slack-credentials.metadata[0].name
+                key  = "client_secret"
               }
             }
           }

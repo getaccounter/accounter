@@ -121,6 +121,11 @@ module "connector" {
     state_secret  = var.slack_state_secret
   }
 
+  google = {
+    client_id     = var.google_client_id
+    client_secret = var.google_client_secret
+  }
+
   token_encryption_key = var.token_encryption_key
 }
 
