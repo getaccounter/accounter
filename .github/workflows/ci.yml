@@ -45,10 +45,10 @@ jobs:
           cp accounter/server/.env.example accounter/server/.env
           cp accounter/connector/.env.example accounter/connector/.env
 
-      # - name: build
-      #   run: |
-      #     docker-compose run server ./manage.py graphql_schema --out schema.graphql
-      #     mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
+      - name: build
+        run: |
+          docker-compose run server ./manage.py graphql_schema --out schema.graphql
+          mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
 
       # - name: lint
       #   run: |
