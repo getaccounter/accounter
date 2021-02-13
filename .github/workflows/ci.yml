@@ -50,35 +50,35 @@ jobs:
           docker-compose run server ./manage.py graphql_schema --out schema.graphql
           mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
 
-      # - name: lint
-      #   run: |
-      #     docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
-      #     docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
+      - name: lint
+        run: |
+          docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
+          docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
 
-      # - name: unit tests server
-      #   run: |
-      #     docker-compose run server coverage run --source='.' manage.py test
-      #     docker-compose run --no-deps --entrypoint /usr/bin/env server coverage xml
+      - name: unit tests server
+        run: |
+          docker-compose run server coverage run --source='.' manage.py test
+          docker-compose run --no-deps --entrypoint /usr/bin/env server coverage xml
 
-      # - name: unit tests web
-      #   run: docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm t -- --coverage
+      - name: unit tests web
+        run: docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm t -- --coverage
 
-      # - name: unit tests connector
-      #   run: |
-      #     docker-compose run --no-deps --entrypoint /usr/bin/env connector npm run test:once -- --coverage
+      - name: unit tests connector
+        run: |
+          docker-compose run --no-deps --entrypoint /usr/bin/env connector npm run test:once -- --coverage
 
-      # - name: report coverage
-      #   uses: codecov/codecov-action@v1
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     flags: web, server
-      #     fail_ci_if_error: true
+      - name: report coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: web, server
+          fail_ci_if_error: true
 
-      # - name: check migrations
-      #   run: docker-compose -f docker-compose.yml run --entrypoint /usr/bin/env server python manage.py makemigrations --check
+      - name: check migrations
+        run: docker-compose -f docker-compose.yml run --entrypoint /usr/bin/env server python manage.py makemigrations --check
 
       - name: end-to-end tests production build
-        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml build web server connector loadbalancer
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --exit-code-from e2e
 
       - uses: hashicorp/setup-terraform@v1
       - name: Install doctl
