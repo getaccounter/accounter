@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { RequestHandler } from "express";
 import * as z from "zod";
 import { decrypt, encrypt } from "../encryption";
 
@@ -20,16 +20,15 @@ export const makeHandler = <Params>(schemas: { params: z.ZodType<Params> }) => <
     data: { params: Params },
     callback: (resp: Response200<ResponsePayload> | Response400 | Response401) => void
   ) => void
-) => {
-    return async (request: FastifyRequest, reply: FastifyReply) => {
-      // @ts-expect-error decrypt token
+): RequestHandler => {
+    return async (request, reply) => {
       if (request.query && request.query.token) {
         // @ts-expect-error decrypt token
         request.query.token = decrypt(request.query.token)
       }
       const paramValidationResult = await schemas.params.safeParse(request.query);
       if (!paramValidationResult.success) {
-        return reply.code(400).send(paramValidationResult.error.message);
+        return reply.status(400).send(paramValidationResult.error.message);
       }
       const params = paramValidationResult.data;
 
@@ -39,7 +38,7 @@ export const makeHandler = <Params>(schemas: { params: z.ZodType<Params> }) => <
         if (body?.token) {
           body.token = encrypt(body.token)
         }
-        reply.code(response.code).send(body);
+        reply.status(response.code).send(body);
       });
     };
   };

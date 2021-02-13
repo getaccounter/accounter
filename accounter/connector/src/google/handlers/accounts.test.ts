@@ -5,6 +5,7 @@ import {
   testList,
 } from "../../utils/handlers/accounts.testutils";
 import { Account } from "../../utils/handlers/accounts";
+import app from "..";
 
 const createGoogleUser = (account: Account) => {
   const fullName = `${account.firstName} ${account.lastName}`;
@@ -60,7 +61,7 @@ const derivation = (account: Account) => ({
 });
 
 describe("accounts", () => {
-  testAccountsGetById("/google", derivation, {
+  testAccountsGetById(app, derivation, {
     found: async ({ params }, { account }) => {
       const { token, id } = params;
       nock("https://admin.googleapis.com", {
@@ -135,7 +136,7 @@ describe("accounts", () => {
     },
   });
 
-  testList("/google", derivation, {
+  testList(app, derivation, {
     success: async ({ params }, expectedReturnValue) => {
       const { token } = params;
       const members = [...expectedReturnValue.map(createGoogleUser)];

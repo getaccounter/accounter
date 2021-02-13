@@ -1,17 +1,12 @@
-import { FastifyPluginCallback } from "fastify";
 import { getById, list } from "./handlers/accounts";
 import { oauthCallback, oauth } from "./handlers/oauth";
+import express from "express"
 
-const slackEndpoints: FastifyPluginCallback<{ prefix: string }> = (
-  server,
-  opts,
-  done
-) => {
-  server.get("/oauth", oauth);
-  server.get("/oauth/handleCallback", oauthCallback);
-  server.get("/accounts/getById", getById);
-  server.get("/accounts/list", list);
-  done();
-};
+const app = express()
 
-export default slackEndpoints;
+app.get("/oauth", oauth);
+app.get("/oauth/handleCallback", oauthCallback);
+app.get("/accounts/getById", getById);
+app.get("/accounts/list", list);
+
+export default app;
