@@ -40,6 +40,18 @@ variable "slack_state_secret" {
   sensitive   = true
 }
 
+variable "google_client_id" {
+  description = "google client id"
+  type        = string
+  sensitive   = true
+}
+
+variable "google_client_secret" {
+  description = "google client secret"
+  type        = string
+  sensitive   = true
+}
+
 variable "token_encryption_key" {
   description = "encryption key for service tokens"
   type        = string
