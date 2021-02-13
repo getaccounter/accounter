@@ -14,7 +14,7 @@ resource "kubernetes_secret" "slack-credentials" {
 resource "kubernetes_secret" "google-credentials" {
   type = "Opaque"
   metadata {
-    name = "slack-credentials"
+    name = "google-credentials"
   }
 
   data = {
