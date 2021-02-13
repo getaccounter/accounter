@@ -64,8 +64,8 @@ resource "digitalocean_spaces_bucket" "assets" {
   region = "ams3"
 }
 
-resource "digitalocean_container_registry_docker_credentials" "accounter" {
-  registry_name = "accounter"
+resource "digitalocean_container_registry_docker_credentials" "registry" {
+  registry_name = data.digitalocean_container_registry.accounter.name
 }
 
 resource "kubernetes_secret" "registry-accounter" {
@@ -75,7 +75,7 @@ resource "kubernetes_secret" "registry-accounter" {
   }
 
   data = {
-    ".dockerconfigjson" = digitalocean_container_registry_docker_credentials.accounter.docker_credentials
+    ".dockerconfigjson" = digitalocean_container_registry_docker_credentials.registry.docker_credentials
   }
 }
 
