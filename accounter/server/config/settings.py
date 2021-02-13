@@ -12,8 +12,11 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
+from typing import List
 
+import sentry_sdk
 from django.core.exceptions import ImproperlyConfigured
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 def get_optional_env_value(env_variable, default_value):
@@ -49,14 +52,17 @@ def get_int_env_value(env_variable):
         raise ImproperlyConfigured(error_msg)
 
 
-def get_bool_env_value(env_variable):
-    valid_boolean_values = ["True", "False"]
-    string_value = get_env_value(env_variable)
-    if string_value not in valid_boolean_values:
+def get_enum_env_value(env_variable: str, valid_values: List[str]):
+    value = get_env_value(env_variable)
+    if value not in valid_values:
         error_msg = "The {} environment variable must be in [{}]".format(
-            env_variable, ", ".join(valid_boolean_values)
+            env_variable, ", ".join(valid_values)
         )
         raise ImproperlyConfigured(error_msg)
+
+
+def get_bool_env_value(env_variable):
+    string_value = get_enum_env_value(env_variable, ["True", "False"])
     return string_value == "True"
 
 
@@ -218,3 +224,15 @@ EMAIL_USE_TLS = get_bool_env_value("EMAIL_USE_TLS")
 CONNECTOR_HOST = get_env_value("CONNECTOR_HOST")
 CONNECTOR_PORT = get_int_env_value("CONNECTOR_PORT")
 CONNECTOR_URL = f"http://{CONNECTOR_HOST}:{CONNECTOR_PORT}"
+
+ENVIRONMENT = get_enum_env_value("ENVIRONMENT", ["development", "production"])
+
+if ENVIRONMENT == "production":
+    sentry_sdk.init(
+        dsn="https://00fdc0626e75488c8253114cc01e0a57@o523541.ingest.sentry.io/5635694",
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )
