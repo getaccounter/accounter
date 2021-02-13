@@ -140,6 +140,10 @@ resource "kubernetes_deployment" "server" {
             }
           }
           env {
+            name  = "ENVIRONMENT"
+            value = "production"
+          }
+          env {
             name  = "BASE_URL"
             value = "https://app.accounter.io"
           }
