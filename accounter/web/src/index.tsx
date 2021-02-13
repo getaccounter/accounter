@@ -4,7 +4,22 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "./tailwind.output.css";
 
-// TODO move providers to App.tsx
+import * as Sentry from "@sentry/react";
+import { Integrations } from "@sentry/tracing";
+import { NODE_ENV } from "./config";
+
+if (NODE_ENV === "production") {
+  Sentry.init({
+    dsn:
+      "https://91cf151a010240c5b9675f7fede2114c@o523541.ingest.sentry.io/5635703",
+    integrations: [new Integrations.BrowserTracing()],
+
+    // We recommend adjusting this value in production, or using tracesSampler
+    // for finer control
+    tracesSampleRate: 1.0,
+  });
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
