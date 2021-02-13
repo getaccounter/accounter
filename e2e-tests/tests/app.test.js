@@ -14,7 +14,6 @@ const FULLSCREEN = "macbook-13";
 
 const sizes = [
   { name: MOBILE, viewport: "iphone-5" },
-  { name: WINDOW, viewport: [1024, 800] },
   { name: FULLSCREEN, viewport: "macbook-13" },
 ];
 
