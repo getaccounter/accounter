@@ -5,6 +5,7 @@ import {
   testList,
 } from "../../utils/handlers/accounts.testutils";
 import { Account } from "../../utils/handlers/accounts";
+import app from "..";
 
 const createSlackbotUser = () => ({
   id: "USLACKBOT",
@@ -160,7 +161,7 @@ const createSlackUser = (account: Account) => {
 const derivation = (account: Account) => (account);
 
 describe("accounts", () => {
-  testAccountsGetById("/slack", derivation, {
+  testAccountsGetById(app, derivation, {
     found: async ({ params }, { account }) => {
       const { token, id } = params;
       nock("https://slack.com")
@@ -259,7 +260,7 @@ describe("accounts", () => {
     },
   });
 
-  testList("/slack", derivation, {
+  testList(app, derivation, {
     success: async ({ params }, expectedReturnValue) => {
       const { token } = params;
       const members = [
