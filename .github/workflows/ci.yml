@@ -78,8 +78,10 @@ jobs:
         run: docker-compose -f docker-compose.yml run --entrypoint /usr/bin/env server python manage.py makemigrations --check
 
       - name: end-to-end tests production build
-        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml up --exit-code-from e2e
-
+        run: |
+          docker-compose -f docker-compose.yml -f docker-compose.production.yml build --parallel
+          docker-compose -f docker-compose.yml -f docker-compose.production.yml up --exit-code-from e2e
+          
       - uses: hashicorp/setup-terraform@v1
       - name: Install doctl
         uses: digitalocean/action-doctl@v2.1.0
@@ -107,7 +109,7 @@ jobs:
         if: github.ref != 'refs/heads/master'
         run: terraform -chdir=accounter plan -no-color
         env:
-          TF_VAR_image_tag: ${{ env.version }}
+          TF_VAR_app_version: ${{ env.version }}
 
       - uses: actions/github-script@v3
         if: github.event_name == 'pull_request'
