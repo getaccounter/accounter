@@ -7,7 +7,6 @@ variable "do_token" {
 variable "app_version" {
   description = "version of current release"
   type        = string
-  default     = "latest"
 }
 
 variable "s3_access_id" {

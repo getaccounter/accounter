@@ -8,6 +8,6 @@ docker push $IMAGE_REGISTRY/web:$@
 docker push $IMAGE_REGISTRY/loadbalancer:$@
 docker push $IMAGE_REGISTRY/connector:$@
 
-export TF_VAR_version=$@
+export TF_VAR_app_version=$@
 terraform -chdir=provider apply -auto-approve
 terraform -chdir=accounter apply -auto-approve
