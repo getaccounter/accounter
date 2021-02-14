@@ -6,7 +6,7 @@ import "./tailwind.output.css";
 
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
-import { NODE_ENV } from "./config";
+import { NODE_ENV, VERSION } from "./config";
 
 if (NODE_ENV === "production") {
   Sentry.init({
@@ -17,6 +17,7 @@ if (NODE_ENV === "production") {
     // We recommend adjusting this value in production, or using tracesSampler
     // for finer control
     tracesSampleRate: 1.0,
+    release: `connector@${VERSION}`
   });
 }
 

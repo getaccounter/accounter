@@ -28,3 +28,5 @@ export const NODE_ENV = parseRequiredEnv(
   "NODE_ENV",
   (val) => String(val) as "development" | "production"
 );
+
+export const VERSION = parseEnv("REACT_APP_VERSION", String, "dev")

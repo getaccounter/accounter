@@ -1,5 +1,5 @@
 import express from "express";
-import { NODE_ENV } from "./env";
+import { NODE_ENV, VERSION } from "./env";
 import googleApp from "./google";
 import slackApp from "./slack";
 import logger from "morgan";
@@ -28,6 +28,7 @@ if (useSentry) {
     // We recommend adjusting this value in production, or using tracesSampler
     // for finer control
     tracesSampleRate: 1.0,
+    release: `connector@${VERSION}`
   });
 
   // RequestHandler creates a separate execution context using domains, so that every

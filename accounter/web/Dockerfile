@@ -14,6 +14,7 @@ ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD [ "npm", "start" ]
 
 FROM node:15.8.0-alpine as builder
+ENV REACT_APP_VERSION="VERSION_DO_REPLACE_ME_BEFORE_DEPLOY"
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code /code

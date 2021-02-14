@@ -62,7 +62,7 @@ resource "kubernetes_deployment" "server" {
           name = var.image_pull_secret_name
         }
         container {
-          image = "registry.digitalocean.com/accounter/server:${var.image_tag}"
+          image = "registry.digitalocean.com/accounter/server:${var.app_version}"
           name  = "server"
           port {
             container_port = var.port
@@ -142,6 +142,10 @@ resource "kubernetes_deployment" "server" {
           env {
             name  = "ENVIRONMENT"
             value = "production"
+          }
+          env {
+            name  = "VERSION"
+            value = var.app_version
           }
           env {
             name  = "BASE_URL"

@@ -4,8 +4,8 @@ variable "do_token" {
   sensitive   = true
 }
 
-variable "image_tag" {
-  description = "tag of images to use"
+variable "app_version" {
+  description = "version of current release"
   type        = string
   default     = "latest"
 }

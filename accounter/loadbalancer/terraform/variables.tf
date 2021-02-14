@@ -1,5 +1,5 @@
-variable "image_tag" {
-  description = "tag of mages to use"
+variable "app_version" {
+  description = "version"
   type        = string
 }
 

@@ -62,7 +62,7 @@ resource "kubernetes_deployment" "connector" {
           name = var.image_pull_secret_name
         }
         container {
-          image = "registry.digitalocean.com/accounter/connector:${var.image_tag}"
+          image = "registry.digitalocean.com/accounter/connector:${var.app_version}"
           name  = "connector"
           port {
             container_port = var.port
@@ -70,6 +70,10 @@ resource "kubernetes_deployment" "connector" {
           env {
             name  = "PORT"
             value = tostring(var.port)
+          }
+          env {
+            name  = "VERSION"
+            value = var.app_version
           }
           env {
             name = "ENCRYPTION_KEY"
