@@ -38,10 +38,10 @@ jobs:
       - name: Set current version
         run: |
           echo "!!!!!!!!!!!"
-          echo $TF_VAR_google_client_id
-          echo $TF_VAR_google_client_secret
-          echo ${{ secrets.GOOGLE_CLIENT_ID }}
-          echo ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          echo $(echo -n $TF_VAR_google_client_id | wc -m)
+          echo $(echo -n $TF_VAR_google_client_secret | wc -m)
+          echo $(echo -n ${{ secrets.GOOGLE_CLIENT_ID }} | wc -m)
+          echo $(echo -n ${{ secrets.GOOGLE_CLIENT_SECRET }} | wc -m)
           echo "done"
           git fetch --prune --unshallow --tags
           echo version=$(git tag | sort -V | tail -1 | cut -c2-) >> $GITHUB_ENV
