@@ -1,6 +1,6 @@
 FROM node:15.8.0-alpine as development
 ENV PORT=3000
-RUN apk update && apk add bash
+RUN apk add --no-cache bash
 
 RUN mkdir /code
 WORKDIR /code
@@ -22,6 +22,7 @@ RUN npm run build
 
 FROM node:15.8.0-alpine as production
 ENV PORT=3000
+RUN apk add --no-cache bash
 RUN mkdir /build
 COPY --from=builder /code/build /build
 COPY docker-entrypoint.sh /
