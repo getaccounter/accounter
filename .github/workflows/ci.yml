@@ -107,7 +107,7 @@ jobs:
         if: github.ref != 'refs/heads/master'
         run: terraform -chdir=accounter plan -no-color
         env:
-          TF_VAR_image_tag: ${{ env.version }}
+          TF_VAR_version: ${{ env.version }}
 
       - uses: actions/github-script@v3
         if: github.event_name == 'pull_request'

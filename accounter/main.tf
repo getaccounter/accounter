@@ -82,7 +82,7 @@ resource "kubernetes_secret" "registry-accounter" {
 module "server" {
   source = "./server/terraform"
 
-  image_tag              = var.image_tag
+  app_version            = var.app_version
   image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   database = {
@@ -112,7 +112,7 @@ module "server" {
 module "connector" {
   source = "./connector/terraform"
 
-  image_tag              = var.image_tag
+  app_version            = var.app_version
   image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   slack = {
@@ -132,7 +132,7 @@ module "connector" {
 module "web" {
   source = "./web/terraform"
 
-  image_tag              = var.image_tag
+  app_version            = var.app_version
   image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   server = {
@@ -144,7 +144,7 @@ module "web" {
 module "loadbalancer" {
   source = "./loadbalancer/terraform"
 
-  image_tag              = var.image_tag
+  app_version            = var.app_version
   image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
 
   web = {

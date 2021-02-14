@@ -227,6 +227,8 @@ CONNECTOR_URL = f"http://{CONNECTOR_HOST}:{CONNECTOR_PORT}"
 
 ENVIRONMENT = get_enum_env_value("ENVIRONMENT", ["development", "production"])
 
+VERSION = get_optional_env_value("VERSION", "dev")
+
 if ENVIRONMENT == "production":
     sentry_sdk.init(
         dsn="https://00fdc0626e75488c8253114cc01e0a57@o523541.ingest.sentry.io/5635694",
@@ -235,4 +237,5 @@ if ENVIRONMENT == "production":
         # If you wish to associate users to errors (assuming you are using
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
+        release=f"server@{VERSION}",
     )

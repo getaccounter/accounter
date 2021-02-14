@@ -25,7 +25,7 @@ resource "kubernetes_deployment" "loadbalancer" {
           name = var.image_pull_secret_name
         }
         container {
-          image = "registry.digitalocean.com/accounter/loadbalancer:${var.image_tag}"
+          image = "registry.digitalocean.com/accounter/loadbalancer:${var.app_version}"
           name  = "loadbalancer"
           port {
             container_port = 8080
