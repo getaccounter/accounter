@@ -8,6 +8,7 @@ import queryString from "query-string";
 import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Sidebar_profile } from "./__generated__/Sidebar_profile.graphql";
+import LogoWriting from "../../../branding/LogoWriting";
 
 interface Props {
   mainTabs: Array<TabType>;
@@ -66,11 +67,7 @@ const MobileSidebar = (props: Props) => {
             </div>
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div className="flex-shrink-0 flex items-center px-4">
-                <img
-                  className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/workflow-logo-pink-500-mark-gray-900-text.svg"
-                  alt="Workflow"
-                />
+              <LogoWriting />
               </div>
               <nav aria-label="Sidebar" className="mt-5">
                 <div className="px-2 space-y-1">
@@ -108,13 +105,7 @@ const DesktopSidebar = (props: Props) => (
         <div className="flex flex-col h-0 flex-1 border-r border-gray-200 bg-gray-100">
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
-            <img
-              className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-              alt="Workflow"
-            />
-            <span className="text-xl font-semibold pl-2">Accounter</span>
-            
+            <LogoWriting />
             </div>
             <nav className="mt-5 flex-1" aria-label="Sidebar">
               <div className="px-2 space-y-1">
