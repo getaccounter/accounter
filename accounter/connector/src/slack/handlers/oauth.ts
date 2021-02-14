@@ -1,5 +1,5 @@
 import installer from "../installer";
-import { oauthCallbackHandler, oauthHandler } from "../../utils/handlers/oauth";
+import { oauthCallbackHandler, oauthHandler, refreshTokenHandler } from "../../utils/handlers/oauth";
 
 export const oauth = oauthHandler(async ({ params }, callback) => {
   const { redirectUri } = params;
@@ -37,3 +37,9 @@ export const oauthCallback = oauthCallbackHandler(
     });
   }
 );
+
+export const refresh = refreshTokenHandler(async (_, callback) => {
+  callback({
+    code: 501,
+  });
+});

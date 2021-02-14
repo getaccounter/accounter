@@ -57,6 +57,7 @@ const mockOauthToken = ({ oauthCode, token } = {}) => {
       httpResponse: {
         body: {
           access_token: token,
+          refresh_token: faker.random.uuid(),
           expires_in: 3598,
           scope:
             "https://www.googleapis.com/auth/admin.directory.user.readonly https://www.googleapis.com/auth/admin.directory.customer.readonly",

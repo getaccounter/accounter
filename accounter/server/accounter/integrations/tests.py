@@ -303,7 +303,7 @@ class IntegrationTestCase(GraphQLTestCase):
     )
     @requests_mock.Mocker()
     def test_get_integrations_expired_token(self, mock_request):
-        token = "some_token"
+        token = fake.uuid4()
         Integration.objects.create(
             service=Service.objects.get(name=Service.Types.SLACK),
             organization=self.admin.profile.organization,
@@ -313,6 +313,95 @@ class IntegrationTestCase(GraphQLTestCase):
         self.client.force_login(self.admin)
         mock_request.get(
             settings.CONNECTOR_URL + f"/slack/accounts/list?token={token}",
+            status_code=401,
+        )
+        response = self.query(
+            """
+            query {
+                integrations {
+                    hasValidToken
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        assert content["data"]["integrations"][0]["hasValidToken"] is False
+
+    @freeze_time(
+        auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
+    )
+    @requests_mock.Mocker()
+    def test_get_integrations_with_refresh_token(self, mock_request):
+        expired_token = fake.uuid4()
+        fresh_token = fake.uuid4()
+        refresh_token = fake.uuid4()
+        Integration.objects.create(
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            has_valid_token=True,
+            token=expired_token,
+            refresh_token=refresh_token,
+        ).save()
+        self.client.force_login(self.admin)
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={expired_token}",
+            status_code=401,
+        )
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/oauth/refresh?token={refresh_token}",
+            json={
+                "token": fresh_token,
+            },
+        )
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={fresh_token}",
+            json=[
+                {
+                    "id": "someid",
+                    "username": self.admin.first_name,
+                    "email": self.admin.email,
+                    "image": {"small": fake.image_url(), "big": fake.image_url()},
+                    "role": "USER",
+                    "externalProfile": fake.url(),
+                    "isDisabled": False,
+                }
+            ],
+        )
+        response = self.query(
+            """
+            query {
+                integrations {
+                    hasValidToken
+                }
+            }
+            """
+        )
+        content = json.loads(response.content)
+        self.assertResponseNoErrors(response)
+        assert content["data"]["integrations"][0]["hasValidToken"] is True
+
+    @freeze_time(
+        auto_tick_seconds=Integration.REFRESH_INTERVAL_SECONDS,
+    )
+    @requests_mock.Mocker()
+    def test_get_integrations_with_expired_refresh_token(self, mock_request):
+        expired_token = fake.uuid4()
+        refresh_token = fake.uuid4()
+        Integration.objects.create(
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            has_valid_token=True,
+            token=expired_token,
+            refresh_token=refresh_token,
+        ).save()
+        self.client.force_login(self.admin)
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/accounts/list?token={expired_token}",
+            status_code=401,
+        )
+        mock_request.get(
+            settings.CONNECTOR_URL + f"/slack/oauth/refresh?token={refresh_token}",
             status_code=401,
         )
         response = self.query(

@@ -11,6 +11,7 @@ interface GenericResponseWithBody<Code extends number, Body> extends GenericResp
 
 type Response200<Body> = GenericResponseWithBody<200, Body>;
 type Response401 = GenericResponse<401>;
+type Response501 = GenericResponse<501>;
 type Response400 = GenericResponseWithBody<400, string>;
 
 export const makeHandler = <Params>(schemas: { params: z.ZodType<Params> }) => <
@@ -18,7 +19,7 @@ export const makeHandler = <Params>(schemas: { params: z.ZodType<Params> }) => <
 >() => (
   callback: (
     data: { params: Params },
-    callback: (resp: Response200<ResponsePayload> | Response400 | Response401) => void
+    callback: (resp: Response200<ResponsePayload> | Response400 | Response401 | Response501) => void
   ) => void
 ): RequestHandler => {
     return async (request, reply) => {
@@ -37,6 +38,9 @@ export const makeHandler = <Params>(schemas: { params: z.ZodType<Params> }) => <
         const body = response.body
         if (body?.token) {
           body.token = encrypt(body.token)
+        }
+        if (body?.refreshToken) {
+          body.refreshToken = encrypt(body.refreshToken)
         }
         reply.status(response.code).send(body);
       });
