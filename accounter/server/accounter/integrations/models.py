@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Optional
 
 import requests
 from django.conf import settings
@@ -17,14 +18,21 @@ class Service(models.Model):
         token: str
         name: str
         management_url: str
+        refresh_token: Optional[str]
 
         def __init__(
-            self, integration_id: str, token: str, name: str, management_url: str
+            self,
+            integration_id: str,
+            token: str,
+            name: str,
+            management_url: str,
+            refresh_token: Optional[str],
         ):
             self.integration_id = integration_id
             self.token = token
             self.name = name
             self.management_url = management_url
+            self.refresh_token = refresh_token
 
     class Types(models.TextChoices):
         SLACK = "SLACK", "Slack"
@@ -57,6 +65,7 @@ class Service(models.Model):
             name=payload["integrationName"],
             token=payload["token"],
             management_url=payload["managementUrl"],
+            refresh_token=payload.get("refreshToken", None),
         )
 
     @property
@@ -83,6 +92,7 @@ class Integration(models.Model):
 
     id = models.TextField(primary_key=True)
     token = models.TextField()
+    refresh_token = models.TextField(null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     last_refresh = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=100)
@@ -116,15 +126,35 @@ class Integration(models.Model):
         )
         return account
 
+    def refresh_auth_token(self):
+        if not self.refresh_token:
+            return
+
+        response = requests.get(
+            self.service.connector_url + "/oauth/refresh",
+            params={"token": self.refresh_token},
+        )
+        if response.status_code == 401:
+            self.refresh_token = None
+            self.save()
+            return
+
+        self.token = response.json().get("token")
+        self.save()
+
     def refresh(self, force=False):
         if not force and self.is_fresh:
             return
         if not self.has_valid_token:
             return
-        response = requests.get(
-            self.service.connector_url + "/accounts/list",
-            params={"token": self.token},
-        )
+
+        endpoint = self.service.connector_url + "/accounts/list"
+
+        response = requests.get(endpoint, params={"token": self.token})
+        if response.status_code == 401:
+            self.refresh_auth_token()
+            response = requests.get(endpoint, params={"token": self.token})
+
         if response.status_code == 401:
             self.has_valid_token = False
             self.save()
@@ -226,10 +256,16 @@ class Account(models.Model):
         if not self.integration.has_valid_token:
             return
 
+        endpoint = self.integration.service.connector_url + "/accounts/getById"
+
         response = requests.get(
-            self.integration.service.connector_url + "/accounts/getById",
-            params={"token": self.integration.token, "id": self.id},
+            endpoint, params={"token": self.integration.token, "id": self.id}
         )
+        if response.status_code == 401:
+            self.integration.refresh_auth_token()
+            response = requests.get(
+                endpoint, params={"token": self.integration.token, "id": self.id}
+            )
 
         if response.status_code == 401:
             self.integration.has_valid_token = False

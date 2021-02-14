@@ -18,7 +18,19 @@ export const oauthCallbackHandler = makeHandler({
   params: handleOAuthParamSchema,
 })<{
   token: string;
+  refreshToken?: string
   integrationId: string;
   integrationName: string;
   managementUrl: string;
 }>();
+
+const refreshTokenParamSChema = z.object({
+  token: z.string(),
+});
+
+export const refreshTokenHandler = makeHandler({
+  params: refreshTokenParamSChema,
+})<{
+  token: string;
+}>();
+

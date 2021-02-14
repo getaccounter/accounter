@@ -125,6 +125,8 @@ services:
 
   mockserver:
     image: mockserver/mockserver:mockserver-5.11.2
+    environment:
+      - MOCKSERVER_LOG_LEVEL=warn
 
   e2e:
     build: ./e2e-tests

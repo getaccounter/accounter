@@ -39,6 +39,7 @@ class HandleCallback(graphene.Mutation):
         )
         integration.name = callback_result.name
         integration.token = callback_result.token
+        integration.refresh_token = callback_result.refresh_token
         integration.has_valid_token = True
         integration.management_url = callback_result.management_url
         integration.save()
