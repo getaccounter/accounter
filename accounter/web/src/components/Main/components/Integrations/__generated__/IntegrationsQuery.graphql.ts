@@ -4,7 +4,7 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceName = "GOOGLE" | "SLACK" | "%future added value";
+export type ServiceName = "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
 export type IntegrationsQueryVariables = {};
 export type IntegrationsQueryResponse = {
     readonly integrations: ReadonlyArray<{
