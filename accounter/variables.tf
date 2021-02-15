@@ -51,6 +51,18 @@ variable "google_client_secret" {
   sensitive   = true
 }
 
+variable "zoom_client_id" {
+  description = "zoom client id"
+  type        = string
+  sensitive   = true
+}
+
+variable "zoom_client_secret" {
+  description = "zoom client secret"
+  type        = string
+  sensitive   = true
+}
+
 variable "token_encryption_key" {
   description = "encryption key for service tokens"
   type        = string

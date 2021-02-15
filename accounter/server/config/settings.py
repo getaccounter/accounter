@@ -60,6 +60,8 @@ def get_enum_env_value(env_variable: str, valid_values: List[str]):
         )
         raise ImproperlyConfigured(error_msg)
 
+    return value
+
 
 def get_bool_env_value(env_variable):
     string_value = get_enum_env_value(env_variable, ["True", "False"])

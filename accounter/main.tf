@@ -126,6 +126,11 @@ module "connector" {
     client_secret = var.google_client_secret
   }
 
+  zoom = {
+    client_id     = var.zoom_client_id
+    client_secret = var.zoom_client_secret
+  }
+
   token_encryption_key = var.token_encryption_key
 }
 
