@@ -3,7 +3,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type ServiceName = "GOOGLE" | "SLACK" | "%future added value";
+export type ServiceName = "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
 export type ServicesQueryVariables = {};
 export type ServicesQueryResponse = {
     readonly services: ReadonlyArray<{

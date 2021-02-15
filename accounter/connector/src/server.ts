@@ -2,6 +2,7 @@ import express from "express";
 import { NODE_ENV, VERSION } from "./env";
 import googleApp from "./google";
 import slackApp from "./slack";
+import zoomApp from "./zoom";
 import logger from "morgan";
 import * as Sentry from "@sentry/node";
 import * as Tracing from "@sentry/tracing";
@@ -42,6 +43,7 @@ server.use(logger(NODE_ENV === "development" ? "dev" : "common"));
 
 server.use("/google", googleApp);
 server.use("/slack", slackApp);
+server.use("/zoom", zoomApp);
 
 if (useSentry) {
   server.use(Sentry.Handlers.errorHandler());

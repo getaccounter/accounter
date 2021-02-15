@@ -31,22 +31,20 @@ class ServiceTestCase(GraphQLTestCase):
     @requests_mock.Mocker()
     def test_services_query(self, mock_request):
         self.client.force_login(self.admin)
-        oauthUrl = "https://some.url"
-        mock_request.get(
-            settings.CONNECTOR_URL
-            + "/slack/oauth?redirectUri=http%3A%2F%2Flocalhost%3A8080%2Fslack%2Foauth%2Fcallback",
-            json={
-                "url": oauthUrl,
-            },
-        )
-        mock_request.get(
-            settings.CONNECTOR_URL
-            + "/google/oauth?redirectUri=http%3A%2F%2Flocalhost%3A8080%2Fgoogle%2Foauth%2Fcallback",
-            json={
-                "url": oauthUrl,
-            },
-        )
-        service = Service.objects.get(name=Service.Types.SLACK)
+
+        services = []
+        for provider in Service.Types:
+            services.append((provider.value, fake.url()))
+
+        for (value, oauth_url) in services:
+            url_name = value.lower()
+            mock_request.get(
+                settings.CONNECTOR_URL
+                + f"/{url_name}/oauth?redirectUri=http%3A%2F%2Flocalhost%3A8080%2F{url_name}%2Foauth%2Fcallback",
+                json={
+                    "url": oauth_url,
+                },
+            )
         response = self.query(
             """
             {
@@ -60,12 +58,12 @@ class ServiceTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        services = content["data"]["services"]
-        service.refresh_from_db()
-        assert len(services) == 2
-        assert services[0]["name"] == service.name
-        assert services[0]["logo"] == service.logo.url
-        assert services[0]["oauthUrl"] == oauthUrl
+        response_services = content["data"]["services"]
+        assert len(response_services) == 3
+        for service_response in response_services:
+            service = Service.objects.get(name=Service.Types[service_response["name"]])
+            assert service_response["logo"] == service.logo.url
+            assert service_response["oauthUrl"] == service.oauth_url
 
     def test_services_query_requires_authenticated_users(self):
         response = self.query(
