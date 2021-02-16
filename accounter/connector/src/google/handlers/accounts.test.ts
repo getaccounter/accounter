@@ -51,10 +51,8 @@ const createGoogleUser = (account: Account) => {
 const derivation = (account: Account) => ({
   username: account.email,
   image: {
-    big:
-      "https://ssl.gstatic.com/images/branding/product/1x/avatar_square_grey_512dp.png",
-    small:
-      "https://www.gstatic.com/images/branding/product/2x/avatar_square_grey_48dp.png",
+    big: null,
+    small: null,
   },
   // owners do not exist in google
   role: account.role === "OWNER" ? "ADMIN" : account.role

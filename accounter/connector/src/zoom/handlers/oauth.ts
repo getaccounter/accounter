@@ -81,7 +81,6 @@ export const refresh = refreshTokenHandler(async ({ params }, callback) => {
 
   try {
     const accessToken = await expiredAccessToken.refresh();
-    console.log({accessToken})
     callback({
       code: 200,
       body: { token: accessToken.token.access_token },
