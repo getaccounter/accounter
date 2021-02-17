@@ -67,14 +67,6 @@ resource "kubernetes_deployment" "server" {
           port {
             container_port = var.port
           }
-          liveness_probe {
-            http_get {
-              path = "/get_csrf_cookie"
-              port = var.port
-            }
-            initial_delay_seconds = 120
-            period_seconds        = 60
-          }
           env {
             name  = "PORT"
             value = tostring(var.port)
