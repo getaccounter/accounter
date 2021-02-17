@@ -36,9 +36,9 @@ export const oauthCallback = oauthCallbackHandler(
     // https://api.zoom.us/v2/users
     try {
       const accessToken = await client.getToken(tokenParams);
-      // NOTE: we BELIEVE that `auid` is the account id, but we are not sure 
-      // if there are any problems with duplicated integrations, this might 
-      // be the culprit
+      // NOTE: we BELIEVE that `auid` is the account id, but we are not sure.
+      // If there are any problems with duplicated integrations, this might 
+      // be the culprit.
       // @ts-expect-error auid should be defined
       const {auid} = jwt_decode(accessToken.token.access_token)
       callback({

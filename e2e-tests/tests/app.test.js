@@ -7,13 +7,14 @@ import mockSlackIntegration, {
   mockSlackAuthTest,
 } from "../utils/slack";
 import mockGoogleIntegration from "../utils/google"
+import mockZoomIntegration from "../utils/zoom"
 
-const MOBILE = "mobile";
-const WINDOW = "window";
+// const MOBILE = "mobile";
 const FULLSCREEN = "macbook-13";
 
 const sizes = [
-  { name: MOBILE, viewport: "iphone-5" },
+  // deactivated mobile tests until we have a faster/cheaper CI
+  // { name: MOBILE, viewport: "iphone-5" },
   { name: FULLSCREEN, viewport: "macbook-13" },
 ];
 
@@ -39,6 +40,12 @@ sizes.forEach(({ name, viewport }) => {
           getMockIntegration: (users) => mockGoogleIntegration(users),
           executeOauthFlow: "mockGoogleOauth",
           getDisplayName: (user) => user.google.displayName
+        },
+        {
+          serviceName: "ZOOM",
+          getMockIntegration: (users) => mockZoomIntegration(users),
+          executeOauthFlow: "mockZoomOauth",
+          getDisplayName: (user) => user.zoom.displayName
         },
       ].forEach(({ serviceName, getMockIntegration, executeOauthFlow, getDisplayName }) => {
         describe(serviceName, () => {
