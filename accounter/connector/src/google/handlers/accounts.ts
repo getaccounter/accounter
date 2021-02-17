@@ -17,8 +17,8 @@ const convertGoogleUserToReturnType = (
     email: user.primaryEmail!,
     username: user.primaryEmail!,
     image: {
-      small: "https://www.gstatic.com/images/branding/product/2x/avatar_square_grey_48dp.png",
-      big: "https://ssl.gstatic.com/images/branding/product/1x/avatar_square_grey_512dp.png",
+      small: null,
+      big: null,
     },
     role: user.isAdmin ? "ADMIN" : "USER",
     externalProfile: `https://admin.google.com/ac/users/${user.id!}`,

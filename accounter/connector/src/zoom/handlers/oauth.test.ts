@@ -3,7 +3,7 @@ import app from "..";
 import { decrypt } from "../../utils/encryption";
 import { refreshToken } from "../../utils/handlers/oauth.testutils";
 
-describe.only("oauth", () => {
+describe("oauth", () => {
   refreshToken(app, {
     success: async ({ params }, expected) => {
       const { token: refreshToken } = params;

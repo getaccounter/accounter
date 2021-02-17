@@ -119,12 +119,14 @@ class Integration(models.Model):
             integration=self,
             email=response["email"],
             username=response["username"],
-            image_small=response["image"]["small"],
-            image_big=response["image"]["big"],
             role=response["role"],
             external_profile=response["externalProfile"],
             is_disabled=response["isDisabled"],
         )
+        if response["image"]["small"]:
+            account.image_small = response["image"]["small"]
+        if response["image"]["big"]:
+            account.image_big = response["image"]["big"]
         return account
 
     def refresh_auth_token(self):
@@ -244,12 +246,14 @@ class Account(models.Model):
     def update_from_response(self, response):
         self.username = response["username"]
         self.email = response["email"]
-        self.image_small = response["image"]["small"]
-        self.image_big = response["image"]["big"]
         self.last_refresh = timezone.now()
         self.role = response["role"]
         self.external_profile = response["externalProfile"]
         self.is_disabled = response["isDisabled"]
+        if response["image"]["small"]:
+            self.image_small = response["image"]["small"]
+        if response["image"]["big"]:
+            self.image_big = response["image"]["big"]
 
     def refresh(self, force=False):
         if not force and self.is_fresh:

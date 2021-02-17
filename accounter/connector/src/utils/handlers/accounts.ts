@@ -10,8 +10,8 @@ export type Account = {
   email: string;
   username: string;
   image: {
-    small: string;
-    big: string;
+    small: string | null;
+    big: string | null;
   };
   role: Role;
   externalProfile: string
