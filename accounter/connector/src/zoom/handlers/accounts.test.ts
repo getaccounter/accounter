@@ -7,8 +7,8 @@ import {
 import { Account } from "../../utils/handlers/accounts";
 import app from "..";
 
-const createZoomUser = (account: Account) => {
-  return {
+const createZoomUser = (account: Account, extended: boolean) => {
+  const zoomUser = {
     id: account.id,
     first_name: account.firstName,
     last_name: account.lastName,
@@ -24,13 +24,33 @@ const createZoomUser = (account: Account) => {
     status: faker.random.word(),
     role_id: account.role === "OWNER" ? "0" : account.role === "ADMIN" ? "1" : "2",
   };
+
+  return extended ? {
+    ...zoomUser,
+    role_name: faker.random.word(),
+    use_pmi: false,
+    personal_meeting_url: faker.internet.url(),
+    dept: faker.commerce.department(),
+    pic_url : account.image.big,
+    host_key: faker.random.uuid(),
+    cms_user_id: faker.random.uuid(),
+    jid: faker.random.uuid(),
+    group_ids: [],
+    im_group_ids: [],
+    account_id: faker.random.uuid(),
+    phone_country: faker.phone.phoneNumber(),
+    job_title: faker.name.jobTitle(),
+    location: faker.address.country(),
+    login_types: [100],
+  } : zoomUser
 };
 
 const derivation = (account: Account) => ({
   username: account.email,
+  // only has one image
   image: {
-    big: null,
-    small: null,
+    big: account.image.big,
+    small: account.image.big,
   },
   // never disabled
   isDisabled: false,
@@ -47,7 +67,7 @@ describe("accounts", () => {
       })
         .get(`/v2/users/${id}`)
         .once()
-        .reply(200, createZoomUser(account!));
+        .reply(200, createZoomUser(account!, true));
     },
     notFound: async ({ params }, { account }) => {
       const { token, id } = params;
@@ -72,7 +92,7 @@ describe("accounts", () => {
       })
         .get(`/v2/users/${id}`)
         .once()
-        .reply(200, createZoomUser(account!));
+        .reply(200, createZoomUser(account!, true));
     },
     invalidToken: async ({ params }) => {
       const { token, id } = params;

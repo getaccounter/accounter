@@ -5,6 +5,7 @@
     "eslint": "7.20.0",
     "eslint-plugin-cypress": "2.11.2",
     "faker": "5.4.0",
+    "jsonwebtoken": "8.5.1",
     "mockserver-client": "5.11.2"
   }
 }

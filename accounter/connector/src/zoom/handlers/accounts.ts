@@ -80,7 +80,7 @@ export const list = listHandler(async ({ params }, callback) => {
       : request.ca(mockCert_ONLY_USE_FOR_TESTING));
 
     const users: Array<ZoomUser> = response.body.users;
-
+    
     callback({
       code: 200,
       body: users.map(convertZoomUserToReturnType),
