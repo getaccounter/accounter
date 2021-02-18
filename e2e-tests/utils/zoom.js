@@ -115,7 +115,6 @@ const mockUsersList = ({ token, users = [] } = {}) => {
 };
 
 const mockIntegration = (users) => {
-  const domain = faker.internet.domainName();
   const oauthCode = faker.random.uuid()
   const token = jwt.sign({
     ver: 7,
@@ -139,20 +138,12 @@ const mockIntegration = (users) => {
     oauthCode,
   });
 
-  const oauthCodes = users.reduce((tokens, user) => {
-
-    return {
-      ...tokens,
-      [user.email]: oauthCode,
-    };
-  }, {});
-
   mockUsersList({
     token,
     users,
   });
 
-  return { oauthCodes, name: "Zoom" };
+  return { oauthCode, name: "Zoom" };
 };
 
 export default mockIntegration;

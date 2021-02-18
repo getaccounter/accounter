@@ -157,28 +157,23 @@ const mockUsersList = ({ token, users = [] } = {}) => {
 const mockIntegration = (users) => {
   const token = faker.random.uuid();
   const domain = faker.internet.domainName();
+  const oauthCode = faker.random.uuid()
 
-  const oauthCodes = users.reduce((tokens, user) => {
-    // NOTE Why do we need one oauth token per user? 
-    // We might be able to simplify this
-    const oauthCode = user.google.id;
-    mockOauthToken({
-      token,
-      oauthCode,
-    });
+  mockOauthToken({
+    token,
+    oauthCode,
+  });
+
+  users.forEach((user) => {
     mockCustomerGet({ token, user, domain });
-
-    return {
-      ...tokens,
-      [user.email]: oauthCode,
-    };
-  }, {});
+  });
+  
   mockUsersList({
     token,
     users,
   });
 
-  return { oauthCodes, name: domain };
+  return { oauthCode, name: domain };
 };
 
 export default mockIntegration;
