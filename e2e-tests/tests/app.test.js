@@ -63,7 +63,7 @@ sizes.forEach(({ name, viewport }) => {
 
             cy.findByRole("link", { name: `Add ${serviceName}` }).click();
 
-            cy[executeOauthFlow](integration.oauthCodes[user.email]);
+            cy[executeOauthFlow](integration.oauthCode);
 
             cy.findByRole("navigation", { name: "Directory" }).within(() => {
               cy.findByRole("link", {

@@ -306,30 +306,25 @@ const mockSlackUsersInfo = ({
 const mockSlackIntegration = (users) => {
   const workspace = generateWorkspaceData();
   const token = faker.random.uuid();
+  const oauthCode = faker.random.uuid()
+  
+  mockSlackOauthToken({
+    workspace,
+    token,
+    oauthCode,
+  });
 
-  const oauthCodes = users.reduce((tokens, user) => {
-    // NOTE Why do we need one oauth token per user? 
-    // We might be able to simplify this
-    const oauthCode = user.slack.id
-    mockSlackOauthToken({
-      workspace,
-      token,
-      oauthCode,
-    });
+  users.forEach((user) => {
     mockSlackAuthTest({ user, workspace, token });
+  })
 
-    return {
-      ...tokens,
-      [user.email]: oauthCode
-    }
-  }, {})
   mockSlackUsersList({
     token,
     workspace,
     users,
   });
 
-  return {oauthCodes, name: workspace.name}
+  return {oauthCode, name: workspace.name}
 }
 
 export default mockSlackIntegration
