@@ -1,4 +1,4 @@
-FROM node:15.8.0-alpine as development
+FROM node:15.9.0-alpine as development
 ENV PORT=3000
 RUN apk add --no-cache bash
 
@@ -13,14 +13,14 @@ RUN cp -R node_modules/heroicons/react/ src/components/icons
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD [ "npm", "start" ]
 
-FROM node:15.8.0-alpine as builder
+FROM node:15.9.0-alpine as builder
 ENV REACT_APP_VERSION="VERSION_DO_REPLACE_ME_BEFORE_DEPLOY"
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code /code
 RUN npm run build
 
-FROM node:15.8.0-alpine as production
+FROM node:15.9.0-alpine as production
 ENV PORT=3000
 RUN apk add --no-cache bash
 RUN mkdir /build
