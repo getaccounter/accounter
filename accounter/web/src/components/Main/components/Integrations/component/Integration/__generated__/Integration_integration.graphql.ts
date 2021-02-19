@@ -4,7 +4,7 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceName = "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
 export type Integration_integration = {
     readonly id: string;
     readonly name: string;

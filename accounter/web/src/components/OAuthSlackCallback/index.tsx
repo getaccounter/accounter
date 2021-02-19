@@ -47,7 +47,7 @@ export default function OAuthSlackCallback() {
   >(LOGIN_MUTATION, {
     errorPolicy: "all",
   });
-  const code = query.get("code");
+  const code = query.get("code") || query.get("installation_id")
   const state = query.get("state");
 
   useEffect(() => {

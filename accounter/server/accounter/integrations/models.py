@@ -38,6 +38,7 @@ class Service(models.Model):
         SLACK = "SLACK", "Slack"
         GOOGLE = "Google", "Google"
         ZOOM = "Zoom", "Zoom"
+        GITHUB = "GitHub", "GitHub"
 
     name = models.CharField("Type", max_length=50, choices=Types.choices, unique=True)
     logo = models.FileField(upload_to="services/logos")
