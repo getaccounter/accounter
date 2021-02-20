@@ -8,6 +8,7 @@ import mockSlackIntegration, {
 } from "../utils/slack";
 import mockGoogleIntegration from "../utils/google"
 import mockZoomIntegration from "../utils/zoom"
+import {mockService as mockGitHubService} from "../utils/zoom"
 
 // const MOBILE = "mobile";
 const FULLSCREEN = "macbook-13";
@@ -17,6 +18,10 @@ const sizes = [
   // { name: MOBILE, viewport: "iphone-5" },
   { name: FULLSCREEN, viewport: "macbook-13" },
 ];
+
+beforeEach(() => {
+  mockGitHubService()
+})
 
 sizes.forEach(({ name, viewport }) => {
   describe(name, () => {

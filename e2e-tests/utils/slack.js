@@ -303,6 +303,8 @@ const mockSlackUsersInfo = ({
     );
 };
 
+export const mockService = () => {/* noop */}
+
 const mockSlackIntegration = (users) => {
   const workspace = generateWorkspaceData();
   const token = faker.random.uuid();

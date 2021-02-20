@@ -42,7 +42,14 @@ variable "zoom" {
   sensitive = true
 }
 
-
+variable "github" {
+  description = "GitHub credentials"
+  type = object({
+    app_id      = string
+    private_key = string
+  })
+  sensitive = true
+}
 
 variable "token_encryption_key" {
   description = "encryption key for service tokens"
@@ -54,4 +61,3 @@ variable "token_encryption_key" {
   #   error_message = "Token_encryption_key must be 32  characters long."
   # }
 }
-

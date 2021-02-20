@@ -63,6 +63,18 @@ variable "zoom_client_secret" {
   sensitive   = true
 }
 
+variable "github_app_id" {
+  description = "github app id"
+  type        = string
+  sensitive   = true
+}
+
+variable "github_private_key" {
+  description = "github private key"
+  type        = string
+  sensitive   = true
+}
+
 variable "token_encryption_key" {
   description = "encryption key for service tokens"
   type        = string
