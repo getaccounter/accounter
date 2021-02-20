@@ -8,7 +8,9 @@
 
 1. [Install pre-commit](https://pre-commit.com/#install)
 
-2. Install hooks:
+1. [Install terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+
+1. Install hooks:
 
 ```bash
 pre-commit install
