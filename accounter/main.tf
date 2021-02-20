@@ -131,6 +131,11 @@ module "connector" {
     client_secret = var.zoom_client_secret
   }
 
+  github = {
+    app_id      = var.github_app_id
+    private_key = var.github_private_key
+  }
+
   token_encryption_key = var.token_encryption_key
 }
 

@@ -114,6 +114,8 @@ const mockUsersList = ({ token, users = [] } = {}) => {
     );
 };
 
+export const mockService = () => {/* noop */}
+
 const mockIntegration = (users) => {
   const oauthCode = faker.random.uuid()
   const token = jwt.sign({

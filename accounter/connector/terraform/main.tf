@@ -35,6 +35,18 @@ resource "kubernetes_secret" "zoom-workspace-credentials" {
   }
 }
 
+resource "kubernetes_secret" "github-credentials" {
+  type = "Opaque"
+  metadata {
+    name = "zoom-workspace-credentials"
+  }
+
+  data = {
+    app_id      = var.github.app_id
+    private_key = var.github.private_key
+  }
+}
+
 resource "kubernetes_secret" "token-encryption" {
   type = "Opaque"
   metadata {
@@ -158,6 +170,25 @@ resource "kubernetes_deployment" "connector" {
               secret_key_ref {
                 name = kubernetes_secret.zoom-workspace-credentials.metadata[0].name
                 key  = "client_secret"
+              }
+            }
+          }
+          # Zoom
+          env {
+            name = "GITHUB_APP_ID"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.github-credentials.metadata[0].name
+                key  = "app_id"
+              }
+            }
+          }
+          env {
+            name = "GITHUB_PRIVATE_KEY"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.github-credentials.metadata[0].name
+                key  = "private_key"
               }
             }
           }

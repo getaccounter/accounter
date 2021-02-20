@@ -154,6 +154,8 @@ const mockUsersList = ({ token, users = [] } = {}) => {
     );
 };
 
+export const mockService = () => {/* noop */}
+
 const mockIntegration = (users) => {
   const token = faker.random.uuid();
   const domain = faker.internet.domainName();
