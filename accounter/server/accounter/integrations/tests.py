@@ -59,7 +59,7 @@ class ServiceTestCase(GraphQLTestCase):
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
         response_services = content["data"]["services"]
-        assert len(response_services) == 3
+        assert len(response_services) == 4
         for service_response in response_services:
             service = Service.objects.get(name=Service.Types[service_response["name"]])
             assert service_response["logo"] == service.logo.url
