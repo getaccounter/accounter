@@ -3,7 +3,7 @@ import graphql from "babel-plugin-relay/macro";
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Environment, PayloadError } from "relay-runtime";
-import { useEnvironment } from "../contexts/relay";
+import { useEnvironment } from "../../contexts/relay";
 import {
   UserFormCreateMutation,
   UserFormCreateMutationResponse,
@@ -16,7 +16,9 @@ import {
   UserFormUpdateMutation,
 } from "./__generated__/UserFormUpdateMutation.graphql";
 import { UserForm_currentUser } from "./__generated__/UserForm_currentUser.graphql";
-import { useNotifications } from "../contexts/notification";
+import { useNotifications } from "../../contexts/notification";
+import UserSelect from "./UserSelect";
+import { UserForm_profileList } from "./__generated__/UserForm_profileList.graphql";
 
 const createUser = (
   environment: Environment,
@@ -96,26 +98,38 @@ const updateUser = (
   });
 };
 
-type Props = {
-  profile: UserForm_profile | null;
-  cancelRoute: string;
-  currentUser: UserForm_currentUser;
-};
+type Props =
+  | {
+      // Edit
+      profile: UserForm_profile;
+      profileList: UserForm_profileList;
+      cancelRoute: string;
+      currentUser: UserForm_currentUser;
+    }
+  | {
+      // Create
+      profile?: undefined;
+      profileList?: undefined;
+      cancelRoute: string;
+      currentUser: UserForm_currentUser;
+    };
 
-const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
+const UserForm = (props: Props) => {
   const { addNotification } = useNotifications();
-  const isUpdate = !!profile;
+  const isUpdate = !!props.profile;
   const environment = useEnvironment();
   const history = useHistory();
-  const [emailInput, setEmailInput] = useState(isUpdate ? profile!.email : "");
+  const [emailInput, setEmailInput] = useState(
+    isUpdate ? props.profile!.email : ""
+  );
   const [firstNameInput, setFirstNameInput] = useState(
-    isUpdate && profile!.firstName ? profile!.firstName : ""
+    isUpdate && props.profile!.firstName ? props.profile!.firstName : ""
   );
   const [lastNameInput, setLastNameInput] = useState(
-    isUpdate && profile!.lastName ? profile!.lastName : ""
+    isUpdate && props.profile!.lastName ? props.profile!.lastName : ""
   );
   const [titleInput, setTitleInput] = useState(
-    isUpdate && profile!.title ? profile!.title : ""
+    isUpdate && props.profile!.title ? props.profile!.title : ""
   );
   return (
     <form
@@ -125,7 +139,7 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
 
         if (isUpdate) {
           const variables = {
-            id: profile!.id,
+            id: props.profile!.id,
             email: emailInput,
             firstName: firstNameInput,
             lastName: lastNameInput,
@@ -195,7 +209,7 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
               Personal Information
             </h3>
             <p className="mt-1 max-w-2xl text-sm text-gray-500">
-              Use a permanent address where you can receive mail.
+              Basic information about the user
             </p>
           </div>
           <div className="space-y-6 sm:space-y-5">
@@ -282,9 +296,39 @@ const UserForm = ({ profile, cancelRoute, currentUser }: Props) => {
         </div>
       </div>
 
+      <div className="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
+        <div>
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            Merge
+          </h3>
+          <p className="mt-1 max-w-2xl text-sm text-gray-500">
+            Merges this profile into another one.
+          </p>
+        </div>
+        <div className="space-y-6 sm:space-y-5">
+          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label
+              htmlFor="last_name"
+              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+            >
+              with
+            </label>
+            <div className="mt-1 sm:mt-0 sm:col-span-2">
+              {props.profileList && (
+                <UserSelect
+                  profileList={props.profileList.filter(
+                    (p) => p.id !== props.profile.id
+                  )}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="pt-5">
         <div className="flex justify-end">
-          <Link to={cancelRoute}>
+          <Link to={props.cancelRoute}>
             <button
               type="button"
               className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -319,6 +363,12 @@ export default createFragmentContainer(UserForm, {
       lastName
       email
       title
+    }
+  `,
+  profileList: graphql`
+    fragment UserForm_profileList on ProfileNode @relay(plural: true) {
+      id
+      ...UserSelect_profileList
     }
   `,
 });

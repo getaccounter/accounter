@@ -8,7 +8,7 @@ import {
 import { GITHUB_APP_ID, GITHUB_PRIVATE_KEY } from "../env";
 import { Octokit } from "@octokit/rest";
 import { createAppAuth } from "@octokit/auth-app";
-import { encryptToken } from "../utils";
+import { encryptToken, removeInstallation } from "../utils";
 
 export const oauth = oauthHandler(async ({ params }, callback) => {
   const app = new Octokit({
@@ -45,6 +45,7 @@ export const oauthCallback = oauthCallbackHandler(
     });
     const account = installationData.account!;
     if (account.type !== "Organization") {
+      await removeInstallation(installationId)
       throw Error(
         `GitHub Account is not an Organization. It's ${account.type}.`
       );

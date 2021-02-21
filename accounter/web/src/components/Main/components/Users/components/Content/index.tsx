@@ -16,6 +16,7 @@ import EditUser from "./components/EditUser";
 import { Content_currentUser } from "./__generated__/Content_currentUser.graphql";
 import Accounts from "./components/Accounts";
 import Breadcrumb from "../../../Breadcrumb";
+import { Content_profileList } from "./__generated__/Content_profileList.graphql";
 const Tab = (props: { children: ReactNode; to: string }) => {
   const { pathname } = useLocation();
   const isSelected = props.to === pathname;
@@ -54,17 +55,18 @@ const Tabs = () => {
 };
 
 type Props = {
-  title: ReactNode;
   profile: Content_profile;
   currentUser: Content_currentUser;
+  profileList: Content_profileList;
 };
 
-const Content = ({ profile, currentUser }: Props) => {
+const Content = ({ profile, currentUser, profileList }: Props) => {
   const { path, url } = useRouteMatch();
   return (
     <Switch>
       <Route path={`${path}/edit`}>
         <EditUser
+          profileList={profileList}
           currentUser={currentUser}
           profile={profile}
           cancelRoute={url}
@@ -107,6 +109,11 @@ export default createFragmentContainer(Content, {
       ...DescriptionList_profile
       ...EditUser_profile
       ...Accounts_profile
+    }
+  `,
+  profileList: graphql`
+    fragment Content_profileList on ProfileNode @relay(plural: true) {
+      ...EditUser_profileList
     }
   `,
 });
