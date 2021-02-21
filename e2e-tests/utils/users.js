@@ -21,6 +21,10 @@ export const generateUser = (options = {}) => {
     zoom: {
       id: faker.random.uuid(),
       displayName: faker.internet.email(firstName, lastName),
+    },
+    github: {
+      id: faker.random.uuid(),
+      displayName: faker.internet.userName(firstName, lastName),
     }
   };
 };

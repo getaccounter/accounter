@@ -127,6 +127,8 @@ services:
     image: mockserver/mockserver:mockserver-5.11.2
     environment:
       - MOCKSERVER_LOG_LEVEL=warn
+    ports:
+      - 127.0.0.1:1080:1080
 
   e2e:
     build: ./e2e-tests

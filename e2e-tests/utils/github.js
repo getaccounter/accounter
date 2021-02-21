@@ -1,158 +1,326 @@
 import { mockServerClient } from "mockserver-client";
 import faker from "faker";
 
-// const createGoogleUser = (user) => {
-//   const fullName = `${user.firstName} ${user.lastName}`;
-//   return {
-//     kind: "admin#directory#user",
-//     id: user.google.id,
-//     etag:
-//       '"gOh9Uq_ycr-aUnq8woL8QEV8fL8OYaPTx7Cwo9DpKbU/k3V4muCFAOeLJE3vrvvihowHGa8"',
-//     primaryEmail: user.google.displayName,
-//     name: {
-//       givenName: user.firstName,
-//       familyName: user.lastName,
-//       fullName,
-//     },
-//     isAdmin: false,
-//     isDelegatedAdmin: false,
-//     lastLoginTime: faker.date.recent(),
-//     creationTime: faker.date.recent(),
-//     agreedToTerms: true,
-//     suspended: false,
-//     archived: false,
-//     changePasswordAtNextLogin: false,
-//     ipWhitelisted: false,
-//     emails: [
-//       {
-//         address: user.google.displayName,
-//         primary: true,
-//       },
-//       {
-//         address: `${user.google.displayName}.test-google-a.com`,
-//       },
-//     ],
-//     nonEditableAliases: [`${user.google.displayName}.test-google-a.com`],
-//     customerId: "custeromerId" + user.google.id,
-//     orgUnitPath: "/",
-//     isMailboxSetup: true,
-//     isEnrolledIn2Sv: false,
-//     isEnforcedIn2Sv: false,
-//     includeInGlobalAddressList: true,
-//   };
-// };
+const createGitHubUser = (user) => {
+  const fullName = `${user.firstName} ${user.lastName}`;
+  return {
+    node: {
+      id: user.github.id,
+      avatarUrl: faker.image.imageUrl(),
+      email: user.email,
+      login: user.github.displayName,
+      name: fullName,
+      url: `https://github.com/${user.github.displayName}`,
+    },
+    role: "MEMBER",
+  };
+};
 
-// const mockOauthToken = ({ oauthCode, token } = {}) => {
-//   mockServerClient("mockserver", 1080)
-//     .mockAnyResponse({
-//       httpRequest: {
-//         method: "POST",
-//         path: "/token",
-//         body: {
-//           type: "STRING",
-//           string: `code=${oauthCode}`,
-//           subString: true,
-//         },
-//       },
-//       httpResponse: {
-//         body: {
-//           access_token: token,
-//           refresh_token: faker.random.uuid(),
-//           expires_in: 3598,
-//           scope:
-//             "https://www.googleapis.com/auth/admin.directory.user.readonly https://www.googleapis.com/auth/admin.directory.customer.readonly",
-//           token_type: "Bearer",
-//         },
-//       },
-//       times: {
-//         remainingTimes: 1,
-//       },
-//     })
-//     .then(
-//       function () {
-//         console.log("expectation created");
-//       },
-//       function (error) {
-//         console.log(error);
-//       }
-//     );
-// };
+const mockOauthToken = ({ installationId, token, githubOrg } = {}) => {
+  mockServerClient("mockserver", 1080)
+    .mockAnyResponse({
+      httpRequest: {
+        method: "GET",
+        path: `/app/installations/${installationId}`,
+        headers: {
+          Host: ["api.github.com"],
+        },
+      },
+      httpResponse: {
+        body: {
+          id: faker.random.uuid(),
+          account: {
+            login: githubOrg.login,
+            id: githubOrg.id,
+            node_id: faker.random.uuid(),
+            avatar_url: faker.image.imageUrl(),
+            gravatar_id: "",
+            url: faker.internet.url(),
+            html_url: faker.internet.url(),
+            followers_url: faker.internet.url(),
+            following_url: faker.internet.url(),
+            gists_url: faker.internet.url(),
+            starred_url: faker.internet.url(),
+            subscriptions_url: faker.internet.url(),
+            organizations_url: faker.internet.url(),
+            repos_url: faker.internet.url(),
+            events_url: faker.internet.url(),
+            received_events_url: faker.internet.url(),
+            type: "Organization",
+            site_admin: false,
+          },
+          repository_selection: "selected",
+          access_tokens_url: faker.internet.url(),
+          repositories_url: faker.internet.url(),
+          html_url: faker.internet.url(),
+          app_id: 101209,
+          app_slug: "accounter-integration",
+          target_id: 72317938,
+          target_type: "Organization",
+          permissions: {
+            members: "read",
+            organization_administration: "read",
+          },
+          events: [],
+          created_at: "2021-02-19T22:33:41.000Z",
+          updated_at: "2021-02-19T22:33:41.000Z",
+          single_file_name: null,
+          has_multiple_single_files: false,
+          single_file_paths: [],
+          suspended_by: null,
+          suspended_at: null,
+        },
+      },
+      times: {
+        remainingTimes: 1,
+      },
+    })
+    .then(
+      function () {
+        console.log("expectation created");
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
 
-// const mockCustomerGet = ({ token, user, domain } = {}) => {
-//   mockServerClient("mockserver", 1080)
-//     .mockAnyResponse({
-//       httpRequest: {
-//         method: "GET",
-//         path: "/admin/directory/v1/customers/my_customer",
-//         headers: {
-//           Authorization: [`Bearer ${token}`],
-//         },
-//       },
-//       httpResponse: {
-//         body: {
-//           kind: "admin#directory#customer",
-//           id: "custeromerId" + user.google.id,
-//           etag:
-//             '"gOh9Uq_ycr-aUnq8woL8QEV8fL8OYaPTx7Cwo9DpKbU/Dm4_13wBQjHftrVJtFU6cV8O7DA"',
-//           customerDomain: domain,
-//           alternateEmail: user.email,
-//           postalAddress: {
-//             contactName: `${user.firstName} ${user.lastName}`,
-//             organizationName: user.organization,
-//             countryCode: "ES",
-//           },
-//           language: "en",
-//           customerCreationTime: faker.date.recent(),
-//         },
-//       },
-//       times: {
-//         remainingTimes: 1,
-//       },
-//     })
-//     .then(
-//       function () {
-//         console.log("expectation created");
-//       },
-//       function (error) {
-//         console.log(error);
-//       }
-//     );
-// };
+  mockServerClient("mockserver", 1080)
+    .mockAnyResponse({
+      httpRequest: {
+        method: "GET",
+        path: `/orgs/${githubOrg.login}`,
+        headers: {
+          Host: ["api.github.com"],
+        },
+      },
+      httpResponse: {
+        body: {
+          login: githubOrg.login,
+          id: githubOrg.id,
+          node_id: githubOrg.nodeId,
+          url: "https://api.github.com/orgs/getaccounter",
+          repos_url: faker.internet.url(),
+          events_url: faker.internet.url(),
+          hooks_url: faker.internet.url(),
+          issues_url: faker.internet.url(),
+          members_url: faker.internet.url(),
+          public_members_url: faker.internet.url(),
+          avatar_url: faker.image.imageUrl(),
+          description: "",
+          name: githubOrg.name,
+          company: null,
+          blog: faker.internet.domainName(),
+          location: null,
+          email: null,
+          twitter_username: faker.internet.userName(),
+          is_verified: false,
+          has_organization_projects: true,
+          has_repository_projects: true,
+          public_repos: 0,
+          public_gists: 0,
+          followers: 0,
+          following: 0,
+          html_url: `https://github.com/${githubOrg.login}`,
+          created_at: faker.date.recent(),
+          updated_at: faker.date.recent(),
+          type: "Organization",
+          total_private_repos: 1,
+          owned_private_repos: 1,
+          private_gists: 0,
+          disk_usage: 13819,
+          collaborators: 1,
+          billing_email: faker.internet.email(),
+          default_repository_permission: "read",
+          members_can_create_repositories: true,
+          two_factor_requirement_enabled: false,
+          members_can_create_pages: true,
+          members_can_create_public_pages: true,
+          members_can_create_private_pages: true,
+          plan: {
+            name: "team",
+            space: 976562499,
+            private_repos: 999999,
+            filled_seats: 1,
+            seats: 1,
+          },
+        },
+      },
+      times: {
+        remainingTimes: 1,
+      },
+    })
+    .then(
+      function () {
+        console.log("expectation created");
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
 
-// const mockUsersList = ({ token, users = [] } = {}) => {
-//   mockServerClient("mockserver", 1080)
-//     .mockAnyResponse({
-//       httpRequest: {
-//         method: "GET",
-//         path: "/admin/directory/v1/users",
-//         queryStringParameters: {
-//           customer: ["my_customer"],
-//         },
-//         headers: {
-//           Authorization: [`Bearer ${token}`],
-//         },
-//       },
-//       httpResponse: {
-//         body: {
-//           kind: "admin#directory#users",
-//           etag:
-//             '"gOh9Uq_ycr-aUnq8woL8QEV8fL8OYaPTx7Cwo9DpKbU/hMN4D181o5mOTLJ8GfgaBcb_2fw"',
-//           users: users.map(createGoogleUser),
-//         },
-//       },
-//       times: {
-//         remainingTimes: 1,
-//       },
-//     })
-//     .then(
-//       function () {
-//         console.log("expectation created");
-//       },
-//       function (error) {
-//         console.log(error);
-//       }
-//     );
-// };
+  mockServerClient("mockserver", 1080)
+    .mockAnyResponse({
+      httpRequest: {
+        method: "POST",
+        path: `/app/installations/${installationId}/access_tokens`,
+        headers: {
+          Host: ["api.github.com"],
+        },
+      },
+      httpResponse: {
+        body: {
+          token,
+          expires_at: "2099-12-31T12:56:47Z",
+          permissions: {
+            members: "read",
+            organization_administration: "read",
+          },
+          repository_selection: "selected",
+        },
+      },
+      times: {
+        remainingTimes: 2,
+      },
+    })
+    .then(
+      function () {
+        console.log("expectation created");
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
+};
+
+const mockUserGet = ({ token, user, users, githubOrg } = {}) => {
+  mockServerClient("mockserver", 1080)
+    .mockAnyResponse({
+      httpRequest: {
+        method: "POST",
+        path: "/graphql",
+        headers: {
+          authorization: [`token ${token}`],
+          Host: ["api.github.com"],
+        },
+        body: {
+          type: "JSON_SCHEMA",
+          jsonSchema: {
+            $schema: "https://json-schema.org/draft-04/schema#",
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                pattern: "memberQuery",
+              },
+              variables: {
+                type: "object",
+                properties: {
+                  organizationNodeId: {
+                    type: "string",
+                    const: githubOrg.nodeId,
+                  },
+                  userNodeId: {
+                    type: "string",
+                    const: user.github.id,
+                  },
+                },
+                required: ["organizationNodeId", "userNodeId"],
+              },
+            },
+            required: ["query", "variables"],
+          },
+        },
+      },
+      httpResponse: {
+        body: {
+          data: {
+            organization: {
+              membersWithRole: {
+                edges: users.map(u => ({
+                  node: {
+                    id: u.github.id
+                  },
+                  role: "MEMBER"
+                })),
+              },
+            },
+            member: createGitHubUser(user).node,
+          },
+        },
+      },
+      times: {
+        remainingTimes: 1,
+      },
+    })
+    .then(
+      function () {
+        console.log("expectation created");
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
+};
+
+const mockUsersList = ({ token, users = [], githubOrg } = {}) => {
+  mockServerClient("mockserver", 1080)
+    .mockAnyResponse({
+      httpRequest: {
+        method: "POST",
+        path: "/graphql",
+        headers: {
+          authorization: [`token ${token}`],
+          Host: ["api.github.com"],
+        },
+        body: {
+          type: "JSON_SCHEMA",
+          jsonSchema: {
+            $schema: "https://json-schema.org/draft-04/schema#",
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                pattern: "organizationQuery",
+              },
+              variables: {
+                type: "object",
+                properties: {
+                  organizationNodeId: {
+                    type: "string",
+                    const: githubOrg.nodeId,
+                  },
+                },
+                required: ["organizationNodeId"],
+              },
+            },
+            required: ["query", "variables"],
+          },
+        },
+      },
+      httpResponse: {
+        body: {
+          data: {
+            organization: {
+              membersWithRole: {
+                edges: users.map(createGitHubUser),
+              },
+            },
+          },
+        },
+      },
+      times: {
+        remainingTimes: 1,
+      },
+    })
+    .then(
+      function () {
+        console.log("expectation created");
+      },
+      function (error) {
+        console.log(error);
+      }
+    );
+};
 
 export const mockService = () => {
   mockServerClient("mockserver", 1080)
@@ -204,9 +372,6 @@ export const mockService = () => {
           installations_count: 1,
         },
       },
-      times: {
-        remainingTimes: 1,
-      },
     })
     .then(
       function () {
@@ -218,26 +383,37 @@ export const mockService = () => {
     );
 };
 
+const generateGithubOrganization = () => {
+  return {
+    login: faker.internet.userName(),
+    name: faker.company.companyName(),
+    id: faker.random.uuid(),
+    nodeId: faker.random.uuid(),
+  };
+};
+
 const mockIntegration = (users) => {
+  const githubOrg = generateGithubOrganization();
+  const installationId = faker.random.number();
   const token = faker.random.uuid();
-  const domain = faker.internet.domainName();
-  const oauthCode = faker.random.uuid();
 
   mockOauthToken({
     token,
-    oauthCode,
+    githubOrg,
+    installationId,
   });
 
   users.forEach((user) => {
-    mockCustomerGet({ token, user, domain });
+    mockUserGet({ token, user, users, githubOrg });
   });
 
   mockUsersList({
     token,
     users,
+    githubOrg,
   });
 
-  return { oauthCode, name: domain };
+  return { oauthCode: installationId, name: githubOrg.name };
 };
 
 export default mockIntegration;

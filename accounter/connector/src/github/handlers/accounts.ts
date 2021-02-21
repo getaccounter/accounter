@@ -78,7 +78,7 @@ export const list = listHandler(async ({ params }, callback) => {
   // NOTE this will break if org has more than 100 members
   const { organization } = await graphqlWithAuth<Response>(
     `  
-      query memberQuery($organizationNodeId: ID!) {
+      query organizationQuery($organizationNodeId: ID!) {
         organization: node(id: $organizationNodeId) {
           ... on Organization {
             membersWithRole(first: 100) {
