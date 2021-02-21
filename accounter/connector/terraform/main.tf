@@ -38,7 +38,7 @@ resource "kubernetes_secret" "zoom-workspace-credentials" {
 resource "kubernetes_secret" "github-credentials" {
   type = "Opaque"
   metadata {
-    name = "zoom-workspace-credentials"
+    name = "github-credentials"
   }
 
   data = {
