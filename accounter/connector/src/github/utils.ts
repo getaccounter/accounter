@@ -11,6 +11,7 @@ export type TokenPayload = z.infer<typeof payloadValidator>;
 
 export const encryptToken = (payload: TokenPayload) =>
   jwt.sign(payload, ENCRYPTION_KEY);
+
 export const decryptToken = (token: string) => {
   let payload;
   try {
