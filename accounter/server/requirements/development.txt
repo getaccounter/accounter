@@ -3,6 +3,6 @@
 flake8==3.8.4
 coverage==5.4
 model_bakery==1.2.1
-Faker==6.3.0
+Faker==6.4.1
 freezegun==1.1.0
 requests-mock==1.8.0
