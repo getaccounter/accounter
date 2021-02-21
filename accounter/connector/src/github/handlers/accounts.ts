@@ -8,7 +8,6 @@ import { createAppAuth } from "@octokit/auth-app";
 import { decryptToken } from "../utils";
 import { graphql } from "@octokit/graphql";
 import human from "humanparser";
-import { Octokit } from "@octokit/rest";
 
 type Member = {
   id: string;
@@ -75,33 +74,32 @@ export const list = listHandler(async ({ params }, callback) => {
     };
   };
 
-  // NOTE this will break if org has more than 100 members
-  const { organization } = await graphqlWithAuth<Response>(
-    `  
-      query organizationQuery($organizationNodeId: ID!) {
-        organization: node(id: $organizationNodeId) {
-          ... on Organization {
-            membersWithRole(first: 100) {
-              edges {
-                node {
-                  id
-                  avatarUrl
-                  email
-                  login
-                  name
-                  url
+  try {
+    // NOTE this will break if org has more than 100 members
+    const { organization } = await graphqlWithAuth<Response>(
+      `  
+        query organizationQuery($organizationNodeId: ID!) {
+          organization: node(id: $organizationNodeId) {
+            ... on Organization {
+              membersWithRole(first: 100) {
+                edges {
+                  node {
+                    id
+                    avatarUrl
+                    email
+                    login
+                    name
+                    url
+                  }
+                  role
                 }
-                role
               }
             }
           }
         }
-      }
-    `,
-    { organizationNodeId }
-  );
-
-  try {
+      `,
+      { organizationNodeId }
+    );
     callback({
       code: 200,
       body: organization.membersWithRole.edges.map(({ node, role }) =>
@@ -109,7 +107,16 @@ export const list = listHandler(async ({ params }, callback) => {
       ),
     });
   } catch (error) {
-    if (error.code === 401) {
+    if (error.status === 404) {
+      // installation id not found
+      callback({
+        code: 401,
+      });
+    } else if (
+      error.errors.some(
+        (e: any) => e.type === "NOT_FOUND" && e.path.includes("organization")
+      )
+    ) {
       callback({
         code: 401,
       });
@@ -158,42 +165,42 @@ export const getById = getByIdHandler(async ({ params }, callback) => {
     member: Member;
   };
 
-  // NOTE this will break if org has more than 100 members
-  const { organization, member } = await graphqlWithAuth<Response>(
-    `  
-        query memberQuery($organizationNodeId: ID!, $userNodeId: ID!) {
-          organization: node(id: $organizationNodeId) {
-            ... on Organization {
-              membersWithRole(first: 100) {
-                edges {
-                  node {
-                    id
+  try {
+    // NOTE this will break if org has more than 100 members
+    const { organization, member } = await graphqlWithAuth<Response>(
+      `  
+          query memberQuery($organizationNodeId: ID!, $userNodeId: ID!) {
+            organization: node(id: $organizationNodeId) {
+              ... on Organization {
+                membersWithRole(first: 100) {
+                  edges {
+                    node {
+                      id
+                    }
+                    role
                   }
-                  role
                 }
               }
             }
-          }
-          member: node(id: $userNodeId) {
-            ... on User {
-              id
-              avatarUrl
-              email
-              login
-              name
-              url
+            member: node(id: $userNodeId) {
+              ... on User {
+                id
+                avatarUrl
+                email
+                login
+                name
+                url
+              }
             }
           }
-        }
-      `,
-    { organizationNodeId, userNodeId: id }
-  );
+        `,
+      { organizationNodeId, userNodeId: id }
+    );
 
-  const role = organization.membersWithRole.edges.find(
-    (edge) => edge.node.id === member.id
-  )!.role
+    const role = organization.membersWithRole.edges.find(
+      (edge) => edge.node.id === member.id
+    )!.role;
 
-  try {
     callback({
       code: 200,
       body: {
@@ -202,8 +209,16 @@ export const getById = getByIdHandler(async ({ params }, callback) => {
       },
     });
   } catch (error) {
-    console.error(error)
-    if (error.code === 404) {
+    if (error.status === 404) {
+      // installation id not found
+      callback({
+        code: 401,
+      });
+    } else if (
+      error.errors.some(
+        (e: any) => e.type === "NOT_FOUND" && e.path.includes("member")
+      )
+    ) {
       callback({
         code: 200,
         body: {
@@ -211,7 +226,11 @@ export const getById = getByIdHandler(async ({ params }, callback) => {
           account: null,
         },
       });
-    } else if (error.code === 401) {
+    } else if (
+      error.errors.some(
+        (e: any) => e.type === "NOT_FOUND" && e.path.includes("organization")
+      )
+    ) {
       callback({
         code: 401,
       });
