@@ -5,9 +5,11 @@ import {
 } from "../../utils/handlers/accounts";
 import { GITHUB_APP_ID, GITHUB_PRIVATE_KEY } from "../env";
 import { createAppAuth } from "@octokit/auth-app";
-import { decryptToken } from "../utils";
+import { decryptToken, TokenPayload } from "../utils";
 import { graphql } from "@octokit/graphql";
 import human from "humanparser";
+import { Octokit } from "@octokit/rest";
+import jwt from "jsonwebtoken";
 
 type Member = {
   id: string;
@@ -38,12 +40,30 @@ const convertGithubUserToReturnType = (member: Member, role: Role): Account => {
   };
 };
 
+const removeInstallation = async (installationId: string) => {
+  const app = new Octokit({
+    authStrategy: createAppAuth,
+    auth: {
+      appId: GITHUB_APP_ID,
+      privateKey: GITHUB_PRIVATE_KEY,
+    },
+  });
+
+  await app.apps.deleteInstallation({
+    installation_id: parseInt(installationId, 10),
+  });
+};
+
 export const list = listHandler(async ({ params }, callback) => {
   const { token } = params;
 
   const tokenPayload = decryptToken(token);
 
   if (!tokenPayload) {
+    const payload = jwt.decode(token) as TokenPayload;
+    if (payload?.installationId) {
+      await removeInstallation(payload.installationId);
+    }
     return callback({
       code: 401,
     });
@@ -117,6 +137,7 @@ export const list = listHandler(async ({ params }, callback) => {
         (e: any) => e.type === "NOT_FOUND" && e.path.includes("organization")
       )
     ) {
+      await removeInstallation(installationId);
       callback({
         code: 401,
       });
@@ -132,6 +153,10 @@ export const getById = getByIdHandler(async ({ params }, callback) => {
   const tokenPayload = decryptToken(token);
 
   if (!tokenPayload) {
+    const payload = jwt.decode(token) as TokenPayload;
+    if (payload?.installationId) {
+      await removeInstallation(payload.installationId);
+    }
     return callback({
       code: 401,
     });
@@ -231,6 +256,7 @@ export const getById = getByIdHandler(async ({ params }, callback) => {
         (e: any) => e.type === "NOT_FOUND" && e.path.includes("organization")
       )
     ) {
+      await removeInstallation(installationId);
       callback({
         code: 401,
       });
