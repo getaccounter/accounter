@@ -8,7 +8,8 @@ import mockSlackIntegration, {
 } from "../utils/slack";
 import mockGoogleIntegration from "../utils/google"
 import mockZoomIntegration from "../utils/zoom"
-import {mockService as mockGitHubService} from "../utils/zoom"
+import mockGithubIntegration, {mockService as mockGitHubService} from "../utils/github"
+import { mockServerClient } from "mockserver-client";
 
 // const MOBILE = "mobile";
 const FULLSCREEN = "macbook-13";
@@ -18,6 +19,19 @@ const sizes = [
   // { name: MOBILE, viewport: "iphone-5" },
   { name: FULLSCREEN, viewport: "macbook-13" },
 ];
+
+before(() => {
+  mockServerClient("localhost", 1080)
+  .reset()
+  .then(
+    function () {
+      console.log("reset all state");
+    },
+    function (error) {
+      console.log(error);
+    }
+  );
+})
 
 beforeEach(() => {
   mockGitHubService()
@@ -51,6 +65,12 @@ sizes.forEach(({ name, viewport }) => {
           getMockIntegration: (users) => mockZoomIntegration(users),
           executeOauthFlow: "mockZoomOauth",
           getDisplayName: (user) => user.zoom.displayName
+        },
+        {
+          serviceName: "GITHUB",
+          getMockIntegration: (users) => mockGithubIntegration(users),
+          executeOauthFlow: "mockGithubOauth",
+          getDisplayName: (user) => user.github.displayName
         },
       ].forEach(({ serviceName, getMockIntegration, executeOauthFlow, getDisplayName }) => {
         describe(serviceName, () => {

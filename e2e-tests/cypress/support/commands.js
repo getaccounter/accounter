@@ -122,6 +122,11 @@ Cypress.Commands.add("mockZoomOauth", (oauthCode) => {
   cy.visit(`/zoom/oauth/callback?code=${oauthCode}`);
 });
 
+Cypress.Commands.add("mockGithubOauth", (oauthCode) => {
+  cy.url().should("include", "https://github.com");
+  cy.visit(`/github/oauth/callback?installation_id=${oauthCode}&setup_action=install`);
+});
+
 Cypress.Commands.add("getMailHogEmailContent", () => {
   const getIframeDocument = () => {
     return (

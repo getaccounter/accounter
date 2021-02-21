@@ -49,8 +49,9 @@ export const oauthCallback = oauthCallbackHandler(
         `GitHub Account is not an Organization. It's ${account.type}.`
       );
     }
+    
     const { data: orgData } = await app.orgs.get({ org: account.login! });
-    console.log({ organizationNodeId: orgData.node_id });
+    
     callback({
       code: 200,
       body: {
