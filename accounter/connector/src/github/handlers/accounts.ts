@@ -7,32 +7,22 @@ import { GITHUB_APP_ID, GITHUB_PRIVATE_KEY } from "../env";
 import { createAppAuth } from "@octokit/auth-app";
 import { decryptToken } from "../utils";
 import { graphql } from "@octokit/graphql";
-import human from "humanparser"
+import human from "humanparser";
+import { Octokit } from "@octokit/rest";
 
 type Member = {
-  id: string
-  avatarUrl: string
-  email: string
-  login: string
-  name: string
-  url: string
-}
+  id: string;
+  avatarUrl: string;
+  email: string;
+  login: string;
+  name: string;
+  url: string;
+};
 
-type Role = any
-
-type ListResponse = {
-  node: {
-    membersWithRole: {
-      edges: Array<{
-        node: Member
-        role: Role
-      }>
-    }
-  }
-}
+type Role = "ADMIN" | "MEMBER";
 
 const convertGithubUserToReturnType = (member: Member, role: Role): Account => {
-  const { firstName, lastName } = human.parseName(member.name)
+  const { firstName, lastName } = human.parseName(member.name);
   return {
     id: member.id,
     firstName,
@@ -74,10 +64,22 @@ export const list = listHandler(async ({ params }, callback) => {
     },
   });
 
-  const {node} = await graphqlWithAuth<ListResponse>(
+  type Response = {
+    organization: {
+      membersWithRole: {
+        edges: Array<{
+          node: Member;
+          role: Role;
+        }>;
+      };
+    };
+  };
+
+  // NOTE this will break if org has more than 100 members
+  const { organization } = await graphqlWithAuth<Response>(
     `  
       query memberQuery($organizationNodeId: ID!) {
-        node(id: $organizationNodeId) {
+        organization: node(id: $organizationNodeId) {
           ... on Organization {
             membersWithRole(first: 100) {
               edges {
@@ -87,7 +89,6 @@ export const list = listHandler(async ({ params }, callback) => {
                   email
                   login
                   name
-                  bioHTML
                   url
                 }
                 role
@@ -103,7 +104,9 @@ export const list = listHandler(async ({ params }, callback) => {
   try {
     callback({
       code: 200,
-      body: node.membersWithRole.edges.map(({node, role}) => convertGithubUserToReturnType(node, role)),
+      body: organization.membersWithRole.edges.map(({ node, role }) =>
+        convertGithubUserToReturnType(node, role)
+      ),
     });
   } catch (error) {
     if (error.code === 401) {
@@ -118,15 +121,88 @@ export const list = listHandler(async ({ params }, callback) => {
 
 export const getById = getByIdHandler(async ({ params }, callback) => {
   const { id, token } = params;
+
+  const tokenPayload = decryptToken(token);
+
+  if (!tokenPayload) {
+    return callback({
+      code: 401,
+    });
+  }
+
+  const { installationId, organizationNodeId } = tokenPayload;
+
+  const auth = createAppAuth({
+    appId: GITHUB_APP_ID,
+    privateKey: GITHUB_PRIVATE_KEY,
+    installationId,
+  });
+
+  const graphqlWithAuth = graphql.defaults({
+    request: {
+      hook: auth.hook,
+    },
+  });
+
+  type Response = {
+    organization: {
+      membersWithRole: {
+        edges: Array<{
+          node: {
+            id: string;
+          };
+          role: Role;
+        }>;
+      };
+    };
+    member: Member;
+  };
+
+  // NOTE this will break if org has more than 100 members
+  const { organization, member } = await graphqlWithAuth<Response>(
+    `  
+        query memberQuery($organizationNodeId: ID!, $userNodeId: ID!) {
+          organization: node(id: $organizationNodeId) {
+            ... on Organization {
+              membersWithRole(first: 100) {
+                edges {
+                  node {
+                    id
+                  }
+                  role
+                }
+              }
+            }
+          }
+          member: node(id: $userNodeId) {
+            ... on User {
+              id
+              avatarUrl
+              email
+              login
+              name
+              url
+            }
+          }
+        }
+      `,
+    { organizationNodeId, userNodeId: id }
+  );
+
+  const role = organization.membersWithRole.edges.find(
+    (edge) => edge.node.id === member.id
+  )!.role
+
   try {
     callback({
       code: 200,
       body: {
-        found: false,
-        account: null,
+        found: true,
+        account: convertGithubUserToReturnType(member, role),
       },
     });
   } catch (error) {
+    console.error(error)
     if (error.code === 404) {
       callback({
         code: 200,
