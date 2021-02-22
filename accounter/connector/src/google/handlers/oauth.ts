@@ -64,7 +64,7 @@ export const oauthCallback = oauthCallbackHandler(
             refreshToken: credentials!.refresh_token!,
             integrationId: data.id!,
             integrationName: data.customerDomain!,
-            managementUrl: "https://admin.google.com/",
+            managementUrl: "https://admin.google.com/ac/users",
           },
         });
       }
