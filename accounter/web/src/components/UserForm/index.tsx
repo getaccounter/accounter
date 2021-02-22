@@ -131,6 +131,7 @@ const UserForm = (props: Props) => {
   const [titleInput, setTitleInput] = useState(
     isUpdate && props.profile!.title ? props.profile!.title : ""
   );
+  const [profileToMergeInput, setProfileToMergeInput] = useState<UserForm_profileList[0]["id"] | null>(null);
   return (
     <form
       className="space-y-8 divide-y divide-gray-200"
@@ -319,6 +320,8 @@ const UserForm = (props: Props) => {
                   profileList={props.profileList.filter(
                     (p) => p.id !== props.profile.id
                   )}
+                  value={profileToMergeInput}
+                  onChange={setProfileToMergeInput}
                 />
               )}
             </div>

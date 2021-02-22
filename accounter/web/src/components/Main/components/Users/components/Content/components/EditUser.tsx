@@ -15,7 +15,7 @@ type Props = {
 
 const EditUser = ({ profile, cancelRoute, currentUser, profileList }: Props) => {
   return (
-    <main className="flex-1 overflow-y-auto focus:outline-none">
+    <div className="h-full overflow-y-auto focus:outline-none">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <UserForm
           currentUser={currentUser}
@@ -24,7 +24,7 @@ const EditUser = ({ profile, cancelRoute, currentUser, profileList }: Props) => 
           profileList={profileList}
         />
       </div>
-    </main>
+    </div>
   );
 };
 
