@@ -23,6 +23,7 @@ const Users = () => {
                   node {
                     id
                     ...Content_profile
+                    ...Content_profileList
                   }
                 }
                 ...UserDirectory_profiles
@@ -49,7 +50,7 @@ const Users = () => {
                 );
                 return (
                   <Content
-                    title="Users"
+                    profileList={props.currentUser.organization.profiles.edges.map(edge => edge!.node!)}
                     profile={profile!.node!}
                     currentUser={props.currentUser}
                   />

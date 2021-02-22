@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
 import { ENCRYPTION_KEY } from "../env";
 import * as z from "zod";
+import { Octokit } from "@octokit/rest";
+import { GITHUB_APP_ID, GITHUB_PRIVATE_KEY } from "./env";
+import { createAppAuth } from "@octokit/auth-app";
 
 const payloadValidator = z.object({
   installationId: z.string(),
@@ -26,4 +29,20 @@ export const decryptToken = (token: string) => {
     })
     .safeParse(payload);
   return parseResult.success ? parseResult.data : null;
+};
+
+
+
+export const removeInstallation = async (installationId: string) => {
+  const app = new Octokit({
+    authStrategy: createAppAuth,
+    auth: {
+      appId: GITHUB_APP_ID,
+      privateKey: GITHUB_PRIVATE_KEY,
+    },
+  });
+
+  await app.apps.deleteInstallation({
+    installation_id: parseInt(installationId, 10),
+  });
 };

@@ -5,10 +5,9 @@ import {
 } from "../../utils/handlers/accounts";
 import { GITHUB_APP_ID, GITHUB_PRIVATE_KEY } from "../env";
 import { createAppAuth } from "@octokit/auth-app";
-import { decryptToken, TokenPayload } from "../utils";
+import { decryptToken, TokenPayload, removeInstallation } from "../utils";
 import { graphql } from "@octokit/graphql";
 import human from "humanparser";
-import { Octokit } from "@octokit/rest";
 import jwt from "jsonwebtoken";
 
 type Member = {
@@ -38,20 +37,6 @@ const convertGithubUserToReturnType = (member: Member, role: Role): Account => {
     externalProfile: member.url,
     isDisabled: false,
   };
-};
-
-const removeInstallation = async (installationId: string) => {
-  const app = new Octokit({
-    authStrategy: createAppAuth,
-    auth: {
-      appId: GITHUB_APP_ID,
-      privateKey: GITHUB_PRIVATE_KEY,
-    },
-  });
-
-  await app.apps.deleteInstallation({
-    installation_id: parseInt(installationId, 10),
-  });
 };
 
 export const list = listHandler(async ({ params }, callback) => {
