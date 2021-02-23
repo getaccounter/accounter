@@ -166,14 +166,17 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         email = graphene.String()
         title = graphene.String()
         is_admin = graphene.Boolean()
+        merge_with = graphene.ID()
 
-    profile = graphene.Field(ProfileNode, required=True)
+    profiles = graphene.List(ProfileNode, required=True)
 
     @admin_required
     def mutate_and_get_payload(root, info, *args, **input):
         profile_pk = from_global_id(input.get("id"))[1]
         organization = info.context.user.profile.organization
         profile = Profile.objects.get(pk=profile_pk, organization=organization)
+
+        updated_profiles = [profile]
 
         if not profile.can_be_edited_by(info.context.user.profile):
             raise PermissionDenied("You do not have permission to perform this action")
@@ -205,10 +208,17 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         if input.get("title") is not None:
             profile.title = input.get("title")
 
-        profile.save()
-        profile.user.save()
+        if input.get("merge_with") is not None:
+            node_id = input.get("merge_with")
+            profile_to_merge_with_pk = from_global_id(node_id)[1]
+            profile_to_merge_with = Profile.objects.get(pk=profile_to_merge_with_pk)
+            profile.merge_with(profile_to_merge_with)
+            updated_profiles.append(profile_to_merge_with)
 
-        return UpdateUser(profile=profile)
+        profile.user.save()
+        profile.save()
+
+        return UpdateUser(profiles=updated_profiles)
 
 
 class Query(graphene.ObjectType):

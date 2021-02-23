@@ -221,7 +221,9 @@ class Account(models.Model):
     REFRESH_INTERVAL_SECONDS = 60
 
     id = models.CharField(primary_key=True, max_length=100)
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(
+        Profile, related_name="accounts", on_delete=models.CASCADE
+    )
     last_refresh = models.DateTimeField(auto_now_add=True)
     image_small = models.URLField(
         default="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"

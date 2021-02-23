@@ -75,6 +75,7 @@ const updateUser = (
         $firstName: String
         $lastName: String
         $title: String
+        $mergeWith: ID
       ) {
         updateUser(
           input: {
@@ -83,9 +84,10 @@ const updateUser = (
             firstName: $firstName
             lastName: $lastName
             title: $title
+            mergeWith: $mergeWith
           }
         ) {
-          profile {
+          profiles {
             id
             ...Content_profile
           }
@@ -145,6 +147,7 @@ const UserForm = (props: Props) => {
             firstName: firstNameInput,
             lastName: lastNameInput,
             title: titleInput.length > 0 ? titleInput : undefined,
+            mergeWith: profileToMergeInput
           };
           updateUser(
             environment,
@@ -157,8 +160,9 @@ const UserForm = (props: Props) => {
                   content: "Could not update user",
                 });
               } else {
+                const updatedProfile = response.updateUser!.profiles.find(p => p?.id === props.profile!.id)!
                 history.push(
-                  `/users/details/${response.updateUser!.profile.id}`
+                  `/users/details/${updatedProfile.id}`
                 );
               }
             },

@@ -10,8 +10,8 @@ describe("oauth", () => {
       .get("/app")
       .once()
       .reply(200, {
-        id: 101209,
-        slug: "accounter-integration",
+        id: 101725,
+        slug: "accounter-development",
         node_id: "MDM6QXBwMTAxMjA5",
         owner: {
           login: "getaccounter",

@@ -28,7 +28,7 @@ const toggleAdmin = (
     mutation: graphql`
       mutation HeaderAdminMutation($id: ID!, $isAdmin: Boolean!) {
         updateUser(input: { id: $id, isAdmin: $isAdmin }) {
-          profile {
+          profiles {
             id
             ...Content_profile
           }

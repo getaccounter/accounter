@@ -53,6 +53,11 @@ class Profile(models.Model):
     is_admin = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
 
+    def merge_with(self, profile_to_merge_with: Type["Profile"]):
+        for account in self.accounts.all():
+            account.profile = profile_to_merge_with
+            account.save()
+
     def can_be_edited_by(self, editor: Type["Profile"]):
         if self.pk == editor.pk:
             # user can always edit themselves
