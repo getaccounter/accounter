@@ -10,10 +10,10 @@ export type HeaderAdminMutationVariables = {
 };
 export type HeaderAdminMutationResponse = {
     readonly updateUser: {
-        readonly profile: {
+        readonly profiles: ReadonlyArray<{
             readonly id: string;
             readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
-        };
+        } | null>;
     } | null;
 };
 export type HeaderAdminMutation = {
@@ -29,7 +29,7 @@ mutation HeaderAdminMutation(
   $isAdmin: Boolean!
 ) {
   updateUser(input: {id: $id, isAdmin: $isAdmin}) {
-    profile {
+    profiles {
       id
       ...Content_profile
     }
@@ -157,8 +157,8 @@ return {
             "args": null,
             "concreteType": "ProfileNode",
             "kind": "LinkedField",
-            "name": "profile",
-            "plural": false,
+            "name": "profiles",
+            "plural": true,
             "selections": [
               (v2/*: any*/),
               {
@@ -195,8 +195,8 @@ return {
             "args": null,
             "concreteType": "ProfileNode",
             "kind": "LinkedField",
-            "name": "profile",
-            "plural": false,
+            "name": "profiles",
+            "plural": true,
             "selections": [
               (v2/*: any*/),
               {
@@ -343,14 +343,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "71a89bfbf1f6e9ddc27717dca4f9cf74",
+    "cacheID": "567a3d89274f456d3714fde67b25ad7a",
     "id": null,
     "metadata": {},
     "name": "HeaderAdminMutation",
     "operationKind": "mutation",
-    "text": "mutation HeaderAdminMutation(\n  $id: ID!\n  $isAdmin: Boolean!\n) {\n  updateUser(input: {id: $id, isAdmin: $isAdmin}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
+    "text": "mutation HeaderAdminMutation(\n  $id: ID!\n  $isAdmin: Boolean!\n) {\n  updateUser(input: {id: $id, isAdmin: $isAdmin}) {\n    profiles {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
   }
 };
 })();
-(node as any).hash = '8a8adaf3556ffcd3824d23fed24b6146';
+(node as any).hash = '237406faef49fe4522b3b22871b4f894';
 export default node;

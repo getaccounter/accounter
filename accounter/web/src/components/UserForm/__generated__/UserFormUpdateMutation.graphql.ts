@@ -10,13 +10,14 @@ export type UserFormUpdateMutationVariables = {
     firstName?: string | null;
     lastName?: string | null;
     title?: string | null;
+    mergeWith?: string | null;
 };
 export type UserFormUpdateMutationResponse = {
     readonly updateUser: {
-        readonly profile: {
+        readonly profiles: ReadonlyArray<{
             readonly id: string;
             readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
-        };
+        } | null>;
     } | null;
 };
 export type UserFormUpdateMutation = {
@@ -33,9 +34,10 @@ mutation UserFormUpdateMutation(
   $firstName: String
   $lastName: String
   $title: String
+  $mergeWith: ID
 ) {
-  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title}) {
-    profile {
+  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, mergeWith: $mergeWith}) {
+    profiles {
       id
       ...Content_profile
     }
@@ -122,9 +124,14 @@ v3 = {
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "mergeWith"
+},
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "title"
 },
-v5 = [
+v6 = [
   {
     "fields": [
       {
@@ -149,6 +156,11 @@ v5 = [
       },
       {
         "kind": "Variable",
+        "name": "mergeWith",
+        "variableName": "mergeWith"
+      },
+      {
+        "kind": "Variable",
         "name": "title",
         "variableName": "title"
       }
@@ -157,14 +169,14 @@ v5 = [
     "name": "input"
   }
 ],
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -178,7 +190,8 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -186,7 +199,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
         "name": "updateUser",
@@ -197,10 +210,10 @@ return {
             "args": null,
             "concreteType": "ProfileNode",
             "kind": "LinkedField",
-            "name": "profile",
-            "plural": false,
+            "name": "profiles",
+            "plural": true,
             "selections": [
-              (v6/*: any*/),
+              (v7/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -223,6 +236,7 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v3/*: any*/),
+      (v5/*: any*/),
       (v4/*: any*/)
     ],
     "kind": "Operation",
@@ -230,7 +244,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "UpdateUserPayload",
         "kind": "LinkedField",
         "name": "updateUser",
@@ -241,10 +255,10 @@ return {
             "args": null,
             "concreteType": "ProfileNode",
             "kind": "LinkedField",
-            "name": "profile",
-            "plural": false,
+            "name": "profiles",
+            "plural": true,
             "selections": [
-              (v6/*: any*/),
+              (v7/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -316,7 +330,7 @@ return {
                 "name": "accounts",
                 "plural": true,
                 "selections": [
-                  (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -325,7 +339,7 @@ return {
                     "name": "integration",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/),
+                      (v8/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -334,7 +348,7 @@ return {
                         "name": "service",
                         "plural": false,
                         "selections": [
-                          (v7/*: any*/),
+                          (v8/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -345,7 +359,7 @@ return {
                         ],
                         "storageKey": null
                       },
-                      (v6/*: any*/)
+                      (v7/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -389,14 +403,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fbf80564a3f25822ce0ddf33fa111354",
+    "cacheID": "a2f433354c67a2ebaf84362932025de5",
     "id": null,
     "metadata": {},
     "name": "UserFormUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
+    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n  $mergeWith: ID\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, mergeWith: $mergeWith}) {\n    profiles {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
   }
 };
 })();
-(node as any).hash = '280539a40063f89cd8e54213cde9397b';
+(node as any).hash = '8797f2cf068cf7a9e1c16b4858871fb7';
 export default node;

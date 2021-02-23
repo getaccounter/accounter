@@ -53,8 +53,8 @@ const mockOauthToken = ({ installationId, token, githubOrg } = {}) => {
           access_tokens_url: faker.internet.url(),
           repositories_url: faker.internet.url(),
           html_url: faker.internet.url(),
-          app_id: 101209,
-          app_slug: "accounter-integration",
+          app_id: 101725,
+          app_slug: "accounter-development",
           target_id: 72317938,
           target_type: "Organization",
           permissions: {
@@ -334,8 +334,8 @@ export const mockService = () => {
       },
       httpResponse: {
         body: {
-          id: 101209,
-          slug: "accounter-integration",
+          id: 101725,
+          slug: "accounter-development",
           node_id: "MDM6QXBwMTAxMjA5",
           owner: {
             login: "getaccounter",
@@ -357,11 +357,11 @@ export const mockService = () => {
             type: "Organization",
             site_admin: false,
           },
-          name: "Accounter Integration",
+          name: "Accounter Development",
           description:
             "Accounter Companion app to retrieve user information from your organization",
           external_url: "https://accounter.io",
-          html_url: "https://github.com/apps/accounter-integration",
+          html_url: "https://github.com/apps/accounter-development",
           created_at: faker.date.recent(),
           updated_at: faker.date.recent(),
           permissions: {

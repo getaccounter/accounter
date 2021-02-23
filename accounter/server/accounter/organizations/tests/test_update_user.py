@@ -75,7 +75,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 title: $title
               }
             ) {
-              profile {
+              profiles {
                 id
                 email
                 firstName
@@ -96,10 +96,9 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        returned_profile = content["data"]["updateUser"]["profile"]
+        returned_profile = content["data"]["updateUser"]["profiles"][0]
         _, db_pk = from_global_id(returned_profile["id"])
         profile = Profile.objects.get(id=int(db_pk))
-
         assert profile.user.first_name == returned_profile["firstName"] == first_name
         assert profile.user.last_name == returned_profile["lastName"] == last_name
         assert profile.user.email == returned_profile["email"] == email
@@ -128,7 +127,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 email: $email
               }
             ) {
-              profile {
+              profiles {
                 id
               }
             }
@@ -168,7 +167,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 id: $id
               }
             ) {
-              profile {
+              profiles {
                 id
                 email
                 firstName
@@ -185,7 +184,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        returned_profile = content["data"]["updateUser"]["profile"]
+        returned_profile = content["data"]["updateUser"]["profiles"][0]
         _, db_pk = from_global_id(returned_profile["id"])
 
         # Assert that nothing changed and the return type is correct
@@ -229,7 +228,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 id: $id
               }
             ) {
-              profile {
+              profiles {
                 id
               }
             }
@@ -268,7 +267,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 id: $id
               }
             ) {
-              profile {
+              profiles {
                 id
               }
             }
@@ -310,7 +309,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 email: $email
               }
             ) {
-              profile {
+              profiles {
                 id
               }
             }
@@ -352,7 +351,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 email: $email
               }
             ) {
-              profile {
+              profiles {
                 id
               }
             }
@@ -394,7 +393,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 isAdmin: $isAdmin
               }
             ) {
-              profile {
+              profiles {
                 id
               }
             }
@@ -436,7 +435,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 isAdmin: $isAdmin
               }
             ) {
-              profile {
+              profiles {
                 id
                 isAdmin
               }
@@ -451,7 +450,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        returned_profile = content["data"]["updateUser"]["profile"]
+        returned_profile = content["data"]["updateUser"]["profiles"][0]
         _, db_pk = from_global_id(returned_profile["id"])
 
         profile = Profile.objects.get(id=int(db_pk))
@@ -486,7 +485,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 isAdmin: $isAdmin
               }
             ) {
-              profile {
+              profiles {
                 id
                 isAdmin
               }
@@ -501,7 +500,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        returned_profile = content["data"]["updateUser"]["profile"]
+        returned_profile = content["data"]["updateUser"]["profiles"][0]
         _, db_pk = from_global_id(returned_profile["id"])
 
         profile = Profile.objects.get(id=int(db_pk))
@@ -524,7 +523,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 email: $email
               }
             ) {
-              profile {
+              profiles {
                 id
                 email
               }
@@ -539,7 +538,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        returned_profile = content["data"]["updateUser"]["profile"]
+        returned_profile = content["data"]["updateUser"]["profiles"][0]
         self.owner.refresh_from_db()
         assert self.owner.email == returned_profile["email"] == email
 
@@ -559,7 +558,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
                 email: $email
               }
             ) {
-              profile {
+              profiles {
                 id
                 email
               }
@@ -574,6 +573,6 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         )
         self.assertResponseNoErrors(response)
         content = json.loads(response.content)
-        returned_profile = content["data"]["updateUser"]["profile"]
+        returned_profile = content["data"]["updateUser"]["profiles"][0]
         self.admin.refresh_from_db()
         assert self.admin.email == returned_profile["email"] == email
