@@ -6,10 +6,17 @@ from graphene_django.utils.testing import GraphQLTestCase
 from graphql_relay.node.node import from_global_id, to_global_id
 from model_bakery import baker
 
+from accounter.integrations.models import Account, Integration, Service
+
 from ..models import Organization, Profile
 from ..schemas import ProfileNode
 
 User = get_user_model()
+
+
+def get_db_pk_from_global_id(global_id: str) -> int:
+    _, db_pk = from_global_id(global_id)
+    return int(db_pk)
 
 
 class OrganizationUpdateProfileTestCase(GraphQLTestCase):
@@ -103,6 +110,83 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         assert profile.user.last_name == returned_profile["lastName"] == last_name
         assert profile.user.email == returned_profile["email"] == email
         assert profile.title == returned_profile["title"] == title
+
+    def test_update_user_merge(self):
+        self.client.force_login(self.admin)
+        user_profile_to_update = baker.make(
+            Profile,
+            is_admin=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+        user_profile_to_merge_into = baker.make(
+            Profile,
+            is_admin=False,
+            organization=self.admin.profile.organization,
+            user=baker.make(User, _fill_optional=True),
+            _fill_optional=True,
+        )
+        integration = baker.make(
+            Integration,
+            service=Service.objects.get(name=Service.Types.SLACK),
+            organization=self.admin.profile.organization,
+            has_valid_token=True,
+            _fill_optional=True,
+        )
+        account = baker.make(
+            Account,
+            profile=user_profile_to_update,
+            integration=integration,
+            _fill_optional=True,
+        )
+
+        response = self.query(
+            """
+          mutation UpdateUser (
+            $id: ID!
+            $mergeWith: ID!
+          ) {
+            updateUser(
+              input: {
+                id: $id
+                mergeWith: $mergeWith
+              }
+            ) {
+              profiles {
+                id
+                accounts {
+                  id
+                }
+              }
+            }
+          }
+
+          """,
+            variables={
+                "id": to_global_id(ProfileNode._meta.name, user_profile_to_update.pk),
+                "mergeWith": to_global_id(
+                    ProfileNode._meta.name, user_profile_to_merge_into.pk
+                ),
+            },
+        )
+        self.assertResponseNoErrors(response)
+        content = json.loads(response.content)
+        response_updated_profile = content["data"]["updateUser"]["profiles"][0]
+        response_merged_into_profile = content["data"]["updateUser"]["profiles"][1]
+
+        assert (
+            get_db_pk_from_global_id(response_updated_profile["id"])
+            == user_profile_to_update.id
+        )
+        assert len(response_updated_profile["accounts"]) == 0
+
+        assert (
+            get_db_pk_from_global_id(response_merged_into_profile["id"])
+            == user_profile_to_merge_into.id
+        )
+        assert len(response_merged_into_profile["accounts"]) == 1
+        assert response_merged_into_profile["accounts"][0]["id"] == account.id
 
     def test_update_user_cannot_update_user_from_other_org(self):
         self.client.force_login(self.admin)
