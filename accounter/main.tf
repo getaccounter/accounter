@@ -107,6 +107,8 @@ module "server" {
   }
 
   sendgrid_api_key = var.sendgrid_api_key
+
+  secret_key = var.server_secret_key
 }
 
 module "connector" {

@@ -93,3 +93,9 @@ variable "sendgrid_api_key" {
   type        = string
   sensitive   = true
 }
+
+variable "server_secret_key" {
+  description = "django SECRET_KEY"
+  type        = string
+  sensitive   = true
+}

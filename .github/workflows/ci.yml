@@ -27,6 +27,7 @@ env:
   TF_VAR_token_encryption_key: ${{ secrets.ENCRYPTION_KEY }}
   TF_VAR_sendgrid_api_key: ${{ secrets.SENDGRID_API_KEY }}
   SLACK_WEBHOOK: ${{ secrets.SEMANTIC_RELEASE_SLACK_WEBHOOK }}
+  TF_VAR_server_secret_key: ${{ secrets.DJANGO_SECRET_KEY }}
 
 jobs:
   health-checks:
