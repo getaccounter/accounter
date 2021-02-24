@@ -74,6 +74,10 @@ services:
       - EMAIL_HOST_PASSWORD=
       - EMAIL_PORT=1025
       - EMAIL_USE_TLS=False
+
+      # Just used for dev
+      - SECRET_KEY=-7k-e#5^w@00zsxi$$0+i!n$$&4w#m-i@x4+i@(lp$$e1q3m#0p$$-
+      
     env_file:
       - ./accounter/server/.env
     volumes:

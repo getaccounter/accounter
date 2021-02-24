@@ -35,6 +35,17 @@ resource "kubernetes_secret" "sendgrid-api-key" {
   }
 }
 
+resource "kubernetes_secret" "secret-key" {
+  type = "Opaque"
+  metadata {
+    name = "secret-key"
+  }
+
+  data = {
+    value = var.secret_key
+  }
+}
+
 resource "kubernetes_deployment" "server" {
   metadata {
     name = "server"
@@ -66,6 +77,15 @@ resource "kubernetes_deployment" "server" {
           name  = "server"
           port {
             container_port = var.port
+          }
+          env {
+            name = "SECRET_KEY"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.secret-key.metadata[0].name
+                key  = "value"
+              }
+            }
           }
           env {
             name  = "PORT"

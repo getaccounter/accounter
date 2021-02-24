@@ -51,3 +51,9 @@ variable "connector" {
     port = number
   })
 }
+
+variable "secret_key" {
+  description = "django SECRET_KEY"
+  type        = string
+  sensitive   = true
+}
