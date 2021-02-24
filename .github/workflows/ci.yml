@@ -116,15 +116,25 @@ jobs:
         env:
           TF_VAR_app_version: ${{ env.version }}
 
+      - id: server-deployment-check
+        name: django deployment check
+        if: github.event_name == 'pull_request'
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
+
       - uses: actions/github-script@v3
         if: github.event_name == 'pull_request'
         env:
           PROVIDER_PLAN: "terraform\n${{ steps.plan-provider.outputs.stdout }}"
           CLUSTER_PLAN: "terraform\n${{ steps.plan-cluster.outputs.stdout }}"
+          DJANGO_DEPLOYMENT_CHECK: "${{ steps.server-deployment-check.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Plan 📖
+            const output = `#### Server Deployment Check
+
+            \`\`\`${process.env.DJANGO_DEPLOYMENT_CHECK}\`\`\`
+            
+            #### Terraform Plan
 
             <details>
             <summary>Show Provider Plan</summary>
@@ -146,11 +156,6 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
-
-      # Deploy
-      - name: django deployment check
-        if: github.ref == 'refs/heads/master'
-        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
 
       - name: Semantic Release
         if: github.ref == 'refs/heads/master'
