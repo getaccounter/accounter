@@ -231,6 +231,9 @@ ENVIRONMENT = get_enum_env_value("ENVIRONMENT", ["development", "production"])
 
 VERSION = get_optional_env_value("VERSION", "dev")
 
+SESSION_COOKIE_SECURE = ENVIRONMENT == "production"
+CSRF_COOKIE_SECURE = ENVIRONMENT == "production"
+
 if ENVIRONMENT == "production":
     sentry_sdk.init(
         dsn="https://00fdc0626e75488c8253114cc01e0a57@o523541.ingest.sentry.io/5635694",
