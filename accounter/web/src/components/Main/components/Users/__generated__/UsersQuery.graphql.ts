@@ -11,8 +11,7 @@ export type UsersQueryResponse = {
             readonly profiles: {
                 readonly edges: ReadonlyArray<{
                     readonly node: {
-                        readonly id: string;
-                        readonly " $fragmentRefs": FragmentRefs<"Content_profile" | "Content_profileList">;
+                        readonly " $fragmentRefs": FragmentRefs<"Content_profileList">;
                     } | null;
                 } | null>;
                 readonly " $fragmentRefs": FragmentRefs<"UserDirectory_profiles">;
@@ -36,9 +35,8 @@ query UsersQuery {
       profiles(first: 100) {
         edges {
           node {
-            id
-            ...Content_profile
             ...Content_profileList
+            id
             __typename
           }
           cursor
@@ -55,53 +53,17 @@ query UsersQuery {
   }
 }
 
-fragment Accounts_profile on ProfileNode {
-  accounts {
-    id
-    integration {
-      name
-      service {
-        name
-        logo
-      }
-      id
-    }
-    username
-    role
-    externalProfile
-    isDisabled
-  }
-}
-
 fragment Content_currentUser on ProfileNode {
   ...EditUser_currentUser
   ...Header_currentUser
-}
-
-fragment Content_profile on ProfileNode {
-  ...Header_profile
-  ...DescriptionList_profile
-  ...EditUser_profile
-  ...Accounts_profile
 }
 
 fragment Content_profileList on ProfileNode {
   ...EditUser_profileList
 }
 
-fragment DescriptionList_profile on ProfileNode {
-  firstName
-  lastName
-  email
-  title
-}
-
 fragment EditUser_currentUser on ProfileNode {
   ...UserForm_currentUser
-}
-
-fragment EditUser_profile on ProfileNode {
-  ...UserForm_profile
 }
 
 fragment EditUser_profileList on ProfileNode {
@@ -112,17 +74,6 @@ fragment Header_currentUser on ProfileNode {
   isOwner
 }
 
-fragment Header_profile on ProfileNode {
-  id
-  image
-  firstName
-  lastName
-  isAdmin
-  currentUserCanEdit
-  isOwner
-  isCurrentUser
-}
-
 fragment UserDirectory_profiles on ProfileNodeConnection {
   totalCount
   edges {
@@ -131,9 +82,7 @@ fragment UserDirectory_profiles on ProfileNodeConnection {
       lastName
       firstName
       email
-      accounts {
-        isDisabled
-      }
+      hasActiveAccounts
       ...User_profile
     }
   }
@@ -143,14 +92,6 @@ fragment UserForm_currentUser on ProfileNode {
   organization {
     id
   }
-}
-
-fragment UserForm_profile on ProfileNode {
-  id
-  firstName
-  lastName
-  email
-  title
 }
 
 fragment UserForm_profileList on ProfileNode {
@@ -181,24 +122,17 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
+  "name": "__typename",
   "storageKey": null
 },
 v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "__typename",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "cursor",
   "storageKey": null
 },
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "concreteType": "PageInfo",
@@ -223,6 +157,13 @@ v3 = {
   ],
   "storageKey": null
 },
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
 v4 = [
   {
     "kind": "Literal",
@@ -235,13 +176,6 @@ v5 = {
   "args": null,
   "kind": "ScalarField",
   "name": "isOwner",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
   "storageKey": null
 };
 return {
@@ -292,12 +226,6 @@ return {
                         "plural": false,
                         "selections": [
                           (v0/*: any*/),
-                          (v1/*: any*/),
-                          {
-                            "args": null,
-                            "kind": "FragmentSpread",
-                            "name": "Content_profile"
-                          },
                           {
                             "args": null,
                             "kind": "FragmentSpread",
@@ -306,11 +234,11 @@ return {
                         ],
                         "storageKey": null
                       },
-                      (v2/*: any*/)
+                      (v1/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v3/*: any*/),
+                  (v2/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -356,7 +284,7 @@ return {
             "name": "organization",
             "plural": false,
             "selections": [
-              (v0/*: any*/),
+              (v3/*: any*/),
               {
                 "alias": null,
                 "args": (v4/*: any*/),
@@ -381,14 +309,7 @@ return {
                         "name": "node",
                         "plural": false,
                         "selections": [
-                          (v0/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "image",
-                            "storageKey": null
-                          },
+                          (v3/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -407,29 +328,22 @@ return {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
-                            "name": "isAdmin",
+                            "name": "image",
                             "storageKey": null
                           },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "currentUserCanEdit",
-                            "storageKey": null
-                          },
-                          (v5/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "isCurrentUser",
-                            "storageKey": null
-                          },
+                          (v0/*: any*/),
                           {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
                             "name": "email",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "hasActiveAccounts",
                             "storageKey": null
                           },
                           {
@@ -442,80 +356,15 @@ return {
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "AccountNode",
-                            "kind": "LinkedField",
-                            "name": "accounts",
-                            "plural": true,
-                            "selections": [
-                              (v0/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "IntegrationNode",
-                                "kind": "LinkedField",
-                                "name": "integration",
-                                "plural": false,
-                                "selections": [
-                                  (v6/*: any*/),
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "concreteType": "ServiceNode",
-                                    "kind": "LinkedField",
-                                    "name": "service",
-                                    "plural": false,
-                                    "selections": [
-                                      (v6/*: any*/),
-                                      {
-                                        "alias": null,
-                                        "args": null,
-                                        "kind": "ScalarField",
-                                        "name": "logo",
-                                        "storageKey": null
-                                      }
-                                    ],
-                                    "storageKey": null
-                                  },
-                                  (v0/*: any*/)
-                                ],
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "username",
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "role",
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "externalProfile",
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "isDisabled",
-                                "storageKey": null
-                              }
-                            ],
+                            "kind": "ScalarField",
+                            "name": "isAdmin",
                             "storageKey": null
                           },
-                          (v1/*: any*/)
+                          (v5/*: any*/)
                         ],
                         "storageKey": null
                       },
-                      (v2/*: any*/)
+                      (v1/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -526,7 +375,7 @@ return {
                     "name": "totalCount",
                     "storageKey": null
                   },
-                  (v3/*: any*/)
+                  (v2/*: any*/)
                 ],
                 "storageKey": "profiles(first:100)"
               },
@@ -543,14 +392,14 @@ return {
             "storageKey": null
           },
           (v5/*: any*/),
-          (v0/*: any*/)
+          (v3/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "3a1e47d0df6bdbef9ef2f13a28adcf52",
+    "cacheID": "4e40fc1f2c1012303505afcd7e94970d",
     "id": null,
     "metadata": {
       "connection": [
@@ -568,9 +417,9 @@ return {
     },
     "name": "UsersQuery",
     "operationKind": "query",
-    "text": "query UsersQuery {\n  currentUser {\n    ...Content_currentUser\n    organization {\n      profiles(first: 100) {\n        edges {\n          node {\n            id\n            ...Content_profile\n            ...Content_profileList\n            __typename\n          }\n          cursor\n        }\n        ...UserDirectory_profiles\n        pageInfo {\n          endCursor\n          hasNextPage\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...EditUser_currentUser\n  ...Header_currentUser\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment Content_profileList on ProfileNode {\n  ...EditUser_profileList\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment EditUser_profileList on ProfileNode {\n  ...UserForm_profileList\n}\n\nfragment Header_currentUser on ProfileNode {\n  isOwner\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      firstName\n      email\n      accounts {\n        isDisabled\n      }\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n  }\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment UserForm_profileList on ProfileNode {\n  id\n  ...UserSelect_profileList\n}\n\nfragment UserSelect_profileList on ProfileNode {\n  id\n  firstName\n  lastName\n  image\n}\n\nfragment User_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n}\n"
+    "text": "query UsersQuery {\n  currentUser {\n    ...Content_currentUser\n    organization {\n      profiles(first: 100) {\n        edges {\n          node {\n            ...Content_profileList\n            id\n            __typename\n          }\n          cursor\n        }\n        ...UserDirectory_profiles\n        pageInfo {\n          endCursor\n          hasNextPage\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...EditUser_currentUser\n  ...Header_currentUser\n}\n\nfragment Content_profileList on ProfileNode {\n  ...EditUser_profileList\n}\n\nfragment EditUser_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment EditUser_profileList on ProfileNode {\n  ...UserForm_profileList\n}\n\nfragment Header_currentUser on ProfileNode {\n  isOwner\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      firstName\n      email\n      hasActiveAccounts\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n  }\n}\n\nfragment UserForm_profileList on ProfileNode {\n  id\n  ...UserSelect_profileList\n}\n\nfragment UserSelect_profileList on ProfileNode {\n  id\n  firstName\n  lastName\n  image\n}\n\nfragment User_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n}\n"
   }
 };
 })();
-(node as any).hash = '622b6a37d7a89dc0c03f75849e86e560';
+(node as any).hash = '7780999fa2122c4ea6e2365faabaa65c';
 export default node;

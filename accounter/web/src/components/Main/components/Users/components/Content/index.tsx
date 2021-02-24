@@ -8,15 +8,18 @@ import {
   useRouteMatch,
 } from "react-router-dom";
 import Header from "./components/Header";
-import { createFragmentContainer } from "react-relay";
+import { createFragmentContainer, QueryRenderer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { Content_profile } from "./__generated__/Content_profile.graphql";
 import DescriptionList from "./components/DescriptionList";
 import EditUser from "./components/EditUser";
 import { Content_currentUser } from "./__generated__/Content_currentUser.graphql";
 import Accounts from "./components/Accounts";
 import Breadcrumb from "../../../Breadcrumb";
 import { Content_profileList } from "./__generated__/Content_profileList.graphql";
+import { useEnvironment } from "../../../../../../contexts/relay";
+import Loading from "../../../../../Loading";
+import { ContentQuery } from "./__generated__/ContentQuery.graphql";
+
 const Tab = (props: { children: ReactNode; to: string }) => {
   const { pathname } = useLocation();
   const isSelected = props.to === pathname;
@@ -54,45 +57,84 @@ const Tabs = () => {
   );
 };
 
+graphql`
+  fragment Content_profile on ProfileNode {
+    ...Header_profile
+    ...DescriptionList_profile
+    ...EditUser_profile
+    ...Accounts_profile
+  }
+`;
+
 type Props = {
-  profile: Content_profile;
+  profileId: string;
   currentUser: Content_currentUser;
   profileList: Content_profileList;
 };
 
-const Content = ({ profile, currentUser, profileList }: Props) => {
+const Content = ({ currentUser, profileList, profileId }: Props) => {
   const { path, url } = useRouteMatch();
+  const environment = useEnvironment();
   return (
-    <Switch>
-      <Route path={`${path}/edit`}>
-        <EditUser
-          profileList={profileList}
-          currentUser={currentUser}
-          profile={profile}
-          cancelRoute={url}
-        />
-      </Route>
-      <Route>
-        <Breadcrumb title="Users" to="/users" />
-        <article>
-          <Header currentUser={currentUser} profile={profile} />
-          <Tabs />
-          <div className="mt-6 pb-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Switch>
-              <Route path={`${path}/profile`}>
-                <DescriptionList profile={profile} />
-              </Route>
-              <Route path={`${path}/apps`}>
-                <Accounts profile={profile} />
-              </Route>
-              <Route>
-                <Redirect to={`${url}/profile`} />
-              </Route>
-            </Switch>
-          </div>
-        </article>
-      </Route>
-    </Switch>
+    <QueryRenderer<ContentQuery>
+      environment={environment}
+      query={graphql`
+        query ContentQuery($profileId: ID!) {
+          currentUser {
+            organization {
+              profile(id: $profileId) {
+                ...Content_profile @relay(mask: false)
+              }
+            }
+          }
+        }
+      `}
+      variables={{
+        profileId,
+      }}
+      render={({ props, error }) => {
+        if (error) {
+          // catch in ErrorBoundary
+          throw error;
+        }
+        if (!props) {
+          return <Loading />;
+        }
+        const profile = props.currentUser.organization.profile!;
+        return (
+          <Switch>
+            <Route path={`${path}/edit`}>
+              <EditUser
+                profileList={profileList}
+                currentUser={currentUser}
+                profile={profile}
+                cancelRoute={url}
+              />
+            </Route>
+            <Route>
+              <Breadcrumb title="Users" to="/users" />
+              <article>
+                <Header currentUser={currentUser} profile={profile} />
+                <Tabs />
+                <div className="mt-6 pb-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <Switch>
+                    <Route path={`${path}/profile`}>
+                      <DescriptionList profile={profile} />
+                    </Route>
+                    <Route path={`${path}/apps`}>
+                      <Accounts profile={profile} />
+                    </Route>
+                    <Route>
+                      <Redirect to={`${url}/profile`} />
+                    </Route>
+                  </Switch>
+                </div>
+              </article>
+            </Route>
+          </Switch>
+        );
+      }}
+    />
   );
 };
 
@@ -101,14 +143,6 @@ export default createFragmentContainer(Content, {
     fragment Content_currentUser on ProfileNode {
       ...EditUser_currentUser
       ...Header_currentUser
-    }
-  `,
-  profile: graphql`
-    fragment Content_profile on ProfileNode {
-      ...Header_profile
-      ...DescriptionList_profile
-      ...EditUser_profile
-      ...Accounts_profile
     }
   `,
   profileList: graphql`

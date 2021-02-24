@@ -12,9 +12,7 @@ export type UserDirectory_profiles = {
             readonly lastName: string | null;
             readonly firstName: string | null;
             readonly email: string;
-            readonly accounts: ReadonlyArray<{
-                readonly isDisabled: boolean;
-            }>;
+            readonly hasActiveAccounts: boolean;
             readonly " $fragmentRefs": FragmentRefs<"User_profile">;
         } | null;
     } | null>;
@@ -88,19 +86,8 @@ const node: ReaderFragment = {
             {
               "alias": null,
               "args": null,
-              "concreteType": "AccountNode",
-              "kind": "LinkedField",
-              "name": "accounts",
-              "plural": true,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "isDisabled",
-                  "storageKey": null
-                }
-              ],
+              "kind": "ScalarField",
+              "name": "hasActiveAccounts",
               "storageKey": null
             },
             {
@@ -118,5 +105,5 @@ const node: ReaderFragment = {
   "type": "ProfileNodeConnection",
   "abstractKey": null
 };
-(node as any).hash = 'd04ab1860aac64bb2ad73f84d1ea7c16';
+(node as any).hash = '970bd8b7e730d9f54b7cbe11207f0eb9';
 export default node;

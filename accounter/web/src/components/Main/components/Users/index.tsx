@@ -21,8 +21,6 @@ const Users = () => {
               profiles(first: 100) @connection(key: "Users_profiles") {
                 edges {
                   node {
-                    id
-                    ...Content_profile
                     ...Content_profileList
                   }
                 }
@@ -45,13 +43,10 @@ const Users = () => {
           <div className="flex-1 relative z-0 flex overflow-hidden">
             <DetailLayout
               mainColumn={(id) => {
-                const profile = props.currentUser.organization.profiles.edges.find(
-                  (p) => p!.node!.id === id
-                );
                 return (
                   <Content
+                    profileId={id}
                     profileList={props.currentUser.organization.profiles.edges.map(edge => edge!.node!)}
-                    profile={profile!.node!}
                     currentUser={props.currentUser}
                   />
                 );

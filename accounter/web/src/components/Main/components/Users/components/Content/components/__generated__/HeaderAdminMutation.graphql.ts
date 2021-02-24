@@ -12,7 +12,7 @@ export type HeaderAdminMutationResponse = {
     readonly updateUser: {
         readonly profiles: ReadonlyArray<{
             readonly id: string;
-            readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
+            readonly " $fragmentRefs": FragmentRefs<"Header_profile" | "DescriptionList_profile" | "EditUser_profile" | "Accounts_profile">;
         } | null>;
     } | null;
 };
@@ -31,7 +31,10 @@ mutation HeaderAdminMutation(
   updateUser(input: {id: $id, isAdmin: $isAdmin}) {
     profiles {
       id
-      ...Content_profile
+      ...Header_profile
+      ...DescriptionList_profile
+      ...EditUser_profile
+      ...Accounts_profile
     }
   }
 }
@@ -52,13 +55,6 @@ fragment Accounts_profile on ProfileNode {
     externalProfile
     isDisabled
   }
-}
-
-fragment Content_profile on ProfileNode {
-  ...Header_profile
-  ...DescriptionList_profile
-  ...EditUser_profile
-  ...Accounts_profile
 }
 
 fragment DescriptionList_profile on ProfileNode {
@@ -164,7 +160,22 @@ return {
               {
                 "args": null,
                 "kind": "FragmentSpread",
-                "name": "Content_profile"
+                "name": "Header_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "DescriptionList_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "EditUser_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "Accounts_profile"
               }
             ],
             "storageKey": null
@@ -343,14 +354,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "567a3d89274f456d3714fde67b25ad7a",
+    "cacheID": "3797dbeaa8d9eab4df3ab524c913c399",
     "id": null,
     "metadata": {},
     "name": "HeaderAdminMutation",
     "operationKind": "mutation",
-    "text": "mutation HeaderAdminMutation(\n  $id: ID!\n  $isAdmin: Boolean!\n) {\n  updateUser(input: {id: $id, isAdmin: $isAdmin}) {\n    profiles {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
+    "text": "mutation HeaderAdminMutation(\n  $id: ID!\n  $isAdmin: Boolean!\n) {\n  updateUser(input: {id: $id, isAdmin: $isAdmin}) {\n    profiles {\n      id\n      ...Header_profile\n      ...DescriptionList_profile\n      ...EditUser_profile\n      ...Accounts_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
   }
 };
 })();
-(node as any).hash = '237406faef49fe4522b3b22871b4f894';
+(node as any).hash = 'a16a85990e1526d9ebc2302a52a95d42';
 export default node;

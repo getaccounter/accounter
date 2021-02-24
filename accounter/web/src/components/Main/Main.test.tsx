@@ -58,6 +58,10 @@ describe("Profile", () => {
   });
 
   it("links you to profile page", async () => {
+    /* test throws weird warining
+       Warning: Function components cannot be given refs. 
+       But still passes. No time to address this now, but should do later
+    */
     const environment = createMockEnvironment();
     const firstName = "Peter";
     const lastName = "Pan";
@@ -77,6 +81,18 @@ describe("Profile", () => {
     );
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation)
+    );
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        ProfileNode() {
+          return {
+            id: "some-id",
+            firstName,
+            lastName,
+            title,
+          };
+        },
+      })
     );
 
     environment.mock.queueOperationResolver((operation) =>
