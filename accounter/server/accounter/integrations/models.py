@@ -95,7 +95,9 @@ class Integration(models.Model):
     id = models.TextField(primary_key=True)
     token = models.TextField()
     refresh_token = models.TextField(null=True, blank=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    organization = models.ForeignKey(
+        Organization, related_name="integrations", on_delete=models.CASCADE
+    )
     last_refresh = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=100)
     service = models.ForeignKey(
@@ -106,7 +108,8 @@ class Integration(models.Model):
     has_valid_token = models.BooleanField(default=True)
 
     @property
-    def is_fresh(self):
+    def are_accounts_fresh(self):
+        # TODO refactor to check account.is_fresh on all accounts
         if not self.last_refresh:
             return False
         return timezone.now() < self.last_refresh + timedelta(
@@ -146,8 +149,8 @@ class Integration(models.Model):
         self.token = response.json().get("token")
         self.save()
 
-    def refresh(self, force=False):
-        if not force and self.is_fresh:
+    def refresh_accounts(self, force=False):
+        if not force and self.are_accounts_fresh:
             return
         if not self.has_valid_token:
             return
