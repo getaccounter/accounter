@@ -1,6 +1,6 @@
 import graphene
 
-from .integrations.models import Integration, Service
+from .integrations.models import Service
 from .integrations.schemas import IntegrationNode, Oauth, ServiceNode
 from .organizations.schemas import Mutation as OrganizationMutation
 from .organizations.schemas import Query as OrganizationQuery
@@ -29,10 +29,10 @@ class Query(UserQuery, OrganizationQuery, graphene.ObjectType):
     @admin_required
     def resolve_integrations(parent, info, **kwargs):
         organization = info.context.user.profile.organization
-        integrations = Integration.objects.filter(organization=organization)
+        integrations = organization.integrations.all()
 
         for integration in integrations:
-            integration.refresh()
+            integration.refresh_accounts()
 
         return integrations
 
