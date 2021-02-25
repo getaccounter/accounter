@@ -28,7 +28,7 @@ const UserDirectory = ({ profiles }: Props) => {
   const filteredProfiles = profiles.edges
     .filter(
       (edge) =>
-        showDisabledUsers || edge!.node!.accounts.some((acc) => !acc.isDisabled)
+        showDisabledUsers || edge!.node!.hasActiveAccounts
     )
     .filter((edge) => {
       const node = edge!.node!;
@@ -106,20 +106,24 @@ const UserDirectory = ({ profiles }: Props) => {
   );
 };
 
+graphql`
+  fragment UserDirectory_profile on ProfileNode {
+    id
+    lastName
+    firstName
+    email
+    hasActiveAccounts
+    ...User_profile
+  }
+`;
+
 export default createFragmentContainer(UserDirectory, {
   profiles: graphql`
     fragment UserDirectory_profiles on ProfileNodeConnection {
       totalCount
       edges {
         node {
-          id
-          lastName
-          firstName
-          email
-          accounts {
-            isDisabled
-          }
-          ...User_profile
+          ...UserDirectory_profile @relay(mask: false)
         }
       }
     }

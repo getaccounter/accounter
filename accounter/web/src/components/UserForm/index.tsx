@@ -47,7 +47,8 @@ const createUser = (
         ) {
           profile {
             id
-            ...Content_profile
+            ...Content_profile @relay(mask: false)
+            ...UserDirectory_profile @relay(mask: false)
           }
         }
       }
@@ -89,7 +90,8 @@ const updateUser = (
         ) {
           profiles {
             id
-            ...Content_profile
+            ...Content_profile @relay(mask: false)
+            ...UserDirectory_profile @relay(mask: false)
           }
         }
       }
@@ -133,7 +135,9 @@ const UserForm = (props: Props) => {
   const [titleInput, setTitleInput] = useState(
     isUpdate && props.profile!.title ? props.profile!.title : ""
   );
-  const [profileToMergeInput, setProfileToMergeInput] = useState<UserForm_profileList[0]["id"] | null>(null);
+  const [profileToMergeInput, setProfileToMergeInput] = useState<
+    UserForm_profileList[0]["id"] | null
+  >(null);
   return (
     <form
       className="space-y-8 divide-y divide-gray-200"
@@ -147,7 +151,7 @@ const UserForm = (props: Props) => {
             firstName: firstNameInput,
             lastName: lastNameInput,
             title: titleInput.length > 0 ? titleInput : undefined,
-            mergeWith: profileToMergeInput
+            mergeWith: profileToMergeInput,
           };
           updateUser(
             environment,
@@ -160,10 +164,10 @@ const UserForm = (props: Props) => {
                   content: "Could not update user",
                 });
               } else {
-                const updatedProfile = response.updateUser!.profiles.find(p => p?.id === props.profile!.id)!
-                history.push(
-                  `/users/details/${updatedProfile.id}`
-                );
+                const updatedProfile = response.updateUser!.profiles.find(
+                  (p) => p?.id === props.profile!.id
+                )!;
+                history.push(`/users/details/${updatedProfile.id}`);
               }
             },
             (err) =>
@@ -303,9 +307,7 @@ const UserForm = (props: Props) => {
 
       <div className="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
         <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Merge
-          </h3>
+          <h3 className="text-lg leading-6 font-medium text-gray-900">Merge</h3>
           <p className="mt-1 max-w-2xl text-sm text-gray-500">
             Merges this profile into another one.
           </p>

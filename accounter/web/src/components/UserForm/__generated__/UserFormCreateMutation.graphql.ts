@@ -14,7 +14,11 @@ export type UserFormCreateMutationResponse = {
     readonly createUser: {
         readonly profile: {
             readonly id: string;
-            readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
+            readonly lastName: string | null;
+            readonly firstName: string | null;
+            readonly email: string;
+            readonly hasActiveAccounts: boolean;
+            readonly " $fragmentRefs": FragmentRefs<"Header_profile" | "DescriptionList_profile" | "EditUser_profile" | "Accounts_profile" | "User_profile">;
         };
     } | null;
 };
@@ -35,7 +39,15 @@ mutation UserFormCreateMutation(
   createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title}) {
     profile {
       id
-      ...Content_profile
+      ...Header_profile
+      ...DescriptionList_profile
+      ...EditUser_profile
+      ...Accounts_profile
+      lastName
+      firstName
+      email
+      hasActiveAccounts
+      ...User_profile
     }
   }
 }
@@ -56,13 +68,6 @@ fragment Accounts_profile on ProfileNode {
     externalProfile
     isDisabled
   }
-}
-
-fragment Content_profile on ProfileNode {
-  ...Header_profile
-  ...DescriptionList_profile
-  ...EditUser_profile
-  ...Accounts_profile
 }
 
 fragment DescriptionList_profile on ProfileNode {
@@ -93,6 +98,16 @@ fragment UserForm_profile on ProfileNode {
   lastName
   email
   title
+}
+
+fragment User_profile on ProfileNode {
+  id
+  image
+  firstName
+  lastName
+  title
+  isAdmin
+  isOwner
 }
 */
 
@@ -158,6 +173,34 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "lastName",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "firstName",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "email",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "hasActiveAccounts",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 };
@@ -185,10 +228,34 @@ return {
             "plural": false,
             "selections": [
               (v2/*: any*/),
+              (v3/*: any*/),
+              (v4/*: any*/),
+              (v5/*: any*/),
+              (v6/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
-                "name": "Content_profile"
+                "name": "Header_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "DescriptionList_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "EditUser_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "Accounts_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "User_profile"
               }
             ],
             "storageKey": null
@@ -230,20 +297,8 @@ return {
                 "name": "image",
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "firstName",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "lastName",
-                "storageKey": null
-              },
+              (v4/*: any*/),
+              (v3/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -272,13 +327,7 @@ return {
                 "name": "isCurrentUser",
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "email",
-                "storageKey": null
-              },
+              (v5/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -303,7 +352,7 @@ return {
                     "name": "integration",
                     "plural": false,
                     "selections": [
-                      (v3/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -312,7 +361,7 @@ return {
                         "name": "service",
                         "plural": false,
                         "selections": [
-                          (v3/*: any*/),
+                          (v7/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -357,7 +406,8 @@ return {
                   }
                 ],
                 "storageKey": null
-              }
+              },
+              (v6/*: any*/)
             ],
             "storageKey": null
           }
@@ -367,14 +417,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2c415d5918c0fe1228fd4b56081ae77d",
+    "cacheID": "012d5c93bf1c71bd2ade558002ea4463",
     "id": null,
     "metadata": {},
     "name": "UserFormCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserFormCreateMutation(\n  $email: String!\n  $firstName: String!\n  $lastName: String!\n  $title: String\n) {\n  createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title}) {\n    profile {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
+    "text": "mutation UserFormCreateMutation(\n  $email: String!\n  $firstName: String!\n  $lastName: String!\n  $title: String\n) {\n  createUser(input: {email: $email, firstName: $firstName, lastName: $lastName, title: $title}) {\n    profile {\n      id\n      ...Header_profile\n      ...DescriptionList_profile\n      ...EditUser_profile\n      ...Accounts_profile\n      lastName\n      firstName\n      email\n      hasActiveAccounts\n      ...User_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment User_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n}\n"
   }
 };
 })();
-(node as any).hash = '9fa29b824b51ea90191746f94e772fed';
+(node as any).hash = '646e90e21a5e78226bf147708a048962';
 export default node;

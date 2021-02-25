@@ -51,13 +51,6 @@ class Signup(graphene.Mutation):
         return Signup(status="success")
 
 
-class OrganizationNode(DjangoObjectType):
-    class Meta:
-        model = Organization
-        fields = ("name", "profiles")
-        interfaces = (graphene.relay.Node,)
-
-
 class ProfileNode(DjangoObjectType):
     class Meta:
         connection_class = ExtendedConnection
@@ -80,6 +73,7 @@ class ProfileNode(DjangoObjectType):
     current_user_can_edit = graphene.Boolean(required=True)
     accounts = graphene.List(graphene.NonNull(AccountNode), required=True)
     image = graphene.String(required=True)
+    has_active_accounts = graphene.Boolean(required=True)
 
     @staticmethod
     def resolve_email(profile, info, **kwargs):
@@ -120,13 +114,37 @@ class ProfileNode(DjangoObjectType):
     @staticmethod
     def resolve_image(profile, info, **kwargs):
         try:
-            account = Account.objects.get(
+            account = Account.objects.filter(
                 profile=profile,
                 integration__service=Service.objects.get(name=Service.Types.SLACK),
-            )
+            ).first()
             return account.image_big
         except Account.DoesNotExist:
             return "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+        except AttributeError:
+            return "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+
+    @staticmethod
+    def resolve_has_active_accounts(profile, info, **kwargs):
+        active_accounts_number = profile.accounts.filter(is_disabled=False).count()
+        return active_accounts_number > 0
+
+
+class OrganizationNode(DjangoObjectType):
+    class Meta:
+        model = Organization
+        fields = ("name", "profiles")
+        interfaces = (graphene.relay.Node,)
+
+    profile = graphene.Field(
+        ProfileNode,
+        id=graphene.ID(required=True),
+    )
+
+    def resolve_profile(root, info, id):
+        organization = info.context.user.profile.organization
+        profile_pk = from_global_id(id)[1]
+        return organization.profiles.get(pk=profile_pk)
 
 
 class CreateUser(graphene.relay.ClientIDMutation):

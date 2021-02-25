@@ -30,7 +30,7 @@ const toggleAdmin = (
         updateUser(input: { id: $id, isAdmin: $isAdmin }) {
           profiles {
             id
-            ...Content_profile
+            ...Content_profile @relay(mask: false)
           }
         }
       }

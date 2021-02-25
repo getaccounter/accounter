@@ -16,7 +16,11 @@ export type UserFormUpdateMutationResponse = {
     readonly updateUser: {
         readonly profiles: ReadonlyArray<{
             readonly id: string;
-            readonly " $fragmentRefs": FragmentRefs<"Content_profile">;
+            readonly lastName: string | null;
+            readonly firstName: string | null;
+            readonly email: string;
+            readonly hasActiveAccounts: boolean;
+            readonly " $fragmentRefs": FragmentRefs<"Header_profile" | "DescriptionList_profile" | "EditUser_profile" | "Accounts_profile" | "User_profile">;
         } | null>;
     } | null;
 };
@@ -39,7 +43,15 @@ mutation UserFormUpdateMutation(
   updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, mergeWith: $mergeWith}) {
     profiles {
       id
-      ...Content_profile
+      ...Header_profile
+      ...DescriptionList_profile
+      ...EditUser_profile
+      ...Accounts_profile
+      lastName
+      firstName
+      email
+      hasActiveAccounts
+      ...User_profile
     }
   }
 }
@@ -60,13 +72,6 @@ fragment Accounts_profile on ProfileNode {
     externalProfile
     isDisabled
   }
-}
-
-fragment Content_profile on ProfileNode {
-  ...Header_profile
-  ...DescriptionList_profile
-  ...EditUser_profile
-  ...Accounts_profile
 }
 
 fragment DescriptionList_profile on ProfileNode {
@@ -97,6 +102,16 @@ fragment UserForm_profile on ProfileNode {
   lastName
   email
   title
+}
+
+fragment User_profile on ProfileNode {
+  id
+  image
+  firstName
+  lastName
+  title
+  isAdmin
+  isOwner
 }
 */
 
@@ -180,6 +195,34 @@ v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "lastName",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "firstName",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "email",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "hasActiveAccounts",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 };
@@ -214,10 +257,34 @@ return {
             "plural": true,
             "selections": [
               (v7/*: any*/),
+              (v8/*: any*/),
+              (v9/*: any*/),
+              (v10/*: any*/),
+              (v11/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
-                "name": "Content_profile"
+                "name": "Header_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "DescriptionList_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "EditUser_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "Accounts_profile"
+              },
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "User_profile"
               }
             ],
             "storageKey": null
@@ -266,20 +333,8 @@ return {
                 "name": "image",
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "firstName",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "lastName",
-                "storageKey": null
-              },
+              (v9/*: any*/),
+              (v8/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -308,13 +363,7 @@ return {
                 "name": "isCurrentUser",
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "email",
-                "storageKey": null
-              },
+              (v10/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -339,7 +388,7 @@ return {
                     "name": "integration",
                     "plural": false,
                     "selections": [
-                      (v8/*: any*/),
+                      (v12/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -348,7 +397,7 @@ return {
                         "name": "service",
                         "plural": false,
                         "selections": [
-                          (v8/*: any*/),
+                          (v12/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -393,7 +442,8 @@ return {
                   }
                 ],
                 "storageKey": null
-              }
+              },
+              (v11/*: any*/)
             ],
             "storageKey": null
           }
@@ -403,14 +453,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a2f433354c67a2ebaf84362932025de5",
+    "cacheID": "46bf3d37b9cfa62071b489ff97d2d312",
     "id": null,
     "metadata": {},
     "name": "UserFormUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n  $mergeWith: ID\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, mergeWith: $mergeWith}) {\n    profiles {\n      id\n      ...Content_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment Content_profile on ProfileNode {\n  ...Header_profile\n  ...DescriptionList_profile\n  ...EditUser_profile\n  ...Accounts_profile\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
+    "text": "mutation UserFormUpdateMutation(\n  $id: ID!\n  $email: String\n  $firstName: String\n  $lastName: String\n  $title: String\n  $mergeWith: ID\n) {\n  updateUser(input: {id: $id, email: $email, firstName: $firstName, lastName: $lastName, title: $title, mergeWith: $mergeWith}) {\n    profiles {\n      id\n      ...Header_profile\n      ...DescriptionList_profile\n      ...EditUser_profile\n      ...Accounts_profile\n      lastName\n      firstName\n      email\n      hasActiveAccounts\n      ...User_profile\n    }\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment User_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n}\n"
   }
 };
 })();
-(node as any).hash = '8797f2cf068cf7a9e1c16b4858871fb7';
+(node as any).hash = '1e1cde14e20f9a2a0d6b683751be74aa';
 export default node;
