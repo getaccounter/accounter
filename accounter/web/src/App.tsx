@@ -15,6 +15,7 @@ import NotificationProvider from "./contexts/notification";
 import RelayProvider from "./contexts/relay";
 import environment from "./relay-env";
 import ErrorBoundary from "./components/Main/components/ErrorBoundary";
+import { RelayEnvironmentProvider } from "relay-hooks";
 const httpLink = createHttpLink({
   uri: GRAPHQL_ENDPOINT,
 });
@@ -39,13 +40,15 @@ export default function App() {
     <ErrorBoundary>
       <ApolloProvider client={client}>
         <AuthProvider>
+            <RelayEnvironmentProvider environment={environment}>
           <RelayProvider environment={environment}>
-            <Router>
-              <NotificationProvider>
-                <Root />
-              </NotificationProvider>
-            </Router>
+              <Router>
+                <NotificationProvider>
+                  <Root />
+                </NotificationProvider>
+              </Router>
           </RelayProvider>
+            </RelayEnvironmentProvider>
         </AuthProvider>
       </ApolloProvider>
     </ErrorBoundary>

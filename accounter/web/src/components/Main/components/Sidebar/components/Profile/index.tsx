@@ -1,17 +1,29 @@
-import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { Profile_profile } from "./__generated__/Profile_profile.graphql";
+import { Profile_profile$key } from "./__generated__/Profile_profile.graphql";
 import React, { useState } from "react";
 import { Selector } from "../../../../../icons/solid";
 import Dropdown from "./components/Dropdown";
 import ClickAwayListener from "react-click-away-listener";
+import { useFragment } from "relay-hooks";
 
 type Props = {
   desktop?: boolean;
-  profile: Profile_profile;
+  profile: Profile_profile$key;
 };
 
-const Profile = ({ desktop, profile }: Props) => {
+const Profile = (props: Props) => {
+  const profile = useFragment(
+    graphql`
+      fragment Profile_profile on ProfileNode {
+        ...Dropdown_profile
+        firstName
+        lastName
+        title
+        image
+      }
+    `,
+    props.profile
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   return (
     <div className="relative text-left flex flex-col-reverse">
@@ -21,7 +33,7 @@ const Profile = ({ desktop, profile }: Props) => {
           aria-haspopup
           type="button"
           className={`w-full text-left flex-shrink-0 group block p-4 hover:bg-gray-50  ${
-            desktop ? "w-full" : ""
+            props.desktop ? "w-full" : ""
           }`}
           id="options-menu"
           aria-expanded={isDropdownOpen}
@@ -31,7 +43,7 @@ const Profile = ({ desktop, profile }: Props) => {
               <span>
                 <img
                   className={`inline-block rounded-full ${
-                    desktop ? "h-9 w-9" : "h-10 w-10 "
+                    props.desktop ? "h-9 w-9" : "h-10 w-10 "
                   }`}
                   src={profile.image}
                   alt=""
@@ -40,14 +52,14 @@ const Profile = ({ desktop, profile }: Props) => {
               <span className="ml-3">
                 <p
                   className={`${
-                    desktop ? "text-sm" : "text-base"
+                    props.desktop ? "text-sm" : "text-base"
                   } font-medium text-gray-700`}
                 >
                   {profile.firstName} {profile.lastName}
                 </p>
                 <p
                   className={`${
-                    desktop ? "text-xs" : "text-sm"
+                    props.desktop ? "text-xs" : "text-sm"
                   } font-medium text-gray-500`}
                 >
                   {profile.title}
@@ -70,14 +82,4 @@ const Profile = ({ desktop, profile }: Props) => {
   );
 };
 
-export default createFragmentContainer(Profile, {
-  profile: graphql`
-    fragment Profile_profile on ProfileNode {
-      ...Dropdown_profile
-      firstName
-      lastName
-      title
-      image
-    }
-  `,
-});
+export default Profile;

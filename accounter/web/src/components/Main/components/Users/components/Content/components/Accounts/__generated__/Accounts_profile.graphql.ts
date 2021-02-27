@@ -8,7 +8,6 @@ export type AccountRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
 export type Accounts_profile = {
     readonly accounts: ReadonlyArray<{
-        readonly id: string;
         readonly integration: {
             readonly name: string;
             readonly service: {
@@ -53,13 +52,6 @@ return {
       "name": "accounts",
       "plural": true,
       "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "id",
-          "storageKey": null
-        },
         {
           "alias": null,
           "args": null,
@@ -127,5 +119,5 @@ return {
   "abstractKey": null
 };
 })();
-(node as any).hash = '2c915fd69c1d5e0cbf78013d6b67bd5f';
+(node as any).hash = 'd1ba3f897128429834386c0d51df31d2';
 export default node;

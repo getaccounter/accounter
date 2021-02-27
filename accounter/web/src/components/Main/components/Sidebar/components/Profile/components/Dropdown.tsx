@@ -1,15 +1,23 @@
-import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { Dropdown_profile } from "./__generated__/Dropdown_profile.graphql";
+import { Dropdown_profile$key } from "./__generated__/Dropdown_profile.graphql";
 import React from "react";
 import { Link } from "react-router-dom";
+import { useFragment } from "relay-hooks";
 
 type Props = {
-  profile: Dropdown_profile;
+  profile: Dropdown_profile$key;
   onClick: () => void;
 };
 
-const Dropdown = ({ profile, onClick }: Props) => {
+const Dropdown = (props: Props) => {
+  const profile = useFragment(
+    graphql`
+      fragment Dropdown_profile on ProfileNode {
+        id
+      }
+    `,
+    props.profile
+  );
   return (
     <>
       {/*
@@ -33,7 +41,7 @@ const Dropdown = ({ profile, onClick }: Props) => {
             to={`/users/details/${profile.id}`}
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             role="menuitem"
-            onClick={onClick}
+            onClick={props.onClick}
           >
             View profile
           </Link>
@@ -52,10 +60,4 @@ const Dropdown = ({ profile, onClick }: Props) => {
   );
 };
 
-export default createFragmentContainer(Dropdown, {
-  profile: graphql`
-    fragment Dropdown_profile on ProfileNode {
-      id
-    }
-  `,
-});
+export default Dropdown;

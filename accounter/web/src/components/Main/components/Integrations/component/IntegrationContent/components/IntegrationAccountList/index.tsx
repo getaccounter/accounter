@@ -1,15 +1,33 @@
-import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { IntegrationAccountList_accounts } from "./__generated__/IntegrationAccountList_accounts.graphql";
+import { IntegrationAccountList_accounts$key } from "./__generated__/IntegrationAccountList_accounts.graphql";
 import React from "react";
 import Table from "../../../../../../../Table";
 import Badge from "../../../../../../../Badge";
+import { useFragment } from "relay-hooks";
 
 type Props = {
-  accounts: IntegrationAccountList_accounts;
+  accounts: IntegrationAccountList_accounts$key;
 };
 
-const IntegrationAccountList = ({ accounts }: Props) => {
+const IntegrationAccountList = (props: Props) => {
+  const accounts = useFragment(
+    graphql`
+      fragment IntegrationAccountList_accounts on AccountNode
+      @relay(plural: true) {
+        imageSmall
+        isDisabled
+        profile {
+          firstName
+          lastName
+          title
+        }
+        username
+        role
+        externalProfile
+      }
+    `,
+    props.accounts
+  );
   return (
     <Table
       title="Accounts"
@@ -99,21 +117,4 @@ const IntegrationAccountList = ({ accounts }: Props) => {
   );
 };
 
-export default createFragmentContainer(IntegrationAccountList, {
-  accounts: graphql`
-    fragment IntegrationAccountList_accounts on AccountNode
-    @relay(plural: true) {
-      id
-      imageSmall
-      isDisabled
-      profile {
-        firstName
-        lastName
-        title
-      }
-      username
-      role
-      externalProfile
-    }
-  `,
-});
+export default IntegrationAccountList;

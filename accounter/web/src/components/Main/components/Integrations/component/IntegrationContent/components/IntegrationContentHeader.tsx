@@ -1,13 +1,13 @@
 import React, { ReactNode } from "react";
 import { Pencil, Link as LinkIcon } from "../../../../../../icons/solid";
-import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Link } from "react-router-dom";
-import { IntegrationContentHeader_integration } from "./__generated__/IntegrationContentHeader_integration.graphql";
+import { IntegrationContentHeader_integration$key } from "./__generated__/IntegrationContentHeader_integration.graphql";
 import Badge from "../../../../../../Badge";
+import { useFragment } from "relay-hooks";
 
 type Props = {
-  integration: IntegrationContentHeader_integration;
+  integration: IntegrationContentHeader_integration$key;
 };
 
 const Name = (props: { children: ReactNode; hasValidToken: boolean }) => (
@@ -60,7 +60,21 @@ const MainButton = (props: {
   );
 };
 
-const IntegrationContentHeader = ({ integration }: Props) => {
+const IntegrationContentHeader = (props: Props) => {
+  const integration = useFragment(
+    graphql`
+      fragment IntegrationContentHeader_integration on IntegrationNode {
+        name
+        managementUrl
+        hasValidToken
+        service {
+          logo
+          oauthUrl
+        }
+      }
+    `,
+    props.integration
+  );
   return (
     <div>
       <div>
@@ -110,16 +124,4 @@ const IntegrationContentHeader = ({ integration }: Props) => {
   );
 };
 
-export default createFragmentContainer(IntegrationContentHeader, {
-  integration: graphql`
-    fragment IntegrationContentHeader_integration on IntegrationNode {
-      name
-      managementUrl
-      hasValidToken
-      service {
-        logo
-        oauthUrl
-      }
-    }
-  `,
-});
+export default IntegrationContentHeader

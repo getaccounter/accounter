@@ -8,11 +8,12 @@ import {
   useRouteMatch,
 } from "react-router-dom";
 import IntegrationContentHeader from "./components/IntegrationContentHeader";
-import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import Breadcrumb from "../../../Breadcrumb";
-import { IntegrationContent_integration } from "./__generated__/IntegrationContent_integration.graphql";
 import IntegrationAccountList from "./components/IntegrationAccountList";
+import Loading from "../../../../../Loading";
+import { useQuery } from "relay-hooks";
+import { IntegrationContentQuery } from "./__generated__/IntegrationContentQuery.graphql";
 
 const Tab = (props: { children: ReactNode; to: string }) => {
   const { pathname } = useLocation();
@@ -51,11 +52,32 @@ const Tabs = () => {
 };
 
 type Props = {
-  integration: IntegrationContent_integration;
+  id: string;
 };
 
-const IntegrationContent = ({ integration }: Props) => {
+const IntegrationContent = (props: Props) => {
   const { path, url } = useRouteMatch();
+  const { data, error } = useQuery<IntegrationContentQuery>(
+    graphql`
+      query IntegrationContentQuery($id: ID!) {
+        integration(id: $id) {
+          ...IntegrationContentHeader_integration
+          accounts {
+            ...IntegrationAccountList_accounts
+          }
+        }
+      }
+    `,
+    { id: props.id }
+  );
+  if (error) {
+    // catch in ErrorBoundary
+    throw error;
+  }
+  if (!data) {
+    return <Loading />;
+  }
+  const integration = data.integration!;
   return (
     <Switch>
       <Route>
@@ -79,14 +101,4 @@ const IntegrationContent = ({ integration }: Props) => {
   );
 };
 
-export default createFragmentContainer(IntegrationContent, {
-  integration: graphql`
-    fragment IntegrationContent_integration on IntegrationNode {
-      name
-      ...IntegrationContentHeader_integration
-      accounts {
-        ...IntegrationAccountList_accounts
-      }
-    }
-  `,
-});
+export default IntegrationContent;

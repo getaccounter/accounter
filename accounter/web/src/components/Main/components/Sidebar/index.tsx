@@ -5,18 +5,26 @@ import Profile from "./components/Profile";
 import { Link, useLocation } from "react-router-dom";
 import { useBooleanQueryString } from "../../../../utils/querystring";
 import queryString from "query-string";
-import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { Sidebar_profile } from "./__generated__/Sidebar_profile.graphql";
 import LogoWriting from "../../../branding/LogoWriting";
+import { useFragment } from "relay-hooks";
+import { Sidebar_profile, Sidebar_profile$key } from "./__generated__/Sidebar_profile.graphql";
 
 interface Props {
   mainTabs: Array<TabType>;
   extraTabs: Array<TabType>;
+  profile: Sidebar_profile$key;
+}
+
+interface MobileProps {
+  mainTabs: Props["mainTabs"]
+  extraTabs: Props["extraTabs"]
   profile: Sidebar_profile;
 }
 
-const MobileSidebar = (props: Props) => {
+interface DesktopSidebarProps extends MobileProps {}
+
+const MobileSidebar = (props: MobileProps) => {
   const location = useLocation();
   const { showMobileSidebar, ...qsObject } = queryString.parse(location.search);
   const closeSidebarLink = `${location.pathname}?${queryString.stringify(
@@ -67,7 +75,7 @@ const MobileSidebar = (props: Props) => {
             </div>
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div className="flex-shrink-0 flex items-center px-4">
-              <LogoWriting />
+                <LogoWriting />
               </div>
               <nav aria-label="Sidebar" className="mt-5">
                 <div className="px-2 space-y-1">
@@ -97,7 +105,7 @@ const MobileSidebar = (props: Props) => {
   );
 };
 
-const DesktopSidebar = (props: Props) => (
+const DesktopSidebar = (props: DesktopSidebarProps) => (
   <>
     {/* Static sidebar for desktop */}
     <div className="hidden lg:flex lg:flex-shrink-0">
@@ -105,7 +113,7 @@ const DesktopSidebar = (props: Props) => (
         <div className="flex flex-col h-0 flex-1 border-r border-gray-200 bg-gray-100">
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
-            <LogoWriting />
+              <LogoWriting />
             </div>
             <nav className="mt-5 flex-1" aria-label="Sidebar">
               <div className="px-2 space-y-1">
@@ -133,18 +141,20 @@ const DesktopSidebar = (props: Props) => (
 
 const Sidebar = (props: Props) => {
   const showMobileSidebar = useBooleanQueryString("showMobileSidebar");
+  const profile = useFragment(
+    graphql`
+      fragment Sidebar_profile on ProfileNode {
+        ...Profile_profile
+      }
+    `,
+    props.profile
+  );
   return (
     <>
-      {showMobileSidebar && <MobileSidebar {...props} />}
-      <DesktopSidebar {...props} />
+      {showMobileSidebar && <MobileSidebar {...props} profile={profile} />}
+      <DesktopSidebar {...props} profile={profile} />
     </>
   );
 };
 
-export default createFragmentContainer(Sidebar, {
-  profile: graphql`
-    fragment Sidebar_profile on ProfileNode {
-      ...Profile_profile
-    }
-  `,
-});
+export default Sidebar;

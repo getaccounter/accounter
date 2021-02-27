@@ -54,16 +54,11 @@ query UsersQuery {
 }
 
 fragment Content_currentUser on ProfileNode {
-  ...EditUser_currentUser
   ...Header_currentUser
 }
 
 fragment Content_profileList on ProfileNode {
   ...EditUser_profileList
-}
-
-fragment EditUser_currentUser on ProfileNode {
-  ...UserForm_currentUser
 }
 
 fragment EditUser_profileList on ProfileNode {
@@ -85,12 +80,6 @@ fragment UserDirectory_profiles on ProfileNodeConnection {
       hasActiveAccounts
       ...User_profile
     }
-  }
-}
-
-fragment UserForm_currentUser on ProfileNode {
-  organization {
-    id
   }
 }
 
@@ -161,7 +150,7 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
+  "name": "isOwner",
   "storageKey": null
 },
 v4 = [
@@ -175,7 +164,7 @@ v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isOwner",
+  "name": "id",
   "storageKey": null
 };
 return {
@@ -276,6 +265,7 @@ return {
         "name": "currentUser",
         "plural": false,
         "selections": [
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -284,7 +274,6 @@ return {
             "name": "organization",
             "plural": false,
             "selections": [
-              (v3/*: any*/),
               {
                 "alias": null,
                 "args": (v4/*: any*/),
@@ -309,7 +298,7 @@ return {
                         "name": "node",
                         "plural": false,
                         "selections": [
-                          (v3/*: any*/),
+                          (v5/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -360,7 +349,7 @@ return {
                             "name": "isAdmin",
                             "storageKey": null
                           },
-                          (v5/*: any*/)
+                          (v3/*: any*/)
                         ],
                         "storageKey": null
                       },
@@ -387,19 +376,19 @@ return {
                 "key": "Users_profiles",
                 "kind": "LinkedHandle",
                 "name": "profiles"
-              }
+              },
+              (v5/*: any*/)
             ],
             "storageKey": null
           },
-          (v5/*: any*/),
-          (v3/*: any*/)
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "4e40fc1f2c1012303505afcd7e94970d",
+    "cacheID": "6a067157d08a4531ac40d56e0058fa20",
     "id": null,
     "metadata": {
       "connection": [
@@ -417,7 +406,7 @@ return {
     },
     "name": "UsersQuery",
     "operationKind": "query",
-    "text": "query UsersQuery {\n  currentUser {\n    ...Content_currentUser\n    organization {\n      profiles(first: 100) {\n        edges {\n          node {\n            ...Content_profileList\n            id\n            __typename\n          }\n          cursor\n        }\n        ...UserDirectory_profiles\n        pageInfo {\n          endCursor\n          hasNextPage\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...EditUser_currentUser\n  ...Header_currentUser\n}\n\nfragment Content_profileList on ProfileNode {\n  ...EditUser_profileList\n}\n\nfragment EditUser_currentUser on ProfileNode {\n  ...UserForm_currentUser\n}\n\nfragment EditUser_profileList on ProfileNode {\n  ...UserForm_profileList\n}\n\nfragment Header_currentUser on ProfileNode {\n  isOwner\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      firstName\n      email\n      hasActiveAccounts\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_currentUser on ProfileNode {\n  organization {\n    id\n  }\n}\n\nfragment UserForm_profileList on ProfileNode {\n  id\n  ...UserSelect_profileList\n}\n\nfragment UserSelect_profileList on ProfileNode {\n  id\n  firstName\n  lastName\n  image\n}\n\nfragment User_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n}\n"
+    "text": "query UsersQuery {\n  currentUser {\n    ...Content_currentUser\n    organization {\n      profiles(first: 100) {\n        edges {\n          node {\n            ...Content_profileList\n            id\n            __typename\n          }\n          cursor\n        }\n        ...UserDirectory_profiles\n        pageInfo {\n          endCursor\n          hasNextPage\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Content_currentUser on ProfileNode {\n  ...Header_currentUser\n}\n\nfragment Content_profileList on ProfileNode {\n  ...EditUser_profileList\n}\n\nfragment EditUser_profileList on ProfileNode {\n  ...UserForm_profileList\n}\n\nfragment Header_currentUser on ProfileNode {\n  isOwner\n}\n\nfragment UserDirectory_profiles on ProfileNodeConnection {\n  totalCount\n  edges {\n    node {\n      id\n      lastName\n      firstName\n      email\n      hasActiveAccounts\n      ...User_profile\n    }\n  }\n}\n\nfragment UserForm_profileList on ProfileNode {\n  id\n  ...UserSelect_profileList\n}\n\nfragment UserSelect_profileList on ProfileNode {\n  id\n  firstName\n  lastName\n  image\n}\n\nfragment User_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  title\n  isAdmin\n  isOwner\n}\n"
   }
 };
 })();
