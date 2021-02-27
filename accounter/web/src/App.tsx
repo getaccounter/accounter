@@ -40,15 +40,15 @@ export default function App() {
     <ErrorBoundary>
       <ApolloProvider client={client}>
         <AuthProvider>
-          <RelayProvider environment={environment}>
             <RelayEnvironmentProvider environment={environment}>
+          <RelayProvider environment={environment}>
               <Router>
                 <NotificationProvider>
                   <Root />
                 </NotificationProvider>
               </Router>
-            </RelayEnvironmentProvider>
           </RelayProvider>
+            </RelayEnvironmentProvider>
         </AuthProvider>
       </ApolloProvider>
     </ErrorBoundary>

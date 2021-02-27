@@ -141,7 +141,7 @@ class OrganizationNode(DjangoObjectType):
         id=graphene.ID(required=True),
     )
 
-    def resolve_profile(root, info, id):
+    def resolve_profile(root, info, id: str):
         organization = info.context.user.profile.organization
         profile_pk = from_global_id(id)[1]
         return organization.profiles.get(pk=profile_pk)

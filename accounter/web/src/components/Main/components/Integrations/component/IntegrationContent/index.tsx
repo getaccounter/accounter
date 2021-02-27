@@ -10,9 +10,10 @@ import {
 import IntegrationContentHeader from "./components/IntegrationContentHeader";
 import graphql from "babel-plugin-relay/macro";
 import Breadcrumb from "../../../Breadcrumb";
-import { IntegrationContent_integration$key } from "./__generated__/IntegrationContent_integration.graphql";
 import IntegrationAccountList from "./components/IntegrationAccountList";
-import { useFragment } from "relay-hooks";
+import Loading from "../../../../../Loading";
+import { useQuery } from "relay-hooks";
+import { IntegrationContentQuery } from "./__generated__/IntegrationContentQuery.graphql";
 
 const Tab = (props: { children: ReactNode; to: string }) => {
   const { pathname } = useLocation();
@@ -51,22 +52,32 @@ const Tabs = () => {
 };
 
 type Props = {
-  integration: IntegrationContent_integration$key;
+  id: string;
 };
 
 const IntegrationContent = (props: Props) => {
   const { path, url } = useRouteMatch();
-  const integration = useFragment(
+  const { data, error } = useQuery<IntegrationContentQuery>(
     graphql`
-      fragment IntegrationContent_integration on IntegrationNode {
-        ...IntegrationContentHeader_integration
-        accounts {
-          ...IntegrationAccountList_accounts
+      query IntegrationContentQuery($id: ID!) {
+        integration(id: $id) {
+          ...IntegrationContentHeader_integration
+          accounts {
+            ...IntegrationAccountList_accounts
+          }
         }
       }
     `,
-    props.integration
+    { id: props.id }
   );
+  if (error) {
+    // catch in ErrorBoundary
+    throw error;
+  }
+  if (!data) {
+    return <Loading />;
+  }
+  const integration = data.integration!;
   return (
     <Switch>
       <Route>
@@ -90,4 +101,4 @@ const IntegrationContent = (props: Props) => {
   );
 };
 
-export default IntegrationContent
+export default IntegrationContent;

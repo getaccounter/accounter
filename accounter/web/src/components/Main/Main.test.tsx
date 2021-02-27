@@ -7,6 +7,7 @@ import RelayProvider from "../../contexts/relay";
 import { Environment } from "react-relay";
 import userEvent from "@testing-library/user-event";
 import NotificationProvider from "../../contexts/notification";
+import { RelayEnvironmentProvider } from "relay-hooks";
 
 const Providers = ({
   children,
@@ -15,11 +16,13 @@ const Providers = ({
   children: ReactNode;
   environment: Environment;
 }) => (
-  <NotificationProvider>
-    <RelayProvider environment={environment}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </RelayProvider>
-  </NotificationProvider>
+  <RelayEnvironmentProvider environment={environment}>
+    <NotificationProvider>
+      <RelayProvider environment={environment}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </RelayProvider>
+    </NotificationProvider>
+  </RelayEnvironmentProvider>
 );
 
 describe("Profile", () => {
