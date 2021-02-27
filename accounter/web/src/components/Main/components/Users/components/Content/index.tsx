@@ -106,7 +106,6 @@ const Content = ({ currentUser, profileList, profileId }: Props) => {
             <Route path={`${path}/edit`}>
               <EditUser
                 profileList={profileList}
-                currentUser={currentUser}
                 profile={profile}
                 cancelRoute={url}
               />
@@ -141,7 +140,6 @@ const Content = ({ currentUser, profileList, profileId }: Props) => {
 export default createFragmentContainer(Content, {
   currentUser: graphql`
     fragment Content_currentUser on ProfileNode {
-      ...EditUser_currentUser
       ...Header_currentUser
     }
   `,

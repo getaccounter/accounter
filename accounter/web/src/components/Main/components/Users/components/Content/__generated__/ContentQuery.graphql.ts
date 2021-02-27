@@ -44,7 +44,6 @@ query ContentQuery(
 
 fragment Accounts_profile on ProfileNode {
   accounts {
-    id
     integration {
       name
       service {
@@ -79,7 +78,6 @@ fragment Header_profile on ProfileNode {
   isAdmin
   currentUserCanEdit
   isOwner
-  isCurrentUser
 }
 
 fragment UserForm_profile on ProfileNode {
@@ -261,13 +259,6 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "isCurrentUser",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
                     "name": "email",
                     "storageKey": null
                   },
@@ -286,7 +277,6 @@ return {
                     "name": "accounts",
                     "plural": true,
                     "selections": [
-                      (v2/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -364,12 +354,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7adf6f8cfadc0eed840d8cf649f2c1c2",
+    "cacheID": "5db0def837414d50f333364aa556a79b",
     "id": null,
     "metadata": {},
     "name": "ContentQuery",
     "operationKind": "query",
-    "text": "query ContentQuery(\n  $profileId: ID!\n) {\n  currentUser {\n    organization {\n      profile(id: $profileId) {\n        ...Header_profile\n        ...DescriptionList_profile\n        ...EditUser_profile\n        ...Accounts_profile\n        id\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    id\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n  isCurrentUser\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
+    "text": "query ContentQuery(\n  $profileId: ID!\n) {\n  currentUser {\n    organization {\n      profile(id: $profileId) {\n        ...Header_profile\n        ...DescriptionList_profile\n        ...EditUser_profile\n        ...Accounts_profile\n        id\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
   }
 };
 })();

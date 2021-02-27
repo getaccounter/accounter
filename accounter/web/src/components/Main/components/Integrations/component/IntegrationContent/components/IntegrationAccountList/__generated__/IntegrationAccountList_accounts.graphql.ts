@@ -6,7 +6,6 @@ import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type AccountRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type IntegrationAccountList_accounts = ReadonlyArray<{
-    readonly id: string;
     readonly imageSmall: string;
     readonly isDisabled: boolean;
     readonly profile: {
@@ -35,13 +34,6 @@ const node: ReaderFragment = {
   },
   "name": "IntegrationAccountList_accounts",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -113,5 +105,5 @@ const node: ReaderFragment = {
   "type": "AccountNode",
   "abstractKey": null
 };
-(node as any).hash = 'c52f34eac9081cf1aac9dae9acb590b5';
+(node as any).hash = '1ce417eca4f2d799eea65f70be478c29';
 export default node;

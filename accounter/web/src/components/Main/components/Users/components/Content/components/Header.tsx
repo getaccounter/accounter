@@ -212,7 +212,6 @@ export default createFragmentContainer(Header, {
       isAdmin
       currentUserCanEdit
       isOwner
-      isCurrentUser
     }
   `,
 });

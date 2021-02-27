@@ -99,7 +99,6 @@ export default createFragmentContainer(Accounts, {
   profile: graphql`
     fragment Accounts_profile on ProfileNode {
       accounts {
-        id
         integration {
           name
           service {

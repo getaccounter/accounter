@@ -1,4 +1,7 @@
 {
   "extends": ["react-app", "plugin:relay/recommended"],
-  "plugins": ["relay"]
+  "plugins": ["relay"],
+  "rules": {
+    "relay/generated-flow-types": 0
+  }
 }

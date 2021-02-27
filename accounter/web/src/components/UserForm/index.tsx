@@ -15,7 +15,6 @@ import {
   UserFormUpdateMutationResponse,
   UserFormUpdateMutation,
 } from "./__generated__/UserFormUpdateMutation.graphql";
-import { UserForm_currentUser } from "./__generated__/UserForm_currentUser.graphql";
 import { useNotifications } from "../../contexts/notification";
 import UserSelect from "./UserSelect";
 import { UserForm_profileList } from "./__generated__/UserForm_profileList.graphql";
@@ -108,14 +107,12 @@ type Props =
       profile: UserForm_profile;
       profileList: UserForm_profileList;
       cancelRoute: string;
-      currentUser: UserForm_currentUser;
     }
   | {
       // Create
       profile?: undefined;
       profileList?: undefined;
       cancelRoute: string;
-      currentUser: UserForm_currentUser;
     };
 
 const UserForm = (props: Props) => {
@@ -358,13 +355,6 @@ const UserForm = (props: Props) => {
 };
 
 export default createFragmentContainer(UserForm, {
-  currentUser: graphql`
-    fragment UserForm_currentUser on ProfileNode {
-      organization {
-        id
-      }
-    }
-  `,
   profile: graphql`
     fragment UserForm_profile on ProfileNode {
       id
