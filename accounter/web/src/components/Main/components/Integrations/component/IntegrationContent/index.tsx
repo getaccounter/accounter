@@ -8,11 +8,11 @@ import {
   useRouteMatch,
 } from "react-router-dom";
 import IntegrationContentHeader from "./components/IntegrationContentHeader";
-import { createFragmentContainer } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import Breadcrumb from "../../../Breadcrumb";
-import { IntegrationContent_integration } from "./__generated__/IntegrationContent_integration.graphql";
+import { IntegrationContent_integration$key } from "./__generated__/IntegrationContent_integration.graphql";
 import IntegrationAccountList from "./components/IntegrationAccountList";
+import { useFragment } from "relay-hooks";
 
 const Tab = (props: { children: ReactNode; to: string }) => {
   const { pathname } = useLocation();
@@ -51,11 +51,22 @@ const Tabs = () => {
 };
 
 type Props = {
-  integration: IntegrationContent_integration;
+  integration: IntegrationContent_integration$key;
 };
 
-const IntegrationContent = ({ integration }: Props) => {
+const IntegrationContent = (props: Props) => {
   const { path, url } = useRouteMatch();
+  const integration = useFragment(
+    graphql`
+      fragment IntegrationContent_integration on IntegrationNode {
+        ...IntegrationContentHeader_integration
+        accounts {
+          ...IntegrationAccountList_accounts
+        }
+      }
+    `,
+    props.integration
+  );
   return (
     <Switch>
       <Route>
@@ -79,14 +90,4 @@ const IntegrationContent = ({ integration }: Props) => {
   );
 };
 
-export default createFragmentContainer(IntegrationContent, {
-  integration: graphql`
-    fragment IntegrationContent_integration on IntegrationNode {
-      name
-      ...IntegrationContentHeader_integration
-      accounts {
-        ...IntegrationAccountList_accounts
-      }
-    }
-  `,
-});
+export default IntegrationContent

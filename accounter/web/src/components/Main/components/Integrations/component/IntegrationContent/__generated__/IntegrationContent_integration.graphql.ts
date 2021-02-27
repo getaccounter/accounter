@@ -5,7 +5,6 @@
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type IntegrationContent_integration = {
-    readonly name: string;
     readonly accounts: ReadonlyArray<{
         readonly " $fragmentRefs": FragmentRefs<"IntegrationAccountList_accounts">;
     }>;
@@ -26,13 +25,6 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "IntegrationContent_integration",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -58,5 +50,5 @@ const node: ReaderFragment = {
   "type": "IntegrationNode",
   "abstractKey": null
 };
-(node as any).hash = '138866f4e7d478fc810a45476102a737';
+(node as any).hash = '0c00e30f77751f1d13bd2b279fe5d372';
 export default node;

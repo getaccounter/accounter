@@ -61,7 +61,6 @@ fragment IntegrationContentHeader_integration on IntegrationNode {
 }
 
 fragment IntegrationContent_integration on IntegrationNode {
-  name
   ...IntegrationContentHeader_integration
   accounts {
     ...IntegrationAccountList_accounts
@@ -281,12 +280,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "81026cfb99e297ed549c89833edab145",
+    "cacheID": "7c837da59a2fd28812214d79a86a7f1a",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    name\n    service {\n      name\n    }\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  imageSmall\n  isDisabled\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  managementUrl\n  hasValidToken\n  service {\n    logo\n    oauthUrl\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  name\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  hasValidToken\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    id\n    name\n    service {\n      name\n    }\n    ...Integration_integration\n    ...IntegrationContent_integration\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  imageSmall\n  isDisabled\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  managementUrl\n  hasValidToken\n  service {\n    logo\n    oauthUrl\n  }\n}\n\nfragment IntegrationContent_integration on IntegrationNode {\n  ...IntegrationContentHeader_integration\n  accounts {\n    ...IntegrationAccountList_accounts\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  hasValidToken\n  service {\n    name\n    logo\n  }\n}\n"
   }
 };
 })();
