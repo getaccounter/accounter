@@ -32,7 +32,7 @@
   "dependencies": {
     "@octokit/auth-app": "3.0.0",
     "@octokit/graphql": "4.6.0",
-    "@octokit/rest": "18.2.1",
+    "@octokit/rest": "18.3.1",
     "@sentry/node": "6.2.0",
     "@sentry/tracing": "6.2.0",
     "@slack/oauth": "2.0.1",
