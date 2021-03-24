@@ -72,8 +72,11 @@ jobs:
         run: |
           docker-compose run --no-deps --entrypoint /usr/bin/env connector npm run test:once -- --coverage
 
+      # Deactivated for PRs until fixed for dependabot
+      # https://github.com/codecov/codecov-action/issues/258
       - name: report coverage
-        uses: codecov/codecov-action@v1.2.2
+        if: github.ref != 'refs/heads/master'
+        uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: web, server
