@@ -1,6 +1,6 @@
 -r base.txt
 
-flake8==3.8.4
+flake8==3.9.0
 coverage==5.5
 model_bakery==1.2.1
 Faker==6.5.0
