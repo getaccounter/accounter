@@ -39,7 +39,7 @@
     "@slack/web-api": "6.1.0",
     "express": "4.17.1",
     "global-agent": "2.1.12",
-    "googleapis": "67.1.1",
+    "googleapis": "68.0.0",
     "humanparser": "2.6.0",
     "jsonwebtoken": "8.5.1",
     "jwt-decode": "3.1.2",
