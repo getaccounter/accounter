@@ -1,7 +1,5 @@
 # Accounter
 
-[![codecov](https://codecov.io/gh/getaccounter/accounter/branch/master/graph/badge.svg?token=D2EQCHJWZS)](https://codecov.io/gh/getaccounter/accounter)
-
 ## Developing
 
 ### Installing pre-commit hooks
