@@ -2,7 +2,7 @@
   "name": "e2e-tests",
   "devDependencies": {
     "@testing-library/cypress": "7.0.4",
-    "eslint": "7.22.0",
+    "eslint": "7.23.0",
     "eslint-plugin-cypress": "2.11.2",
     "faker": "5.4.0",
     "jsonwebtoken": "8.5.1",
