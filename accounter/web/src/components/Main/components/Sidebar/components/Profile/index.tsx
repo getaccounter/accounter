@@ -1,7 +1,7 @@
 import graphql from "babel-plugin-relay/macro";
 import { Profile_profile$key } from "./__generated__/Profile_profile.graphql";
-import React, { useState } from "react";
-import { Selector } from "../../../../../icons/solid";
+import { useState } from "react";
+import { SelectorIcon } from "@heroicons/react/solid";
 import Dropdown from "./components/Dropdown";
 import ClickAwayListener from "react-click-away-listener";
 import { useFragment } from "relay-hooks";
@@ -66,7 +66,7 @@ const Profile = (props: Props) => {
                 </p>
               </span>
             </span>
-            <Selector className="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+            <SelectorIcon className="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
           </span>
         </button>
       </div>

@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Pencil, Link as LinkIcon } from "../../../../../../icons/solid";
+import { PencilIcon, LinkIcon } from "@heroicons/react/solid";
 import graphql from "babel-plugin-relay/macro";
 import { Link } from "react-router-dom";
 import { IntegrationContentHeader_integration$key } from "./__generated__/IntegrationContentHeader_integration.graphql";
@@ -107,7 +107,7 @@ const IntegrationContentHeader = (props: Props) => {
                 </MainButton>
               ) : (
                 <MainButton external to={integration.managementUrl}>
-                  <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                  <PencilIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                   <span>Manage</span>
                 </MainButton>
               )}

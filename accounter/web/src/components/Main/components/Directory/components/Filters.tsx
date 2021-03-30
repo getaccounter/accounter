@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Filter as FilterIcon } from "../../../../icons/solid";
+import { FilterIcon } from "@heroicons/react/solid";
 import ClickAwayListener from "react-click-away-listener";
 
 export type Filter = {

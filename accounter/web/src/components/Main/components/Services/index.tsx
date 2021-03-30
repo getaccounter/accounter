@@ -1,7 +1,6 @@
-import React from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useEnvironment } from "../../../../contexts/relay";
-import { Plus } from "../../../icons/solid";
+import { PlusIcon } from "@heroicons/react/solid";
 import { QueryRenderer } from "react-relay";
 import { ServicesQuery } from "./__generated__/ServicesQuery.graphql";
 import Loading from "../../../Loading";
@@ -52,7 +51,7 @@ const Services = () => {
                   <div className="pr-3">
                     <a href={service.oauthUrl} className="focus:outline-none">
                       <span className="absolute inset-0" aria-hidden="true" />
-                      <Plus className="h-6 w-6 text-gray-400" />
+                      <PlusIcon className="h-6 w-6 text-gray-400" />
                       <span className="sr-only">Add {service.name}</span>
                     </a>
                   </div>

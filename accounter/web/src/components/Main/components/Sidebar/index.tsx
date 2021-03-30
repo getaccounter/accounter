@@ -1,5 +1,4 @@
-import React from "react";
-import { X } from "../../../icons/solid";
+import { XIcon } from "@heroicons/react/solid";
 import Tab, { TabType } from "./components/Tab";
 import Profile from "./components/Profile";
 import { Link, useLocation } from "react-router-dom";
@@ -69,7 +68,7 @@ const MobileSidebar = (props: MobileProps) => {
                   className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                 >
                   <span className="sr-only">Close sidebar</span>
-                  <X className="h-6 w-6 text-white" />
+                  <XIcon className="h-6 w-6 text-white" />
                 </button>
               </Link>
             </div>

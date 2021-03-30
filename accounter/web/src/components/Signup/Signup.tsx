@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 import { useNotifications } from "../../contexts/notification";
-import { LockClosed } from "../icons/solid";
+import { LockClosedIcon } from "@heroicons/react/solid";
 
 export const SIGNUP_MUTATION = gql`
   mutation Signup(
@@ -182,7 +182,7 @@ const Signup = () => {
               disabled={loading}
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <LockClosed className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
+                <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
               </span>
               {loading ? "Signing up..." : "Sign up"}
             </button>
