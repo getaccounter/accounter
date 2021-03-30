@@ -6,3 +6,6 @@ dev.log
 
 # k8s
 **/helm/charts
+
+# idea
+/.idea
