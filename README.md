@@ -21,6 +21,8 @@ pre-commit install --hook-type commit-msg
 docker-compose up
 ```
 
+After all services are running, run the web on http://localhost:8080
+
 ### Unit tests
 
 ```bash
