@@ -1,6 +1,6 @@
 import React from "react";
 import SideBar from "./components/Sidebar";
-import { Menu, UserGroup, ViewGrid, ViewGridAdd } from "../icons/outline";
+import { MenuIcon, UserGroupIcon, ViewGridIcon, ViewGridAddIcon } from "@heroicons/react/outline";
 import { Link, Redirect, Route, Switch, useLocation } from "react-router-dom";
 import Integrations from "./components/Integrations";
 import Users from "./components/Users";
@@ -36,7 +36,7 @@ const Header = () => {
               className="-mr-3 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-600"
             >
               <span className="sr-only">Open sidebar</span>
-              <Menu className="h-6 w-6" />
+              <MenuIcon className="h-6 w-6" />
             </button>
           </Link>
         </div>
@@ -68,7 +68,7 @@ export default function Main() {
       tab: {
         label: "Apps",
         path: "/integrations",
-        Icon: ViewGrid,
+        Icon: ViewGridIcon,
       },
       content: <Integrations />,
     },
@@ -76,7 +76,7 @@ export default function Main() {
       tab: {
         label: "Users",
         path: "/users",
-        Icon: UserGroup,
+        Icon: UserGroupIcon,
       },
       content: <Users />,
     },
@@ -87,7 +87,7 @@ export default function Main() {
       tab: {
         label: "Add Apps",
         path: "/services",
-        Icon: ViewGridAdd,
+        Icon: ViewGridAddIcon,
       },
       content: <Services />,
     },

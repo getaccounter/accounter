@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft } from "../../../icons/solid";
+import { ChevronLeftIcon } from "@heroicons/react/solid";
 
 type Props = {
   title: ReactNode;
@@ -16,7 +16,7 @@ const Breadcrumb = ({ title, to }: Props) => {
         to={to}
         className="inline-flex items-center space-x-3 text-sm font-medium text-gray-900"
       >
-        <ChevronLeft className="-mAppl-2 h-5 w-5 text-gray-400" />
+        <ChevronLeftIcon className="-mAppl-2 h-5 w-5 text-gray-400" />
         <span>{title}</span>
       </Link>
     </nav>

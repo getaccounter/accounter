@@ -3,7 +3,8 @@ import { Link, Redirect, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/auth";
 import { useNotifications } from "../../contexts/notification";
 import LogoSquare from "../branding/LogoSquare";
-import { LockClosed } from "../icons/solid";
+import { LockClosedIcon } from "@heroicons/react/solid";
+
 
 export default function Login() {
   const { addNotification } = useNotifications();
@@ -94,7 +95,7 @@ export default function Login() {
                 disabled={isSigningIn}
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  <LockClosed className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
+                  <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
                 </span>
                 {isSignedIn ? "Signing in..." : "Sign in"}
               </button>

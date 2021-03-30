@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { CheckCircle, XCircle, X } from "../../../../components/icons/outline";
+import { CheckCircleIcon, XCircleIcon, XIcon } from '@heroicons/react/outline'
 
 // TODO
 /*animate entering and leaving:
@@ -31,9 +31,9 @@ const Notification = ({ type, headline, onClose, children }: Props) => {
           <div className="flex items-start">
             <div className="flex-shrink-0">
               {type === "success" ? (
-                <CheckCircle className="h-6 w-6 text-green-400" />
+                <CheckCircleIcon className="h-6 w-6 text-green-400" />
               ) : (
-                <XCircle className="h-6 w-6 text-red-400" />
+                <XCircleIcon className="h-6 w-6 text-red-400" />
               )}
             </div>
             <div className="ml-3 w-0 flex-1 pt-0.5">
@@ -46,7 +46,7 @@ const Notification = ({ type, headline, onClose, children }: Props) => {
                 className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <span className="sr-only">Close</span>
-                <X className="w-6 h-6" />
+                <XIcon className="w-6 h-6" />
               </button>
             </div>
           </div>

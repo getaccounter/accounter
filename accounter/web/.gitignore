@@ -27,6 +27,3 @@ tailwind.output.css
 
 # eslint
 .eslintcache
-
-# temp, until heroicons properly releases
-src/components/icons

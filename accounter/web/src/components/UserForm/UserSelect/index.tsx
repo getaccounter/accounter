@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import SelectorIcon from "../../icons/solid/Selector";
-import { Check } from "../../icons/solid";
+import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import graphql from "babel-plugin-relay/macro";
 import { createFragmentContainer } from "react-relay";
 import { UserSelect_profileList } from "./__generated__/UserSelect_profileList.graphql";
@@ -96,7 +95,7 @@ const UserSelect = ({ profileList, value, onChange }: Props) => {
                               active ? "text-white" : "text-indigo-600"
                             } absolute inset-y-0 right-0 flex items-center pr-4`}
                           >
-                            <Check className="h-5 w-5" />
+                            <CheckIcon className="h-5 w-5" />
                           </span>
                         )}
                       </li>

@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { Briefcase, MinusCircle, Pencil } from "../../../../../../icons/solid";
+import { ReactNode } from "react";
+import { BriefcaseIcon, MinusCircleIcon, PencilIcon } from "@heroicons/react/solid";
 import { createFragmentContainer, Environment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { Header_profile } from "./__generated__/Header_profile.graphql";
@@ -158,7 +158,7 @@ const Header = (props: Props) => {
             {props.profile.currentUserCanEdit && (
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
                 <MainButton to={`${url}/edit`}>
-                  <Pencil className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                  <PencilIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                   <span>Edit</span>
                 </MainButton>
                 {props.currentUser.isOwner && !props.profile.isOwner && (
@@ -169,7 +169,7 @@ const Header = (props: Props) => {
                         key="remove-admin"
                         onClick={() => handleAdminToggle(false)}
                       >
-                        <MinusCircle className="-ml-1 mr-2 h-5 w-5 text-red-400" />
+                        <MinusCircleIcon className="-ml-1 mr-2 h-5 w-5 text-red-400" />
                         <span>Remove admin</span>
                       </MainButton>
                     ) : (
@@ -177,7 +177,7 @@ const Header = (props: Props) => {
                         key="make-admin"
                         onClick={() => handleAdminToggle(true)}
                       >
-                        <Briefcase className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                        <BriefcaseIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                         <span>Make admin</span>
                       </MainButton>
                     )}
