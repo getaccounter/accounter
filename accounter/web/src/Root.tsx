@@ -7,6 +7,7 @@ import PrivateRoute from "./components/ProtectedRoute";
 import Signup from "./components/Signup/Signup";
 import Logout from "./components/Logout";
 import ResetPassword from "./components/ResetPassword";
+import Onboarding from "./components/Onboarding";
 
 export default function Root() {
   return (
@@ -21,6 +22,10 @@ export default function Root() {
         <Route path="/signup">
           {/* TODO: make /signup redirect to the app if you're already loged in */}
           <Signup />
+        </Route>
+        <Route path="/onboarding">
+          {/* TODO: make /onboarding redirect to the app if you're already loged in */}
+          <Onboarding />
         </Route>
         <Route path="/reset-password">
           <ResetPassword />
