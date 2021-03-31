@@ -7,8 +7,8 @@ import { useAuth } from '../../contexts/auth';
 import LogoSquare from '../branding/LogoSquare';
 
 export const SIGNUP_MUTATION = gql`
-  mutation Signup($firstName: String!, $orgName: String!, $email: String!, $password: String!) {
-    signup(firstName: $firstName, orgName: $orgName, email: $email, password: $password) {
+  mutation Signup($orgName: String!, $email: String!, $password: String!) {
+    signup(orgName: $orgName, email: $email, password: $password) {
       status
     }
   }
@@ -21,7 +21,6 @@ type SignupResponse = {
 };
 
 type SignupParameters = {
-  firstName: string;
   orgName: string;
   email: string;
   password: string;
@@ -37,7 +36,6 @@ const Signup = () => {
       onError: () => undefined
     }
   );
-  const [firstNameInput, setFirstNameInput] = useState('');
   const [orgNameInput, setOrgNameInput] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
@@ -74,7 +72,6 @@ const Signup = () => {
               e.preventDefault();
               signup({
                 variables: {
-                  firstName: firstNameInput,
                   orgName: orgNameInput,
                   email: emailInput,
                   password: passwordInput
@@ -83,17 +80,17 @@ const Signup = () => {
             }}
           >
             <div>
-              <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
-                Your Name
+              <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
+                Work Email
               </label>
               <div className="mt-1">
                 <input
-                  value={firstNameInput}
-                  onChange={(evt) => setFirstNameInput(evt.target.value)}
-                  id="full-name"
-                  name="text"
-                  type="text"
-                  autoComplete="given-name"
+                  value={emailInput}
+                  onChange={(evt) => setEmailInput(evt.target.value)}
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   disabled={loading}
@@ -113,25 +110,6 @@ const Signup = () => {
                   name="text"
                   type="text"
                   autoComplete="company-name"
-                  required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
-                Work Email
-              </label>
-              <div className="mt-1">
-                <input
-                  value={emailInput}
-                  onChange={(evt) => setEmailInput(evt.target.value)}
-                  id="email-address"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   disabled={loading}
