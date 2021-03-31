@@ -1,7 +1,7 @@
-import React from "react";
-import { Redirect, Route, RouteProps } from "react-router-dom";
-import { useAuth } from "../contexts/auth";
-import Loading from "./Loading";
+import React from 'react';
+import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { useAuth } from '../contexts/auth';
+import Loading from './Loading';
 
 export default function PrivateRoute({ children, ...rest }: RouteProps) {
   const { isSignedIn } = useAuth();
@@ -17,8 +17,8 @@ export default function PrivateRoute({ children, ...rest }: RouteProps) {
         ) : (
           <Redirect
             to={{
-              pathname: "/login",
-              state: { from: location },
+              pathname: '/login',
+              state: { from: location }
             }}
           />
         )

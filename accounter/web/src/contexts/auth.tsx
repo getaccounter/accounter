@@ -1,5 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { createContext, ReactNode, useContext, useEffect } from "react";
+import { gql, useMutation, useQuery } from '@apollo/client';
+import React, { createContext, ReactNode, useContext, useEffect } from 'react';
 
 export const SESSION_INFO_QUERY = gql`
   query SessionInfo {
@@ -18,12 +18,9 @@ export type SessionInfoQueryResponse = {
 export type VerificationParameters = void;
 
 const useIsSignedIn = () => {
-  const { refetch, data, loading } = useQuery<SessionInfoQueryResponse>(
-    SESSION_INFO_QUERY,
-    {
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { refetch, data, loading } = useQuery<SessionInfoQueryResponse>(SESSION_INFO_QUERY, {
+    notifyOnNetworkStatusChange: true
+  });
   const isSignedIn = !loading ? data?.sessionInfo.signedIn : undefined;
   return { recheck: refetch, isSignedIn };
 };
@@ -39,7 +36,7 @@ export const LOGIN_MUTATION = gql`
 
 export type LoginResponse = {
   signin: {
-    status: "success";
+    status: 'success';
     message: string;
   };
 };
@@ -60,7 +57,7 @@ export const LOGOUT_MUTATION = gql`
 
 export type LogoutResponse = {
   signin: {
-    status: "success";
+    status: 'success';
     message: string;
   };
 };
@@ -79,19 +76,13 @@ type Props = {
 };
 
 export default function AuthProvider({ children }: Props) {
-  const [login, { data: loginData, error: loginError }] = useMutation<
-    LoginResponse,
-    LoginParameters
-  >(LOGIN_MUTATION, {
-    errorPolicy: "all",
-    onError: () => undefined,
+  const [login, { data: loginData, error: loginError }] = useMutation<LoginResponse, LoginParameters>(LOGIN_MUTATION, {
+    errorPolicy: 'all',
+    onError: () => undefined
   });
-  const [logout, { data: logoutData }] = useMutation<
-    LoginResponse,
-    LoginParameters
-  >(LOGOUT_MUTATION, {
-    errorPolicy: "all",
-    onError: () => undefined,
+  const [logout, { data: logoutData }] = useMutation<LoginResponse, LoginParameters>(LOGOUT_MUTATION, {
+    errorPolicy: 'all',
+    onError: () => undefined
   });
 
   const { recheck, isSignedIn } = useIsSignedIn();
@@ -106,7 +97,7 @@ export default function AuthProvider({ children }: Props) {
 
   const signIn = (email: string, password: string) => {
     login({
-      variables: { email, password },
+      variables: { email, password }
     });
   };
   const signOut = () => {
@@ -120,7 +111,7 @@ export default function AuthProvider({ children }: Props) {
         isSignedIn,
         signInError: loginError && loginError.message,
         signIn,
-        signOut,
+        signOut
       }}
     />
   );

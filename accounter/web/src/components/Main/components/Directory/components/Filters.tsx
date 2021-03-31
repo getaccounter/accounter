@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { FilterIcon } from "@heroicons/react/solid";
-import ClickAwayListener from "react-click-away-listener";
+import React, { useState } from 'react';
+import { FilterIcon } from '@heroicons/react/solid';
+import ClickAwayListener from 'react-click-away-listener';
 
 export type Filter = {
   id: string;
@@ -43,12 +43,7 @@ const Filters = ({ filters }: Props) => {
       {showFilters && (
         <ClickAwayListener onClickAway={() => setShowFilters(false)}>
           <div className="z-20 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-            <div
-              className="py-1"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="options-menu"
-            >
+            <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
               {filters.map((filter) => (
                 <label
                   key={filter.id}

@@ -1,17 +1,8 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
-  color:
-    | "gray"
-    | "red"
-    | "yellow"
-    | "green"
-    | "blue"
-    | "indigo"
-    | "purple"
-    | "purple"
-    | "pink";
+  color: 'gray' | 'red' | 'yellow' | 'green' | 'blue' | 'indigo' | 'purple' | 'purple' | 'pink';
 };
 
 const Badge = ({ children, color }: Props) => (

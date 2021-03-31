@@ -1,11 +1,11 @@
-const colors = require("tailwindcss/colors");
+const colors = require('tailwindcss/colors');
 module.exports = {
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [require('@tailwindcss/forms')],
   theme: {
     extend: {
       colors: {
-        rose: colors.rose,
-      },
-    },
-  },
+        rose: colors.rose
+      }
+    }
+  }
 };

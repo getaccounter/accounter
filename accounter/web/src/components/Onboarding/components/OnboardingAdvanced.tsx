@@ -1,5 +1,5 @@
 const OnboardingAdvanced = () => {
-    return <div>OnboardingAdvanced</div>
-}
+  return <div>OnboardingAdvanced</div>;
+};
 
-export default OnboardingAdvanced
+export default OnboardingAdvanced;

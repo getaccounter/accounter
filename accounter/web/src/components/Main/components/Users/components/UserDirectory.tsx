@@ -1,15 +1,15 @@
-import { createFragmentContainer } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import React, { useState } from "react";
-import Directory, { DirectoryEntryList, DirectoryEntry } from "../../Directory";
-import User from "./components/User";
-import { UserDirectory_profiles } from "./__generated__/UserDirectory_profiles.graphql";
+import { createFragmentContainer } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useState } from 'react';
+import Directory, { DirectoryEntryList, DirectoryEntry } from '../../Directory';
+import User from './components/User';
+import { UserDirectory_profiles } from './__generated__/UserDirectory_profiles.graphql';
 
 type Props = {
   profiles: UserDirectory_profiles;
 };
 
-type ProfileEdge = UserDirectory_profiles["edges"][0];
+type ProfileEdge = UserDirectory_profiles['edges'][0];
 
 const getComparerValue = (edge: NonNullable<ProfileEdge>) => {
   if (edge.node!.lastName) {
@@ -22,40 +22,25 @@ const getComparerValue = (edge: NonNullable<ProfileEdge>) => {
 };
 
 const UserDirectory = ({ profiles }: Props) => {
-  const [searchString, setSearchString] = useState("");
+  const [searchString, setSearchString] = useState('');
   const [showDisabledUsers, setShowDisabledUsers] = useState(false);
 
   const filteredProfiles = profiles.edges
-    .filter(
-      (edge) =>
-        showDisabledUsers || edge!.node!.hasActiveAccounts
-    )
+    .filter((edge) => showDisabledUsers || edge!.node!.hasActiveAccounts)
     .filter((edge) => {
       const node = edge!.node!;
       const lowerCasedSearchString = searchString.toLocaleLowerCase();
-      const lowerCasedFirstName = (node.firstName ?? "").toLowerCase();
-      const lowerCasedLastName = (node.lastName ?? "").toLowerCase();
+      const lowerCasedFirstName = (node.firstName ?? '').toLowerCase();
+      const lowerCasedLastName = (node.lastName ?? '').toLowerCase();
       const lowerCasedFullName = `${lowerCasedFirstName} ${lowerCasedLastName}`;
       const lowerCasedEmail = node.email.toLowerCase();
 
-      const matchesFirstName = lowerCasedFirstName.includes(
-        lowerCasedSearchString
-      );
-      const matchesLastName = lowerCasedLastName.includes(
-        lowerCasedSearchString
-      );
-      const matchesFullName = lowerCasedFullName.includes(
-        lowerCasedSearchString
-      );
+      const matchesFirstName = lowerCasedFirstName.includes(lowerCasedSearchString);
+      const matchesLastName = lowerCasedLastName.includes(lowerCasedSearchString);
+      const matchesFullName = lowerCasedFullName.includes(lowerCasedSearchString);
       const matchesEmail = lowerCasedEmail.includes(lowerCasedSearchString);
 
-      if (
-        !searchString ||
-        matchesFirstName ||
-        matchesLastName ||
-        matchesFullName ||
-        matchesEmail
-      ) {
+      if (!searchString || matchesFirstName || matchesLastName || matchesFullName || matchesEmail) {
         return true;
       }
       return false;
@@ -75,18 +60,18 @@ const UserDirectory = ({ profiles }: Props) => {
       const group = grouped[groupLabel] || [];
       return {
         ...grouped,
-        [groupLabel]: group.concat(profile),
+        [groupLabel]: group.concat(profile)
       };
     }, {});
   return (
     <Directory
       filters={[
         {
-          id: "disabled",
-          label: "Disabled",
+          id: 'disabled',
+          label: 'Disabled',
           value: showDisabledUsers,
-          onChange: (val) => setShowDisabledUsers(val),
-        },
+          onChange: (val) => setShowDisabledUsers(val)
+        }
       ]}
       title="Users"
       subtitle={`${profiles.totalCount} users`}
@@ -127,5 +112,5 @@ export default createFragmentContainer(UserDirectory, {
         }
       }
     }
-  `,
+  `
 });

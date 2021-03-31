@@ -1,8 +1,8 @@
-import graphql from "babel-plugin-relay/macro";
-import { Dropdown_profile$key } from "./__generated__/Dropdown_profile.graphql";
-import React from "react";
-import { Link } from "react-router-dom";
-import { useFragment } from "relay-hooks";
+import graphql from 'babel-plugin-relay/macro';
+import { Dropdown_profile$key } from './__generated__/Dropdown_profile.graphql';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useFragment } from 'relay-hooks';
 
 type Props = {
   profile: Dropdown_profile$key;

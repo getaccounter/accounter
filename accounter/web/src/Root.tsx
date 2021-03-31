@@ -1,13 +1,13 @@
-import React from "react";
-import { Switch, Route } from "react-router-dom";
-import Login from "./components/Login";
-import OAuthSlackCallback from "./components/OAuthSlackCallback";
-import Main from "./components/Main";
-import PrivateRoute from "./components/ProtectedRoute";
-import Signup from "./components/Signup/Signup";
-import Logout from "./components/Logout";
-import ResetPassword from "./components/ResetPassword";
-import Onboarding from "./components/Onboarding";
+import React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import Login from './components/Login';
+import OAuthSlackCallback from './components/OAuthSlackCallback';
+import Main from './components/Main';
+import PrivateRoute from './components/ProtectedRoute';
+import Signup from './components/Signup/Signup';
+import Logout from './components/Logout';
+import ResetPassword from './components/ResetPassword';
+import Onboarding from './components/Onboarding';
 
 export default function Root() {
   return (

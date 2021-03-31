@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { Redirect, useLocation } from "react-router-dom";
-import { useAuth } from "../../contexts/auth";
-import Loading from "../Loading";
+import React, { useEffect } from 'react';
+import { Redirect, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/auth';
+import Loading from '../Loading';
 
 export default function Logout() {
   const { signOut, isSignedIn } = useAuth();
@@ -17,8 +17,8 @@ export default function Logout() {
   ) : (
     <Redirect
       to={{
-        pathname: "/",
-        state: { from: location },
+        pathname: '/',
+        state: { from: location }
       }}
     />
   );

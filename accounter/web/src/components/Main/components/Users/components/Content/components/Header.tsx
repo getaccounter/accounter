@@ -1,27 +1,24 @@
-import { ReactNode } from "react";
-import { BriefcaseIcon, MinusCircleIcon, PencilIcon } from "@heroicons/react/solid";
-import { createFragmentContainer, Environment } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import { Header_profile } from "./__generated__/Header_profile.graphql";
-import { Link, useRouteMatch } from "react-router-dom";
-import Badge from "../../../../../../Badge";
-import { commitMutation, PayloadError } from "relay-runtime";
+import { ReactNode } from 'react';
+import { BriefcaseIcon, MinusCircleIcon, PencilIcon } from '@heroicons/react/solid';
+import { createFragmentContainer, Environment } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import { Header_profile } from './__generated__/Header_profile.graphql';
+import { Link, useRouteMatch } from 'react-router-dom';
+import Badge from '../../../../../../Badge';
+import { commitMutation, PayloadError } from 'relay-runtime';
 import {
   HeaderAdminMutation,
   HeaderAdminMutationResponse,
-  HeaderAdminMutationVariables,
-} from "./__generated__/HeaderAdminMutation.graphql";
-import { useEnvironment } from "../../../../../../../contexts/relay";
-import { useNotifications } from "../../../../../../../contexts/notification";
-import { Header_currentUser } from "./__generated__/Header_currentUser.graphql";
+  HeaderAdminMutationVariables
+} from './__generated__/HeaderAdminMutation.graphql';
+import { useEnvironment } from '../../../../../../../contexts/relay';
+import { useNotifications } from '../../../../../../../contexts/notification';
+import { Header_currentUser } from './__generated__/Header_currentUser.graphql';
 
 const toggleAdmin = (
   environment: Environment,
   variables: HeaderAdminMutationVariables,
-  onCompleted: (
-    response: HeaderAdminMutationResponse,
-    errors?: ReadonlyArray<PayloadError> | null
-  ) => void,
+  onCompleted: (response: HeaderAdminMutationResponse, errors?: ReadonlyArray<PayloadError> | null) => void,
   onError: (error: PayloadError) => void
 ) => {
   commitMutation<HeaderAdminMutation>(environment, {
@@ -37,7 +34,7 @@ const toggleAdmin = (
     `,
     variables,
     onCompleted,
-    onError,
+    onError
   });
 };
 
@@ -46,15 +43,9 @@ type Props = {
   currentUser: Header_currentUser;
 };
 
-const Name = (props: {
-  children: ReactNode;
-  isAdmin: boolean;
-  isOwner: boolean;
-}) => (
+const Name = (props: { children: ReactNode; isAdmin: boolean; isOwner: boolean }) => (
   <div className="inline-flex items-center">
-    <h1 className="text-2xl font-bold text-gray-900 truncate">
-      {props.children}
-    </h1>
+    <h1 className="text-2xl font-bold text-gray-900 truncate">{props.children}</h1>
     {props.isOwner ? (
       <span className="pl-2">
         <Badge color="blue">Owner</Badge>
@@ -69,22 +60,13 @@ const Name = (props: {
   </div>
 );
 
-const MainButton = (props: {
-  children: ReactNode;
-  to?: string;
-  onClick?: () => void;
-  danger?: boolean;
-}) => {
+const MainButton = (props: { children: ReactNode; to?: string; onClick?: () => void; danger?: boolean }) => {
   const className = `hover:bg-gray-50 inline-flex px-4 py-2 border border-${
-    props.danger ? "red" : "gray"
+    props.danger ? 'red' : 'gray'
   }-300 shadow-sm rounded-md text-${
-    props.danger ? "red" : "gray"
+    props.danger ? 'red' : 'gray'
   }-700 bg-white  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`;
-  const content = (
-    <span className="flex-1 inline-flex justify-center text-sm font-medium">
-      {props.children}
-    </span>
-  );
+  const content = <span className="flex-1 inline-flex justify-center text-sm font-medium">{props.children}</span>;
   return props.to ? (
     <Link className={className} to={props.to}>
       {content}
@@ -104,7 +86,7 @@ const Header = (props: Props) => {
   const handleAdminToggle = (isAdmin: boolean) => {
     const variables = {
       id: props.profile.id,
-      isAdmin,
+      isAdmin
     };
     toggleAdmin(
       environment,
@@ -112,18 +94,18 @@ const Header = (props: Props) => {
       (response, errors) => {
         if (errors) {
           addNotification({
-            type: "error",
-            title: "Something went wrong.",
-            content: "Could not change admin",
+            type: 'error',
+            title: 'Something went wrong.',
+            content: 'Could not change admin'
           });
         } else {
         }
       },
       (err) =>
         addNotification({
-          type: "error",
-          title: "Something went wrong.",
-          content: "Could not change admin",
+          type: 'error',
+          title: 'Something went wrong.',
+          content: 'Could not change admin'
         })
     );
   };
@@ -148,10 +130,7 @@ const Header = (props: Props) => {
           </div>
           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
             <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
-              <Name
-                isOwner={props.profile.isOwner}
-                isAdmin={props.profile.isAdmin}
-              >
+              <Name isOwner={props.profile.isOwner} isAdmin={props.profile.isAdmin}>
                 {props.profile.firstName} {props.profile.lastName}
               </Name>
             </div>
@@ -164,19 +143,12 @@ const Header = (props: Props) => {
                 {props.currentUser.isOwner && !props.profile.isOwner && (
                   <>
                     {props.profile.isAdmin ? (
-                      <MainButton
-                        danger
-                        key="remove-admin"
-                        onClick={() => handleAdminToggle(false)}
-                      >
+                      <MainButton danger key="remove-admin" onClick={() => handleAdminToggle(false)}>
                         <MinusCircleIcon className="-ml-1 mr-2 h-5 w-5 text-red-400" />
                         <span>Remove admin</span>
                       </MainButton>
                     ) : (
-                      <MainButton
-                        key="make-admin"
-                        onClick={() => handleAdminToggle(true)}
-                      >
+                      <MainButton key="make-admin" onClick={() => handleAdminToggle(true)}>
                         <BriefcaseIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                         <span>Make admin</span>
                       </MainButton>
@@ -213,5 +185,5 @@ export default createFragmentContainer(Header, {
       currentUserCanEdit
       isOwner
     }
-  `,
+  `
 });

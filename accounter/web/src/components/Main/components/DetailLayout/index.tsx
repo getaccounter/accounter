@@ -1,8 +1,8 @@
-import React, { ReactNode } from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
-import Media from "react-media";
-import SecondaryColumn from "./components/SecondaryColumn";
-import MainColumn from "./components/MainColumn";
+import React, { ReactNode } from 'react';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import Media from 'react-media';
+import SecondaryColumn from './components/SecondaryColumn';
+import MainColumn from './components/MainColumn';
 
 type Props = {
   secondaryColumn: () => ReactNode;
@@ -17,11 +17,7 @@ const DetailLayout = ({ secondaryColumn, mainColumn }: Props) => {
           xlAndBigger ? (
             <>
               <Route path={`${path}/details/:id`}>
-                {({ match }) => (
-                  <MainColumn>
-                    {match && mainColumn(match!.params.id)}
-                  </MainColumn>
-                )}
+                {({ match }) => <MainColumn>{match && mainColumn(match!.params.id)}</MainColumn>}
               </Route>
               <Route path={`${path}/`}>
                 <SecondaryColumn>{secondaryColumn()}</SecondaryColumn>
@@ -30,11 +26,7 @@ const DetailLayout = ({ secondaryColumn, mainColumn }: Props) => {
           ) : (
             <Switch>
               <Route path={`${path}/details/:id`}>
-                {({ match }) => (
-                  <MainColumn>
-                    {match && mainColumn(match!.params.id)}
-                  </MainColumn>
-                )}
+                {({ match }) => <MainColumn>{match && mainColumn(match!.params.id)}</MainColumn>}
               </Route>
               <Route path={`${path}/`}>
                 <SecondaryColumn isMobile>{secondaryColumn()}</SecondaryColumn>

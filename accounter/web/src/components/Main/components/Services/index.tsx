@@ -1,9 +1,9 @@
-import graphql from "babel-plugin-relay/macro";
-import { useEnvironment } from "../../../../contexts/relay";
-import { PlusIcon } from "@heroicons/react/solid";
-import { QueryRenderer } from "react-relay";
-import { ServicesQuery } from "./__generated__/ServicesQuery.graphql";
-import Loading from "../../../Loading";
+import graphql from 'babel-plugin-relay/macro';
+import { useEnvironment } from '../../../../contexts/relay';
+import { PlusIcon } from '@heroicons/react/solid';
+import { QueryRenderer } from 'react-relay';
+import { ServicesQuery } from './__generated__/ServicesQuery.graphql';
+import Loading from '../../../Loading';
 
 const Services = () => {
   const environment = useEnvironment();
@@ -37,16 +37,10 @@ const Services = () => {
                   className="relative rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-md flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                 >
                   <div className="flex-shrink-0">
-                    <img
-                      className="h-10 w-10 rounded-full"
-                      src={service.logo}
-                      alt={`${service.name} logo`}
-                    />
+                    <img className="h-10 w-10 rounded-full" src={service.logo} alt={`${service.name} logo`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-md font-medium text-gray-900">
-                      {service.name}
-                    </p>
+                    <p className="text-md font-medium text-gray-900">{service.name}</p>
                   </div>
                   <div className="pr-3">
                     <a href={service.oauthUrl} className="focus:outline-none">

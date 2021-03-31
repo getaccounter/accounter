@@ -1,9 +1,9 @@
-import { createFragmentContainer } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import { Accounts_profile } from "./__generated__/Accounts_profile.graphql";
-import React from "react";
-import Table from "../../../../../../../Table";
-import Badge from "../../../../../../../Badge";
+import { createFragmentContainer } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import { Accounts_profile } from './__generated__/Accounts_profile.graphql';
+import React from 'react';
+import Table from '../../../../../../../Table';
+import Badge from '../../../../../../../Badge';
 
 type Props = {
   profile: Accounts_profile;
@@ -16,26 +16,26 @@ const Accounts = ({ profile }: Props) => {
         title="Accounts"
         head={[
           {
-            value: "app",
-            label: "App",
+            value: 'app',
+            label: 'App'
           },
           {
-            value: "username",
-            label: "Username",
+            value: 'username',
+            label: 'Username'
           },
           {
-            value: "role",
-            label: "Role",
+            value: 'role',
+            label: 'Role'
           },
           {
-            value: "status",
-            label: "Status",
+            value: 'status',
+            label: 'Status'
           },
           {
-            value: "view",
-            label: "View",
-            hidden: true,
-          },
+            value: 'view',
+            label: 'View',
+            hidden: true
+          }
         ]}
         entries={profile.accounts.map((account) => ({
           app: (
@@ -49,33 +49,17 @@ const Accounts = ({ profile }: Props) => {
                   />
                 </div>
                 <div className="ml-4">
-                  <div className="text-sm font-medium text-gray-900">
-                    {account.integration.name}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {account.integration.service.name}
-                  </div>
+                  <div className="text-sm font-medium text-gray-900">{account.integration.name}</div>
+                  <div className="text-sm text-gray-500">{account.integration.service.name}</div>
                 </div>
               </div>
             </td>
           ),
-          username: (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {account.username}
-            </td>
-          ),
-          role: (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {account.role}
-            </td>
-          ),
+          username: <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{account.username}</td>,
+          role: <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{account.role}</td>,
           status: (
             <td className="px-6 py-4 whitespace-nowrap">
-              {account.isDisabled ? (
-                <Badge color="gray">Disabled</Badge>
-              ) : (
-                <Badge color="green">Active</Badge>
-              )}
+              {account.isDisabled ? <Badge color="gray">Disabled</Badge> : <Badge color="green">Active</Badge>}
             </td>
           ),
           view: (
@@ -89,7 +73,7 @@ const Accounts = ({ profile }: Props) => {
                 View
               </a>
             </td>
-          ),
+          )
         }))}
       />
     </>
@@ -112,5 +96,5 @@ export default createFragmentContainer(Accounts, {
         isDisabled
       }
     }
-  `,
+  `
 });

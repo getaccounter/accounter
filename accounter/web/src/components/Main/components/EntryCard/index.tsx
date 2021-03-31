@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import React, { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 type Props = {
   to: string;
@@ -20,9 +20,7 @@ const EntryCard = ({ imgSrc, to, secondary, children, rightSide }: Props) => {
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
           <p className="text-sm font-medium text-gray-900">{children}</p>
-          {secondary && (
-            <p className="text-sm text-gray-500 truncate">{secondary}</p>
-          )}
+          {secondary && <p className="text-sm text-gray-500 truncate">{secondary}</p>}
         </Link>
       </div>
       {rightSide}

@@ -1,21 +1,15 @@
-import React, { ReactNode } from "react";
-import { render, within } from "@testing-library/react";
-import Main from "./";
-import { MemoryRouter } from "react-router-dom";
-import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
-import RelayProvider from "../../contexts/relay";
-import { Environment } from "react-relay";
-import userEvent from "@testing-library/user-event";
-import NotificationProvider from "../../contexts/notification";
-import { RelayEnvironmentProvider } from "relay-hooks";
+import React, { ReactNode } from 'react';
+import { render, within } from '@testing-library/react';
+import Main from './';
+import { MemoryRouter } from 'react-router-dom';
+import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
+import RelayProvider from '../../contexts/relay';
+import { Environment } from 'react-relay';
+import userEvent from '@testing-library/user-event';
+import NotificationProvider from '../../contexts/notification';
+import { RelayEnvironmentProvider } from 'relay-hooks';
 
-const Providers = ({
-  children,
-  environment,
-}: {
-  children: ReactNode;
-  environment: Environment;
-}) => (
+const Providers = ({ children, environment }: { children: ReactNode; environment: Environment }) => (
   <RelayEnvironmentProvider environment={environment}>
     <NotificationProvider>
       <RelayProvider environment={environment}>
@@ -25,28 +19,26 @@ const Providers = ({
   </RelayEnvironmentProvider>
 );
 
-describe("Profile", () => {
-  it("renders name", async () => {
+describe('Profile', () => {
+  it('renders name', async () => {
     const environment = createMockEnvironment();
-    const firstName = "Peter";
-    const lastName = "Pan";
-    const title = "CEO";
+    const firstName = 'Peter';
+    const lastName = 'Pan';
+    const title = 'CEO';
 
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation, {
         ProfileNode() {
           return {
-            id: "some-id",
+            id: 'some-id',
             firstName,
             lastName,
-            title,
+            title
           };
-        },
+        }
       })
     );
-    environment.mock.queueOperationResolver((operation) =>
-      MockPayloadGenerator.generate(operation)
-    );
+    environment.mock.queueOperationResolver((operation) => MockPayloadGenerator.generate(operation));
     const main = render(
       <Providers environment={environment}>
         <Main />
@@ -54,47 +46,45 @@ describe("Profile", () => {
     );
 
     expect(
-      await main.findByRole("button", {
-        name: `${firstName} ${lastName} ${title}`,
+      await main.findByRole('button', {
+        name: `${firstName} ${lastName} ${title}`
       })
     ).toBeInTheDocument();
   });
 
-  it("links you to profile page", async () => {
+  it('links you to profile page', async () => {
     /* test throws weird warining
        Warning: Function components cannot be given refs. 
        But still passes. No time to address this now, but should do later
     */
     const environment = createMockEnvironment();
-    const firstName = "Peter";
-    const lastName = "Pan";
-    const title = "CEO";
+    const firstName = 'Peter';
+    const lastName = 'Pan';
+    const title = 'CEO';
 
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation, {
         ProfileNode() {
           return {
-            id: "some-id",
+            id: 'some-id',
             firstName,
             lastName,
-            title,
+            title
           };
-        },
+        }
       })
     );
-    environment.mock.queueOperationResolver((operation) =>
-      MockPayloadGenerator.generate(operation)
-    );
+    environment.mock.queueOperationResolver((operation) => MockPayloadGenerator.generate(operation));
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation, {
         ProfileNode() {
           return {
-            id: "some-id",
+            id: 'some-id',
             firstName,
             lastName,
-            title,
+            title
           };
-        },
+        }
       })
     );
 
@@ -102,12 +92,12 @@ describe("Profile", () => {
       MockPayloadGenerator.generate(operation, {
         ProfileNode() {
           return {
-            id: "some-id",
+            id: 'some-id',
             firstName,
             lastName,
-            title,
+            title
           };
-        },
+        }
       })
     );
     const main = render(
@@ -117,37 +107,31 @@ describe("Profile", () => {
     );
 
     userEvent.click(
-      await main.findByRole("button", {
-        name: `${firstName} ${lastName} ${title}`,
+      await main.findByRole('button', {
+        name: `${firstName} ${lastName} ${title}`
       })
     );
 
     userEvent.click(
-      main.getByRole("menuitem", {
-        name: "View profile",
+      main.getByRole('menuitem', {
+        name: 'View profile'
       })
     );
 
-    const mainContainer = within(await main.getByRole("main"));
-    mainContainer.getAllByRole("heading", { name: `${firstName} ${lastName}` });
+    const mainContainer = within(await main.getByRole('main'));
+    mainContainer.getAllByRole('heading', { name: `${firstName} ${lastName}` });
   });
 });
 
-test("show Services by default", async () => {
+test('show Services by default', async () => {
   const environment = createMockEnvironment();
-  environment.mock.queueOperationResolver((operation) =>
-    MockPayloadGenerator.generate(operation)
-  );
-  environment.mock.queueOperationResolver((operation) =>
-    MockPayloadGenerator.generate(operation)
-  );
+  environment.mock.queueOperationResolver((operation) => MockPayloadGenerator.generate(operation));
+  environment.mock.queueOperationResolver((operation) => MockPayloadGenerator.generate(operation));
   const main = render(
     <Providers environment={environment}>
       <Main />
     </Providers>
   );
   // TODO assert for content page as soon as we have it for services
-  expect(
-    await main.findByRole("navigation", { name: "Directory" })
-  ).toBeInTheDocument();
+  expect(await main.findByRole('navigation', { name: 'Directory' })).toBeInTheDocument();
 });

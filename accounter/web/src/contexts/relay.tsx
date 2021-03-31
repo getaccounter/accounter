@@ -1,5 +1,5 @@
-import { createContext, ReactNode, useContext } from "react";
-import { Environment } from "relay-runtime";
+import { createContext, ReactNode, useContext } from 'react';
+import { Environment } from 'relay-runtime';
 
 const relayContext = createContext<{
   environment: Environment;
@@ -14,7 +14,7 @@ export default function RelayProvider({ children, environment }: Props) {
     <relayContext.Provider
       children={children}
       value={{
-        environment,
+        environment
       }}
     />
   );

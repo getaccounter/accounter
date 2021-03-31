@@ -1,35 +1,28 @@
-import React, { useState } from "react";
-import { Redirect, useHistory, useLocation } from "react-router-dom";
-import { useNotifications } from "../../contexts/notification";
-import { LockClosedIcon } from "@heroicons/react/solid";
-import graphql from "babel-plugin-relay/macro";
+import React, { useState } from 'react';
+import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import { useNotifications } from '../../contexts/notification';
+import { LockClosedIcon } from '@heroicons/react/solid';
+import graphql from 'babel-plugin-relay/macro';
 
-import { commitMutation, Environment } from "react-relay";
+import { commitMutation, Environment } from 'react-relay';
 import {
   ResetPasswordMutation,
   ResetPasswordMutationResponse,
-  ResetPasswordMutationVariables,
-} from "./__generated__/ResetPasswordMutation.graphql";
-import { PayloadError } from "relay-runtime";
-import { useEnvironment } from "../../contexts/relay";
-import { useQueryString } from "../../utils/querystring";
+  ResetPasswordMutationVariables
+} from './__generated__/ResetPasswordMutation.graphql';
+import { PayloadError } from 'relay-runtime';
+import { useEnvironment } from '../../contexts/relay';
+import { useQueryString } from '../../utils/querystring';
 
 const resetPassword = (
   environment: Environment,
   variables: ResetPasswordMutationVariables,
-  onCompleted: (
-    response: ResetPasswordMutationResponse,
-    errors?: ReadonlyArray<PayloadError> | null
-  ) => void,
+  onCompleted: (response: ResetPasswordMutationResponse, errors?: ReadonlyArray<PayloadError> | null) => void,
   onError: (error: PayloadError) => void
 ) => {
   commitMutation<ResetPasswordMutation>(environment, {
     mutation: graphql`
-      mutation ResetPasswordMutation(
-        $username: String!
-        $token: String!
-        $password: String!
-      ) {
+      mutation ResetPasswordMutation($username: String!, $token: String!, $password: String!) {
         resetPassword(username: $username, token: $token, password: $password) {
           status
         }
@@ -37,27 +30,25 @@ const resetPassword = (
     `,
     variables,
     onCompleted,
-    onError,
+    onError
   });
 };
 
 const ResetPassword = () => {
   const location = useLocation();
-  const token = useQueryString("token");
-  const username = useQueryString("username");
+  const token = useQueryString('token');
+  const username = useQueryString('username');
   const environment = useEnvironment();
   const history = useHistory();
   const { addNotification } = useNotifications();
-  const [passwordInput, setPasswordInput] = useState("");
-  const [passwordConfirmationInput, setPasswordConfirmationInput] = useState(
-    ""
-  );
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordConfirmationInput, setPasswordConfirmationInput] = useState('');
 
   return !(token && username) ? (
     <Redirect
       to={{
-        pathname: "/",
-        state: { from: location },
+        pathname: '/',
+        state: { from: location }
       }}
     />
   ) : (
@@ -70,7 +61,7 @@ const ResetPassword = () => {
             const variables = {
               username,
               token,
-              password: passwordInput,
+              password: passwordInput
             };
             resetPassword(
               environment,
@@ -78,19 +69,19 @@ const ResetPassword = () => {
               (response, errors) => {
                 if (errors) {
                   addNotification({
-                    type: "error",
-                    title: "Something went wrong",
-                    content: "Setting password failed",
+                    type: 'error',
+                    title: 'Something went wrong',
+                    content: 'Setting password failed'
                   });
                 } else {
-                  history.push("/login");
+                  history.push('/login');
                 }
               },
               (err) =>
                 addNotification({
-                  type: "error",
-                  title: "Something went wrong",
-                  content: "Setting password failed",
+                  type: 'error',
+                  title: 'Something went wrong',
+                  content: 'Setting password failed'
                 })
             );
           }}
@@ -121,9 +112,7 @@ const ResetPassword = () => {
                 value={passwordConfirmationInput}
                 title="Must match the password."
                 pattern={passwordInput}
-                onChange={(evt) =>
-                  setPasswordConfirmationInput(evt.target.value)
-                }
+                onChange={(evt) => setPasswordConfirmationInput(evt.target.value)}
                 id="password-confirmation"
                 name="password-confirmation"
                 type="password"

@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import Loading from "../../../Loading";
-import Directory, { DirectoryEntry, DirectoryEntryList } from "../Directory";
-import graphql from "babel-plugin-relay/macro";
-import { IntegrationsQuery } from "./__generated__/IntegrationsQuery.graphql";
-import Integration from "./component/Integration";
-import DetailLayout from "../DetailLayout";
-import IntegrationContent from "./component/IntegrationContent";
-import { useQuery } from "relay-hooks";
+import React, { useState } from 'react';
+import Loading from '../../../Loading';
+import Directory, { DirectoryEntry, DirectoryEntryList } from '../Directory';
+import graphql from 'babel-plugin-relay/macro';
+import { IntegrationsQuery } from './__generated__/IntegrationsQuery.graphql';
+import Integration from './component/Integration';
+import DetailLayout from '../DetailLayout';
+import IntegrationContent from './component/IntegrationContent';
+import { useQuery } from 'relay-hooks';
 
 const Integrations = () => {
-  const [searchString, setSearchString] = useState("");
+  const [searchString, setSearchString] = useState('');
   const { data, error } = useQuery<IntegrationsQuery>(
     graphql`
       query IntegrationsQuery {
@@ -47,17 +47,9 @@ const Integrations = () => {
                 const lowerCasedSearchString = searchString.toLocaleLowerCase();
                 const lowerCasedIntegrationName = integration.name.toLowerCase();
                 const lowerCasedServiceName = integration.service.name.toLowerCase();
-                const matchesIntegrationName = lowerCasedIntegrationName.includes(
-                  lowerCasedSearchString
-                );
-                const matchesServiceName = lowerCasedServiceName.includes(
-                  lowerCasedSearchString
-                );
-                if (
-                  !searchString ||
-                  matchesIntegrationName ||
-                  matchesServiceName
-                ) {
+                const matchesIntegrationName = lowerCasedIntegrationName.includes(lowerCasedSearchString);
+                const matchesServiceName = lowerCasedServiceName.includes(lowerCasedSearchString);
+                if (!searchString || matchesIntegrationName || matchesServiceName) {
                   return true;
                 }
                 return false;
