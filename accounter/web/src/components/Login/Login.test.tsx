@@ -44,7 +44,7 @@ test('logs in and reroutes', async () => {
 
   const emailInput = login.getByLabelText('Work Email');
   const passwordInput = login.getByLabelText('Password');
-  const loginButton = login.getByRole('button', { name: 'Sign in' });
+  const loginButton = login.getByRole('button', { name: 'Log in' });
 
   userEvent.type(emailInput, email);
   userEvent.type(passwordInput, password);
@@ -70,7 +70,7 @@ test('renders error message if something goes wrong', async () => {
 
   const emailInput = login.getByLabelText('Work Email');
   const passwordInput = login.getByLabelText('Password');
-  const loginButton = login.getByRole('button', { name: 'Sign in' });
+  const loginButton = login.getByRole('button', { name: 'Log in' });
 
   userEvent.type(emailInput, email);
   userEvent.type(passwordInput, password);

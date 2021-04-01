@@ -40,11 +40,11 @@ test('reroutes to login and after reroutes to actual content', async () => {
       </Providers>
     </MockedProvider>
   );
-  expect(await root.findByText('Sign in')).toBeInTheDocument();
+  expect(await root.findByText('Log in')).toBeInTheDocument();
 
   const emailInput = root.getByLabelText('Work Email');
   const passwordInput = root.getByLabelText('Password');
-  const loginButton = root.getByRole('button', { name: 'Sign in' });
+  const loginButton = root.getByRole('button', { name: 'Log in' });
 
   userEvent.type(emailInput, email);
   userEvent.type(passwordInput, password);
