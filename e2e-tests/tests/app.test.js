@@ -93,7 +93,7 @@ sizes.forEach(({ name, viewport }) => {
             const integration = getMockIntegration([user]);
 
             cy.visit("/");
-            cy.findByRole("link", { name: "register" }).click();
+            cy.findByRole("link", { name: "Sign up for free" }).click();
             cy.register(user);
             cy.login(user.email, user.password);
 
@@ -147,7 +147,7 @@ sizes.forEach(({ name, viewport }) => {
         });
 
         cy.visit("/");
-        cy.findByRole("link", { name: "register" }).click();
+        cy.findByRole("link", { name: "Sign up for free" }).click();
         cy.register(user);
         cy.login(user.email, user.password);
 
@@ -250,7 +250,7 @@ sizes.forEach(({ name, viewport }) => {
             });
 
             cy.visit("/");
-            cy.findByRole("link", { name: "register" }).click();
+            cy.findByRole("link", { name: "Sign up for free" }).click();
             cy.register(user);
             cy.login(user.email, user.password);
 
