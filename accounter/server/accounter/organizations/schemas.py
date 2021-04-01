@@ -1,5 +1,5 @@
 import graphene
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from graphene_django import DjangoObjectType
@@ -42,6 +42,7 @@ class Signup(graphene.Mutation):
         )
         profile.save()
 
+        login(info.context, user)
         return Signup(status="success")
 
 
