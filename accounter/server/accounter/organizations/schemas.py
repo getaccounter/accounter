@@ -14,6 +14,7 @@ from .models import Organization, Profile
 
 class Signup(graphene.Mutation):
     class Arguments:
+        first_name = graphene.String(required=True)
         org_name = graphene.String(required=True)
         email = graphene.String(required=True)
         password = graphene.String(required=True)
@@ -24,6 +25,7 @@ class Signup(graphene.Mutation):
     def mutate(
         self,
         info,
+        first_name: str,
         org_name: str,
         email: str,
         password: str,
@@ -32,6 +34,7 @@ class Signup(graphene.Mutation):
         org = Organization.objects.create(name=org_name)
         org.save()
         user = User.objects.create(
+            first_name=first_name,
             username=email,
             email=email,
         )
