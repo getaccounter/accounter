@@ -1,7 +1,7 @@
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import OnboardingAdvanced from "./components/OnboardingAdvanced";
-import OnboardingAppSelector from "./components/OnboardingAppSelector";
-import OnboardingBasics from "./components/OnboardingBasics";
+import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
+import OnboardingAdvanced from './components/OnboardingAdvanced';
+import OnboardingAppSelector from './components/OnboardingAppSelector';
+import OnboardingBasics from './components/OnboardingBasics';
 
 export default function Onboarding() {
   const { path } = useRouteMatch();

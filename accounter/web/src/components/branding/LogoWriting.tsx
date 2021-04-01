@@ -1,12 +1,12 @@
 const LogoWriting = () => (
-  <svg x="0px" y="0px" viewBox="0 0 425 130" xmlSpace="preserve" style={{margin: "-16px"}}>
+  <svg x="0px" y="0px" viewBox="0 0 425 130" xmlSpace="preserve" style={{ margin: '-16px' }}>
     <text
       transform="matrix(1.0012 0 0 1 123.015 86.424)"
       fill="#232B68"
       fontFamily="'Merriweather-Regular'"
       fontSize="54.933px"
     >
-      {"Accounter"}
+      {'Accounter'}
     </text>
     <ellipse fill="#232B68" cx={57.8} cy={45.2} rx={11.9} ry={12.4} />
     <ellipse fill="#232B68" cx={38.8} cy={84.4} rx={11.9} ry={12.4} />

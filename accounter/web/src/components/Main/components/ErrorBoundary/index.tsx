@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import * as Sentry from "@sentry/react";
+import React, { ReactNode } from 'react';
+import * as Sentry from '@sentry/react';
 
 interface Props {
   children: ReactNode;
@@ -10,10 +10,7 @@ const ErrorBoundary = ({ children }: Props) => (
     fallback={
       <div className="flex flex-col items-center ">
         <div className="flex justify-center height h-full">
-          <h1>
-            Something went wrong. Please try again. If the issue still persists,
-            please contact us.
-          </h1>
+          <h1>Something went wrong. Please try again. If the issue still persists, please contact us.</h1>
         </div>
         <a href="/">
           <button

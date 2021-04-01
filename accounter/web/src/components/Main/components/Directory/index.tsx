@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import { SearchIcon } from "@heroicons/react/solid";
-import Filters, { Filter } from "./components/Filters";
+import React, { ReactNode } from 'react';
+import { SearchIcon } from '@heroicons/react/solid';
+import Filters, { Filter } from './components/Filters';
 
 const DirectoryHeader = (props: {
   title: string;
@@ -12,9 +12,7 @@ const DirectoryHeader = (props: {
   return (
     <div className="px-6 pt-6 pb-4">
       <h2 className="text-lg font-medium text-gray-900">{props.title}</h2>
-      {props.subtitle && (
-        <p className="mt-1 text-sm text-gray-600">{props.subtitle}</p>
-      )}
+      {props.subtitle && <p className="mt-1 text-sm text-gray-600">{props.subtitle}</p>}
       <form className="mt-6 flex space-x-4" action="#">
         <div className="flex-1 min-w-0">
           <label htmlFor="search" className="sr-only">
@@ -41,21 +39,14 @@ const DirectoryHeader = (props: {
   );
 };
 
-export const DirectoryEntryList = (props: {
-  title?: ReactNode;
-  children: ReactNode;
-}) => (
+export const DirectoryEntryList = (props: { title?: ReactNode; children: ReactNode }) => (
   <>
     {props.title && (
       <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
         <h3>{props.title}</h3>
       </div>
     )}
-    <ul
-      className={`relative z-0 divide-y divide-gray-200 border-gray-200 last:border-b ${
-        !props.title && "border-t"
-      }`}
-    >
+    <ul className={`relative z-0 divide-y divide-gray-200 border-gray-200 last:border-b ${!props.title && 'border-t'}`}>
       {props.children}
     </ul>
   </>
@@ -70,10 +61,7 @@ export const DirectoryEntry = (props: { children: ReactNode }) => (
 );
 
 const DirectoryList = ({ children }: { children: ReactNode }) => (
-  <nav
-    className="flex-1 min-h-0 relative overflow-y-auto"
-    aria-label="Directory"
-  >
+  <nav className="flex-1 min-h-0 relative overflow-y-auto" aria-label="Directory">
     {children}
   </nav>
 );
@@ -87,14 +75,7 @@ type Props = {
   onChangeSearchString: (searchString: string) => void;
 };
 
-const Directory = ({
-  children,
-  title,
-  subtitle,
-  filters,
-  searchString,
-  onChangeSearchString,
-}: Props) => (
+const Directory = ({ children, title, subtitle, filters, searchString, onChangeSearchString }: Props) => (
   <>
     <DirectoryHeader
       filters={filters}

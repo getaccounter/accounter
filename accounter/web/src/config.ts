@@ -1,8 +1,4 @@
-const parseEnv = <T>(
-  envName: string,
-  parser: (val: string) => T,
-  defaultValue: T
-) => {
+const parseEnv = <T>(envName: string, parser: (val: string) => T, defaultValue: T) => {
   const value = process.env[envName];
   if (value) {
     return parser(value);
@@ -18,15 +14,8 @@ const parseRequiredEnv = <T>(envName: string, parser: (val: string) => T) => {
   return parsedValue;
 };
 
-export const GRAPHQL_ENDPOINT = parseEnv(
-  "REACT_APP_GRAPHQL_ENDPOINT",
-  String,
-  "/api/graphql/"
-);
+export const GRAPHQL_ENDPOINT = parseEnv('REACT_APP_GRAPHQL_ENDPOINT', String, '/api/graphql/');
 
-export const NODE_ENV = parseRequiredEnv(
-  "NODE_ENV",
-  (val) => String(val) as "development" | "production"
-);
+export const NODE_ENV = parseRequiredEnv('NODE_ENV', (val) => String(val) as 'development' | 'production');
 
-export const VERSION = parseEnv("REACT_APP_VERSION", String, "dev")
+export const VERSION = parseEnv('REACT_APP_VERSION', String, 'dev');

@@ -1,7 +1,6 @@
-
 type Props = {
-    className: string
-}
+  className: string;
+};
 const LogoSquare = (props: Props) => (
   <svg x="0px" y="0px" viewBox="0 0 68 68" xmlSpace="preserve" {...props}>
     <ellipse fill="#272F65" cx={33.8} cy={13.7} rx={11.9} ry={12.5} />

@@ -1,12 +1,6 @@
-import React, {
-  ReactNode,
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-} from "react";
-import Notification, { Type } from "./components/Notification";
-import { v5 as uuidv5 } from "uuid";
+import React, { ReactNode, createContext, useContext, useState, useCallback } from 'react';
+import Notification, { Type } from './components/Notification';
+import { v5 as uuidv5 } from 'uuid';
 
 type NotificationPayload = {
   type: Type;
@@ -15,10 +9,8 @@ type NotificationPayload = {
   timeToShow?: number;
 };
 
-const generateDeterministicIdForNotification = (
-  notification: NotificationPayload
-) =>
-  uuidv5(JSON.stringify(notification), "3e1fe495-f36f-4c39-94ac-1eea15fbc5b8");
+const generateDeterministicIdForNotification = (notification: NotificationPayload) =>
+  uuidv5(JSON.stringify(notification), '3e1fe495-f36f-4c39-94ac-1eea15fbc5b8');
 
 const notificationContext = createContext<{
   addNotification: (notification: NotificationPayload) => void;
@@ -40,7 +32,7 @@ export default function NotificationProvider({ children }: Props) {
     setNotifications((notifications) => {
       const { [id]: omit, ...updatedNotifications } = notifications;
       return {
-        ...updatedNotifications,
+        ...updatedNotifications
       };
     });
   }, []);
@@ -58,8 +50,8 @@ export default function NotificationProvider({ children }: Props) {
           ...notifications,
           [id]: {
             notification,
-            timeoutId,
-          },
+            timeoutId
+          }
         };
       });
     },
@@ -83,7 +75,7 @@ export default function NotificationProvider({ children }: Props) {
       <notificationContext.Provider
         children={children}
         value={{
-          addNotification,
+          addNotification
         }}
       />
     </>

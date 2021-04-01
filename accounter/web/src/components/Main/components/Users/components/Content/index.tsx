@@ -1,41 +1,27 @@
-import React, { ReactNode } from "react";
-import {
-  Link,
-  Redirect,
-  Route,
-  Switch,
-  useLocation,
-  useRouteMatch,
-} from "react-router-dom";
-import Header from "./components/Header";
-import { createFragmentContainer, QueryRenderer } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import DescriptionList from "./components/DescriptionList";
-import EditUser from "./components/EditUser";
-import { Content_currentUser } from "./__generated__/Content_currentUser.graphql";
-import Accounts from "./components/Accounts";
-import Breadcrumb from "../../../Breadcrumb";
-import { Content_profileList } from "./__generated__/Content_profileList.graphql";
-import { useEnvironment } from "../../../../../../contexts/relay";
-import Loading from "../../../../../Loading";
-import { ContentQuery } from "./__generated__/ContentQuery.graphql";
+import React, { ReactNode } from 'react';
+import { Link, Redirect, Route, Switch, useLocation, useRouteMatch } from 'react-router-dom';
+import Header from './components/Header';
+import { createFragmentContainer, QueryRenderer } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import DescriptionList from './components/DescriptionList';
+import EditUser from './components/EditUser';
+import { Content_currentUser } from './__generated__/Content_currentUser.graphql';
+import Accounts from './components/Accounts';
+import Breadcrumb from '../../../Breadcrumb';
+import { Content_profileList } from './__generated__/Content_profileList.graphql';
+import { useEnvironment } from '../../../../../../contexts/relay';
+import Loading from '../../../../../Loading';
+import { ContentQuery } from './__generated__/ContentQuery.graphql';
 
 const Tab = (props: { children: ReactNode; to: string }) => {
   const { pathname } = useLocation();
   const isSelected = props.to === pathname;
 
-  const sharedClassNames =
-    "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
-  const selectedClassNames = "border-pink-500 text-gray-900";
-  const unSelectedClassNames =
-    "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300";
+  const sharedClassNames = 'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm';
+  const selectedClassNames = 'border-pink-500 text-gray-900';
+  const unSelectedClassNames = 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300';
   return (
-    <Link
-      to={props.to}
-      className={`${
-        isSelected ? selectedClassNames : unSelectedClassNames
-      } ${sharedClassNames}`}
-    >
+    <Link to={props.to} className={`${isSelected ? selectedClassNames : unSelectedClassNames} ${sharedClassNames}`}>
       {props.children}
     </Link>
   );
@@ -90,7 +76,7 @@ const Content = ({ currentUser, profileList, profileId }: Props) => {
         }
       `}
       variables={{
-        profileId,
+        profileId
       }}
       render={({ props, error }) => {
         if (error) {
@@ -104,11 +90,7 @@ const Content = ({ currentUser, profileList, profileId }: Props) => {
         return (
           <Switch>
             <Route path={`${path}/edit`}>
-              <EditUser
-                profileList={profileList}
-                profile={profile}
-                cancelRoute={url}
-              />
+              <EditUser profileList={profileList} profile={profile} cancelRoute={url} />
             </Route>
             <Route>
               <Breadcrumb title="Users" to="/users" />
@@ -147,5 +129,5 @@ export default createFragmentContainer(Content, {
     fragment Content_profileList on ProfileNode @relay(plural: true) {
       ...EditUser_profileList
     }
-  `,
+  `
 });

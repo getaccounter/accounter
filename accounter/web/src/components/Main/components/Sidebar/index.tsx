@@ -1,13 +1,13 @@
-import { XIcon } from "@heroicons/react/solid";
-import Tab, { TabType } from "./components/Tab";
-import Profile from "./components/Profile";
-import { Link, useLocation } from "react-router-dom";
-import { useBooleanQueryString } from "../../../../utils/querystring";
-import queryString from "query-string";
-import graphql from "babel-plugin-relay/macro";
-import LogoWriting from "../../../branding/LogoWriting";
-import { useFragment } from "relay-hooks";
-import { Sidebar_profile, Sidebar_profile$key } from "./__generated__/Sidebar_profile.graphql";
+import { XIcon } from '@heroicons/react/solid';
+import Tab, { TabType } from './components/Tab';
+import Profile from './components/Profile';
+import { Link, useLocation } from 'react-router-dom';
+import { useBooleanQueryString } from '../../../../utils/querystring';
+import queryString from 'query-string';
+import graphql from 'babel-plugin-relay/macro';
+import LogoWriting from '../../../branding/LogoWriting';
+import { useFragment } from 'relay-hooks';
+import { Sidebar_profile, Sidebar_profile$key } from './__generated__/Sidebar_profile.graphql';
 
 interface Props {
   mainTabs: Array<TabType>;
@@ -16,8 +16,8 @@ interface Props {
 }
 
 interface MobileProps {
-  mainTabs: Props["mainTabs"]
-  extraTabs: Props["extraTabs"]
+  mainTabs: Props['mainTabs'];
+  extraTabs: Props['extraTabs'];
   profile: Sidebar_profile;
 }
 
@@ -26,9 +26,7 @@ interface DesktopSidebarProps extends MobileProps {}
 const MobileSidebar = (props: MobileProps) => {
   const location = useLocation();
   const { showMobileSidebar, ...qsObject } = queryString.parse(location.search);
-  const closeSidebarLink = `${location.pathname}?${queryString.stringify(
-    qsObject
-  )}`;
+  const closeSidebarLink = `${location.pathname}?${queryString.stringify(qsObject)}`;
   return (
     <>
       {/* Off-canvas menu for mobile, show/hide based on off-canvas menu state. */}
@@ -57,10 +55,7 @@ const MobileSidebar = (props: MobileProps) => {
                 From: "translate-x-0"
                 To: "-translate-x-full"
             */}
-          <div
-            tabIndex={0}
-            className="relative flex-1 flex flex-col max-w-xs w-full bg-white focus:outline-none"
-          >
+          <div tabIndex={0} className="relative flex-1 flex flex-col max-w-xs w-full bg-white focus:outline-none">
             <div className="absolute top-0 right-0 -mr-12 pt-2">
               <Link to={closeSidebarLink}>
                 <button
@@ -82,10 +77,7 @@ const MobileSidebar = (props: MobileProps) => {
                     <Tab key={tab.path} tab={tab} />
                   ))}
                 </div>
-                <hr
-                  className="border-t border-gray-200 my-5"
-                  aria-hidden="true"
-                />
+                <hr className="border-t border-gray-200 my-5" aria-hidden="true" />
                 <div className="px-2 space-y-1">
                   {props.extraTabs.map((tab) => (
                     <Tab key={tab.path} tab={tab} />
@@ -120,10 +112,7 @@ const DesktopSidebar = (props: DesktopSidebarProps) => (
                   <Tab key={tab.path} desktop tab={tab} />
                 ))}
               </div>
-              <hr
-                className="border-t border-gray-200 my-5"
-                aria-hidden="true"
-              />
+              <hr className="border-t border-gray-200 my-5" aria-hidden="true" />
               <div className="flex-1 px-2 space-y-1">
                 {props.extraTabs.map((tab) => (
                   <Tab key={tab.path} desktop tab={tab} />
@@ -139,7 +128,7 @@ const DesktopSidebar = (props: DesktopSidebarProps) => (
 );
 
 const Sidebar = (props: Props) => {
-  const showMobileSidebar = useBooleanQueryString("showMobileSidebar");
+  const showMobileSidebar = useBooleanQueryString('showMobileSidebar');
   const profile = useFragment(
     graphql`
       fragment Sidebar_profile on ProfileNode {

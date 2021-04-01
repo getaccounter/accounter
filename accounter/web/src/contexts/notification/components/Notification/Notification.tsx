@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { CheckCircleIcon, XCircleIcon, XIcon } from '@heroicons/react/outline'
+import React, { ReactNode } from 'react';
+import { CheckCircleIcon, XCircleIcon, XIcon } from '@heroicons/react/outline';
 
 // TODO
 /*animate entering and leaving:
@@ -11,7 +11,7 @@ import { CheckCircleIcon, XCircleIcon, XIcon } from '@heroicons/react/outline'
     To: "opacity-0"
     */
 
-export type Type = "success" | "error";
+export type Type = 'success' | 'error';
 
 type Props = {
   type: Type;
@@ -22,15 +22,12 @@ type Props = {
 
 const Notification = ({ type, headline, onClose, children }: Props) => {
   return (
-    <div
-      role="alert"
-      className="flex items-end justify-center px-4 py-6 sm:p-6 sm:items-start sm:justify-end"
-    >
+    <div role="alert" className="flex items-end justify-center px-4 py-6 sm:p-6 sm:items-start sm:justify-end">
       <div className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
         <div className="p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0">
-              {type === "success" ? (
+              {type === 'success' ? (
                 <CheckCircleIcon className="h-6 w-6 text-green-400" />
               ) : (
                 <XCircleIcon className="h-6 w-6 text-red-400" />

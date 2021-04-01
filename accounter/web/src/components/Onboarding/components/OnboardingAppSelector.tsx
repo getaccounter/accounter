@@ -1,5 +1,5 @@
 const OnboardingAppSelector = () => {
-    return <div>OnboardingAppSelector</div>
-}
+  return <div>OnboardingAppSelector</div>;
+};
 
-export default OnboardingAppSelector
+export default OnboardingAppSelector;

@@ -1,23 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { Link, Redirect, useLocation } from "react-router-dom";
-import { useAuth } from "../../contexts/auth";
-import { useNotifications } from "../../contexts/notification";
-import LogoSquare from "../branding/LogoSquare";
-import { LockClosedIcon } from "@heroicons/react/solid";
-
+import React, { useState, useEffect } from 'react';
+import { Link, Redirect, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/auth';
+import { useNotifications } from '../../contexts/notification';
+import LogoSquare from '../branding/LogoSquare';
+import { LockClosedIcon } from '@heroicons/react/solid';
 
 export default function Login() {
   const { addNotification } = useNotifications();
   const { isSignedIn, signIn, signInError } = useAuth();
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
 
   useEffect(() => {
     if (signInError) {
       addNotification({
-        type: "error",
-        title: "Login Failed",
-        content: signInError,
+        type: 'error',
+        title: 'Login Failed',
+        content: signInError
       });
     }
   }, [signInError, addNotification]);
@@ -31,16 +30,11 @@ export default function Login() {
         <div className="max-w-md w-full space-y-8">
           <div>
             <LogoSquare className="mx-auto h-12 w-auto" />
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Sign in to your account
-            </h2>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
             <p className="mt-2 text-center text-sm text-gray-600">
               Or
-              <Link
-                to="/signup"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                {" "}
+              <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+                {' '}
                 register
               </Link>
             </p>
@@ -97,7 +91,7 @@ export default function Login() {
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
                 </span>
-                {isSignedIn ? "Signing in..." : "Sign in"}
+                {isSignedIn ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
@@ -107,8 +101,8 @@ export default function Login() {
   ) : (
     <Redirect
       to={{
-        pathname: "/",
-        state: { from: location },
+        pathname: '/',
+        state: { from: location }
       }}
     />
   );

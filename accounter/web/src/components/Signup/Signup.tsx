@@ -1,24 +1,12 @@
-import { gql, useMutation } from "@apollo/client";
-import React, { useEffect, useState } from "react";
-import { Redirect, useLocation } from "react-router-dom";
-import { useNotifications } from "../../contexts/notification";
-import { LockClosedIcon } from "@heroicons/react/solid";
+import { gql, useMutation } from '@apollo/client';
+import React, { useEffect, useState } from 'react';
+import { Redirect, useLocation } from 'react-router-dom';
+import { useNotifications } from '../../contexts/notification';
+import { LockClosedIcon } from '@heroicons/react/solid';
 
 export const SIGNUP_MUTATION = gql`
-  mutation Signup(
-    $orgName: String!
-    $firstName: String!
-    $lastName: String!
-    $email: String!
-    $password: String!
-  ) {
-    signup(
-      orgName: $orgName
-      firstName: $firstName
-      lastName: $lastName
-      email: $email
-      password: $password
-    ) {
+  mutation Signup($orgName: String!, $firstName: String!, $lastName: String!, $email: String!, $password: String!) {
+    signup(orgName: $orgName, firstName: $firstName, lastName: $lastName, email: $email, password: $password) {
       status
     }
   }
@@ -26,7 +14,7 @@ export const SIGNUP_MUTATION = gql`
 
 type SignupResponse = {
   signup?: {
-    status: "success" | "error";
+    status: 'success' | 'error';
   };
 };
 
@@ -41,33 +29,33 @@ type SignupParameters = {
 const Signup = () => {
   const { addNotification } = useNotifications();
   const location = useLocation();
-  const [signup, { data: signupResponse, error, loading }] = useMutation<
-    SignupResponse,
-    SignupParameters
-  >(SIGNUP_MUTATION, {
-    errorPolicy: "all",
-    onError: () => undefined,
-  });
-  const [organizationNameInput, setOrganizationNameInput] = useState("");
-  const [firstNameInput, setFirstNameInput] = useState("");
-  const [lastNameInput, setLastNameInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
+  const [signup, { data: signupResponse, error, loading }] = useMutation<SignupResponse, SignupParameters>(
+    SIGNUP_MUTATION,
+    {
+      errorPolicy: 'all',
+      onError: () => undefined
+    }
+  );
+  const [organizationNameInput, setOrganizationNameInput] = useState('');
+  const [firstNameInput, setFirstNameInput] = useState('');
+  const [lastNameInput, setLastNameInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
 
   useEffect(() => {
     if (error) {
       addNotification({
-        type: "error",
-        title: "Signup Failed",
-        content: "Something went wrong. We could not register this account",
+        type: 'error',
+        title: 'Signup Failed',
+        content: 'Something went wrong. We could not register this account'
       });
     }
   }, [error, addNotification]);
-  return signupResponse?.signup?.status === "success" ? (
+  return signupResponse?.signup?.status === 'success' ? (
     <Redirect
       to={{
-        pathname: "/",
-        state: { from: location },
+        pathname: '/',
+        state: { from: location }
       }}
     />
   ) : (
@@ -83,8 +71,8 @@ const Signup = () => {
                 firstName: firstNameInput,
                 lastName: lastNameInput,
                 email: emailInput,
-                password: passwordInput,
-              },
+                password: passwordInput
+              }
             });
           }}
         >
@@ -184,7 +172,7 @@ const Signup = () => {
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
               </span>
-              {loading ? "Signing up..." : "Sign up"}
+              {loading ? 'Signing up...' : 'Sign up'}
             </button>
           </div>
         </form>

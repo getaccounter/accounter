@@ -1,22 +1,22 @@
-import React from "react";
-import SideBar from "./components/Sidebar";
-import { MenuIcon, UserGroupIcon, ViewGridIcon, ViewGridAddIcon } from "@heroicons/react/outline";
-import { Link, Redirect, Route, Switch, useLocation } from "react-router-dom";
-import Integrations from "./components/Integrations";
-import Users from "./components/Users";
-import Services from "./components/Services";
-import queryString from "query-string";
-import Loading from "../Loading";
-import graphql from "babel-plugin-relay/macro";
-import { MainQuery } from "./__generated__/MainQuery.graphql";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { useQuery } from "relay-hooks";
+import React from 'react';
+import SideBar from './components/Sidebar';
+import { MenuIcon, UserGroupIcon, ViewGridIcon, ViewGridAddIcon } from '@heroicons/react/outline';
+import { Link, Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import Integrations from './components/Integrations';
+import Users from './components/Users';
+import Services from './components/Services';
+import queryString from 'query-string';
+import Loading from '../Loading';
+import graphql from 'babel-plugin-relay/macro';
+import { MainQuery } from './__generated__/MainQuery.graphql';
+import ErrorBoundary from './components/ErrorBoundary';
+import { useQuery } from 'relay-hooks';
 
 const Header = () => {
   const location = useLocation();
   const qsObject = {
     ...queryString.parse(location.search),
-    showMobileSidebar: true,
+    showMobileSidebar: true
   };
   const menuLink = `${location.pathname}?${queryString.stringify(qsObject)}`;
   return (
@@ -66,31 +66,31 @@ export default function Main() {
   const mainPages = [
     {
       tab: {
-        label: "Apps",
-        path: "/integrations",
-        Icon: ViewGridIcon,
+        label: 'Apps',
+        path: '/integrations',
+        Icon: ViewGridIcon
       },
-      content: <Integrations />,
+      content: <Integrations />
     },
     {
       tab: {
-        label: "Users",
-        path: "/users",
-        Icon: UserGroupIcon,
+        label: 'Users',
+        path: '/users',
+        Icon: UserGroupIcon
       },
-      content: <Users />,
-    },
+      content: <Users />
+    }
   ];
 
   const extraPages = [
     {
       tab: {
-        label: "Add Apps",
-        path: "/services",
-        Icon: ViewGridAddIcon,
+        label: 'Add Apps',
+        path: '/services',
+        Icon: ViewGridAddIcon
       },
-      content: <Services />,
-    },
+      content: <Services />
+    }
   ];
   return (
     <div className="h-screen flex overflow-hidden bg-white">
