@@ -281,7 +281,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByRole("menuitem", { name: "Logout" }).click();
 
             cy.findByRole("heading", {
-              name: "Sign in to your account",
+              name: "Accounter",
             }).should("exist");
           });
 
@@ -322,7 +322,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByRole("menuitem", { name: "Logout" }).click();
 
             cy.findByRole("heading", {
-              name: "Sign in to your account",
+              name: "Accounter",
             }).should("exist");
 
             cy.login(user.email, user.password);
@@ -342,7 +342,7 @@ sizes.forEach(({ name, viewport }) => {
             cy.findByRole("menuitem", { name: "Logout" }).click();
 
             cy.findByRole("heading", {
-              name: "Sign in to your account",
+              name: "Accounter",
             }).should("exist");
 
             cy.login(userToCreate.email, userToCreate.password);
