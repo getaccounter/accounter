@@ -42,7 +42,7 @@ test('reroutes to login and after reroutes to actual content', async () => {
   );
   expect(await root.findByText('Sign in')).toBeInTheDocument();
 
-  const emailInput = root.getByLabelText('Email address');
+  const emailInput = root.getByLabelText('Work Email');
   const passwordInput = root.getByLabelText('Password');
   const loginButton = root.getByRole('button', { name: 'Sign in' });
 

@@ -40,9 +40,9 @@ test('logs in and reroutes', async () => {
   );
 
   // waits for Login page to be ready
-  await waitFor(() => expect(login.getByLabelText('Email address')).not.toHaveAttribute('disabled'));
+  await waitFor(() => expect(login.getByLabelText('Work Email')).not.toHaveAttribute('disabled'));
 
-  const emailInput = login.getByLabelText('Email address');
+  const emailInput = login.getByLabelText('Work Email');
   const passwordInput = login.getByLabelText('Password');
   const loginButton = login.getByRole('button', { name: 'Sign in' });
 
@@ -66,9 +66,9 @@ test('renders error message if something goes wrong', async () => {
   );
 
   // waits for Login page to be ready
-  await waitFor(() => expect(login.getByLabelText('Email address')).not.toHaveAttribute('disabled'));
+  await waitFor(() => expect(login.getByLabelText('Work Email')).not.toHaveAttribute('disabled'));
 
-  const emailInput = login.getByLabelText('Email address');
+  const emailInput = login.getByLabelText('Work Email');
   const passwordInput = login.getByLabelText('Password');
   const loginButton = login.getByRole('button', { name: 'Sign in' });
 
