@@ -40,8 +40,8 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add("login", (email, password) => {
-  cy.findByText("Sign in to your account").should("exist");
-  cy.findByLabelText("Email address").type(email);
+  cy.findByText("Accounter").should("exist");
+  cy.findByLabelText("Work Email").type(email);
   cy.findByLabelText("Password").type(password);
   cy.findByText("Sign in").click();
 });
