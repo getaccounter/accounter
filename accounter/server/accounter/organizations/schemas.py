@@ -14,7 +14,6 @@ from .models import Organization, Profile
 
 class Signup(graphene.Mutation):
     class Arguments:
-        first_name = graphene.String(required=True)
         org_name = graphene.String(required=True)
         email = graphene.String(required=True)
         password = graphene.String(required=True)
@@ -25,7 +24,6 @@ class Signup(graphene.Mutation):
     def mutate(
         self,
         info,
-        first_name: str,
         org_name: str,
         email: str,
         password: str,
@@ -34,7 +32,6 @@ class Signup(graphene.Mutation):
         org = Organization.objects.create(name=org_name)
         org.save()
         user = User.objects.create(
-            first_name=first_name,
             username=email,
             email=email,
         )
@@ -237,6 +234,30 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         return UpdateUser(profiles=updated_profiles)
 
 
+class OnboardBasic(graphene.Mutation):
+    class Arguments:
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+        title = graphene.String(required=True)
+        org_size = graphene.String(required=True)
+
+    status = graphene.String(required=True)
+
+    @transaction.atomic
+    def mutate(self, info, first_name: str, last_name: str, title: str, org_size: str):
+        user = info.context.user
+        profile = info.context.user.profile
+
+        user.first_name = first_name
+        user.last_name = last_name
+        profile.title = title
+
+        user.save()
+        profile.save()
+
+        return OnboardBasic(status="success")
+
+
 class Query(graphene.ObjectType):
     current_user = graphene.Field(ProfileNode, required=True)
 
@@ -250,3 +271,4 @@ class Mutation(graphene.ObjectType):
     signup = Signup.Field()
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
+    onboard_basic = OnboardBasic.Field()
