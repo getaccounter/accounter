@@ -88,7 +88,7 @@
     "graphql": "15.5.0",
     "nodemon": "2.0.7",
     "relay-compiler": "11.0.1",
-    "relay-compiler-language-typescript": "13.0.6",
+    "relay-compiler-language-typescript": "13.0.9",
     "relay-config": "11.0.1",
     "relay-test-utils": "11.0.1"
   }
