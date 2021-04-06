@@ -42,23 +42,17 @@ class UserTestCase(GraphQLTestCase):
 
     def test_signup_mutation(self):
         email = "user@internet.cat"
-        first_name = "firstname"
-        last_name = "lastname"
         password = "some password"
         org_name = "SuperOrg"
         response = self.query(
             """
           mutation SignUp(
             $orgName: String!
-            $firstName: String!
-            $lastName: String!
             $email: String!
             $password: String!
           ) {
             signup(
               orgName: $orgName
-              firstName: $firstName
-              lastName: $lastName
               email: $email
               password: $password
             ) {
@@ -69,8 +63,6 @@ class UserTestCase(GraphQLTestCase):
           """,
             variables={
                 "email": email,
-                "firstName": first_name,
-                "lastName": last_name,
                 "password": password,
                 "orgName": org_name,
             },
@@ -78,8 +70,6 @@ class UserTestCase(GraphQLTestCase):
         self.assertResponseNoErrors(response)
         user = authenticate(username=email, password=password)
         assert user is not None
-        assert user.first_name == first_name
-        assert user.last_name == last_name
         assert user.profile is not None
         assert user.profile.organization is not None
         assert user.profile.organization.name == org_name
