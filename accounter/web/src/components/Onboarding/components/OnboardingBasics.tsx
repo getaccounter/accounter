@@ -74,7 +74,7 @@ const StepsBar = () => (
 );
 
 const OnboardingBasics = () => {
-  const [onboardBasic, { data: signupResponse, error, loading }] = useMutation<
+  const [onboardBasic, { loading }] = useMutation<
     OnboardBasicResponse,
     OnboardBasicParameters
   >(ONBOARD_BASIC_MUTATION, {
