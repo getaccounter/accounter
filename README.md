@@ -30,12 +30,6 @@ docker-compose exec web npm t
 docker-compose exec server ./manage.py test
 ```
 
-### E2E tests
-
-```bash
-docker-compose run e2e
-```
-
 ### Linting
 
 ```bash

@@ -4,10 +4,6 @@ import {
   listHandler,
   Account,
 } from "../../utils/handlers/accounts";
-import fs from "fs";
-import path from "path";
-import { NODE_ENV } from "../../env";
-import mockCert_ONLY_USE_FOR_TESTING from "../../mockserver-cert"
 
 interface ZoomUser {
   id: string;
@@ -70,14 +66,10 @@ export const list = listHandler(async ({ params }, callback) => {
   const { token } = params;
 
   try {
-    const request = superagent
+    const response = await superagent
       .get("https://api.zoom.us/v2/users")
       .query("page_size=300")
       .auth(token, { type: "bearer" });
-
-    const response = await (NODE_ENV === "production"
-      ? request
-      : request.ca(mockCert_ONLY_USE_FOR_TESTING));
 
     const users: Array<ZoomUser> = response.body.users;
     
@@ -99,13 +91,9 @@ export const list = listHandler(async ({ params }, callback) => {
 export const getById = getByIdHandler(async ({ params }, callback) => {
   const { id, token } = params;
   try {
-    const request = superagent
+    const response = await superagent
       .get(`https://api.zoom.us/v2/users/${id}`)
       .auth(token, { type: "bearer" })
-
-    const response = await (NODE_ENV === "production"
-      ? request
-      : request.ca(mockCert_ONLY_USE_FOR_TESTING));
 
     const user: ExtendedZoomUser = response.body
 

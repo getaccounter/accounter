@@ -64,10 +64,6 @@ services:
       - AWS_S3_CUSTOM_DOMAIN=localhost:9090/developmentbucket
       - AWS_S3_SECURE_URLS=False
 
-        # mock proxy settings
-      - USE_MOCK_PROXY=True
-      - HTTPS_PROXY=mockserver:1080
-
       # Email
       - EMAIL_HOST=mailserver
       - EMAIL_HOST_USER=
@@ -105,8 +101,6 @@ services:
 
       # Dev only
       - ENCRYPTION_KEY=my_32_chars_encryption_key_12345
-      
-      - GLOBAL_AGENT_HTTPS_PROXY=http://mockserver:1080
 
   web:
     image: web.development
@@ -125,29 +119,6 @@ services:
     stdin_open: true
     depends_on:
       - server
-
-  mockserver:
-    image: mockserver/mockserver:mockserver-5.11.2
-    environment:
-      - MOCKSERVER_LOG_LEVEL=warn
-    ports:
-      - 127.0.0.1:1080:1080
-
-  e2e:
-    build: ./e2e-tests
-    environment:
-      - LOADBALANCER_HOST=loadbalancer
-      - LOADBALANCER_PORT=8080
-      - CYPRESS_baseUrl=http://loadbalancer:8080
-      - CYPRESS_retries=${CYPRESS_retries:-0}
-    working_dir: /e2e
-    volumes:
-      - ./e2e-tests:/e2e
-      - /e2e/node_modules
-    depends_on:
-      - loadbalancer
-      - mockserver
-    ipc: host # https://github.com/cypress-io/cypress/issues/350#issuecomment-267704772
 
 volumes:
   shared-graphql:

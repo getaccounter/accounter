@@ -1,7 +1,0 @@
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-cypress/videos
-cypress/screenshots
-tmp-test-data
