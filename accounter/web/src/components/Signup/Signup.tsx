@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, Redirect, useLocation } from 'react-router-dom';
 import { useNotifications } from '../../contexts/notification';
 import { LockClosedIcon } from '@heroicons/react/solid';
-import { useAuth } from '../../contexts/auth';
 import LogoSquare from '../branding/LogoSquare';
 
 export const SIGNUP_MUTATION = gql`
@@ -37,7 +36,7 @@ const Signup = () => {
     }
   );
   const [orgNameInput, setOrgNameInput] = useState('');
-  const [emailInput, setEmailInput] = useState('');
+  const [emailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
   useEffect(() => {
