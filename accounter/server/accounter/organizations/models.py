@@ -17,6 +17,7 @@ User = get_user_model()
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
+    size = models.CharField(max_length=50, null=True)
 
     def create_profile(
         self,
