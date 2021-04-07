@@ -233,23 +233,17 @@ class IntegrationTestCase(GraphQLTestCase):
 
     def _signup_user(self, **kwargs):
         email = kwargs.get("email", fake.company_email())
-        first_name = kwargs.get("first_name", fake.first_name())
-        last_name = kwargs.get("last_name", fake.last_name())
         password = kwargs.get("password", fake.password())
         org_name = kwargs.get("org_name", fake.company())
         self.query(
             """
             mutation SignUp(
                 $orgName: String!
-                $firstName: String!
-                $lastName: String!
                 $email: String!
                 $password: String!
             ) {
                 signup(
                     orgName: $orgName
-                    firstName: $firstName
-                    lastName: $lastName
                     email: $email
                     password: $password
                 ) {
@@ -259,13 +253,11 @@ class IntegrationTestCase(GraphQLTestCase):
             """,
             variables={
                 "email": email,
-                "firstName": first_name,
-                "lastName": last_name,
                 "password": password,
                 "orgName": org_name,
             },
         )
-
+        self.client.logout()
         return get_user_model().objects.get(username=email)
 
     @patch.object(requests, "get")

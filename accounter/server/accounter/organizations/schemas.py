@@ -1,5 +1,5 @@
 import graphene
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from graphene_django import DjangoObjectType
@@ -15,8 +15,6 @@ from .models import Organization, Profile
 class Signup(graphene.Mutation):
     class Arguments:
         org_name = graphene.String(required=True)
-        first_name = graphene.String(required=True)
-        last_name = graphene.String(required=True)
         email = graphene.String(required=True)
         password = graphene.String(required=True)
 
@@ -27,8 +25,6 @@ class Signup(graphene.Mutation):
         self,
         info,
         org_name: str,
-        first_name: str,
-        last_name: str,
         email: str,
         password: str,
     ):
@@ -38,8 +34,6 @@ class Signup(graphene.Mutation):
         user = User.objects.create(
             username=email,
             email=email,
-            first_name=first_name,
-            last_name=last_name,
         )
         user.set_password(password)
         user.save()
@@ -48,6 +42,7 @@ class Signup(graphene.Mutation):
         )
         profile.save()
 
+        login(info.context, user)
         return Signup(status="success")
 
 
@@ -239,6 +234,30 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         return UpdateUser(profiles=updated_profiles)
 
 
+class OnboardBasic(graphene.Mutation):
+    class Arguments:
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+        title = graphene.String(required=True)
+        org_size = graphene.String(required=True)
+
+    status = graphene.String(required=True)
+
+    @transaction.atomic
+    def mutate(self, info, first_name: str, last_name: str, title: str, org_size: str):
+        user = info.context.user
+        profile = info.context.user.profile
+
+        user.first_name = first_name
+        user.last_name = last_name
+        profile.title = title
+
+        user.save()
+        profile.save()
+
+        return OnboardBasic(status="success")
+
+
 class Query(graphene.ObjectType):
     current_user = graphene.Field(ProfileNode, required=True)
 
@@ -252,3 +271,4 @@ class Mutation(graphene.ObjectType):
     signup = Signup.Field()
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
+    onboard_basic = OnboardBasic.Field()

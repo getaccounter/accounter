@@ -1,5 +1,4 @@
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
-import OnboardingAdvanced from './components/OnboardingAdvanced';
 import OnboardingAppSelector from './components/OnboardingAppSelector';
 import OnboardingBasics from './components/OnboardingBasics';
 
@@ -9,9 +8,6 @@ export default function Onboarding() {
     <Switch>
       <Route path={`${path}/basic`}>
         <OnboardingBasics />
-      </Route>
-      <Route path={`${path}/advanced`}>
-        <OnboardingAdvanced />
       </Route>
       <Route path={`${path}/apps`}>
         <OnboardingAppSelector />
