@@ -257,7 +257,7 @@ class IntegrationTestCase(GraphQLTestCase):
                 "orgName": org_name,
             },
         )
-
+        self.client.logout()
         return get_user_model().objects.get(username=email)
 
     @patch.object(requests, "get")
