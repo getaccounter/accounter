@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
+import { Redirect } from 'react-router-dom';
 
 export const ONBOARD_BASIC_MUTATION = gql`
   mutation OnboardBasic($firstName: String!, $lastName: String!, $title: String!, $orgSize: String!) {
@@ -10,7 +11,7 @@ export const ONBOARD_BASIC_MUTATION = gql`
 `;
 
 type OnboardBasicResponse = {
-  signup?: {
+  onboardBasic?: {
     status: 'success' | 'error';
   };
 };
@@ -74,19 +75,25 @@ const StepsBar = () => (
 );
 
 const OnboardingBasics = () => {
-  const [onboardBasic, { data: signupResponse, error, loading }] = useMutation<
-    OnboardBasicResponse,
-    OnboardBasicParameters
-  >(ONBOARD_BASIC_MUTATION, {
-    errorPolicy: 'all',
-    onError: () => undefined
-  });
+  const [onboardBasic, { data: response, loading }] = useMutation<OnboardBasicResponse, OnboardBasicParameters>(
+    ONBOARD_BASIC_MUTATION,
+    {
+      errorPolicy: 'all',
+      onError: () => undefined
+    }
+  );
   const [firstNameInput, setFirstNameInput] = useState('');
   const [lastNameInput, setLastNameInput] = useState('');
   const [titleInput, setTitleInput] = useState('');
   const [orgSizeInput, setOrgSizeInput] = useState('');
 
-  return (
+  return response?.onboardBasic?.status === 'success' ? (
+    <Redirect
+      to={{
+        pathname: '/onboarding/welcome'
+      }}
+    />
+  ) : (
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-lg">
       <StepsBar />
       <div className="px-4 sm:px-0">

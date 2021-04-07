@@ -16,13 +16,4 @@ User.objects.filter(username=username).exists() or \
     User.objects.create_superuser(username, username, 'password')
 EOF
 
-if [ "$USE_MOCK_PROXY" = "True" ]; then
-  # NOTE I believe this can be removed as all requests are made by connector now
-  echo "Adding mockserver certificates"
-  cp mockserver.crt /usr/local/share/ca-certificates/mockserver.crt
-  update-ca-certificates
-else
-  echo "Will NOT add mockserver certificates"
-fi
-
 exec "$@"
