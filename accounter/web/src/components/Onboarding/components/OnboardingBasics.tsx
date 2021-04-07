@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { Redirect } from 'react-router-dom';
+import { useNotifications } from '../../../contexts/notification';
 
 export const ONBOARD_BASIC_MUTATION = gql`
   mutation OnboardBasic($firstName: String!, $lastName: String!, $title: String!, $orgSize: String!) {
@@ -75,7 +76,9 @@ const StepsBar = () => (
 );
 
 const OnboardingBasics = () => {
-  const [onboardBasic, { data: response, loading }] = useMutation<OnboardBasicResponse, OnboardBasicParameters>(
+  const { addNotification } = useNotifications();
+
+  const [onboardBasic, { data: response, error, loading }] = useMutation<OnboardBasicResponse, OnboardBasicParameters>(
     ONBOARD_BASIC_MUTATION,
     {
       errorPolicy: 'all',
@@ -86,6 +89,16 @@ const OnboardingBasics = () => {
   const [lastNameInput, setLastNameInput] = useState('');
   const [titleInput, setTitleInput] = useState('');
   const [orgSizeInput, setOrgSizeInput] = useState('');
+
+  useEffect(() => {
+    if (error) {
+      addNotification({
+        type: 'error',
+        title: 'Onboarding Failed',
+        content: 'Something went wrong. We could not save your data'
+      });
+    }
+  }, [error, addNotification]);
 
   return response?.onboardBasic?.status === 'success' ? (
     <Redirect
