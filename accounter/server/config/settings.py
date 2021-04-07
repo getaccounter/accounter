@@ -125,6 +125,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 ROOT_URLCONF = "accounter.urls"
 
 TEMPLATES = [
@@ -231,8 +233,8 @@ ENVIRONMENT = get_enum_env_value("ENVIRONMENT", ["development", "production"])
 
 VERSION = get_optional_env_value("VERSION", "dev")
 
-SESSION_COOKIE_SECURE = ENVIRONMENT == "production"
-CSRF_COOKIE_SECURE = ENVIRONMENT == "production"
+SESSION_COOKIE_SECURE = ENVIRONMENT != "development"
+CSRF_COOKIE_SECURE = ENVIRONMENT != "development"
 
 if ENVIRONMENT == "production":
     sentry_sdk.init(
