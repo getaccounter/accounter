@@ -36,7 +36,7 @@ const Signup = () => {
     }
   );
   const [orgNameInput, setOrgNameInput] = useState('');
-  const [emailInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
   useEffect(() => {
@@ -90,6 +90,25 @@ const Signup = () => {
                   name="org_name"
                   type="text"
                   autoComplete="organization"
+                  required
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
+                Work Email
+              </label>
+              <div className="mt-1">
+                <input
+                  value={emailInput}
+                  onChange={(evt) => setEmailInput(evt.target.value)}
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   disabled={loading}

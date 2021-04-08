@@ -1,6 +1,7 @@
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import OnboardingAppSelector from './components/OnboardingAppSelector';
 import OnboardingBasics from './components/OnboardingBasics';
+import OnboardingWelcome from './components/OnboardingWelcome';
 
 export default function Onboarding() {
   const { path } = useRouteMatch();
@@ -11,6 +12,9 @@ export default function Onboarding() {
       </Route>
       <Route path={`${path}/apps`}>
         <OnboardingAppSelector />
+      </Route>
+      <Route path={`${path}/welcome`}>
+        <OnboardingWelcome />
       </Route>
       <Route exact path={`${path}/`}>
         <Redirect to={`${path}/basic`} />

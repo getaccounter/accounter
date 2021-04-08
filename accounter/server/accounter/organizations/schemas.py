@@ -246,14 +246,17 @@ class OnboardBasic(graphene.Mutation):
     @transaction.atomic
     def mutate(self, info, first_name: str, last_name: str, title: str, org_size: str):
         user = info.context.user
-        profile = info.context.user.profile
+        profile = user.profile
+        organization = profile.organization
 
         user.first_name = first_name
         user.last_name = last_name
         profile.title = title
+        organization.size = org_size
 
         user.save()
         profile.save()
+        organization.save()
 
         return OnboardBasic(status="success")
 
