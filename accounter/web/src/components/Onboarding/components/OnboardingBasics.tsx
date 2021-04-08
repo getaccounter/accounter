@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { Redirect } from 'react-router-dom';
 import { useNotifications } from '../../../contexts/notification';
+import { useFragment } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import { OnboardingBasics_roles$key } from './__generated__/OnboardingBasics_roles.graphql';
 
 export const ONBOARD_BASIC_MUTATION = gql`
   mutation OnboardBasic($firstName: String!, $lastName: String!, $title: String!, $orgSize: String!) {
@@ -40,9 +43,9 @@ const StepsBar = () => (
             aria-hidden="true"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-              clip-rule="evenodd"
+              clipRule="evenodd"
             />
           </svg>
           <span className="sr-only">Step 1</span>
@@ -75,7 +78,11 @@ const StepsBar = () => (
   </nav>
 );
 
-const OnboardingBasics = () => {
+type Props = {
+  roles: OnboardingBasics_roles$key
+}
+
+const OnboardingBasics = (props: Props) => {
   const { addNotification } = useNotifications();
 
   const [onboardBasic, { data: response, error, loading }] = useMutation<OnboardBasicResponse, OnboardBasicParameters>(
@@ -99,6 +106,16 @@ const OnboardingBasics = () => {
       });
     }
   }, [error, addNotification]);
+
+  const roles = useFragment(
+    graphql`
+      fragment OnboardingBasics_roles on ValueLabelPair @relay(plural: true) {
+        value
+        label
+      }
+    `,
+    props.roles
+  );
 
   return response?.onboardBasic?.status === 'success' ? (
     <Redirect
@@ -178,8 +195,9 @@ const OnboardingBasics = () => {
                   disabled={loading}
                 >
                   <option />
-                  <option value={'ca'}>IT Manager</option>
-                  <option value={'mx'}>Human Resources</option>
+                  {roles.map(role => (
+                    <option key={role.value} value={role.value}>{role.label}</option>
+                  ))}
                 </select>
               </div>
 
