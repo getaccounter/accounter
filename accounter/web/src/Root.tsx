@@ -1,4 +1,4 @@
-import React from 'react';
+import { Suspense } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Login from './components/Login';
 import OAuthSlackCallback from './components/OAuthSlackCallback';
@@ -8,10 +8,11 @@ import Signup from './components/Signup/Signup';
 import Logout from './components/Logout';
 import ResetPassword from './components/ResetPassword';
 import Onboarding from './components/Onboarding';
+import Loading from './components/Loading';
 
 export default function Root() {
   return (
-    <div>
+    <Suspense fallback={<Loading />}>
       <Switch>
         <Route path="/login">
           <Login />
@@ -37,6 +38,6 @@ export default function Root() {
           <Main />
         </PrivateRoute>
       </Switch>
-    </div>
+    </Suspense>
   );
 }

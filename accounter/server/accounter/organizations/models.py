@@ -46,6 +46,10 @@ class Organization(models.Model):
 
 
 class Profile(models.Model):
+    class Roles(models.TextChoices):
+        it_manager = "it_manager", "IT Manager"
+        hr = "hr", "Human Resources"
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT)
     organization = models.ForeignKey(
         Organization, related_name="profiles", on_delete=models.CASCADE
@@ -53,6 +57,9 @@ class Profile(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
     is_admin = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
+    role = models.CharField(
+        "role", max_length=50, choices=Roles.choices, blank=True, null=True
+    )
 
     def merge_with(self, profile_to_merge_with: Type["Profile"]):
         for account in self.accounts.all():

@@ -21,20 +21,11 @@ class Signup(graphene.Mutation):
     status = graphene.String(required=True)
 
     @transaction.atomic
-    def mutate(
-        self,
-        info,
-        org_name: str,
-        email: str,
-        password: str,
-    ):
+    def mutate(self, info, org_name: str, email: str, password: str):
         User = get_user_model()
         org = Organization.objects.create(name=org_name)
         org.save()
-        user = User.objects.create(
-            username=email,
-            email=email,
-        )
+        user = User.objects.create(username=email, email=email)
         user.set_password(password)
         user.save()
         profile = Profile.objects.create(
@@ -131,10 +122,7 @@ class OrganizationNode(DjangoObjectType):
         fields = ("name", "profiles")
         interfaces = (graphene.relay.Node,)
 
-    profile = graphene.Field(
-        ProfileNode,
-        id=graphene.ID(required=True),
-    )
+    profile = graphene.Field(ProfileNode, id=graphene.ID(required=True))
 
     def resolve_profile(root, info, id: str):
         organization = info.context.user.profile.organization
@@ -161,12 +149,7 @@ class CreateUser(graphene.relay.ClientIDMutation):
         email = input.get("email")
         title = input.get("title")
 
-        profile = organization.create_profile(
-            email,
-            first_name,
-            last_name,
-            title=title,
-        )
+        profile = organization.create_profile(email, first_name, last_name, title=title)
 
         return CreateUser(profile=profile)
 
@@ -261,13 +244,26 @@ class OnboardBasic(graphene.Mutation):
         return OnboardBasic(status="success")
 
 
+class ValueLabelPair(graphene.ObjectType):
+    value = graphene.String(required=True)
+    label = graphene.String(required=True)
+
+
 class Query(graphene.ObjectType):
     current_user = graphene.Field(ProfileNode, required=True)
 
     @staticmethod
     @admin_required
-    def resolve_current_user(parent, info, **kwargs):
+    def resolve_current_user(_, info, **kwargs):
         return info.context.user.profile
+
+    roles = graphene.List(graphene.NonNull(ValueLabelPair), required=True)
+
+    @staticmethod
+    def resolve_roles(_, info, **kwargs):
+        return list(
+            map(lambda role: {"value": role.value, "label": role.label}, Profile.Roles)
+        )
 
 
 class Mutation(graphene.ObjectType):
