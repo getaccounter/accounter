@@ -52,7 +52,7 @@ export default function Login() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-800 focus:border-blue-800 sm:text-sm"
                   disabled={isSigningIn}
                 />
               </div>
@@ -71,7 +71,7 @@ export default function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-800 focus:border-blue-800 sm:text-sm"
                   disabled={isSigningIn}
                 />
               </div>
@@ -80,11 +80,11 @@ export default function Login() {
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-800"
                 disabled={isSigningIn}
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
+                  <LockClosedIcon className="h-5 w-5 text-blue-600 group-hover:text-blue-400" />
                 </span>
                 {isSigningIn ? 'Logging in...' : 'Log in'}
               </button>
@@ -101,7 +101,7 @@ export default function Login() {
             </div>
           </div>
           <div className="flex justify-center">
-            <Link to="/signup" className="font-medium text-sm text-indigo-600 hover:text-indigo-500">
+            <Link to="/signup" className="font-medium text-sm text-blue-800 hover:text-blue-700">
               Sign up for free
             </Link>
           </div>
