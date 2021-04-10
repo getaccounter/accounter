@@ -17,14 +17,9 @@ User = get_user_model()
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
-    size = models.CharField(max_length=50, null=True)
 
     def create_profile(
-        self,
-        email: str,
-        first_name: str,
-        last_name: str,
-        title: str = None,
+        self, email: str, first_name: str, last_name: str, title: str = None
     ):
 
         user = User.objects.create(
@@ -35,20 +30,38 @@ class Organization(models.Model):
             is_active=False,
         )
         user.save()
-        profile = Profile.objects.create(
-            user=user,
-            organization=self,
-            title=title,
-        )
+        profile = Profile.objects.create(user=user, organization=self, title=title)
         profile.save()
 
         return profile
 
 
-class Profile(models.Model):
+class Lead(models.Model):
     class Roles(models.TextChoices):
         it_manager = "it_manager", "IT Manager"
         hr = "hr", "Human Resources"
+
+    class Sizes(models.TextChoices):
+        gt1 = "1-20", "1 - 20 employees"
+        gt20 = "21-50", "21 - 50 employees"
+        gt50 = "51-100", "51 - 100 employees"
+        gt100 = "101-200", "101 - 200 employees"
+        gt200 = ">200", "> 200 employees"
+
+    organization_size = models.CharField(
+        max_length=50, choices=Sizes.choices, blank=True, null=True
+    )
+
+    role = models.CharField(max_length=50, choices=Roles.choices, blank=True, null=True)
+
+    first_name = models.CharField(max_length=150, blank=True, null=True)
+
+    last_name = models.CharField(max_length=150, blank=True, null=True)
+
+    email = models.EmailField()
+
+
+class Profile(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT)
     organization = models.ForeignKey(
@@ -57,9 +70,6 @@ class Profile(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
     is_admin = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
-    role = models.CharField(
-        "role", max_length=50, choices=Roles.choices, blank=True, null=True
-    )
 
     def merge_with(self, profile_to_merge_with: Type["Profile"]):
         for account in self.accounts.all():
