@@ -7,7 +7,7 @@ import { LockClosedIcon } from '@heroicons/react/solid';
 
 export default function Login() {
   const { addNotification } = useNotifications();
-  const { isSignedIn, signIn, signInError } = useAuth();
+  const { isSignedIn, signIn, signInError, isSigningIn } = useAuth();
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
@@ -22,7 +22,6 @@ export default function Login() {
   }, [signInError, addNotification]);
 
   const location = useLocation();
-  const isSigningIn = isSignedIn === undefined;
 
   return !isSignedIn ? (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -87,7 +86,7 @@ export default function Login() {
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
                 </span>
-                {isSignedIn ? 'Logging in...' : 'Log in'}
+                {isSigningIn ? 'Logging in...' : 'Log in'}
               </button>
             </div>
           </form>

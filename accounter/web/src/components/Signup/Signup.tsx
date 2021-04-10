@@ -4,52 +4,27 @@ import { Link, Redirect, useLocation } from 'react-router-dom';
 import { useNotifications } from '../../contexts/notification';
 import { LockClosedIcon } from '@heroicons/react/solid';
 import LogoSquare from '../branding/LogoSquare';
-
-export const SIGNUP_MUTATION = gql`
-  mutation Signup($orgName: String!, $email: String!, $password: String!) {
-    signup(orgName: $orgName, email: $email, password: $password) {
-      status
-    }
-  }
-`;
-
-type SignupResponse = {
-  signup?: {
-    status: 'success' | 'error';
-  };
-};
-
-type SignupParameters = {
-  orgName: string;
-  email: string;
-  password: string;
-};
+import { useAuth } from '../../contexts/auth';
 
 const Signup = () => {
   const { addNotification } = useNotifications();
   const location = useLocation();
-  const [signup, { data: signupResponse, error, loading }] = useMutation<SignupResponse, SignupParameters>(
-    SIGNUP_MUTATION,
-    {
-      errorPolicy: 'all',
-      onError: () => undefined
-    }
-  );
   const [orgNameInput, setOrgNameInput] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const { isSignedIn, signUp, signUpError, isSigningUp } = useAuth();
 
   useEffect(() => {
-    if (error) {
+    if (signUpError) {
       addNotification({
         type: 'error',
         title: 'Signup Failed',
         content: 'Something went wrong. We could not register this account'
       });
     }
-  }, [error, addNotification]);
+  }, [signUpError, addNotification]);
 
-  return signupResponse?.signup?.status === 'success' ? (
+  return isSignedIn ? (
     <Redirect
       to={{
         pathname: '/onboarding/basic',
@@ -69,13 +44,7 @@ const Signup = () => {
             className="space-y-6"
             onSubmit={(e) => {
               e.preventDefault();
-              signup({
-                variables: {
-                  orgName: orgNameInput,
-                  email: emailInput,
-                  password: passwordInput
-                }
-              });
+              signUp(emailInput, passwordInput, orgNameInput);
             }}
           >
             <div>
@@ -92,7 +61,7 @@ const Signup = () => {
                   autoComplete="organization"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  disabled={loading}
+                  disabled={isSigningUp}
                 />
               </div>
             </div>
@@ -111,7 +80,7 @@ const Signup = () => {
                   autoComplete="email"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  disabled={loading}
+                  disabled={isSigningUp}
                 />
               </div>
             </div>
@@ -130,7 +99,7 @@ const Signup = () => {
                   autoComplete="current-password"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  disabled={loading}
+                  disabled={isSigningUp}
                 />
               </div>
             </div>
@@ -139,12 +108,12 @@ const Signup = () => {
               <button
                 type="submit"
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                disabled={loading}
+                disabled={isSigningUp}
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" />
                 </span>
-                {loading ? 'Signing up...' : 'Sign up'}
+                {isSigningUp ? 'Signing up...' : 'Sign up'}
               </button>
             </div>
           </form>
