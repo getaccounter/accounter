@@ -221,25 +221,30 @@ class OnboardBasic(graphene.Mutation):
     class Arguments:
         first_name = graphene.String(required=True)
         last_name = graphene.String(required=True)
-        title = graphene.String(required=True)
-        org_size = graphene.String(required=True)
+        role = graphene.String(required=True)
+        organization_size = graphene.String(required=True)
 
     status = graphene.String(required=True)
 
     @transaction.atomic
-    def mutate(self, info, first_name: str, last_name: str, title: str, org_size: str):
+    def mutate(
+        self, info, first_name: str, last_name: str, role: str, organization_size: str
+    ):
         user = info.context.user
-        profile = user.profile
-        organization = profile.organization
-
         user.first_name = first_name
         user.last_name = last_name
-        profile.title = title
-        organization.size = org_size
+
+        lead = Lead.objects.create(
+            profile=user.profile,
+            first_name=first_name,
+            last_name=last_name,
+            email=user.email,
+            organization_size=organization_size,
+            role=role,
+        )
 
         user.save()
-        profile.save()
-        organization.save()
+        lead.save()
 
         return OnboardBasic(status="success")
 

@@ -8,8 +8,8 @@ import { OnboardingBasics_roles$key } from './__generated__/OnboardingBasics_rol
 import { OnboardingBasics_organizationSizes$key } from './__generated__/OnboardingBasics_organizationSizes.graphql';
 
 export const ONBOARD_BASIC_MUTATION = gql`
-  mutation OnboardBasic($firstName: String!, $lastName: String!, $title: String!, $orgSize: String!) {
-    onboardBasic(firstName: $firstName, lastName: $lastName, title: $title, orgSize: $orgSize) {
+  mutation OnboardBasic($firstName: String!, $lastName: String!, $role: String!, $organizationSize: String!) {
+    onboardBasic(firstName: $firstName, lastName: $lastName, role: $role, organizationSize: $organizationSize) {
       status
     }
   }
@@ -24,8 +24,8 @@ type OnboardBasicResponse = {
 type OnboardBasicParameters = {
   firstName: string;
   lastName: string;
-  title: string;
-  orgSize: string;
+  role: string;
+  organizationSize: string;
 };
 
 const StepsBar = () => (
@@ -96,8 +96,8 @@ const OnboardingBasics = (props: Props) => {
   );
   const [firstNameInput, setFirstNameInput] = useState('');
   const [lastNameInput, setLastNameInput] = useState('');
-  const [titleInput, setTitleInput] = useState('');
-  const [orgSizeInput, setOrgSizeInput] = useState('');
+  const [roleInput, setRoleInput] = useState('');
+  const [organizationSizeInput, setOrganizationSizeInput] = useState('');
 
   useEffect(() => {
     if (error) {
@@ -139,7 +139,7 @@ const OnboardingBasics = (props: Props) => {
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-lg">
       <StepsBar />
       <div className="px-4 sm:px-0">
-        <h3 className="text-lg font-medium leading-6 text-gray-900">Let's meet a little bit more</h3>
+        <h3 className="text-lg font-medium leading-6 text-gray-900">Tell us more about you!</h3>
         <p className="mt-1 text-sm text-gray-600">Customizing your experience.</p>
       </div>
       <div className="mt-5">
@@ -150,8 +150,8 @@ const OnboardingBasics = (props: Props) => {
               variables: {
                 firstName: firstNameInput,
                 lastName: lastNameInput,
-                title: titleInput,
-                orgSize: orgSizeInput
+                role: roleInput,
+                organizationSize: organizationSizeInput
               }
             });
           }}
@@ -193,15 +193,14 @@ const OnboardingBasics = (props: Props) => {
               </div>
 
               <div className="col-span-2">
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
                   Your role
                 </label>
                 <select
-                  value={titleInput}
-                  onChange={(evt) => setTitleInput(evt.target.value)}
-                  id="title"
-                  name="title"
-                  autoComplete="organization-title"
+                  value={roleInput}
+                  onChange={(evt) => setRoleInput(evt.target.value)}
+                  id="role"
+                  name="role"
                   required
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   disabled={loading}
@@ -214,14 +213,14 @@ const OnboardingBasics = (props: Props) => {
               </div>
 
               <div className="col-span-2">
-                <label htmlFor="company_size" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="organization_size" className="block text-sm font-medium text-gray-700">
                   Company size
                 </label>
                 <select
-                  value={orgSizeInput}
-                  onChange={(evt) => setOrgSizeInput(evt.target.value)}
-                  id="org-size"
-                  name="org_size"
+                  value={organizationSizeInput}
+                  onChange={(evt) => setOrganizationSizeInput(evt.target.value)}
+                  id="organization-size"
+                  name="organization_size"
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                   disabled={loading}
