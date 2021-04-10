@@ -11,8 +11,13 @@ export default function Onboarding() {
   const data = useLazyLoadQuery<OnboardingQuery>(
     graphql`
       query OnboardingQuery {
-        roles {
-          ...OnboardingBasics_roles
+        leads {
+          roles {
+            ...OnboardingBasics_roles
+          }
+          organizationSizes {
+            ...OnboardingBasics_organizationSizes
+          }
         }
       }
     `,
@@ -22,7 +27,7 @@ export default function Onboarding() {
   return (
     <Switch>
       <Route path={`${path}/basic`}>
-        <OnboardingBasics roles={data.roles} />
+        <OnboardingBasics roles={data.leads.roles} organizationSizes={data.leads.organizationSizes} />
       </Route>
       <Route path={`${path}/apps`}>
         <OnboardingAppSelector />

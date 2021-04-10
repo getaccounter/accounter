@@ -9,7 +9,7 @@ from accounter.integrations.models import Account, Service
 from accounter.integrations.schemas import AccountNode
 
 from ..utils import ExtendedConnection, admin_required
-from .models import Organization, Profile
+from .models import Lead, Organization, Profile
 
 
 class Signup(graphene.Mutation):
@@ -249,6 +249,23 @@ class ValueLabelPair(graphene.ObjectType):
     label = graphene.String(required=True)
 
 
+class LeadNode(graphene.ObjectType):
+    roles = graphene.List(graphene.NonNull(ValueLabelPair), required=True)
+    organization_sizes = graphene.List(graphene.NonNull(ValueLabelPair), required=True)
+
+    @staticmethod
+    def resolve_roles(_, info, **kwargs):
+        return list(
+            map(lambda role: {"value": role.value, "label": role.label}, Lead.Roles)
+        )
+
+    @staticmethod
+    def resolve_organization_sizes(_, info, **kwargs):
+        return list(
+            map(lambda size: {"value": size.value, "label": size.label}, Lead.Sizes)
+        )
+
+
 class Query(graphene.ObjectType):
     current_user = graphene.Field(ProfileNode, required=True)
 
@@ -257,13 +274,7 @@ class Query(graphene.ObjectType):
     def resolve_current_user(_, info, **kwargs):
         return info.context.user.profile
 
-    roles = graphene.List(graphene.NonNull(ValueLabelPair), required=True)
-
-    @staticmethod
-    def resolve_roles(_, info, **kwargs):
-        return list(
-            map(lambda role: {"value": role.value, "label": role.label}, Profile.Roles)
-        )
+    leads = graphene.Field(LeadNode, required=True, default_value={})
 
 
 class Mutation(graphene.ObjectType):

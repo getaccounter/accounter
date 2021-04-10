@@ -5,6 +5,7 @@ import { useNotifications } from '../../../contexts/notification';
 import { useFragment } from 'react-relay';
 import graphql from 'babel-plugin-relay/macro';
 import { OnboardingBasics_roles$key } from './__generated__/OnboardingBasics_roles.graphql';
+import { OnboardingBasics_organizationSizes$key } from './__generated__/OnboardingBasics_organizationSizes.graphql';
 
 export const ONBOARD_BASIC_MUTATION = gql`
   mutation OnboardBasic($firstName: String!, $lastName: String!, $title: String!, $orgSize: String!) {
@@ -80,6 +81,7 @@ const StepsBar = () => (
 
 type Props = {
   roles: OnboardingBasics_roles$key
+  organizationSizes: OnboardingBasics_organizationSizes$key
 }
 
 const OnboardingBasics = (props: Props) => {
@@ -115,6 +117,16 @@ const OnboardingBasics = (props: Props) => {
       }
     `,
     props.roles
+  );
+
+  const organizationSizes = useFragment(
+    graphql`
+      fragment OnboardingBasics_organizationSizes on ValueLabelPair @relay(plural: true) {
+        value
+        label
+      }
+    `,
+    props.organizationSizes
   );
 
   return response?.onboardBasic?.status === 'success' ? (
@@ -215,10 +227,9 @@ const OnboardingBasics = (props: Props) => {
                   disabled={loading}
                 >
                   <option />
-                  <option value={1}>1 - 20 employees</option>
-                  <option value={2}>21 - 100 employees</option>
-                  <option value={3}>101 - 1000 employees</option>
-                  <option value={5}>&gt; 1000 employees</option>
+                  {organizationSizes.map(role => (
+                    <option key={role.value} value={role.value}>{role.label}</option>
+                  ))}
                 </select>
               </div>
             </div>
