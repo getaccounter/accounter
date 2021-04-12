@@ -25,19 +25,21 @@ export default function Onboarding() {
   );
 
   return (
-    <Switch>
-      <Route path={`${path}/basic`}>
-        <OnboardingBasics roles={data.leads.roles} organizationSizes={data.leads.organizationSizes} />
-      </Route>
-      <Route path={`${path}/apps`}>
-        <OnboardingAppSelector />
-      </Route>
-      <Route path={`${path}/welcome`}>
-        <OnboardingWelcome />
-      </Route>
-      <Route exact path={`${path}/`}>
-        <Redirect to={`${path}/basic`} />
-      </Route>
-    </Switch>
+    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-lg">
+      <Switch>
+        <Route path={`${path}/basic`}>
+          <OnboardingBasics roles={data.leads.roles} organizationSizes={data.leads.organizationSizes} />
+        </Route>
+        <Route path={`${path}/apps`}>
+          <OnboardingAppSelector />
+        </Route>
+        <Route path={`${path}/welcome`}>
+          <OnboardingWelcome />
+        </Route>
+        <Route exact path={`${path}/`}>
+          <Redirect to={`${path}/basic`} />
+        </Route>
+      </Switch>
+    </div>
   );
 }

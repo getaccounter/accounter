@@ -2,7 +2,7 @@ import React from 'react';
 
 const OnboardingWelcome = () => {
   return (
-    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full">
+    <div>
       <div className="relative px-4 sm:px-6 lg:px-8">
         <div className="text-lg max-w-prose mx-auto">
           <h1>

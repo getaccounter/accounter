@@ -136,7 +136,7 @@ const OnboardingBasics = (props: Props) => {
       }}
     />
   ) : (
-    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-lg">
+    <div>
       <StepsBar />
       <div className="px-4 sm:px-0">
         <h3 className="text-lg font-medium leading-6 text-gray-900">Tell us more about you!</h3>
