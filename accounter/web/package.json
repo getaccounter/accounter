@@ -84,7 +84,7 @@
     "concurrently": "6.0.1",
     "eslint-plugin-relay": "1.8.2",
     "factory": "https://registry.npmjs.org/factory.ts/-/factory.ts-0.5.1.tgz",
-    "faker": "5.5.2",
+    "faker": "5.5.3",
     "graphql": "15.5.0",
     "nodemon": "2.0.7",
     "relay-compiler": "11.0.1",
