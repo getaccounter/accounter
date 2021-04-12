@@ -24,6 +24,11 @@ updates:
     directory: "/accounter/server"
     schedule:
       interval: "monthly"
+
+  - package-ecosystem: "docker"
+    directory: "/accounter/connector"
+    schedule:
+      interval: "monthly"
       
   - package-ecosystem: "github-actions"
     directory: "/"
