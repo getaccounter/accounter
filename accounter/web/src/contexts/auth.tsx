@@ -46,6 +46,27 @@ export type LoginParameters = {
   password: string;
 };
 
+export const SIGNUP_MUTATION = gql`
+  mutation Signup($orgName: String!, $email: String!, $password: String!) {
+    signup(orgName: $orgName, email: $email, password: $password) {
+      status
+    }
+  }
+`;
+
+type SignupResponse = {
+  signup: {
+    status: 'success' | 'error';
+    message: string
+  };
+};
+
+type SignupParameters = {
+  orgName: string;
+  email: string;
+  password: string;
+};
+
 export const LOGOUT_MUTATION = gql`
   mutation Signout {
     signout {
@@ -66,8 +87,12 @@ export type LogoutParameters = {};
 
 const authContext = createContext<{
   isSignedIn?: boolean;
+  isSigningIn?: boolean;
+  isSigningUp?: boolean;
   signInError?: string;
   signIn: (email: string, password: string) => void;
+  signUp: (email: string, password: string, orgName: string) => void;
+  signUpError?: string,
   signOut: () => void;
 }>(undefined!);
 
@@ -76,10 +101,17 @@ type Props = {
 };
 
 export default function AuthProvider({ children }: Props) {
-  const [login, { data: loginData, error: loginError }] = useMutation<LoginResponse, LoginParameters>(LOGIN_MUTATION, {
+  const [login, { data: loginData, error: loginError, loading: isSigningIn }] = useMutation<LoginResponse, LoginParameters>(LOGIN_MUTATION, {
     errorPolicy: 'all',
     onError: () => undefined
   });
+  const [signup, { data: signupData, error: signUpError, loading: isSigningUp }] = useMutation<SignupResponse, SignupParameters>(
+    SIGNUP_MUTATION,
+    {
+      errorPolicy: 'all',
+      onError: () => undefined
+    }
+  );
   const [logout, { data: logoutData }] = useMutation<LoginResponse, LoginParameters>(LOGOUT_MUTATION, {
     errorPolicy: 'all',
     onError: () => undefined
@@ -93,13 +125,20 @@ export default function AuthProvider({ children }: Props) {
       // the browser to set the cookie in time
       recheck();
     }, 100);
-  }, [recheck, loginData, logoutData]);
+  }, [recheck, loginData, signupData, logoutData]);
 
   const signIn = (email: string, password: string) => {
     login({
       variables: { email, password }
     });
   };
+
+  const signUp = (email: string, password: string, orgName: string) => {
+    signup({
+      variables: { email, password, orgName }
+    });
+  };
+
   const signOut = () => {
     logout();
   };
@@ -109,8 +148,12 @@ export default function AuthProvider({ children }: Props) {
       children={children}
       value={{
         isSignedIn,
+        isSigningIn,
+        isSigningUp,
         signInError: loginError && loginError.message,
+        signUpError: signUpError && signUpError.message,
         signIn,
+        signUp,
         signOut
       }}
     />

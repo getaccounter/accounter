@@ -24,10 +24,10 @@ export default function Root() {
           {/* TODO: make /signup redirect to the app if you're already loged in */}
           <Signup />
         </Route>
-        <Route path="/onboarding">
+        <PrivateRoute path="/onboarding">
           {/* TODO: make /onboarding redirect to the app if you're already loged in */}
           <Onboarding />
-        </Route>
+        </PrivateRoute>
         <Route path="/reset-password">
           <ResetPassword />
         </Route>
