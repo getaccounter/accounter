@@ -28,57 +28,6 @@ type OnboardBasicParameters = {
   organizationSize: string;
 };
 
-const StepsBar = () => (
-  <nav aria-label="Progress">
-    <ol className="flex items-center justify-center pb-10">
-      <li className="relative pr-8 sm:pr-20">
-        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <div className="h-0.5 w-full bg-green-400" />
-        </div>
-        <div className="relative w-8 h-8 flex items-center justify-center bg-green-400 rounded-full">
-          <svg
-            className="w-5 h-5 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span className="sr-only">Step 1</span>
-        </div>
-      </li>
-
-      <li className="relative pr-8 sm:pr-20">
-        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <div className="h-0.5 w-full bg-gray-200" />
-        </div>
-        <div
-          className="relative w-8 h-8 flex items-center justify-center bg-white border-2 border-green-400 rounded-full"
-          aria-current="step"
-        >
-          <span className="h-2.5 w-2.5 bg-green-400 rounded-full" aria-hidden="true" />
-          <span className="sr-only">Step 2</span>
-        </div>
-      </li>
-
-      <li className="relative">
-        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <div className="h-0.5 w-full bg-gray-200" />
-        </div>
-        <div className="group relative w-8 h-8 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full">
-          <span className="h-2.5 w-2.5 bg-transparent rounded-full group-hover:bg-gray-300" aria-hidden="true" />
-          <span className="sr-only">Step 3</span>
-        </div>
-      </li>
-    </ol>
-  </nav>
-);
-
 type Props = {
   roles: OnboardingBasics_roles$key
   organizationSizes: OnboardingBasics_organizationSizes$key
@@ -137,7 +86,6 @@ const OnboardingBasics = (props: Props) => {
     />
   ) : (
     <div>
-      <StepsBar />
       <div className="px-4 sm:px-0">
         <h3 className="text-lg font-medium leading-6 text-gray-900">Tell us more about you!</h3>
         <p className="mt-1 text-sm text-gray-600">Customizing your experience.</p>
