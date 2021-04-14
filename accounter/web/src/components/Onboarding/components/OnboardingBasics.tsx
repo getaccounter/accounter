@@ -81,7 +81,7 @@ const OnboardingBasics = (props: Props) => {
   return response?.onboardBasic?.status === 'success' ? (
     <Redirect
       to={{
-        pathname: '/onboarding/welcome'
+        pathname: '/onboarding/apps'
       }}
     />
   ) : (

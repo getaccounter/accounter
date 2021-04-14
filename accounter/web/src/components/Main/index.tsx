@@ -1,4 +1,3 @@
-import React from 'react';
 import SideBar from './components/Sidebar';
 import { MenuIcon, UserGroupIcon, ViewGridIcon, ViewGridAddIcon } from '@heroicons/react/outline';
 import { Link, Redirect, Route, Switch, useLocation } from 'react-router-dom';
