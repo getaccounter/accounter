@@ -31,13 +31,14 @@ export default function Onboarding() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-lg">
+    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-2xl">
       <Switch>
         <Route path={`${path}/basic`}>
           <StepBar steps={onboardingSteps} currentStep={0} />
           <OnboardingBasics roles={data.leads.roles} organizationSizes={data.leads.organizationSizes} />
         </Route>
         <Route path={`${path}/apps`}>
+          <StepBar steps={onboardingSteps} currentStep={1} />
           <OnboardingAppSelector />
         </Route>
         <Route path={`${path}/welcome`}>
