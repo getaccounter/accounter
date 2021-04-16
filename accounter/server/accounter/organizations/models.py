@@ -157,6 +157,8 @@ class Lead(models.Model):
         gt200 = "200-1000", "200 - 1000 employees"
         gt1000 = ">1000", "> 1000 employees"
 
+    app_selection = models.ManyToManyField("integrations.Service")
+
     organization_size = models.CharField(
         max_length=50, choices=Sizes.choices, blank=False, null=True
     )
@@ -169,8 +171,4 @@ class Lead(models.Model):
 
     email = models.EmailField()
 
-    profile = models.OneToOneField(
-        Profile,
-        on_delete=models.RESTRICT,
-        default=None,
-    )
+    profile = models.OneToOneField(Profile, on_delete=models.RESTRICT, default=None)
