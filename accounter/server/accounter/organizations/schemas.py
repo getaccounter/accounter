@@ -6,7 +6,7 @@ from graphene_django import DjangoObjectType
 from graphql_relay.node.node import from_global_id
 
 from accounter.integrations.models import Account, Service
-from accounter.integrations.schemas import AccountNode
+from accounter.integrations.schemas import AccountNode, ServiceType
 
 from ..utils import ExtendedConnection, admin_required
 from .models import Lead, Organization, Profile
@@ -249,6 +249,17 @@ class OnboardBasic(graphene.Mutation):
         return OnboardBasic(status="success")
 
 
+class OnboardApps(graphene.Mutation):
+    class Arguments:
+        apps = graphene.List(graphene.NonNull(ServiceType), required=True)
+
+    status = graphene.String(required=True)
+
+    @transaction.atomic
+    def mutate(self, info, apps: Service.Types):
+        return OnboardBasic(status="success")
+
+
 class ValueLabelPair(graphene.ObjectType):
     value = graphene.String(required=True)
     label = graphene.String(required=True)
@@ -287,3 +298,4 @@ class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
     onboard_basic = OnboardBasic.Field()
+    onboard_apps = OnboardApps.Field()

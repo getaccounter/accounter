@@ -19,9 +19,12 @@ class ServiceNode(DjangoObjectType):
         return instance.logo and instance.logo.url
 
 
+ServiceType = graphene.Enum.from_enum(Service.Types)
+
+
 class HandleCallback(graphene.Mutation):
     class Arguments:
-        service = graphene.Enum.from_enum(Service.Types)(required=True)
+        service = ServiceType(required=True)
         code = graphene.String(required=True)
         state = graphene.String(required=True)
 
