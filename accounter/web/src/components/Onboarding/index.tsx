@@ -42,6 +42,7 @@ export default function Onboarding() {
           <OnboardingAppSelector />
         </Route>
         <Route path={`${path}/welcome`}>
+          <StepBar steps={onboardingSteps} currentStep={onboardingSteps.length} />
           <OnboardingWelcome />
         </Route>
         <Route exact path={`${path}/`}>
