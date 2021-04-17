@@ -4,9 +4,11 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
+export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
 export type OnboardingAppSelectorQueryVariables = {};
 export type OnboardingAppSelectorQueryResponse = {
     readonly services: ReadonlyArray<{
+        readonly name: ServiceName;
         readonly " $fragmentRefs": FragmentRefs<"OnboardingAppSelectorApp_service">;
     }>;
 };
@@ -20,6 +22,7 @@ export type OnboardingAppSelectorQuery = {
 /*
 query OnboardingAppSelectorQuery {
   services {
+    name
     ...OnboardingAppSelectorApp_service
   }
 }
@@ -30,7 +33,15 @@ fragment OnboardingAppSelectorApp_service on ServiceNode {
 }
 */
 
-const node: ConcreteRequest = {
+const node: ConcreteRequest = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
+return {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -45,6 +56,7 @@ const node: ConcreteRequest = {
         "name": "services",
         "plural": true,
         "selections": [
+          (v0/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -71,13 +83,7 @@ const node: ConcreteRequest = {
         "name": "services",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
+          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -91,13 +97,14 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "f3de77c5b2829d6e6a7873f978e27525",
+    "cacheID": "3fe743c7fd37fca0c8c44410c4f39a32",
     "id": null,
     "metadata": {},
     "name": "OnboardingAppSelectorQuery",
     "operationKind": "query",
-    "text": "query OnboardingAppSelectorQuery {\n  services {\n    ...OnboardingAppSelectorApp_service\n  }\n}\n\nfragment OnboardingAppSelectorApp_service on ServiceNode {\n  name\n  logo\n}\n"
+    "text": "query OnboardingAppSelectorQuery {\n  services {\n    name\n    ...OnboardingAppSelectorApp_service\n  }\n}\n\nfragment OnboardingAppSelectorApp_service on ServiceNode {\n  name\n  logo\n}\n"
   }
 };
-(node as any).hash = 'f55d963f243212e0db41ef3465b468e9';
+})();
+(node as any).hash = '7820c139c0f6f1105404df673d3d037d';
 export default node;

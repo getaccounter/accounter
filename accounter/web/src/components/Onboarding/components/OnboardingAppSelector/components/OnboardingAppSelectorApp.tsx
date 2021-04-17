@@ -4,6 +4,8 @@ import { OnboardingAppSelectorApp_service$key } from './__generated__/Onboarding
 
 type Props = {
   service: OnboardingAppSelectorApp_service$key;
+  selected: boolean;
+  onSelect: (selected: boolean) => void
 };
 
 const OnboardingAppSelectorApp = (props: Props) => {
@@ -16,19 +18,28 @@ const OnboardingAppSelectorApp = (props: Props) => {
     `,
     props.service
   );
-  
+
   return (
-    <div
-      key={service.name}
-      className="relative rounded-lg border border-gray-300 bg-white px-4 py-3 shadow-md flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
-    >
-      <div className="flex-shrink-0">
-        <img className="h-10 w-10 rounded-full" src={service.logo} alt={`${service.name} logo`} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-md font-medium text-gray-900">{service.name}</p>
-      </div>
-    </div>
+    <>
+      <label key={service.name}>
+        <input
+          type="checkbox"
+          checked={props.selected}
+          name={service.name}
+          onChange={evt => props.onSelect(evt.target.checked)}
+          className="sr-only"
+          aria-labelledby="server-size-0-label"
+        />
+        <div className="label-checked:border-indigo-500 relative flex items-center rounded-lg border border-gray-300 bg-white shadow-sm px-6 py-4 cursor-pointer hover:border-gray-400 sm:flex sm:justify-between focus-within:ring-1 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+          <div className="flex-shrink-0">
+            <img className="h-10 w-10 rounded-full" src={service.logo} alt={`${service.name} logo`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-md font-medium text-gray-900">{service.name}</p>
+          </div>
+        </div>
+      </label>
+    </>
   );
 };
 
