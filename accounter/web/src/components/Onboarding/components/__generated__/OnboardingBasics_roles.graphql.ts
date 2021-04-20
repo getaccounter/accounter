@@ -4,8 +4,9 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
+export type Role = "c_level" | "engineering" | "hr" | "marketing" | "other" | "product" | "sales" | "%future added value";
 export type OnboardingBasics_roles = ReadonlyArray<{
-    readonly value: string;
+    readonly value: Role;
     readonly label: string;
     readonly " $refType": "OnboardingBasics_roles";
 }>;
@@ -40,8 +41,8 @@ const node: ReaderFragment = {
       "storageKey": null
     }
   ],
-  "type": "ValueLabelPair",
+  "type": "RoleValueLabelPair",
   "abstractKey": null
 };
-(node as any).hash = '4bc2414ed1b000194196bf5932db19d0';
+(node as any).hash = 'b9cc1deab30061ecfe171d35eda9dfec';
 export default node;

@@ -34,12 +34,12 @@ query OnboardingQuery {
   }
 }
 
-fragment OnboardingBasics_organizationSizes on ValueLabelPair {
+fragment OnboardingBasics_organizationSizes on OrganizationSizeValueLabelPair {
   value
   label
 }
 
-fragment OnboardingBasics_roles on ValueLabelPair {
+fragment OnboardingBasics_roles on RoleValueLabelPair {
   value
   label
 }
@@ -80,7 +80,7 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "ValueLabelPair",
+            "concreteType": "RoleValueLabelPair",
             "kind": "LinkedField",
             "name": "roles",
             "plural": true,
@@ -96,7 +96,7 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "ValueLabelPair",
+            "concreteType": "OrganizationSizeValueLabelPair",
             "kind": "LinkedField",
             "name": "organizationSizes",
             "plural": true,
@@ -133,7 +133,7 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "ValueLabelPair",
+            "concreteType": "RoleValueLabelPair",
             "kind": "LinkedField",
             "name": "roles",
             "plural": true,
@@ -143,7 +143,7 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "ValueLabelPair",
+            "concreteType": "OrganizationSizeValueLabelPair",
             "kind": "LinkedField",
             "name": "organizationSizes",
             "plural": true,
@@ -156,12 +156,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "74e1998605a6b122c75ab72f0e81d81a",
+    "cacheID": "cde5cdc5109825f1e8aef71ea34aac18",
     "id": null,
     "metadata": {},
     "name": "OnboardingQuery",
     "operationKind": "query",
-    "text": "query OnboardingQuery {\n  leads {\n    roles {\n      ...OnboardingBasics_roles\n    }\n    organizationSizes {\n      ...OnboardingBasics_organizationSizes\n    }\n  }\n}\n\nfragment OnboardingBasics_organizationSizes on ValueLabelPair {\n  value\n  label\n}\n\nfragment OnboardingBasics_roles on ValueLabelPair {\n  value\n  label\n}\n"
+    "text": "query OnboardingQuery {\n  leads {\n    roles {\n      ...OnboardingBasics_roles\n    }\n    organizationSizes {\n      ...OnboardingBasics_organizationSizes\n    }\n  }\n}\n\nfragment OnboardingBasics_organizationSizes on OrganizationSizeValueLabelPair {\n  value\n  label\n}\n\nfragment OnboardingBasics_roles on RoleValueLabelPair {\n  value\n  label\n}\n"
   }
 };
 })();

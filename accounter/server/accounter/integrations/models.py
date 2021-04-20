@@ -34,13 +34,13 @@ class Service(models.Model):
             self.management_url = management_url
             self.refresh_token = refresh_token
 
-    class Types(models.TextChoices):
+    class Type(models.TextChoices):
         SLACK = "SLACK", "Slack"
         GOOGLE = "Google", "Google"
         ZOOM = "Zoom", "Zoom"
         GITHUB = "GitHub", "GitHub"
 
-    name = models.CharField("Type", max_length=50, choices=Types.choices, unique=True)
+    name = models.CharField("Type", max_length=50, choices=Type.choices, unique=True)
     logo = models.FileField(upload_to="services/logos")
 
     @property

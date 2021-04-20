@@ -20,7 +20,7 @@ const OnboardingAppSelector = () => {
     {}
   );
   const [commit, isInFlight] = useMutation<OnboardingAppSelectorMutation>(graphql`
-    mutation OnboardingAppSelectorMutation($apps: [Types!]!) {
+    mutation OnboardingAppSelectorMutation($apps: [Type!]!) {
       onboardApps(apps: $apps) {
         status
       }

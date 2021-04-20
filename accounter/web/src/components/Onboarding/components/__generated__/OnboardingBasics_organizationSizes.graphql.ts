@@ -4,8 +4,9 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
+export type Size = "gt1" | "gt1000" | "gt200" | "gt50" | "%future added value";
 export type OnboardingBasics_organizationSizes = ReadonlyArray<{
-    readonly value: string;
+    readonly value: Size;
     readonly label: string;
     readonly " $refType": "OnboardingBasics_organizationSizes";
 }>;
@@ -40,8 +41,8 @@ const node: ReaderFragment = {
       "storageKey": null
     }
   ],
-  "type": "ValueLabelPair",
+  "type": "OrganizationSizeValueLabelPair",
   "abstractKey": null
 };
-(node as any).hash = 'dcb9a4c6f4dc882f47bf86fe51a7e799';
+(node as any).hash = 'a37a43058454e2e4f33bce64a67d8399';
 export default node;

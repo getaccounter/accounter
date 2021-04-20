@@ -19,7 +19,7 @@ class ServiceNode(DjangoObjectType):
         return instance.logo and instance.logo.url
 
 
-ServiceType = graphene.Enum.from_enum(Service.Types)
+ServiceType = graphene.Enum.from_enum(Service.Type)
 
 
 class HandleCallback(graphene.Mutation):
@@ -31,7 +31,7 @@ class HandleCallback(graphene.Mutation):
     status = graphene.String(required=True)
 
     @admin_required
-    def mutate(self, info, service: Service.Types, code: str, state: str):
+    def mutate(self, info, service: Service.Type, code: str, state: str):
         organization = info.context.user.profile.organization
         service = Service.objects.get(name=service)
         callback_result = service.handle_callback(code, state)
