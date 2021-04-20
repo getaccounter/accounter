@@ -1,8 +1,11 @@
 import OnboardingAppSelectorApp from './components/OnboardingAppSelectorApp';
-import { useLazyLoadQuery } from 'react-relay';
+import { useLazyLoadQuery, useMutation } from 'react-relay';
 import { OnboardingAppSelectorQuery, ServiceName } from './__generated__/OnboardingAppSelectorQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import { useState } from 'react';
+import { OnboardingAppSelectorMutation } from './__generated__/OnboardingAppSelectorMutation.graphql';
+import Loading from '../../../Loading';
+import { useHistory } from 'react-router-dom';
 
 const OnboardingAppSelector = () => {
   const { services } = useLazyLoadQuery<OnboardingAppSelectorQuery>(
@@ -16,33 +19,62 @@ const OnboardingAppSelector = () => {
     `,
     {}
   );
-
+  const [commit, isInFlight] = useMutation<OnboardingAppSelectorMutation>(graphql`
+    mutation OnboardingAppSelectorMutation($apps: [Types!]!) {
+      onboardApps(apps: $apps) {
+        status
+      }
+    }
+  `);
+  
+  const history = useHistory();
   const [selectedApps, setSelectedApps] = useState<Array<ServiceName>>([]);
 
-  return (
+  return isInFlight ? <Loading /> : (
     <div>
       <div className="px-4 sm:px-0">
         <h3 className="text-lg font-medium leading-6 text-gray-900">Tell us more about you!</h3>
         <p className="mt-1 text-sm text-gray-600">Customizing your experience.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {services.map((service) => (
-          <OnboardingAppSelectorApp
-            service={service}
-            selected={selectedApps.includes(service.name)}
-            onSelect={(selected) =>
-              setSelectedApps((selectedApps) => {
-                const updatedSelectedApps = selectedApps.filter((app) => app !== service.name)
-                if (selected) {
-                  updatedSelectedApps.push(service.name)
-                }
-                return updatedSelectedApps
-              })
-            }
-          />
-        ))}
-      </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          commit({
+            variables: {
+              apps: selectedApps
+            },
+            onCompleted: (data) => history.push("/onboarding/welcome")
+          })
+        }}
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {services.map((service) => (
+            <OnboardingAppSelectorApp
+              key={service.name}
+              service={service}
+              selected={selectedApps.includes(service.name)}
+              onSelect={(selected) =>
+                setSelectedApps((selectedApps) => {
+                  const updatedSelectedApps = selectedApps.filter((app) => app !== service.name);
+                  if (selected) {
+                    updatedSelectedApps.push(service.name);
+                  }
+                  return updatedSelectedApps;
+                })
+              }
+            />
+          ))}
+        </div>
+        <div className="px-4 py-3 text-right sm:px-6">
+          <button
+            type="submit"
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-800"
+          >
+            Next
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
