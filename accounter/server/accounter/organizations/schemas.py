@@ -8,7 +8,7 @@ from graphql_relay.node.node import from_global_id
 from accounter.integrations.models import Account, Service
 from accounter.integrations.schemas import AccountNode, ServiceType
 
-from ..utils import ExtendedConnection, admin_required
+from ..utils import ExtendedConnection, admin_required, owner_required
 from .models import Lead, Organization, Profile
 
 
@@ -238,11 +238,9 @@ class OnboardBasic(graphene.Mutation):
         user.first_name = first_name
         user.last_name = last_name
 
-        lead = Lead.objects.create(
-            profile=user.profile,
-            organization_size=organization_size,
-            role=role,
-        )
+        lead, _ = Lead.objects.get_or_create(profile=user.profile)
+        lead.organization_size = organization_size
+        lead.role = role
 
         user.save()
         lead.save()
@@ -257,7 +255,14 @@ class OnboardApps(graphene.Mutation):
     status = graphene.String(required=True)
 
     @transaction.atomic
+    @owner_required
     def mutate(self, info, apps: Service.Type):
+        lead = info.context.user.profile.lead
+        lead.app_selection.clear()
+        for app in apps:
+            service = Service.objects.get(name=app)
+            lead.app_selection.add(service)
+        lead.save()
         return OnboardBasic(status="success")
 
 

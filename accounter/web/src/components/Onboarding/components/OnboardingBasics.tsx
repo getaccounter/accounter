@@ -8,7 +8,7 @@ import { OnboardingBasics_roles$key } from './__generated__/OnboardingBasics_rol
 import { OnboardingBasics_organizationSizes$key } from './__generated__/OnboardingBasics_organizationSizes.graphql';
 
 export const ONBOARD_BASIC_MUTATION = gql`
-  mutation OnboardBasic($firstName: String!, $lastName: String!, $role: String!, $organizationSize: String!) {
+  mutation OnboardBasic($firstName: String!, $lastName: String!, $role: Role!, $organizationSize: Size!) {
     onboardBasic(firstName: $firstName, lastName: $lastName, role: $role, organizationSize: $organizationSize) {
       status
     }

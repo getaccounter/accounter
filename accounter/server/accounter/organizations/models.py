@@ -17,6 +17,8 @@ User = get_user_model()
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
+    is_onboarded = models.BooleanField(default=True)
+    is_beta_user = models.BooleanField(default=False)
 
     def create_profile(
         self, email: str, first_name: str, last_name: str, title: str = None
@@ -45,7 +47,6 @@ class Profile(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
     is_admin = models.BooleanField(default=False)
     is_owner = models.BooleanField(default=False)
-    is_beta_allowed = models.BooleanField(default=False)
 
     def merge_with(self, profile_to_merge_with: Type["Profile"]):
         for account in self.accounts.all():
@@ -160,9 +161,9 @@ class Lead(models.Model):
     app_selection = models.ManyToManyField("integrations.Service")
 
     organization_size = models.CharField(
-        max_length=50, choices=Size.choices, blank=False, null=True
+        max_length=50, choices=Size.choices, blank=True, null=True
     )
 
     role = models.CharField(max_length=50, choices=Role.choices, blank=True, null=True)
 
-    profile = models.OneToOneField(Profile, on_delete=models.RESTRICT, default=None)
+    profile = models.OneToOneField(Profile, on_delete=models.RESTRICT)
