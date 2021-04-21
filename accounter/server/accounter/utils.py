@@ -23,6 +23,17 @@ def admin_required(func):
     return wrapper
 
 
+def owner_required(func):
+    @signin_required
+    def wrapper(*args, **kwargs):
+        if not args[1].context.user.profile.is_owner:
+            raise PermissionDenied("You do not have permission to perform this action")
+        else:
+            return func(*args, **kwargs)
+
+    return wrapper
+
+
 class ExtendedConnection(graphene.relay.Connection):
     class Meta:
         abstract = True
