@@ -3,9 +3,9 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type Types = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type Type = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
 export type OnboardingAppSelectorMutationVariables = {
-    apps: Array<Types>;
+    apps: Array<Type>;
 };
 export type OnboardingAppSelectorMutationResponse = {
     readonly onboardApps: {
@@ -21,7 +21,7 @@ export type OnboardingAppSelectorMutation = {
 
 /*
 mutation OnboardingAppSelectorMutation(
-  $apps: [Types!]!
+  $apps: [Type!]!
 ) {
   onboardApps(apps: $apps) {
     status
@@ -81,14 +81,14 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "4d77f00448bc21bb8d72bc0fe619c4e4",
+    "cacheID": "445371e04643dbbe4fb47f8833401073",
     "id": null,
     "metadata": {},
     "name": "OnboardingAppSelectorMutation",
     "operationKind": "mutation",
-    "text": "mutation OnboardingAppSelectorMutation(\n  $apps: [Types!]!\n) {\n  onboardApps(apps: $apps) {\n    status\n  }\n}\n"
+    "text": "mutation OnboardingAppSelectorMutation(\n  $apps: [Type!]!\n) {\n  onboardApps(apps: $apps) {\n    status\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '375bbf190a9b507198dbefd6ee2ea32f';
+(node as any).hash = '55de99eb2c11bb221d96817b0c262b02';
 export default node;

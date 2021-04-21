@@ -102,7 +102,7 @@ class ProfileNode(DjangoObjectType):
         try:
             account = Account.objects.filter(
                 profile=profile,
-                integration__service=Service.objects.get(name=Service.Types.SLACK),
+                integration__service=Service.objects.get(name=Service.Type.SLACK),
             ).first()
             return account.image_big
         except Account.DoesNotExist:
@@ -217,12 +217,16 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         return UpdateUser(profiles=updated_profiles)
 
 
+Role = graphene.Enum.from_enum(Lead.Role)
+OrganizationSize = graphene.Enum.from_enum(Lead.Size)
+
+
 class OnboardBasic(graphene.Mutation):
     class Arguments:
         first_name = graphene.String(required=True)
         last_name = graphene.String(required=True)
-        role = graphene.String(required=True)
-        organization_size = graphene.String(required=True)
+        role = Role(required=True)
+        organization_size = OrganizationSize(required=True)
 
     status = graphene.String(required=True)
 
@@ -236,9 +240,6 @@ class OnboardBasic(graphene.Mutation):
 
         lead = Lead.objects.create(
             profile=user.profile,
-            first_name=first_name,
-            last_name=last_name,
-            email=user.email,
             organization_size=organization_size,
             role=role,
         )
@@ -256,29 +257,36 @@ class OnboardApps(graphene.Mutation):
     status = graphene.String(required=True)
 
     @transaction.atomic
-    def mutate(self, info, apps: Service.Types):
+    def mutate(self, info, apps: Service.Type):
         return OnboardBasic(status="success")
 
 
-class ValueLabelPair(graphene.ObjectType):
-    value = graphene.String(required=True)
+class RoleValueLabelPair(graphene.ObjectType):
+    value = Role(required=True)
+    label = graphene.String(required=True)
+
+
+class OrganizationSizeValueLabelPair(graphene.ObjectType):
+    value = OrganizationSize(required=True)
     label = graphene.String(required=True)
 
 
 class LeadNode(graphene.ObjectType):
-    roles = graphene.List(graphene.NonNull(ValueLabelPair), required=True)
-    organization_sizes = graphene.List(graphene.NonNull(ValueLabelPair), required=True)
+    roles = graphene.List(graphene.NonNull(RoleValueLabelPair), required=True)
+    organization_sizes = graphene.List(
+        graphene.NonNull(OrganizationSizeValueLabelPair), required=True
+    )
 
     @staticmethod
     def resolve_roles(_, info, **kwargs):
         return list(
-            map(lambda role: {"value": role.value, "label": role.label}, Lead.Roles)
+            map(lambda role: {"value": role.value, "label": role.label}, Lead.Role)
         )
 
     @staticmethod
     def resolve_organization_sizes(_, info, **kwargs):
         return list(
-            map(lambda size: {"value": size.value, "label": size.label}, Lead.Sizes)
+            map(lambda size: {"value": size.value, "label": size.label}, Lead.Size)
         )
 
 

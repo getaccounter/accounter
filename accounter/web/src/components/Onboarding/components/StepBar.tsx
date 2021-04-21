@@ -56,6 +56,7 @@ const StepBar = (props: Props) => (
         const stage = idx < props.currentStep ? Stage.past : idx === props.currentStep ? Stage.current : Stage.future
         return (
           <Step
+            key={idx}
             label={label}
             stage={stage}
             isLast={idx + 1 === props.steps.length}

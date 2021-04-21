@@ -33,7 +33,7 @@ class ServiceTestCase(GraphQLTestCase):
         self.client.force_login(self.admin)
 
         services = []
-        for provider in Service.Types:
+        for provider in Service.Type:
             services.append((provider.value, fake.url()))
 
         for (value, oauth_url) in services:
@@ -61,7 +61,7 @@ class ServiceTestCase(GraphQLTestCase):
         response_services = content["data"]["services"]
         assert len(response_services) == 4
         for service_response in response_services:
-            service = Service.objects.get(name=Service.Types[service_response["name"]])
+            service = Service.objects.get(name=Service.Type[service_response["name"]])
             assert service_response["logo"] == service.logo.url
             assert service_response["oauthUrl"] == service.oauth_url
 
@@ -103,7 +103,7 @@ class ServiceTestCase(GraphQLTestCase):
         )
         response = self.query(
             """
-            mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
+            mutation SlackMutation($service: Type!, $code: String!, $state: String!) {
                 oauth {
                     slack {
                         handleCallback(service: $service, code: $code, state: $state) {
@@ -132,7 +132,7 @@ class ServiceTestCase(GraphQLTestCase):
 
         response = self.query(
             """
-            mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
+            mutation SlackMutation($service: Type!, $code: String!, $state: String!) {
                 oauth {
                     slack {
                         handleCallback(service: $service, code: $code, state: $state) {
@@ -170,7 +170,7 @@ class ServiceTestCase(GraphQLTestCase):
         # Calling endpoint twice
         self.query(
             """
-            mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
+            mutation SlackMutation($service: Type!, $code: String!, $state: String!) {
                 oauth {
                     slack {
                         handleCallback(service: $service, code: $code, state: $state) {
@@ -204,7 +204,7 @@ class ServiceTestCase(GraphQLTestCase):
         )
         self.query(
             """
-            mutation SlackMutation($service: Types!, $code: String!, $state: String!) {
+            mutation SlackMutation($service: Type!, $code: String!, $state: String!) {
                 oauth {
                     slack {
                         handleCallback(service: $service, code: $code, state: $state) {
@@ -263,7 +263,7 @@ class IntegrationTestCase(GraphQLTestCase):
     @patch.object(requests, "get")
     def test_get_integrations(self, _):
         slack_integration = Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             token="some_token",
         )
@@ -295,7 +295,7 @@ class IntegrationTestCase(GraphQLTestCase):
     def test_get_integrations_expired_token(self, mock_request):
         token = fake.uuid4()
         Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             has_valid_token=True,
             token=token,
@@ -327,7 +327,7 @@ class IntegrationTestCase(GraphQLTestCase):
         fresh_token = fake.uuid4()
         refresh_token = fake.uuid4()
         Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             has_valid_token=True,
             token=expired_token,
@@ -379,7 +379,7 @@ class IntegrationTestCase(GraphQLTestCase):
         expired_token = fake.uuid4()
         refresh_token = fake.uuid4()
         Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             has_valid_token=True,
             token=expired_token,
@@ -433,7 +433,7 @@ class IntegrationTestCase(GraphQLTestCase):
             ],
         )
         slack_integration = Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             token=token,
         )
@@ -499,7 +499,7 @@ class IntegrationTestCase(GraphQLTestCase):
             ],
         )
         slack_integration = Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             token=token,
         )
@@ -575,7 +575,7 @@ class IntegrationTestCase(GraphQLTestCase):
             ],
         )
         slack_integration = Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             token=token,
         )
@@ -629,7 +629,7 @@ class IntegrationTestCase(GraphQLTestCase):
             ],
         )
         slack_integration = Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             token=token,
         )
@@ -701,7 +701,7 @@ class IntegrationTestCase(GraphQLTestCase):
             ],
         )
         slack_integration = Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             organization=self.admin.profile.organization,
             token=token,
         )
@@ -757,7 +757,7 @@ class IntegrationTestCase(GraphQLTestCase):
     def test_get_integrations_only_of_own_organization(self, _):
         # integration of this org
         Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             id="1",
             organization=self.other_company_admin.profile.organization,
             token="some_other_token",
@@ -765,7 +765,7 @@ class IntegrationTestCase(GraphQLTestCase):
 
         # integration of other org
         Integration.objects.create(
-            service=Service.objects.get(name=Service.Types.SLACK),
+            service=Service.objects.get(name=Service.Type.SLACK),
             id="2",
             organization=self.admin.profile.organization,
             token="some_token",

@@ -29,9 +29,9 @@ type OnboardBasicParameters = {
 };
 
 type Props = {
-  roles: OnboardingBasics_roles$key
-  organizationSizes: OnboardingBasics_organizationSizes$key
-}
+  roles: OnboardingBasics_roles$key;
+  organizationSizes: OnboardingBasics_organizationSizes$key;
+};
 
 const OnboardingBasics = (props: Props) => {
   const { addNotification } = useNotifications();
@@ -60,7 +60,7 @@ const OnboardingBasics = (props: Props) => {
 
   const roles = useFragment(
     graphql`
-      fragment OnboardingBasics_roles on ValueLabelPair @relay(plural: true) {
+      fragment OnboardingBasics_roles on RoleValueLabelPair @relay(plural: true) {
         value
         label
       }
@@ -70,7 +70,7 @@ const OnboardingBasics = (props: Props) => {
 
   const organizationSizes = useFragment(
     graphql`
-      fragment OnboardingBasics_organizationSizes on ValueLabelPair @relay(plural: true) {
+      fragment OnboardingBasics_organizationSizes on OrganizationSizeValueLabelPair @relay(plural: true) {
         value
         label
       }
@@ -154,8 +154,10 @@ const OnboardingBasics = (props: Props) => {
                   disabled={loading}
                 >
                   <option />
-                  {roles.map(role => (
-                    <option key={role.value} value={role.value}>{role.label}</option>
+                  {roles.map((role) => (
+                    <option key={role.value} value={role.value}>
+                      {role.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -174,8 +176,10 @@ const OnboardingBasics = (props: Props) => {
                   disabled={loading}
                 >
                   <option />
-                  {organizationSizes.map(role => (
-                    <option key={role.value} value={role.value}>{role.label}</option>
+                  {organizationSizes.map((role) => (
+                    <option key={role.value} value={role.value}>
+                      {role.label}
+                    </option>
                   ))}
                 </select>
               </div>

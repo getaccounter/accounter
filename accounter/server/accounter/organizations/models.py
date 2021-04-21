@@ -142,7 +142,7 @@ class Profile(models.Model):
 
 
 class Lead(models.Model):
-    class Roles(models.TextChoices):
+    class Role(models.TextChoices):
         hr = "hr", "Human Resources"
         engineering = "engineering", "Engineering"
         marketing = "marketing", "Marketing"
@@ -151,24 +151,18 @@ class Lead(models.Model):
         c_level = "c_level", "C-Level"
         other = "other", "Other"
 
-    class Sizes(models.TextChoices):
-        gt1 = "1-50", "1 - 50 employees"
-        gt50 = "50-200", "50 - 200 employees"
-        gt200 = "200-1000", "200 - 1000 employees"
-        gt1000 = ">1000", "> 1000 employees"
+    class Size(models.TextChoices):
+        gt1 = "gt1", "1 - 50 employees"
+        gt50 = "gt50", "50 - 200 employees"
+        gt200 = "gt200", "200 - 1000 employees"
+        gt1000 = "gt1000", "> 1000 employees"
 
     app_selection = models.ManyToManyField("integrations.Service")
 
     organization_size = models.CharField(
-        max_length=50, choices=Sizes.choices, blank=False, null=True
+        max_length=50, choices=Size.choices, blank=False, null=True
     )
 
-    role = models.CharField(max_length=50, choices=Roles.choices, blank=True, null=True)
-
-    first_name = models.CharField(max_length=150, blank=True, null=True)
-
-    last_name = models.CharField(max_length=150, blank=True, null=True)
-
-    email = models.EmailField()
+    role = models.CharField(max_length=50, choices=Role.choices, blank=True, null=True)
 
     profile = models.OneToOneField(Profile, on_delete=models.RESTRICT, default=None)
