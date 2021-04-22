@@ -7,7 +7,7 @@ import { FragmentRefs } from "relay-runtime";
 export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
 export type OnboardingAppSelectorApp_service = {
     readonly name: ServiceName;
-    readonly logo: string;
+    readonly logoLarge: string;
     readonly " $refType": "OnboardingAppSelectorApp_service";
 };
 export type OnboardingAppSelectorApp_service$data = OnboardingAppSelectorApp_service;
@@ -35,12 +35,12 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "logo",
+      "name": "logoLarge",
       "storageKey": null
     }
   ],
   "type": "ServiceNode",
   "abstractKey": null
 };
-(node as any).hash = '849efbb99773b4d39fe2836c9d6e943a';
+(node as any).hash = '9ac94ac911baf7b6455f8eebc19a80cf';
 export default node;

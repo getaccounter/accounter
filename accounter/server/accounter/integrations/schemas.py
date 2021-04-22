@@ -13,10 +13,15 @@ class ServiceNode(DjangoObjectType):
 
     oauth_url = graphene.String(source="oauth_url", required=True)
     logo = graphene.String(required=True)
+    logo_large = graphene.String(required=True)
 
     @classmethod
     def resolve_logo(cls, instance, info):
         return instance.logo and instance.logo.url
+
+    @classmethod
+    def resolve_logo_large(cls, instance, info):
+        return instance.logo_large and instance.logo_large.url
 
 
 ServiceType = graphene.Enum.from_enum(Service.Type)
