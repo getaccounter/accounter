@@ -23,7 +23,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      borderColor: ['label-checked'] // you need add new variant to a property you want to extend
+      borderColor: ['label-checked'],
+      borderWidth: ['label-checked']
     }
   }
 };
