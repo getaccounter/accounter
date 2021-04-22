@@ -29,7 +29,7 @@ query OnboardingAppSelectorQuery {
 
 fragment OnboardingAppSelectorApp_service on ServiceNode {
   name
-  logo
+  logoLarge
 }
 */
 
@@ -88,7 +88,7 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "logo",
+            "name": "logoLarge",
             "storageKey": null
           }
         ],
@@ -97,12 +97,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3fe743c7fd37fca0c8c44410c4f39a32",
+    "cacheID": "7326431341aa3e1db99efb6417240149",
     "id": null,
     "metadata": {},
     "name": "OnboardingAppSelectorQuery",
     "operationKind": "query",
-    "text": "query OnboardingAppSelectorQuery {\n  services {\n    name\n    ...OnboardingAppSelectorApp_service\n  }\n}\n\nfragment OnboardingAppSelectorApp_service on ServiceNode {\n  name\n  logo\n}\n"
+    "text": "query OnboardingAppSelectorQuery {\n  services {\n    name\n    ...OnboardingAppSelectorApp_service\n  }\n}\n\nfragment OnboardingAppSelectorApp_service on ServiceNode {\n  name\n  logoLarge\n}\n"
   }
 };
 })();

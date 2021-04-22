@@ -42,6 +42,7 @@ class Service(models.Model):
 
     name = models.CharField("Type", max_length=50, choices=Type.choices, unique=True)
     logo = models.FileField(upload_to="services/logos")
+    logo_large = models.FileField(upload_to="services/logos_large")
 
     @property
     def oauth_url(self):
