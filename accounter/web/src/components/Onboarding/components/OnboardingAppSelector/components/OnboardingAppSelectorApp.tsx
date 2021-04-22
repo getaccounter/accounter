@@ -30,7 +30,7 @@ const OnboardingAppSelectorApp = (props: Props) => {
           className="sr-only"
           aria-labelledby="server-size-0-label"
         />
-        <div className="label-checked:border-indigo-500 relative flex items-center rounded-lg border border-gray-300 bg-white shadow-sm px-6 py-4 cursor-pointer hover:border-gray-400 sm:flex sm:justify-between focus-within:ring-1 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+        <div className="hover:border-indigo-500 label-checked:border-2 label-checked:border-indigo-500 relative flex items-center rounded-lg border border-gray-300 bg-white shadow-sm px-6 py-4 cursor-pointer hover:border-gray-400 sm:flex sm:justify-between focus-within:ring-1 focus-within:ring-offset-2 focus-within:ring-indigo-500">
           <div className="flex-shrink-0">
             <img className="h-10 w-10 rounded-full" src={service.logo} alt={`${service.name} logo`} />
           </div>
