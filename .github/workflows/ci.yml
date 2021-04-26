@@ -120,7 +120,7 @@ jobs:
         env:
           TF_VAR_app_version: ${{ env.version }}
 
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4.0.2
         if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.event_name == 'pull_request' }}
         env:
           PROVIDER_PLAN: "terraform\n${{ steps.plan-provider.outputs.stdout }}"
