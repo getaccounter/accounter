@@ -121,7 +121,7 @@ module "connector" {
   source = "./connector/terraform"
 
   app_version            = var.app_version
-  image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
+  image_pull_secret_name = data.kubernetes_secret.registry-accounter.metadata[0].name
 
   slack = {
     client_id     = var.slack_client_id
@@ -151,7 +151,7 @@ module "web" {
   source = "./web/terraform"
 
   app_version            = var.app_version
-  image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
+  image_pull_secret_name = data.kubernetes_secret.registry-accounter.metadata[0].name
 
   server = {
     host = module.server.host
@@ -163,7 +163,7 @@ module "loadbalancer" {
   source = "./loadbalancer/terraform"
 
   app_version            = var.app_version
-  image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
+  image_pull_secret_name = data.kubernetes_secret.registry-accounter.metadata[0].name
 
   web = {
     host = module.web.host
