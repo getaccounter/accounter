@@ -1,7 +1,7 @@
 resource "kubernetes_secret" "slack-credentials" {
   type = "Opaque"
   metadata {
-    name = "slack-credentials-updated"
+    name = "slack-credentials"
   }
 
   data = {
@@ -14,7 +14,7 @@ resource "kubernetes_secret" "slack-credentials" {
 resource "kubernetes_secret" "google-workspace-credentials" {
   type = "Opaque"
   metadata {
-    name = "google-workspace-credentials-updated"
+    name = "google-workspace-credentials"
   }
 
   data = {
@@ -26,7 +26,7 @@ resource "kubernetes_secret" "google-workspace-credentials" {
 resource "kubernetes_secret" "zoom-workspace-credentials" {
   type = "Opaque"
   metadata {
-    name = "zoom-workspace-credentials-updated"
+    name = "zoom-workspace-credentials"
   }
 
   data = {
@@ -38,7 +38,7 @@ resource "kubernetes_secret" "zoom-workspace-credentials" {
 resource "kubernetes_secret" "github-credentials" {
   type = "Opaque"
   metadata {
-    name = "github-credentials-updated"
+    name = "github-credentials"
   }
 
   data = {
@@ -50,7 +50,7 @@ resource "kubernetes_secret" "github-credentials" {
 resource "kubernetes_secret" "token-encryption" {
   type = "Opaque"
   metadata {
-    name = "token-encryption-updated"
+    name = "token-encryption"
   }
 
   data = {

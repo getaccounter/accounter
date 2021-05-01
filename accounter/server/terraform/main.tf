@@ -3,7 +3,7 @@
 resource "kubernetes_secret" "database-credentials" {
   type = "Opaque"
   metadata {
-    name = "database-credentials-updated"
+    name = "database-credentials"
   }
 
   data = {
@@ -15,7 +15,7 @@ resource "kubernetes_secret" "database-credentials" {
 resource "kubernetes_secret" "s3-credentials" {
   type = "Opaque"
   metadata {
-    name = "s3-credentials-updated"
+    name = "s3-credentials"
   }
 
   data = {
@@ -27,7 +27,7 @@ resource "kubernetes_secret" "s3-credentials" {
 resource "kubernetes_secret" "sendgrid-api-key" {
   type = "Opaque"
   metadata {
-    name = "sendgrid-api-key-updated"
+    name = "sendgrid-api-key"
   }
 
   data = {
@@ -38,7 +38,7 @@ resource "kubernetes_secret" "sendgrid-api-key" {
 resource "kubernetes_secret" "secret-key" {
   type = "Opaque"
   metadata {
-    name = "secret-key-updated"
+    name = "secret-key"
   }
 
   data = {
