@@ -55,27 +55,33 @@ data "digitalocean_database_cluster" "database" {
   name = "database"
 }
 
-data "digitalocean_container_registry" "accounter" {
-  name = "accounter"
-}
+# data "digitalocean_container_registry" "accounter" {
+#   name = "accounter"
+# }
 
 resource "digitalocean_spaces_bucket" "assets" {
   name   = "accounter-assets-bucket"
   region = "ams3"
 }
 
-resource "digitalocean_container_registry_docker_credentials" "registry" {
-  registry_name = data.digitalocean_container_registry.accounter.name
-}
+# resource "digitalocean_container_registry_docker_credentials" "registry" {
+#   registry_name = data.digitalocean_container_registry.accounter.name
+# }
 
-resource "kubernetes_secret" "registry-accounter" {
-  type = "kubernetes.io/dockerconfigjson"
+# resource "kubernetes_secret" "registry-accounter" {
+#   type = "kubernetes.io/dockerconfigjson"
+#   metadata {
+#     name = "registry-accounter"
+#   }
+
+#   data = {
+#     ".dockerconfigjson" = digitalocean_container_registry_docker_credentials.registry.docker_credentials
+#   }
+# }
+
+data "kubernetes_secret" "registry-accounter" {
   metadata {
-    name = "registry-accounter"
-  }
-
-  data = {
-    ".dockerconfigjson" = digitalocean_container_registry_docker_credentials.registry.docker_credentials
+    name = "accounter"
   }
 }
 
@@ -83,7 +89,7 @@ module "server" {
   source = "./server/terraform"
 
   app_version            = var.app_version
-  image_pull_secret_name = kubernetes_secret.registry-accounter.metadata[0].name
+  image_pull_secret_name = data.kubernetes_secret.registry-accounter.metadata[0].name
 
   database = {
     user     = data.digitalocean_database_cluster.database.user
