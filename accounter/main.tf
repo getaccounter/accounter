@@ -31,11 +31,11 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "2.0.1"
+      version = "2.1.2"
     }
     digitalocean = {
       source  = "digitalocean/digitalocean"
-      version = "2.3.0"
+      version = "2.8.0"
     }
   }
 
