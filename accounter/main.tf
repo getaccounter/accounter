@@ -71,7 +71,7 @@ resource "digitalocean_container_registry_docker_credentials" "registry" {
 resource "kubernetes_secret" "registry-accounter" {
   type = "kubernetes.io/dockerconfigjson"
   metadata {
-    name = "registry-accounter"
+    name = "registry-accounter-updated"
   }
 
   data = {
