@@ -1,0 +1,19 @@
+{
+  "name": "e2e-tests",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/faker": "5.5.3",
+    "@types/jest": "26.0.23",
+    "eslint": "7.25.0",
+    "eslint-plugin-jest": "24.3.6",
+    "eslint-plugin-jest-playwright": "0.3.1",
+    "faker": "5.5.3",
+    "jest": "26.6.3",
+    "jest-playwright-preset": "1.5.2",
+    "playwright": "1.10.0",
+    "ts-jest": "26.5.5",
+    "typescript": "4.2.4"
+  }
+}
