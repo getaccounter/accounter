@@ -73,7 +73,6 @@ jobs:
         with:
           context: ./accounter/server
           builder: ${{ steps.buildx.outputs.name }}
-          file: .dockerdev/Dockerfile.multi
           # Set the desired build target here
           target: production
           push: false
