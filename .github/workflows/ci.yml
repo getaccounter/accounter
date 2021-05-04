@@ -83,7 +83,7 @@ jobs:
 
       - name: Create GraphQL Schema
         run: |
-          docker-compose run server ./manage.py graphql_schema --out schema.graphql
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run server ./manage.py graphql_schema --out schema.graphql
           mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
 
       - name: Build Web Development
