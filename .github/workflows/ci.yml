@@ -68,12 +68,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-multi-buildx
 
-      - name: Build Server
+      - name: Build Server Development
         uses: docker/build-push-action@v2
         with:
           context: ./accounter/server
           builder: ${{ steps.buildx.outputs.name }}
-          target: production
+          target: development
           push: false
           cache-from: type=local,src=/tmp/.buildx-cache
           # Note the mode=max here
@@ -81,12 +81,12 @@ jobs:
           # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
 
-      - name: Build Web
+      - name: Build Web Development
         uses: docker/build-push-action@v2
         with:
           context: ./accounter/web
           builder: ${{ steps.buildx.outputs.name }}
-          target: production
+          target: development
           push: false
           cache-from: type=local,src=/tmp/.buildx-cache
           # Note the mode=max here
@@ -94,12 +94,12 @@ jobs:
           # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
 
-      - name: Build Connector
+      - name: Build Connector Development
         uses: docker/build-push-action@v2
         with:
           context: ./accounter/connector
           builder: ${{ steps.buildx.outputs.name }}
-          target: production
+          target: development
           push: false
           cache-from: type=local,src=/tmp/.buildx-cache
           # Note the mode=max here
@@ -128,6 +128,45 @@ jobs:
         run: |
           docker-compose run server ./manage.py graphql_schema --out schema.graphql
           mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
+
+      - name: Build Server Production
+        uses: docker/build-push-action@v2
+        with:
+          context: ./accounter/server
+          builder: ${{ steps.buildx.outputs.name }}
+          target: production
+          push: false
+          cache-from: type=local,src=/tmp/.buildx-cache
+          # Note the mode=max here
+          # More: https://github.com/moby/buildkit#--export-cache-options
+          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+
+      - name: Build Web Production
+        uses: docker/build-push-action@v2
+        with:
+          context: ./accounter/web
+          builder: ${{ steps.buildx.outputs.name }}
+          target: production
+          push: false
+          cache-from: type=local,src=/tmp/.buildx-cache
+          # Note the mode=max here
+          # More: https://github.com/moby/buildkit#--export-cache-options
+          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+
+      - name: Build Connector Production
+        uses: docker/build-push-action@v2
+        with:
+          context: ./accounter/connector
+          builder: ${{ steps.buildx.outputs.name }}
+          target: production
+          push: false
+          cache-from: type=local,src=/tmp/.buildx-cache
+          # Note the mode=max here
+          # More: https://github.com/moby/buildkit#--export-cache-options
+          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
+          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
 
       # - name: lint
       #   run: |
