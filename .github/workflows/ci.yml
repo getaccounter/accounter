@@ -52,25 +52,25 @@ jobs:
 
       - name: Create GraphQL Schema
         run: |
-          docker-compose run server ./manage.py graphql_schema --out schema.graphql
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run server ./manage.py graphql_schema --out schema.graphql
           mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
 
       - name: lint
         run: |
-          docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
-          docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
 
       - name: unit tests server
         run: |
-          docker-compose run server coverage run --source='.' manage.py test
-          docker-compose run --no-deps --entrypoint /usr/bin/env server coverage xml
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run server coverage run --source='.' manage.py test
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run --no-deps --entrypoint /usr/bin/env server coverage xml
 
       - name: unit tests web
-        run: docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm t -- --coverage
+        run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm t -- --coverage
 
       - name: unit tests connector
         run: |
-          docker-compose run --no-deps --entrypoint /usr/bin/env connector npm run test:once -- --coverage
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run --no-deps --entrypoint /usr/bin/env connector npm run test:once -- --coverage
           
       - name: report coverage
         if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
@@ -82,10 +82,10 @@ jobs:
 
       - name: check migrations
         if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
-        run: docker-compose -f docker-compose.yml run --entrypoint /usr/bin/env server python manage.py makemigrations --check
+        run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml run --entrypoint /usr/bin/env server python manage.py makemigrations --check
 
       - name: production build
-        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml build --parallel
+        run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml -f docker-compose.production.yml build --parallel
           
       - uses: hashicorp/setup-terraform@v1
         if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
@@ -154,7 +154,7 @@ jobs:
       # Deploy
       - name: django deployment check
         if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref == 'refs/heads/master' }}
-        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
+        run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
 
       - name: Semantic Release
         if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref == 'refs/heads/master' }}
