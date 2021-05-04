@@ -81,10 +81,10 @@ jobs:
           # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new/dev
 
-      # - name: Create GraphQL Schema
-      #   run: |
-      #     docker-compose run server ./manage.py graphql_schema --out schema.graphql
-      #     mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
+      - name: Create GraphQL Schema
+        run: |
+          docker-compose run server ./manage.py graphql_schema --out schema.graphql
+          mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
 
       - name: Build Web Development
         uses: docker/build-push-action@v2
