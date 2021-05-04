@@ -50,245 +50,118 @@ jobs:
           cp accounter/server/.env.example accounter/server/.env
           cp accounter/connector/.env.example accounter/connector/.env
 
-      - name: Set up Docker Buildx
-        id: buildx
-        # Use the action from the master, as we've seen some inconsistencies with @v1
-        # Issue: https://github.com/docker/build-push-action/issues/286
-        uses: docker/setup-buildx-action@master
-        # Only worked for us with this option on 🤷‍♂️
-        with:
-          install: true
-
-      - name: Cache Development Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache/dev
-          # Key is named differently to avoid collision
-          key: ${{ runner.os }}-multi-buildx-dev-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-multi-buildx-dev
-
-      - name: Build Server Development
-        uses: docker/build-push-action@v2
-        with:
-          context: ./accounter/server
-          builder: ${{ steps.buildx.outputs.name }}
-          target: development
-          push: false
-          cache-from: type=local,src=/tmp/.buildx-cache/dev
-          # Note the mode=max here
-          # More: https://github.com/moby/buildkit#--export-cache-options
-          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new/dev
-
       - name: Create GraphQL Schema
         run: |
-          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose run server ./manage.py graphql_schema --out schema.graphql
+          docker-compose run server ./manage.py graphql_schema --out schema.graphql
           mv accounter/server/schema.graphql accounter/web/shared-graphql/schema.graphql
 
-      - name: Build Web Development
-        uses: docker/build-push-action@v2
-        with:
-          context: ./accounter/web
-          builder: ${{ steps.buildx.outputs.name }}
-          target: development
-          push: false
-          cache-from: type=local,src=/tmp/.buildx-cache/dev
-          # Note the mode=max here
-          # More: https://github.com/moby/buildkit#--export-cache-options
-          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new/dev
-
-      - name: Build Connector Development
-        uses: docker/build-push-action@v2
-        with:
-          context: ./accounter/connector
-          builder: ${{ steps.buildx.outputs.name }}
-          target: development
-          push: false
-          cache-from: type=local,src=/tmp/.buildx-cache/dev
-          # Note the mode=max here
-          # More: https://github.com/moby/buildkit#--export-cache-options
-          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new/dev
-
-      - name: Build Loadbalancer
-        uses: docker/build-push-action@v2
-        with:
-          context: ./accounter/loadbalancer
-          builder: ${{ steps.buildx.outputs.name }}
-          push: false
-          cache-from: type=local,src=/tmp/.buildx-cache/dev
-          # Note the mode=max here
-          # More: https://github.com/moby/buildkit#--export-cache-options
-          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new/dev
-
-      - name: Move dev cache
+      - name: lint
         run: |
-          rm -rf /tmp/.buildx-cache/dev
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache/dev
+          docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
+          docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
 
-      - name: Cache Production Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache/prod
-          # Key is named differently to avoid collision
-          key: ${{ runner.os }}-multi-buildx-prod-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-multi-buildx-prod
-
-      - name: Build Server Production
-        uses: docker/build-push-action@v2
-        with:
-          context: ./accounter/server
-          builder: ${{ steps.buildx.outputs.name }}
-          target: production
-          push: false
-          cache-from: type=local,src=/tmp/.buildx-cache/prod
-          # Note the mode=max here
-          # More: https://github.com/moby/buildkit#--export-cache-options
-          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new/prod
-
-      - name: Build Web Production
-        uses: docker/build-push-action@v2
-        with:
-          context: ./accounter/web
-          builder: ${{ steps.buildx.outputs.name }}
-          target: production
-          push: false
-          cache-from: type=local,src=/tmp/.buildx-cache/prod
-          # Note the mode=max here
-          # More: https://github.com/moby/buildkit#--export-cache-options
-          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new/prod
-
-      - name: Build Connector Production
-        uses: docker/build-push-action@v2
-        with:
-          context: ./accounter/connector
-          builder: ${{ steps.buildx.outputs.name }}
-          target: production
-          push: false
-          cache-from: type=local,src=/tmp/.buildx-cache/prod
-          # Note the mode=max here
-          # More: https://github.com/moby/buildkit#--export-cache-options
-          # And: https://github.com/docker/buildx#--cache-tonametypetypekeyvalue
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new/prod
-
-      - name: Move prod cache
+      - name: unit tests server
         run: |
-          rm -rf /tmp/.buildx-cache/prod
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache/prod
+          docker-compose run server coverage run --source='.' manage.py test
+          docker-compose run --no-deps --entrypoint /usr/bin/env server coverage xml
 
-      # - name: lint
-      #   run: |
-      #     docker-compose run --no-deps --entrypoint /usr/bin/env server flake8 accounter
-      #     docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm run lint
+      - name: unit tests web
+        run: docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm t -- --coverage
 
-      # - name: unit tests server
-      #   run: |
-      #     docker-compose run server coverage run --source='.' manage.py test
-      #     docker-compose run --no-deps --entrypoint /usr/bin/env server coverage xml
-
-      # - name: unit tests web
-      #   run: docker-compose run --no-deps --entrypoint ./dev-setup.sh web npm t -- --coverage
-
-      # - name: unit tests connector
-      #   run: |
-      #     docker-compose run --no-deps --entrypoint /usr/bin/env connector npm run test:once -- --coverage
+      - name: unit tests connector
+        run: |
+          docker-compose run --no-deps --entrypoint /usr/bin/env connector npm run test:once -- --coverage
           
-      # - name: report coverage
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
-      #   uses: codecov/codecov-action@v1
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     flags: web, server
-      #     fail_ci_if_error: true
+      - name: report coverage
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: web, server
+          fail_ci_if_error: true
 
-      # - name: check migrations
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
-      #   run: docker-compose -f docker-compose.yml run --entrypoint /usr/bin/env server python manage.py makemigrations --check
+      - name: check migrations
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
+        run: docker-compose -f docker-compose.yml run --entrypoint /usr/bin/env server python manage.py makemigrations --check
 
-      # - name: production build
-      #   run: docker-compose -f docker-compose.yml -f docker-compose.production.yml build --parallel
+      - name: production build
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml build --parallel
           
-      # - uses: hashicorp/setup-terraform@v1
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
-      # - name: Install doctl
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
-      #   uses: digitalocean/action-doctl@v2.1.0
-      #   with:
-      #     token: ${{ secrets.TF_VAR_DO_TOKEN }}
+      - uses: hashicorp/setup-terraform@v1
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
+      - name: Install doctl
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
+        uses: digitalocean/action-doctl@v2.1.0
+        with:
+          token: ${{ secrets.TF_VAR_DO_TOKEN }}
 
-      # - name: Terraform Init
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
-      #   id: init
-      #   run: |
-      #     doctl kubernetes cluster kubeconfig save accounter
-      #     terraform -chdir=provider init
-      #     terraform -chdir=accounter init
+      - name: Terraform Init
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
+        id: init
+        run: |
+          doctl kubernetes cluster kubeconfig save accounter
+          terraform -chdir=provider init
+          terraform -chdir=accounter init
 
-      # - name: Terraform Validate
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
-      #   id: validate
-      #   run: |
-      #     terraform -chdir=provider validate -no-color
-      #     terraform -chdir=accounter validate -no-color
+      - name: Terraform Validate
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' }}
+        id: validate
+        run: |
+          terraform -chdir=provider validate -no-color
+          terraform -chdir=accounter validate -no-color
 
-      # - id: plan-provider
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref != 'refs/heads/master' }}
-      #   run: terraform -chdir=provider plan -no-color
+      - id: plan-provider
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref != 'refs/heads/master' }}
+        run: terraform -chdir=provider plan -no-color
 
-      # - id: plan-cluster
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref != 'refs/heads/master' }}
-      #   run: terraform -chdir=accounter plan -no-color
-      #   env:
-      #     TF_VAR_app_version: ${{ env.version }}
+      - id: plan-cluster
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref != 'refs/heads/master' }}
+        run: terraform -chdir=accounter plan -no-color
+        env:
+          TF_VAR_app_version: ${{ env.version }}
 
-      # - uses: actions/github-script@v4.0.2
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.event_name == 'pull_request' }}
-      #   env:
-      #     PROVIDER_PLAN: "terraform\n${{ steps.plan-provider.outputs.stdout }}"
-      #     CLUSTER_PLAN: "terraform\n${{ steps.plan-cluster.outputs.stdout }}"
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #       const output = `#### Terraform Plan 📖
+      - uses: actions/github-script@v4.0.2
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.event_name == 'pull_request' }}
+        env:
+          PROVIDER_PLAN: "terraform\n${{ steps.plan-provider.outputs.stdout }}"
+          CLUSTER_PLAN: "terraform\n${{ steps.plan-cluster.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan 📖
 
-      #       <details>
-      #       <summary>Show Provider Plan</summary>
+            <details>
+            <summary>Show Provider Plan</summary>
 
-      #       \`\`\`${process.env.PROVIDER_PLAN}\`\`\`
+            \`\`\`${process.env.PROVIDER_PLAN}\`\`\`
 
-      #       </details>
+            </details>
 
-      #       <details>
-      #       <summary>Show Cluster Plan</summary>
+            <details>
+            <summary>Show Cluster Plan</summary>
 
-      #       \`\`\`${process.env.CLUSTER_PLAN}\`\`\`
+            \`\`\`${process.env.CLUSTER_PLAN}\`\`\`
 
-      #       </details>`;
+            </details>`;
 
-      #       github.issues.createComment({
-      #         issue_number: context.issue.number,
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         body: output
-      #       })
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
 
-      # # Deploy
-      # - name: django deployment check
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref == 'refs/heads/master' }}
-      #   run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
+      # Deploy
+      - name: django deployment check
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref == 'refs/heads/master' }}
+        run: docker-compose -f docker-compose.yml -f docker-compose.production.yml run server ./manage.py check --deploy
 
-      # - name: Semantic Release
-      #   if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref == 'refs/heads/master' }}
-      #   uses: cycjimmy/semantic-release-action@v2
-      #   with:
-      #     extra_plugins: |
-      #       @semantic-release/exec
-      #       semantic-release-slack-bot
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Semantic Release
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]' && github.ref == 'refs/heads/master' }}
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          extra_plugins: |
+            @semantic-release/exec
+            semantic-release-slack-bot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
