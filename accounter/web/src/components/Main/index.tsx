@@ -48,6 +48,9 @@ export default function Main() {
   const { data, error } = useQuery<MainQuery>(graphql`
     query MainQuery {
       currentUser {
+        organization {
+          isBetaUser
+        }
         ...Sidebar_profile
       }
     }
@@ -60,6 +63,10 @@ export default function Main() {
 
   if (!data) {
     return <Loading />;
+  }
+
+  if (!data.currentUser.organization.isBetaUser) {
+    return <Redirect to="/onboarding/welcome" />
   }
 
   const mainPages = [
