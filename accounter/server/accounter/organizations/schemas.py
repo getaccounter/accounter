@@ -119,7 +119,7 @@ class ProfileNode(DjangoObjectType):
 class OrganizationNode(DjangoObjectType):
     class Meta:
         model = Organization
-        fields = ("name", "profiles")
+        fields = ("name", "profiles", "is_beta_user")
         interfaces = (graphene.relay.Node,)
 
     profile = graphene.Field(ProfileNode, id=graphene.ID(required=True))
