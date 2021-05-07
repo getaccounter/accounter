@@ -3,34 +3,44 @@ updates:
   - package-ecosystem: "pip"
     directory: "/accounter/server"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
 
   - package-ecosystem: "npm"
     directory: "/accounter/web"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
 
   - package-ecosystem: "npm"
     directory: "/accounter/connector"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+
+  - package-ecosystem: "npm"
+    directory: "/accounter/e2e-tests"
+    schedule:
+      interval: "weekly"
 
   - package-ecosystem: "docker"
     directory: "/accounter/web"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
 
   - package-ecosystem: "docker"
     directory: "/accounter/server"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
 
   - package-ecosystem: "docker"
     directory: "/accounter/connector"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+
+  - package-ecosystem: "docker"
+    directory: "/accounter/e2e-tests"
+    schedule:
+      interval: "weekly"
       
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "weekly"
