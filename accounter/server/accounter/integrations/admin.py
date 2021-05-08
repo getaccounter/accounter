@@ -5,4 +5,6 @@ from .models import Service
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    pass
+    def has_add_permission(self, request, obj=None):
+        # Services should only be added in data migration, not in django admin
+        return False

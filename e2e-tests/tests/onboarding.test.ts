@@ -31,8 +31,8 @@ describe("Onboarding", () => {
       page.waitForNavigation(),
       page.click("text=Next"),
     ]);
-    await page.click('img[alt="SLACK logo"]');
-    await page.click('img[alt="GOOGLE logo"]');
+    await page.click('img[alt="Slack logo"]');
+    await page.click('img[alt="Google logo"]');
     await Promise.all([
       page.waitForNavigation(),
       page.click("text=Next"),

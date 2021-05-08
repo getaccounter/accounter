@@ -4,9 +4,9 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type OnboardingAppSelectorApp_service = {
-    readonly name: ServiceName;
+    readonly name: ServiceEnum;
     readonly logoLarge: string;
     readonly " $refType": "OnboardingAppSelectorApp_service";
 };

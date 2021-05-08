@@ -3,9 +3,9 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type Type = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type OnboardingAppSelectorMutationVariables = {
-    apps: Array<Type>;
+    apps: Array<ServiceEnum>;
 };
 export type OnboardingAppSelectorMutationResponse = {
     readonly onboardApps: {
@@ -21,7 +21,7 @@ export type OnboardingAppSelectorMutation = {
 
 /*
 mutation OnboardingAppSelectorMutation(
-  $apps: [Type!]!
+  $apps: [ServiceEnum!]!
 ) {
   onboardApps(apps: $apps) {
     status
@@ -81,14 +81,14 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "445371e04643dbbe4fb47f8833401073",
+    "cacheID": "db7e8bf2f8a6794694457546c27cbafe",
     "id": null,
     "metadata": {},
     "name": "OnboardingAppSelectorMutation",
     "operationKind": "mutation",
-    "text": "mutation OnboardingAppSelectorMutation(\n  $apps: [Type!]!\n) {\n  onboardApps(apps: $apps) {\n    status\n  }\n}\n"
+    "text": "mutation OnboardingAppSelectorMutation(\n  $apps: [ServiceEnum!]!\n) {\n  onboardApps(apps: $apps) {\n    status\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '55de99eb2c11bb221d96817b0c262b02';
+(node as any).hash = '80092b39c3c2aa9b321896d36f33fe62';
 export default node;

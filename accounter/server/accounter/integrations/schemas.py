@@ -1,3 +1,5 @@
+import enum
+
 import graphene
 from graphene import relay
 from graphene_django import DjangoObjectType
@@ -5,12 +7,19 @@ from graphene_django import DjangoObjectType
 from ..utils import admin_required
 from .models import Account, Integration, Service
 
+services = Service.objects.all()
+enum_key_value_paris = {}
+for service in services:
+    enum_key_value_paris[service.name] = service.name
+ServiceEnum = enum.Enum("ServiceEnum", enum_key_value_paris)
+ServiceType = graphene.Enum.from_enum(ServiceEnum)
+
 
 class ServiceNode(DjangoObjectType):
     class Meta:
         model = Service
-        fields = ("name",)
 
+    name = ServiceType(source="name", required=True)
     oauth_url = graphene.String(source="oauth_url", required=True)
     logo = graphene.String(required=True)
     logo_large = graphene.String(required=True)
@@ -24,9 +33,6 @@ class ServiceNode(DjangoObjectType):
         return instance.logo_large and instance.logo_large.url
 
 
-ServiceType = graphene.Enum.from_enum(Service.Type)
-
-
 class HandleCallback(graphene.Mutation):
     class Arguments:
         service = ServiceType(required=True)
@@ -36,7 +42,7 @@ class HandleCallback(graphene.Mutation):
     status = graphene.String(required=True)
 
     @admin_required
-    def mutate(self, info, service: Service.Type, code: str, state: str):
+    def mutate(self, info, service: str, code: str, state: str):
         organization = info.context.user.profile.organization
         service = Service.objects.get(name=service)
         callback_result = service.handle_callback(code, state)

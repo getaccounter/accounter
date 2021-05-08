@@ -5,13 +5,13 @@
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
 export type AccountRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
-export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type Accounts_profile = {
     readonly accounts: ReadonlyArray<{
         readonly integration: {
             readonly name: string;
             readonly service: {
-                readonly name: ServiceName;
+                readonly name: ServiceEnum;
                 readonly logo: string;
             };
         };

@@ -4,13 +4,13 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type IntegrationsQueryVariables = {};
 export type IntegrationsQueryResponse = {
     readonly integrations: ReadonlyArray<{
         readonly name: string;
         readonly service: {
-            readonly name: ServiceName;
+            readonly name: ServiceEnum;
         };
         readonly " $fragmentRefs": FragmentRefs<"Integration_integration">;
     }>;
@@ -28,6 +28,7 @@ query IntegrationsQuery {
     name
     service {
       name
+      id
     }
     ...Integration_integration
     id
@@ -41,6 +42,7 @@ fragment Integration_integration on IntegrationNode {
   service {
     name
     logo
+    id
   }
 }
 */
@@ -51,6 +53,13 @@ var v0 = {
   "args": null,
   "kind": "ScalarField",
   "name": "name",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
@@ -117,6 +126,7 @@ return {
             "plural": false,
             "selections": [
               (v0/*: any*/),
+              (v1/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -127,13 +137,7 @@ return {
             ],
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -147,12 +151,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "52fbf2f855c7f0213460143863c2764d",
+    "cacheID": "0e48c0543d92c42462680fd9673bd29b",
     "id": null,
     "metadata": {},
     "name": "IntegrationsQuery",
     "operationKind": "query",
-    "text": "query IntegrationsQuery {\n  integrations {\n    name\n    service {\n      name\n    }\n    ...Integration_integration\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  hasValidToken\n  service {\n    name\n    logo\n  }\n}\n"
+    "text": "query IntegrationsQuery {\n  integrations {\n    name\n    service {\n      name\n      id\n    }\n    ...Integration_integration\n    id\n  }\n}\n\nfragment Integration_integration on IntegrationNode {\n  id\n  name\n  hasValidToken\n  service {\n    name\n    logo\n    id\n  }\n}\n"
   }
 };
 })();
