@@ -1,7 +1,6 @@
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import OnboardingAppSelector from './components/OnboardingAppSelector';
 import OnboardingBasics from './components/OnboardingBasics';
-import OnboardingWelcome from './components/OnboardingWelcome';
 import graphql from 'babel-plugin-relay/macro';
 import { useLazyLoadQuery } from 'react-relay';
 import { OnboardingQuery } from './__generated__/OnboardingQuery.graphql';
@@ -40,10 +39,6 @@ export default function Onboarding() {
         <Route path={`${path}/apps`}>
           <StepBar steps={onboardingSteps} currentStep={1} />
           <OnboardingAppSelector />
-        </Route>
-        <Route path={`${path}/welcome`}>
-          <StepBar steps={onboardingSteps} currentStep={onboardingSteps.length} />
-          <OnboardingWelcome />
         </Route>
         <Route exact path={`${path}/`}>
           <Redirect to={`${path}/basic`} />

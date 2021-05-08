@@ -9,6 +9,7 @@ import Logout from './components/Logout';
 import ResetPassword from './components/ResetPassword';
 import Onboarding from './components/Onboarding';
 import Loading from './components/Loading';
+import BetaBlocker from './components/BetaBlocker';
 
 export default function Root() {
   return (
@@ -34,6 +35,9 @@ export default function Root() {
         <Route exact path="/:service/oauth/callback">
           <OAuthSlackCallback />
         </Route>
+        <PrivateRoute path="/betablocker">
+          <BetaBlocker />
+        </PrivateRoute>
         <PrivateRoute path="/">
           <Main />
         </PrivateRoute>

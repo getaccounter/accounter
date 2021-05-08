@@ -38,8 +38,10 @@ describe("Onboarding", () => {
       page.click("text=Next"),
     ]);
     
+    await page.waitForNavigation()
+    
     // welcome page is shown
-    expect(page.url()).toBe(`${LOADBALANCER_URL}/onboarding/welcome`)
+    expect(page.url()).toBe(`${LOADBALANCER_URL}/betablocker`)
 
     await Promise.all([
       page.waitForNavigation(),
@@ -56,6 +58,6 @@ describe("Onboarding", () => {
     ]);
     
     await page.waitForNavigation()
-    expect(page.url()).toBe(`${LOADBALANCER_URL}/onboarding/welcome`)
+    expect(page.url()).toBe(`${LOADBALANCER_URL}/betablocker`)
   });
 });

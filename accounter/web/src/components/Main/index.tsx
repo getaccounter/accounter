@@ -66,7 +66,7 @@ export default function Main() {
   }
 
   if (!data.currentUser.organization.isBetaUser) {
-    return <Redirect to="/onboarding/welcome" />
+    return <Redirect to="/betablocker" />
   }
 
   const mainPages = [

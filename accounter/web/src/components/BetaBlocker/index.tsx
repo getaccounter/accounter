@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 
-const OnboardingWelcome = () => {
+const BetaBlocker = () => {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 sm:mx-auto sm:w-full sm:max-w-2xl">
       <div className="relative px-4 sm:px-6 lg:px-8">
         <div className="text-lg max-w-prose mx-auto">
           <h1>
@@ -32,4 +32,4 @@ const OnboardingWelcome = () => {
   );
 };
 
-export default OnboardingWelcome;
+export default BetaBlocker;

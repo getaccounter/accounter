@@ -44,7 +44,7 @@ const OnboardingAppSelector = () => {
             variables: {
               apps: selectedApps
             },
-            onCompleted: (data) => history.push("/onboarding/welcome")
+            onCompleted: (data) => history.push("/")
           })
         }}
       >
