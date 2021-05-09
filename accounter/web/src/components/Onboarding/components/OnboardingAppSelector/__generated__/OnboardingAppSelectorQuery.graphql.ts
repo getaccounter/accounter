@@ -4,11 +4,11 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type OnboardingAppSelectorQueryVariables = {};
 export type OnboardingAppSelectorQueryResponse = {
     readonly services: ReadonlyArray<{
-        readonly name: ServiceName;
+        readonly name: ServiceEnum;
         readonly " $fragmentRefs": FragmentRefs<"OnboardingAppSelectorApp_service">;
     }>;
 };
@@ -24,6 +24,7 @@ query OnboardingAppSelectorQuery {
   services {
     name
     ...OnboardingAppSelectorApp_service
+    id
   }
 }
 
@@ -90,6 +91,13 @@ return {
             "kind": "ScalarField",
             "name": "logoLarge",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -97,12 +105,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7326431341aa3e1db99efb6417240149",
+    "cacheID": "9ad4a0515bbdb5736960d6fa7e457dbd",
     "id": null,
     "metadata": {},
     "name": "OnboardingAppSelectorQuery",
     "operationKind": "query",
-    "text": "query OnboardingAppSelectorQuery {\n  services {\n    name\n    ...OnboardingAppSelectorApp_service\n  }\n}\n\nfragment OnboardingAppSelectorApp_service on ServiceNode {\n  name\n  logoLarge\n}\n"
+    "text": "query OnboardingAppSelectorQuery {\n  services {\n    name\n    ...OnboardingAppSelectorApp_service\n    id\n  }\n}\n\nfragment OnboardingAppSelectorApp_service on ServiceNode {\n  name\n  logoLarge\n}\n"
   }
 };
 })();

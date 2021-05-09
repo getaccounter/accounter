@@ -3,12 +3,12 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type ServicesQueryVariables = {};
 export type ServicesQueryResponse = {
     readonly services: ReadonlyArray<{
         readonly logo: string;
-        readonly name: ServiceName;
+        readonly name: ServiceEnum;
         readonly oauthUrl: string;
     }>;
 };
@@ -25,52 +25,55 @@ query ServicesQuery {
     logo
     name
     oauthUrl
+    id
   }
 }
 */
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "ServiceNode",
-    "kind": "LinkedField",
-    "name": "services",
-    "plural": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "logo",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "oauthUrl",
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-];
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "logo",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "oauthUrl",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
     "name": "ServicesQuery",
-    "selections": (v0/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ServiceNode",
+        "kind": "LinkedField",
+        "name": "services",
+        "plural": true,
+        "selections": [
+          (v0/*: any*/),
+          (v1/*: any*/),
+          (v2/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -79,15 +82,37 @@ return {
     "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ServicesQuery",
-    "selections": (v0/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ServiceNode",
+        "kind": "LinkedField",
+        "name": "services",
+        "plural": true,
+        "selections": [
+          (v0/*: any*/),
+          (v1/*: any*/),
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "cd3ab3169ead67cff3268dc9872c5dcd",
+    "cacheID": "66f62f72eced8b29c41d7cbeecb3975b",
     "id": null,
     "metadata": {},
     "name": "ServicesQuery",
     "operationKind": "query",
-    "text": "query ServicesQuery {\n  services {\n    logo\n    name\n    oauthUrl\n  }\n}\n"
+    "text": "query ServicesQuery {\n  services {\n    logo\n    name\n    oauthUrl\n    id\n  }\n}\n"
   }
 };
 })();

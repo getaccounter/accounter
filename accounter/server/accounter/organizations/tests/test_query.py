@@ -149,7 +149,7 @@ class OrganizationQueryTestCase(GraphQLTestCase):
         self.client.force_login(self.admin)
         integration = baker.make(
             Integration,
-            service=Service.objects.get(name=Service.Type.SLACK),
+            service=Service.objects.get(name="Slack"),
             organization=self.admin.profile.organization,
             token=token,
             has_valid_token=True,

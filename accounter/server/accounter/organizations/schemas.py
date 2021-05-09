@@ -1,3 +1,5 @@
+from typing import List
+
 import graphene
 from django.contrib.auth import get_user_model, login
 from django.core.exceptions import PermissionDenied
@@ -102,7 +104,7 @@ class ProfileNode(DjangoObjectType):
         try:
             account = Account.objects.filter(
                 profile=profile,
-                integration__service=Service.objects.get(name=Service.Type.SLACK),
+                integration__service=Service.objects.get(name="Slack"),
             ).first()
             return account.image_big
         except Account.DoesNotExist:
@@ -256,7 +258,7 @@ class OnboardApps(graphene.Mutation):
 
     @transaction.atomic
     @owner_required
-    def mutate(self, info, apps: Service.Type):
+    def mutate(self, info, apps: List[str]):
         lead = info.context.user.profile.lead
         lead.app_selection.clear()
         for app in apps:

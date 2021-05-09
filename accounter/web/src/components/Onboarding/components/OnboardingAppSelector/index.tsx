@@ -1,9 +1,9 @@
 import OnboardingAppSelectorApp from './components/OnboardingAppSelectorApp';
 import { useLazyLoadQuery, useMutation } from 'react-relay';
-import { OnboardingAppSelectorQuery, ServiceName } from './__generated__/OnboardingAppSelectorQuery.graphql';
+import { OnboardingAppSelectorQuery } from './__generated__/OnboardingAppSelectorQuery.graphql';
 import graphql from 'babel-plugin-relay/macro';
 import { useState } from 'react';
-import { OnboardingAppSelectorMutation } from './__generated__/OnboardingAppSelectorMutation.graphql';
+import { OnboardingAppSelectorMutation, ServiceEnum } from './__generated__/OnboardingAppSelectorMutation.graphql';
 import Loading from '../../../Loading';
 import { useHistory } from 'react-router-dom';
 
@@ -20,7 +20,7 @@ const OnboardingAppSelector = () => {
     {}
   );
   const [commit, isInFlight] = useMutation<OnboardingAppSelectorMutation>(graphql`
-    mutation OnboardingAppSelectorMutation($apps: [Type!]!) {
+    mutation OnboardingAppSelectorMutation($apps: [ServiceEnum!]!) {
       onboardApps(apps: $apps) {
         status
       }
@@ -28,7 +28,7 @@ const OnboardingAppSelector = () => {
   `);
   
   const history = useHistory();
-  const [selectedApps, setSelectedApps] = useState<Array<ServiceName>>([]);
+  const [selectedApps, setSelectedApps] = useState<Array<ServiceEnum>>([]);
 
   return isInFlight ? <Loading /> : (
     <div>

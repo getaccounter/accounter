@@ -56,6 +56,7 @@ fragment IntegrationContentHeader_integration on IntegrationNode {
   service {
     logo
     oauthUrl
+    id
   }
 }
 */
@@ -181,7 +182,8 @@ return {
                 "kind": "ScalarField",
                 "name": "oauthUrl",
                 "storageKey": null
-              }
+              },
+              (v2/*: any*/)
             ],
             "storageKey": null
           },
@@ -271,12 +273,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d7c3fc507d34531a0e1395baf46fe3fa",
+    "cacheID": "e2985c0a519f58d13a46f5c46d59c50d",
     "id": null,
     "metadata": {},
     "name": "IntegrationContentQuery",
     "operationKind": "query",
-    "text": "query IntegrationContentQuery(\n  $id: ID!\n) {\n  integration(id: $id) {\n    ...IntegrationContentHeader_integration\n    accounts {\n      ...IntegrationAccountList_accounts\n    }\n    id\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  imageSmall\n  isDisabled\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  managementUrl\n  hasValidToken\n  service {\n    logo\n    oauthUrl\n  }\n}\n"
+    "text": "query IntegrationContentQuery(\n  $id: ID!\n) {\n  integration(id: $id) {\n    ...IntegrationContentHeader_integration\n    accounts {\n      ...IntegrationAccountList_accounts\n    }\n    id\n  }\n}\n\nfragment IntegrationAccountList_accounts on AccountNode {\n  imageSmall\n  isDisabled\n  profile {\n    firstName\n    lastName\n    title\n    id\n  }\n  username\n  role\n  externalProfile\n}\n\nfragment IntegrationContentHeader_integration on IntegrationNode {\n  name\n  managementUrl\n  hasValidToken\n  service {\n    logo\n    oauthUrl\n    id\n  }\n}\n"
   }
 };
 })();

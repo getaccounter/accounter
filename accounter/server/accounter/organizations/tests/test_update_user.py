@@ -129,7 +129,7 @@ class OrganizationUpdateProfileTestCase(GraphQLTestCase):
         )
         integration = baker.make(
             Integration,
-            service=Service.objects.get(name=Service.Type.SLACK),
+            service=Service.objects.get(name="Slack"),
             organization=self.admin.profile.organization,
             has_valid_token=True,
             _fill_optional=True,

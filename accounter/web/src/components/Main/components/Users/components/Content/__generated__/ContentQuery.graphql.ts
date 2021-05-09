@@ -49,6 +49,7 @@ fragment Accounts_profile on ProfileNode {
       service {
         name
         logo
+        id
       }
       id
     }
@@ -301,7 +302,8 @@ return {
                                 "kind": "ScalarField",
                                 "name": "logo",
                                 "storageKey": null
-                              }
+                              },
+                              (v2/*: any*/)
                             ],
                             "storageKey": null
                           },
@@ -354,12 +356,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5db0def837414d50f333364aa556a79b",
+    "cacheID": "b0587d8c7bffb1a7ca8863807d9b677d",
     "id": null,
     "metadata": {},
     "name": "ContentQuery",
     "operationKind": "query",
-    "text": "query ContentQuery(\n  $profileId: ID!\n) {\n  currentUser {\n    organization {\n      profile(id: $profileId) {\n        ...Header_profile\n        ...DescriptionList_profile\n        ...EditUser_profile\n        ...Accounts_profile\n        id\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    integration {\n      name\n      service {\n        name\n        logo\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
+    "text": "query ContentQuery(\n  $profileId: ID!\n) {\n  currentUser {\n    organization {\n      profile(id: $profileId) {\n        ...Header_profile\n        ...DescriptionList_profile\n        ...EditUser_profile\n        ...Accounts_profile\n        id\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Accounts_profile on ProfileNode {\n  accounts {\n    integration {\n      name\n      service {\n        name\n        logo\n        id\n      }\n      id\n    }\n    username\n    role\n    externalProfile\n    isDisabled\n  }\n}\n\nfragment DescriptionList_profile on ProfileNode {\n  firstName\n  lastName\n  email\n  title\n}\n\nfragment EditUser_profile on ProfileNode {\n  ...UserForm_profile\n}\n\nfragment Header_profile on ProfileNode {\n  id\n  image\n  firstName\n  lastName\n  isAdmin\n  currentUserCanEdit\n  isOwner\n}\n\nfragment UserForm_profile on ProfileNode {\n  id\n  firstName\n  lastName\n  email\n  title\n}\n"
   }
 };
 })();

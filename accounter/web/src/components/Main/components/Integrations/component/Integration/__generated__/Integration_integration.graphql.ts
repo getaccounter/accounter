@@ -4,13 +4,13 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceName = "GITHUB" | "GOOGLE" | "SLACK" | "ZOOM" | "%future added value";
+export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type Integration_integration = {
     readonly id: string;
     readonly name: string;
     readonly hasValidToken: boolean;
     readonly service: {
-        readonly name: ServiceName;
+        readonly name: ServiceEnum;
         readonly logo: string;
     };
     readonly " $refType": "Integration_integration";

@@ -68,24 +68,23 @@ class OnboardingTestCase(GraphQLTestCase):
     def test_onboarding_apps(self):
         requesting_user = self.owner
         self.client.force_login(requesting_user)
+        selected_service = Service.objects.get(name="Google")
 
         response = self.query(
             """
-            mutation OnboardApps($apps: [Type!]!) {
+            mutation OnboardApps($apps: [ServiceEnum!]!) {
                 onboardApps(apps: $apps) {
                     status
                 }
             }
             """,
-            variables={"apps": ["GOOGLE"]},
+            variables={"apps": [selected_service.name]},
         )
         self.assertResponseNoErrors(response)
         requesting_user.refresh_from_db()
         lead = requesting_user.profile.lead
         assert lead.app_selection.count() == 1
-        assert lead.app_selection.first() == Service.objects.get(
-            name=Service.Type.GOOGLE
-        )
+        assert lead.app_selection.first() == selected_service
 
     def test_onboarding_apps_only_by_owner(self):
         requesting_user = self.admin
@@ -93,13 +92,13 @@ class OnboardingTestCase(GraphQLTestCase):
 
         response = self.query(
             """
-            mutation OnboardApps($apps: [Type!]!) {
+            mutation OnboardApps($apps: [ServiceEnum!]!) {
                 onboardApps(apps: $apps) {
                     status
                 }
             }
             """,
-            variables={"apps": ["GOOGLE"]},
+            variables={"apps": []},
         )
         self.assertResponseHasErrors(response)
         content = json.loads(response.content)
@@ -113,21 +112,20 @@ class OnboardingTestCase(GraphQLTestCase):
         requesting_user = self.owner
         requesting_user.profile.organization.is_onboarded = True
         self.client.force_login(requesting_user)
+        selected_service = Service.objects.get(name="Google")
 
         response = self.query(
             """
-            mutation OnboardApps($apps: [Type!]!) {
+            mutation OnboardApps($apps: [ServiceEnum!]!) {
                 onboardApps(apps: $apps) {
                     status
                 }
             }
             """,
-            variables={"apps": ["GOOGLE"]},
+            variables={"apps": [selected_service.name]},
         )
         self.assertResponseNoErrors(response)
         requesting_user.refresh_from_db()
         lead = requesting_user.profile.lead
         assert lead.app_selection.count() == 1
-        assert lead.app_selection.first() == Service.objects.get(
-            name=Service.Type.GOOGLE
-        )
+        assert lead.app_selection.first() == Service.objects.get(name="Google")
