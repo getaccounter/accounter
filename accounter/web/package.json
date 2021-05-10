@@ -79,7 +79,7 @@
     "@types/faker": "5.5.4",
     "@types/react-relay": "11.0.1",
     "@types/relay-runtime": "11.0.0",
-    "@types/relay-test-utils": "6.0.3",
+    "@types/relay-test-utils": "6.0.4",
     "@ungap/global-this": "0.4.4",
     "babel-plugin-relay": "11.0.2",
     "concurrently": "6.0.2",
