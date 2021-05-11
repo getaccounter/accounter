@@ -4,7 +4,7 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
+export type ServiceEnum = "Atlassian" | "Figma" | "GitHub" | "Google" | "HubSpot" | "Intercom" | "Notion" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type OnboardingAppSelectorQueryVariables = {};
 export type OnboardingAppSelectorQueryResponse = {
     readonly services: ReadonlyArray<{

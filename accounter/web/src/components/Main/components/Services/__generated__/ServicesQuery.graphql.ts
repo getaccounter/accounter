@@ -3,7 +3,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type ServiceEnum = "Atlassian" | "GitHub" | "Google" | "HubSpot" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
+export type ServiceEnum = "Atlassian" | "Figma" | "GitHub" | "Google" | "HubSpot" | "Intercom" | "Notion" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
 export type ServicesQueryVariables = {};
 export type ServicesQueryResponse = {
     readonly services: ReadonlyArray<{
