@@ -4,7 +4,7 @@
 
 import { ConcreteRequest } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type ServiceEnum = "Atlassian" | "Figma" | "GitHub" | "Google" | "HubSpot" | "Intercom" | "Notion" | "Salesforce" | "Slack" | "Zoom" | "%future added value";
+export type ServiceEnum = "AWS" | "Aircall" | "Asana" | "Atlassian" | "BambooHR" | "Figma" | "GitHub" | "Google" | "HubSpot" | "Intercom" | "Notion" | "Salesforce" | "Slack" | "Zendesk" | "Zoom" | "%future added value";
 export type IntegrationsQueryVariables = {};
 export type IntegrationsQueryResponse = {
     readonly integrations: ReadonlyArray<{
