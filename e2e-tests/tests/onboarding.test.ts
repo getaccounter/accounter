@@ -11,7 +11,7 @@ describe("Onboarding", () => {
       password: faker.internet.password(),
     };
 
-    await page.goto(LOADBALANCER_URL);
+    await page.goto(LOADBALANCER_URL, { waitUntil: 'networkidle' });
     await page.click("text=Sign up for free");
     await page.click('input[name="org_name"]');
     await page.fill('input[name="org_name"]', user.company);
