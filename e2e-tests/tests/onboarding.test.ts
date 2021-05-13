@@ -12,7 +12,7 @@ describe("Onboarding", () => {
     };
 
     await page.goto(LOADBALANCER_URL, { waitUntil: 'networkidle' });
-    await page.click("text=Sign up for free");
+    await page.click("text=Request Beta access");
     await page.click('input[name="org_name"]');
     await page.fill('input[name="org_name"]', user.company);
     await page.press('input[name="org_name"]', "Tab");
