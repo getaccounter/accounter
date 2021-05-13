@@ -102,7 +102,7 @@ export default function Login() {
           </div>
           <div className="flex justify-center">
             <Link to="/signup" className="font-medium text-sm text-blue-800 hover:text-blue-700">
-              Sign up for free
+              Request Beta access
             </Link>
           </div>
         </div>
