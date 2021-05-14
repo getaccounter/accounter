@@ -17,7 +17,6 @@ User = get_user_model()
 
 class Organization(models.Model):
     name = models.CharField(max_length=100)
-    is_onboarded = models.BooleanField(default=True)
     is_beta_user = models.BooleanField(default=False)
 
     def create_profile(
@@ -67,6 +66,18 @@ class Profile(models.Model):
             return False
 
         return True
+
+    def send_waiting_list_email(self):
+        subject = "TODO"
+        html_message = render_to_string(
+            "waiting_list_email.html",
+            {},
+        )
+        plain_message = strip_tags(html_message)
+        from_email = "accounter.io <noreply@accounter.io>"
+        to = self.user.email
+
+        send_mail(subject, plain_message, from_email, [to], html_message=html_message)
 
     def send_invite_email(self, inviter: Type["Profile"]):
         token = token_generator.make_token(self.user)
