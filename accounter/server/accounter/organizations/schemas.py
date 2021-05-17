@@ -259,12 +259,13 @@ class OnboardApps(graphene.Mutation):
     @transaction.atomic
     @owner_required
     def mutate(self, info, apps: List[str]):
-        lead = info.context.user.profile.lead
-        lead.app_selection.clear()
+        profile = info.context.user.profile
+        profile.lead.app_selection.clear()
         for app in apps:
             service = Service.objects.get(name=app)
-            lead.app_selection.add(service)
-        lead.save()
+            profile.lead.app_selection.add(service)
+        profile.lead.save()
+        profile.send_waiting_list_email()
         return OnboardBasic(status="success")
 
 
