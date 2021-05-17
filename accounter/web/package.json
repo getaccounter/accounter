@@ -76,7 +76,7 @@
     ]
   },
   "devDependencies": {
-    "@types/faker": "5.5.4",
+    "@types/faker": "5.5.5",
     "@types/react-relay": "11.0.1",
     "@types/relay-runtime": "11.0.0",
     "@types/relay-test-utils": "6.0.4",
