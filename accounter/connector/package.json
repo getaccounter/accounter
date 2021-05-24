@@ -33,7 +33,7 @@
     "@octokit/auth-app": "3.4.0",
     "@octokit/graphql": "4.6.1",
     "@octokit/rest": "18.5.3",
-    "@sentry/node": "6.3.6",
+    "@sentry/node": "6.4.1",
     "@sentry/tracing": "6.4.0",
     "@slack/oauth": "2.0.1",
     "@slack/web-api": "6.2.3",
