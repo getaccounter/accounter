@@ -1,4 +1,4 @@
-FROM node:16.1.0-alpine as development
+FROM node:16.2.0-alpine as development
 ENV PORT=3000
 RUN apk add --no-cache bash
 
@@ -11,14 +11,14 @@ COPY shared-graphql /code/shared-graphql
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD [ "npm", "start" ]
 
-FROM node:16.1.0-alpine as builder
+FROM node:16.2.0-alpine as builder
 ENV REACT_APP_VERSION="VERSION_DO_REPLACE_ME_BEFORE_DEPLOY"
 RUN mkdir /code
 WORKDIR /code
 COPY --from=development /code /code
 RUN npm run build
 
-FROM node:16.1.0-alpine as production
+FROM node:16.2.0-alpine as production
 ENV PORT=3000
 RUN apk add --no-cache bash
 RUN mkdir /build
